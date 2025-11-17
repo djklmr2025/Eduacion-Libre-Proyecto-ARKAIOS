@@ -1,0 +1,2 @@
+Para ir creciendo tu “web de plantillas educativas” solo repites el patrón:
+nuevo algo_super_escolar.html + nuevo botón en el <nav> del index.html que apunte a ese archivo.

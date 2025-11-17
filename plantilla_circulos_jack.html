@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Plantilla Educativa - Círculos Jack Skellington</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #111827;
+      color: #e5e7eb;
+      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .no-print-bar {
+      background: #020617;
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border: 1px solid #1f2937;
+    }
+    .no-print-bar h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: #4f46e5;
+      color: #f9fafb;
+    }
+    .btn-primary:hover { background: #4338ca; }
+    .btn-danger {
+      background: #ef4444;
+      color: #f9fafb;
+    }
+    .btn-danger:hover { background: #dc2626; }
+    .info {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+
+    .pages-container {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      padding-bottom: 32px;
+    }
+    .page-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .page-header h2 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #e5e7eb;
+    }
+    .page {
+      background: white;
+      color: black;
+      position: relative;
+      width: 21.59cm;
+      height: 27.94cm;
+      margin: 0 auto;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.6);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .page-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding: 1.5cm;
+    }
+    .page-note {
+      position: absolute;
+      bottom: 0.8cm;
+      right: 1cm;
+      font-size: 10px;
+      color: #6b7280;
+    }
+
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      border: 3px dashed #7c3aed;
+      background: #f3f4f6;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .circle.circle-grande {
+      width: 12cm;
+      height: 12cm;
+    }
+    .circle.circle-pequeno {
+      width: 5cm;
+      height: 5cm;
+    }
+    .circle.has-image {
+      border-style: solid;
+      border-color: #22c55e;
+      background: #000;
+    }
+    .circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .circle-label {
+      font-size: 11px;
+      color: #4b5563;
+      text-align: center;
+    }
+    .circle-controls {
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 4px;
+      font-size: 10px;
+    }
+    .chip {
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.85);
+      color: #e5e7eb;
+      cursor: pointer;
+      border: 1px solid rgba(148,163,184,0.5);
+    }
+    .chip-danger {
+      background: rgba(185,28,28,0.9);
+      border-color: rgba(248,113,113,0.7);
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .no-print-bar { display: none !important; }
+      .pages-container {
+        gap: 0;
+        padding: 0;
+      }
+      .page-wrapper {
+        max-width: none;
+      }
+      .page {
+        box-shadow: none;
+        margin: 0;
+        border-radius: 0;
+        page-break-after: always;
+      }
+      .page:last-child {
+        page-break-after: auto;
+      }
+    }
+
+    @page {
+      size: 21.59cm 27.94cm;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="no-print-bar">
+    <div>
+      <h1>Plantilla Educativa - Círculos Jack Skellington</h1>
+      <p class="info">
+        2 círculos grandes (12cm) + 4 pequeños (5cm) por hoja. Haz clic en un círculo para subir imagen.
+      </p>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" id="btnAddPage">＋ Agregar hoja</button>
+      <button class="btn-primary" onclick="window.print()">🖨️ Imprimir</button>
+      <button class="btn-danger" id="btnClearAll">🗑️ Limpiar todo</button>
+    </div>
+  </div>
+
+  <div class="pages-container" id="pagesContainer"></div>
+
+  <!-- Inputs de archivo reutilizables -->
+  <input type="file" id="fileInputHidden" accept="image/*" style="display:none">
+
+  <script>
+    const pagesContainer = document.getElementById('pagesContainer');
+    const fileInputHidden = document.getElementById('fileInputHidden');
+    const btnAddPage = document.getElementById('btnAddPage');
+    const btnClearAll = document.getElementById('btnClearAll');
+
+    let pages = []; // cada página: { id, circles: [ { id, size, imageData } ] }
+    let circleToFill = null;
+
+    function createInitialPageData(id) {
+      return {
+        id,
+        circles: [
+          { id: `p${id}-g1`, size: 'grande', imageData: null },
+          { id: `p${id}-g2`, size: 'grande', imageData: null },
+          { id: `p${id}-p1`, size: 'pequeno', imageData: null },
+          { id: `p${id}-p2`, size: 'pequeno', imageData: null },
+          { id: `p${id}-p3`, size: 'pequeno', imageData: null },
+          { id: `p${id}-p4`, size: 'pequeno', imageData: null }
+        ]
+      };
+    }
+
+    function addPage() {
+      const newId = pages.length + 1;
+      pages.push(createInitialPageData(newId));
+      renderPages();
+    }
+
+    function clearAll() {
+      if (!confirm('¿Limpiar todas las hojas e imágenes?')) return;
+      pages = [];
+      addPage();
+    }
+
+    function handleCircleClick(pageId, circleId) {
+      circleToFill = { pageId, circleId };
+      fileInputHidden.value = '';
+      fileInputHidden.click();
+    }
+
+    fileInputHidden.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file || !circleToFill) return;
+
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const dataUrl = ev.target.result;
+        pages = pages.map(page => {
+          if (page.id === circleToFill.pageId) {
+            return {
+              ...page,
+              circles: page.circles.map(c =>
+                c.id === circleToFill.circleId
+                  ? { ...c, imageData: dataUrl }
+                  : c
+              )
+            };
+          }
+          return page;
+        });
+        circleToFill = null;
+        renderPages();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function removeImage(pageId, circleId) {
+      pages = pages.map(page => {
+        if (page.id === pageId) {
+          return {
+            ...page,
+            circles: page.circles.map(c =>
+              c.id === circleId ? { ...c, imageData: null } : c
+            )
+          };
+        }
+        return page;
+      });
+      renderPages();
+    }
+
+    function removePage(id) {
+      if (pages.length <= 1) return;
+      if (!confirm('¿Eliminar esta hoja completa?')) return;
+      pages = pages.filter(p => p.id !== id).map((p, idx) => ({
+        ...p,
+        id: idx + 1
+      }));
+      renderPages();
+    }
+
+    function renderPages() {
+      pagesContainer.innerHTML = '';
+      pages.forEach((page, index) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'page-wrapper';
+
+        const header = document.createElement('div');
+        header.className = 'page-header';
+
+        const title = document.createElement('h2');
+        title.textContent = `Hoja ${index + 1}`;
+
+        const btnDelete = document.createElement('button');
+        btnDelete.className = 'btn-danger';
+        btnDelete.textContent = 'Eliminar hoja';
+        btnDelete.style.fontSize = '0.75rem';
+        btnDelete.onclick = () => removePage(page.id);
+        if (pages.length <= 1) {
+          btnDelete.disabled = true;
+          btnDelete.style.opacity = '0.5';
+          btnDelete.style.cursor = 'default';
+        }
+
+        header.appendChild(title);
+        header.appendChild(btnDelete);
+
+        const pageEl = document.createElement('div');
+        pageEl.className = 'page';
+
+        const inner = document.createElement('div');
+        inner.className = 'page-inner';
+
+        // posiciones similares a tu TSX
+        const positions = {
+          grande: [
+            { left: '1.2cm', top: '2cm' },
+            { left: '1.2cm', bottom: '2cm' }
+          ],
+          pequeno: [
+            { right: '1.8cm', top: '2cm' },
+            { right: '1.8cm', top: '8cm' },
+            { right: '1.8cm', top: '14cm' },
+            { right: '1.8cm', top: '20cm' }
+          ]
+        };
+
+        let gIndex = 0;
+        let pIndex = 0;
+
+        page.circles.forEach(circle => {
+          const circleDiv = document.createElement('div');
+          circleDiv.className = 'circle ' + (circle.size === 'grande' ? 'circle-grande' : 'circle-pequeno');
+          const pos = circle.size === 'grande'
+            ? positions.grande[gIndex++]
+            : positions.pequeno[pIndex++];
+          Object.assign(circleDiv.style, pos);
+
+          circleDiv.onclick = () => handleCircleClick(page.id, circle.id);
+
+          if (circle.imageData) {
+            circleDiv.classList.add('has-image');
+            const img = document.createElement('img');
+            img.src = circle.imageData;
+            img.alt = 'Imagen círculo';
+
+            const controls = document.createElement('div');
+            controls.className = 'circle-controls';
+
+            const chipChange = document.createElement('div');
+            chipChange.className = 'chip';
+            chipChange.textContent = 'Cambiar';
+            chipChange.onclick = (ev) => {
+              ev.stopPropagation();
+              handleCircleClick(page.id, circle.id);
+            };
+
+            const chipRemove = document.createElement('div');
+            chipRemove.className = 'chip chip-danger';
+            chipRemove.textContent = 'Quitar';
+            chipRemove.onclick = (ev) => {
+              ev.stopPropagation();
+              removeImage(page.id, circle.id);
+            };
+
+            controls.appendChild(chipChange);
+            controls.appendChild(chipRemove);
+
+            circleDiv.appendChild(img);
+            circleDiv.appendChild(controls);
+          } else {
+            const label = document.createElement('div');
+            label.className = 'circle-label';
+            label.innerHTML = circle.size === 'grande'
+              ? 'Clic para subir imagen<br>12 cm'
+              : 'Clic para subir imagen<br>5 cm';
+            circleDiv.appendChild(label);
+          }
+
+          inner.appendChild(circleDiv);
+        });
+
+        const note = document.createElement('div');
+        note.className = 'page-note';
+        note.textContent = `Página ${index + 1}`;
+
+        inner.appendChild(note);
+        pageEl.appendChild(inner);
+
+        wrapper.appendChild(header);
+        wrapper.appendChild(pageEl);
+        pagesContainer.appendChild(wrapper);
+      });
+    }
+
+    btnAddPage.addEventListener('click', addPage);
+    btnClearAll.addEventListener('click', clearAll);
+
+    // iniciar con una hoja
+    addPage();
+  </script>
+</body>
+</html>
