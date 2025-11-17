@@ -271,17 +271,39 @@
     }
     .workspace-header {
       display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
       justify-content: space-between;
       align-items: center;
       color: #cbd5e1;
       font-size: 0.9rem;
       font-weight: 600;
     }
+    .workspace-path {
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+    .workspace-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      width: 100%;
+    }
+    .workspace-select {
+      background: #0f172a;
+      color: #e5e7eb;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 6px 10px;
+      min-width: 180px;
+      font-size: 0.85rem;
+    }
     .workspace-list {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
       gap: 10px;
-      max-height: 160px;
+      max-height: 220px;
       overflow-y: auto;
       padding-right: 6px;
     }
@@ -294,6 +316,7 @@
       flex-direction: column;
       gap: 6px;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      position: relative;
     }
     .workspace-card .thumb {
       height: 60px;
@@ -321,6 +344,10 @@
       font-size: 0.7rem;
       color: #94a3b8;
     }
+    .workspace-label {
+      font-size: 0.68rem;
+      color: #22d3ee;
+    }
     .workspace-actions {
       display: flex;
       gap: 6px;
@@ -341,6 +368,17 @@
     .workspace-btn:hover {
       background: #3b82f6;
       border-color: #60a5fa;
+    }
+    .workspace-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #22c55e;
+      color: #0b1727;
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid #16a34a;
     }
     .action-btn {
       padding: 6px 12px;
@@ -664,6 +702,14 @@
         <span>📂 Espacio de archivos (Claude puede leerlos)</span>
         <span id="workspaceCount">0 archivos</span>
       </div>
+      <div class="workspace-path">Carpeta virtual: /workspace/ai-archivos</div>
+      <div class="workspace-controls">
+        <select id="workspaceFolder" class="workspace-select"></select>
+        <button class="workspace-btn" id="newFolderBtn" style="flex:0 0 auto; min-width:140px;">📁 Nueva carpeta</button>
+        <button class="workspace-btn" id="clearFolderBtn" style="flex:0 0 auto; min-width:140px;">🧹 Vaciar carpeta</button>
+        <button class="workspace-btn" id="shareWorkspaceBtn" style="flex:0 0 auto; min-width:170px;">📤 Enviar carpeta a Claude</button>
+        <button class="workspace-btn" id="clearSelectionBtn" style="flex:0 0 auto; min-width:150px;">✖ Limpiar adjuntos</button>
+      </div>
       <div class="workspace-list" id="workspaceList">
         <div class="workspace-card" style="border-style: dashed; text-align: center; color: #94a3b8;">
           Sube imágenes, PDFs, Word, ZIP y más. Aquí verás tus adjuntos listos para reutilizar.
@@ -726,11 +772,19 @@
     const pendingAttachmentsEl = document.getElementById('pendingAttachments');
     const workspaceList = document.getElementById('workspaceList');
     const workspaceCount = document.getElementById('workspaceCount');
+    const workspaceFolder = document.getElementById('workspaceFolder');
+    const newFolderBtn = document.getElementById('newFolderBtn');
+    const clearFolderBtn = document.getElementById('clearFolderBtn');
+    const shareWorkspaceBtn = document.getElementById('shareWorkspaceBtn');
+    const clearSelectionBtn = document.getElementById('clearSelectionBtn');
 
     const MODEL_NAME = 'claude-sonnet-4-5';
     let conversationHistory = [];
     let pendingAttachments = [];
     let workspaceLibrary = [];
+    let workspaceFolders = ['General'];
+    let currentFolder = 'General';
+    let includeWorkspaceInPrompt = true;
 
     // Abrir/Cerrar panel
     aiButton.addEventListener('click', () => {
@@ -809,6 +863,10 @@
 
     function loadWorkspace() {
       const saved = localStorage.getItem('arkaios-ai-workspace');
+      const savedFolders = localStorage.getItem('arkaios-ai-folders');
+      const savedCurrent = localStorage.getItem('arkaios-ai-folder-current');
+      const savedShare = localStorage.getItem('arkaios-ai-workspace-share');
+
       if (saved) {
         try {
           workspaceLibrary = JSON.parse(saved);
@@ -816,11 +874,32 @@
           workspaceLibrary = [];
         }
       }
+
+      if (savedFolders) {
+        try {
+          const parsed = JSON.parse(savedFolders);
+          if (Array.isArray(parsed) && parsed.length) {
+            workspaceFolders = parsed;
+          }
+        } catch {}
+      }
+
+      if (savedCurrent && workspaceFolders.includes(savedCurrent)) {
+        currentFolder = savedCurrent;
+      }
+
+      includeWorkspaceInPrompt = savedShare ? savedShare === 'true' : true;
+      syncFoldersFromFiles();
+      updateShareButton();
+      renderFolderOptions();
       renderWorkspace();
     }
 
     function saveWorkspace() {
       localStorage.setItem('arkaios-ai-workspace', JSON.stringify(workspaceLibrary));
+      localStorage.setItem('arkaios-ai-folders', JSON.stringify(workspaceFolders));
+      localStorage.setItem('arkaios-ai-folder-current', currentFolder);
+      localStorage.setItem('arkaios-ai-workspace-share', includeWorkspaceInPrompt ? 'true' : 'false');
     }
 
     function handleFiles(files) {
@@ -836,7 +915,9 @@
             size: file.size,
             dataUrl,
             isImage: file.type?.startsWith('image/'),
-            addedAt: new Date().toISOString()
+            addedAt: new Date().toISOString(),
+            folder: currentFolder,
+            saved: true
           };
           workspaceLibrary.unshift(attachment);
           pendingAttachments.unshift(attachment);
@@ -846,6 +927,61 @@
         };
         reader.readAsDataURL(file);
       });
+    }
+
+    function renderFolderOptions() {
+      workspaceFolder.innerHTML = '';
+      workspaceFolders.forEach(folder => {
+        const option = document.createElement('option');
+        option.value = folder;
+        option.textContent = folder;
+        option.selected = folder === currentFolder;
+        workspaceFolder.appendChild(option);
+      });
+    }
+
+    function addFolder(name) {
+      if (!name) return;
+      if (!workspaceFolders.includes(name)) {
+        workspaceFolders.push(name);
+      }
+      currentFolder = name;
+      renderFolderOptions();
+      renderWorkspace();
+      saveWorkspace();
+    }
+
+    function syncFoldersFromFiles() {
+      workspaceLibrary.forEach(file => {
+        const folder = file.folder || 'General';
+        if (!workspaceFolders.includes(folder)) {
+          workspaceFolders.push(folder);
+        }
+      });
+      if (!workspaceFolders.includes(currentFolder)) {
+        currentFolder = workspaceFolders[0] || 'General';
+      }
+      renderFolderOptions();
+    }
+
+    function clearCurrentFolder() {
+      const keep = workspaceLibrary.filter(file => file.folder !== currentFolder);
+      workspaceLibrary = keep;
+      renderWorkspace();
+      saveWorkspace();
+    }
+
+    function toggleWorkspaceShare() {
+      includeWorkspaceInPrompt = !includeWorkspaceInPrompt;
+      updateShareButton();
+      saveWorkspace();
+    }
+
+    function updateShareButton() {
+      shareWorkspaceBtn.textContent = includeWorkspaceInPrompt
+        ? '📤 Carpeta visible para Claude'
+        : '🙈 Ocultar carpeta a Claude';
+      shareWorkspaceBtn.classList.toggle('toggled', includeWorkspaceInPrompt);
     }
 
     attachButton.addEventListener('click', () => fileInput.click());
@@ -876,14 +1012,47 @@
       }
     });
 
+    clearSelectionBtn.addEventListener('click', () => {
+      pendingAttachments = [];
+      renderPendingAttachments();
+    });
+
+    newFolderBtn.addEventListener('click', () => {
+      const name = prompt('Nombre de la nueva carpeta:');
+      if (name) addFolder(name.trim());
+    });
+
+    workspaceFolder.addEventListener('change', (e) => {
+      currentFolder = e.target.value;
+      renderWorkspace();
+      saveWorkspace();
+    });
+
+    clearFolderBtn.addEventListener('click', () => {
+      if (confirm(`¿Vaciar la carpeta "${currentFolder}"?`)) {
+        clearCurrentFolder();
+      }
+    });
+
+    shareWorkspaceBtn.addEventListener('click', toggleWorkspaceShare);
+
     function renderWorkspace() {
       workspaceList.innerHTML = '';
-      if (!workspaceLibrary.length) {
-        workspaceList.innerHTML = '<div class="workspace-card" style="border-style:dashed; text-align:center; color:#94a3b8;">Aún no hay archivos cargados.</div>';
+      const visibleFiles = workspaceLibrary.filter(file => file.folder === currentFolder);
+
+      if (!visibleFiles.length) {
+        workspaceList.innerHTML = '<div class="workspace-card" style="border-style:dashed; text-align:center; color:#94a3b8;">Aún no hay archivos cargados en esta carpeta.</div>';
       } else {
-        workspaceLibrary.forEach(file => {
+        visibleFiles.forEach(file => {
           const card = document.createElement('div');
           card.className = 'workspace-card';
+
+          if (file.saved) {
+            const badge = document.createElement('div');
+            badge.className = 'workspace-badge';
+            badge.textContent = 'Guardado';
+            card.appendChild(badge);
+          }
 
           const thumb = document.createElement('div');
           thumb.className = 'thumb';
@@ -904,6 +1073,10 @@
           meta.className = 'workspace-meta';
           meta.textContent = `${file.type || 'desconocido'} · ${formatBytes(file.size)}`;
 
+          const folderLabel = document.createElement('div');
+          folderLabel.className = 'workspace-label';
+          folderLabel.textContent = `Carpeta: ${file.folder || 'General'}`;
+
           const actions = document.createElement('div');
           actions.className = 'workspace-actions';
 
@@ -915,15 +1088,81 @@
             renderPendingAttachments();
           };
 
+          const keepBtn = document.createElement('button');
+          keepBtn.className = 'workspace-btn';
+          keepBtn.textContent = file.saved ? '💾 Guardado' : '💾 Guardar';
+          keepBtn.onclick = () => {
+            file.saved = !file.saved;
+            renderWorkspace();
+            saveWorkspace();
+          };
+
+          const moveBtn = document.createElement('button');
+          moveBtn.className = 'workspace-btn';
+          moveBtn.textContent = '📁 Mover aquí';
+          moveBtn.onclick = () => {
+            file.folder = currentFolder;
+            renderWorkspace();
+            saveWorkspace();
+          };
+
+          const removeBtn = document.createElement('button');
+          removeBtn.className = 'workspace-btn';
+          removeBtn.textContent = '🗑️ Eliminar';
+          removeBtn.onclick = () => {
+            workspaceLibrary = workspaceLibrary.filter(item => item.id !== file.id);
+            pendingAttachments = pendingAttachments.filter(item => item.id !== file.id);
+            renderWorkspace();
+            renderPendingAttachments();
+            saveWorkspace();
+          };
+
           actions.appendChild(reuseBtn);
+          actions.appendChild(keepBtn);
+          actions.appendChild(moveBtn);
+          actions.appendChild(removeBtn);
+
           card.appendChild(thumb);
           card.appendChild(name);
           card.appendChild(meta);
+          card.appendChild(folderLabel);
           card.appendChild(actions);
           workspaceList.appendChild(card);
         });
       }
       workspaceCount.textContent = `${workspaceLibrary.length} archivo${workspaceLibrary.length === 1 ? '' : 's'}`;
+    }
+
+    function buildWorkspaceContext(limitPerFolder = 6) {
+      if (!includeWorkspaceInPrompt || !workspaceLibrary.length) return '';
+
+      const grouped = {};
+      workspaceLibrary.forEach(file => {
+        const folder = file.folder || 'General';
+        if (!grouped[folder]) grouped[folder] = [];
+        if (grouped[folder].length < limitPerFolder) {
+          const baseSnippet = file.isImage && file.dataUrl
+            ? file.dataUrl.split(',')[1]?.slice(0, 80)
+            : '';
+          grouped[folder].push({
+            name: file.name,
+            type: file.type,
+            size: formatBytes(file.size),
+            snippet: baseSnippet
+          });
+        }
+      });
+
+      return Object.entries(grouped).map(([folder, files]) => {
+        const lines = files.map((file, idx) => {
+          const baseLine = `${idx + 1}. ${file.name} (${file.type || 'sin tipo'}, ${file.size}) en /workspace/ai-archivos/${folder}/`;
+          if (file.snippet) {
+            return `${baseLine} · imagen base64 inicio: ${file.snippet}...`;
+          }
+          return baseLine;
+        });
+        return `Carpeta ${folder} (máx ${limitPerFolder}):\n${lines.join('\n')}`;
+      }).join('\n\n');
     }
 
     function createAttachmentChip(att, allowRemove = false) {
@@ -1020,7 +1259,8 @@
       const attachmentSummary = attachmentsForMessage.length
         ? attachmentsForMessage.map((att, idx) => {
             const snippet = att.dataUrl?.split(',')[1]?.slice(0, 120) || '';
-            const virtualPath = `/workspace/ai-archivos/${att.name}`;
+            const folderPath = att.folder || 'General';
+            const virtualPath = `/workspace/ai-archivos/${folderPath}/${att.name}`;
             const baseLine = `Archivo ${idx + 1}: ${att.name} (${att.type || 'sin tipo'}, ${formatBytes(att.size)}). Ubicación virtual: ${virtualPath}.`;
             if (att.isImage && snippet) {
               return `${baseLine} Imagen codificada (base64 inicio): ${snippet}...`;
@@ -1041,6 +1281,7 @@
 
       try {
         // Contexto del sistema
+        const workspaceContext = buildWorkspaceContext();
         const systemContext = `Eres Claude, un asistente educativo integrado en el "Centro de Plantillas Educativas - Proyecto ARKAIOS".
 
 Tu misión es ayudar a estudiantes y maestros con:
@@ -1053,6 +1294,7 @@ Tu misión es ayudar a estudiantes y maestros con:
 Cuentas con un espacio de archivos en "/workspace/ai-archivos" donde el usuario adjunta imágenes, PDFs, Word, ZIP u otros formatos.
 Se te enviará la lista de adjuntos y, para imágenes, fragmentos en base64. Interpreta y describe el contenido cuando se solicite.
 Si piden un PDF imprimible o un ZIP, organiza el contenido y explica cómo entregarlo o generarlo con enlaces/base64 si procede.
+${workspaceContext ? `\nContenido cargado actualmente por el usuario:\n${workspaceContext}` : ''}
 
 Plantillas disponibles:
 1. Carta MX - Índice + Texto (para tareas escolares)
