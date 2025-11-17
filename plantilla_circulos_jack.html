@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Plantilla Educativa - Círculos Jack Skellington</title>
+  <title>Plantilla Educativa - Círculos Jack Skellington (Completa)</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #111827;
       color: #e5e7eb;
       min-height: 100vh;
@@ -16,20 +16,27 @@
       flex-direction: column;
       gap: 16px;
     }
+    
+    /* Barra superior */
     .no-print-bar {
-      background: #020617;
+      background: linear-gradient(135deg, #1e293b 0%, #020617 100%);
       border-radius: 12px;
-      padding: 12px 16px;
+      padding: 16px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      border: 1px solid #1f2937;
+      gap: 12px;
+      border: 2px solid #3b82f6;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
     .no-print-bar h1 {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       font-weight: 700;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
     .actions {
       display: flex;
@@ -38,30 +45,40 @@
     }
     button {
       border: none;
-      border-radius: 999px;
-      padding: 8px 14px;
+      border-radius: 8px;
+      padding: 10px 16px;
       cursor: pointer;
       font-size: 0.9rem;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      transition: all 0.2s;
     }
     .btn-primary {
-      background: #4f46e5;
-      color: #f9fafb;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
     }
-    .btn-primary:hover { background: #4338ca; }
+    .btn-primary:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.6);
+    }
     .btn-danger {
-      background: #ef4444;
-      color: #f9fafb;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
     }
-    .btn-danger:hover { background: #dc2626; }
+    .btn-danger:hover { 
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+    }
     .info {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: #9ca3af;
+      margin-top: 4px;
     }
 
+    /* Contenedor de páginas */
     .pages-container {
       display: flex;
       flex-direction: column;
@@ -71,18 +88,24 @@
     .page-wrapper {
       max-width: 900px;
       margin: 0 auto;
+      width: 100%;
     }
     .page-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+      padding: 8px 12px;
+      background: #1f2937;
+      border-radius: 8px;
     }
     .page-header h2 {
-      font-size: 0.95rem;
+      font-size: 1rem;
       font-weight: 700;
       color: #e5e7eb;
     }
+
+    /* Página carta */
     .page {
       background: white;
       color: black;
@@ -90,9 +113,9 @@
       width: 21.59cm;
       height: 27.94cm;
       margin: 0 auto;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.6);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
       border-radius: 4px;
-      overflow: hidden;
+      overflow: visible;
     }
     .page-inner {
       position: relative;
@@ -108,6 +131,7 @@
       color: #6b7280;
     }
 
+    /* Círculos */
     .circle {
       position: absolute;
       border-radius: 50%;
@@ -118,6 +142,12 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      transition: all 0.3s;
+    }
+    .circle:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+      transform: scale(1.02);
     }
     .circle.circle-grande {
       width: 12cm;
@@ -132,36 +162,206 @@
       border-color: #22c55e;
       background: #000;
     }
-    .circle img {
+    .circle.locked {
+      border-color: #10b981;
+      border-width: 4px;
+    }
+    
+    /* Imagen dentro del círculo */
+    .circle-image-wrapper {
+      position: relative;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      overflow: hidden;
+      border-radius: 50%;
     }
+    .circle img {
+      position: absolute;
+      object-fit: cover;
+      pointer-events: none;
+    }
+    
     .circle-label {
       font-size: 11px;
       color: #4b5563;
       text-align: center;
+      line-height: 1.4;
     }
+    
+    /* Controles del círculo */
     .circle-controls {
       position: absolute;
-      bottom: 6px;
+      bottom: 8px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
       gap: 4px;
-      font-size: 10px;
+      z-index: 10;
     }
     .chip {
-      padding: 2px 6px;
+      padding: 4px 8px;
       border-radius: 999px;
-      background: rgba(15,23,42,0.85);
+      background: rgba(15,23,42,0.9);
       color: #e5e7eb;
       cursor: pointer;
       border: 1px solid rgba(148,163,184,0.5);
+      font-size: 10px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .chip:hover {
+      background: rgba(59, 130, 246, 0.9);
+      transform: scale(1.05);
     }
     .chip-danger {
       background: rgba(185,28,28,0.9);
       border-color: rgba(248,113,113,0.7);
+    }
+    .chip-danger:hover {
+      background: rgba(220, 38, 38, 0.9);
+    }
+
+    /* Badge de fijado */
+    .locked-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 9px;
+      font-weight: bold;
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.5);
+    }
+
+    /* Panel de edición flotante */
+    .edit-panel {
+      position: fixed;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+      width: 320px;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border: 3px solid #3b82f6;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+      display: none;
+      z-index: 1000;
+    }
+    .edit-panel.active {
+      display: block;
+      animation: slideIn 0.3s ease-out;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(-50%) translateX(20px); opacity: 0; }
+      to { transform: translateY(-50%) translateX(0); opacity: 1; }
+    }
+
+    .edit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #3b82f6;
+    }
+    .edit-header h3 {
+      font-size: 1.1rem;
+      color: #3b82f6;
+      font-weight: 700;
+    }
+    .edit-close {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      color: #ef4444;
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    .edit-close:hover {
+      background: #ef4444;
+      color: white;
+      transform: rotate(90deg);
+    }
+
+    .edit-control {
+      margin-bottom: 16px;
+    }
+    .edit-control label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #e5e7eb;
+      margin-bottom: 8px;
+    }
+    .edit-control .value {
+      color: #3b82f6;
+      font-weight: bold;
+    }
+    .edit-control input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #1f2937;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .edit-control input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
+    }
+    .edit-control input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      cursor: pointer;
+      border: none;
+    }
+
+    .edit-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 20px;
+    }
+    .edit-btn {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .edit-btn-lock {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+    }
+    .edit-btn-lock:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
+    }
+    .edit-btn-unlock {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+    }
+    .edit-btn-delete {
+      background: #1f2937;
+      color: #ef4444;
+      border: 2px solid #ef4444;
     }
 
     @media print {
@@ -169,7 +369,11 @@
         background: white;
         padding: 0;
       }
-      .no-print-bar { display: none !important; }
+      .no-print-bar,
+      .edit-panel,
+      .page-header { 
+        display: none !important; 
+      }
       .pages-container {
         gap: 0;
         padding: 0;
@@ -186,32 +390,83 @@
       .page:last-child {
         page-break-after: auto;
       }
+      .circle-controls,
+      .locked-badge {
+        display: none !important;
+      }
     }
 
     @page {
       size: 21.59cm 27.94cm;
       margin: 0;
     }
+
+    @media (max-width: 768px) {
+      .edit-panel {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        transform: none;
+        border-radius: 16px 16px 0 0;
+      }
+      .edit-panel.active {
+        animation: slideUp 0.3s ease-out;
+      }
+      @keyframes slideUp {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+      }
+    }
   </style>
 </head>
 <body>
   <div class="no-print-bar">
     <div>
-      <h1>Plantilla Educativa - Círculos Jack Skellington</h1>
+      <h1>🎃 Plantilla Educativa - Círculos Jack Skellington</h1>
       <p class="info">
-        2 círculos grandes (12cm) + 4 pequeños (5cm) por hoja. Haz clic en un círculo para subir imagen.
+        ✨ 2 círculos grandes (12cm) + 4 pequeños (5cm) • Edita, ajusta, mueve y fija imágenes
       </p>
     </div>
     <div class="actions">
-      <button class="btn-primary" id="btnAddPage">＋ Agregar hoja</button>
+      <button class="btn-primary" id="btnAddPage">➕ Agregar Hoja</button>
       <button class="btn-primary" onclick="window.print()">🖨️ Imprimir</button>
-      <button class="btn-danger" id="btnClearAll">🗑️ Limpiar todo</button>
+      <button class="btn-danger" id="btnClearAll">🗑️ Limpiar Todo</button>
     </div>
   </div>
 
   <div class="pages-container" id="pagesContainer"></div>
 
-  <!-- Inputs de archivo reutilizables -->
+  <!-- Panel de edición flotante -->
+  <div class="edit-panel" id="editPanel">
+    <div class="edit-header">
+      <h3>✏️ Editor de Círculo</h3>
+      <button class="edit-close" id="editClose">×</button>
+    </div>
+    
+    <div class="edit-control">
+      <label>Tamaño: <span class="value" id="scaleValue">100%</span></label>
+      <input type="range" id="scaleSlider" min="50" max="200" value="100">
+    </div>
+
+    <div class="edit-control">
+      <label>Posición Horizontal: <span class="value" id="posXValue">50%</span></label>
+      <input type="range" id="posXSlider" min="0" max="100" value="50">
+    </div>
+
+    <div class="edit-control">
+      <label>Posición Vertical: <span class="value" id="posYValue">50%</span></label>
+      <input type="range" id="posYSlider" min="0" max="100" value="50">
+    </div>
+
+    <div class="edit-buttons">
+      <button class="edit-btn edit-btn-lock" id="btnLock">🔒 Fijar Imagen</button>
+      <button class="edit-btn edit-btn-delete" id="btnDeleteImage">🗑️ Eliminar Imagen</button>
+    </div>
+  </div>
+
   <input type="file" id="fileInputHidden" accept="image/*" style="display:none">
 
   <script>
@@ -219,88 +474,31 @@
     const fileInputHidden = document.getElementById('fileInputHidden');
     const btnAddPage = document.getElementById('btnAddPage');
     const btnClearAll = document.getElementById('btnClearAll');
+    const editPanel = document.getElementById('editPanel');
+    const editClose = document.getElementById('editClose');
+    const scaleSlider = document.getElementById('scaleSlider');
+    const posXSlider = document.getElementById('posXSlider');
+    const posYSlider = document.getElementById('posYSlider');
+    const scaleValue = document.getElementById('scaleValue');
+    const posXValue = document.getElementById('posXValue');
+    const posYValue = document.getElementById('posYValue');
+    const btnLock = document.getElementById('btnLock');
+    const btnDeleteImage = document.getElementById('btnDeleteImage');
 
-    let pages = []; // cada página: { id, circles: [ { id, size, imageData } ] }
+    let pages = [];
     let circleToFill = null;
+    let editingCircle = null;
 
-    // Listas de imágenes pre-cortadas de Jack
-    const jackGrandes = [
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_0_0.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_0_1.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_0_2.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_0_3.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_0_4.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_1_0.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_1_1.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_1_2.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_1_3.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_1_4.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_2_0.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_2_1.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_2_2.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_2_3.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_2_4.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_3_0.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_3_1.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_3_2.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_3_3.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_3_4.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_4_0.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_4_1.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_4_2.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_4_3.png",
-      "Trabajo caritas de jack/Imagenes 12 cm/jack_4_4.png"
-    ];
-    const jackPequenos = [
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_0_0.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_0_1.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_0_2.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_0_3.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_0_4.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_1_0.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_1_1.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_1_2.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_1_3.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_1_4.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_2_0.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_2_1.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_2_2.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_2_3.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_2_4.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_3_0.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_3_1.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_3_2.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_3_3.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_3_4.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_4_0.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_4_1.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_4_2.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_4_3.png",
-      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_4_4.png"
-    ];
-    let idxJackGrande = 0;
-    let idxJackPequeno = 0;
-
-    function nextJackGrande() {
-      if (idxJackGrande >= jackGrandes.length) return null;
-      return jackGrandes[idxJackGrande++];
-    }
-    function nextJackPequeno() {
-      if (idxJackPequeno >= jackPequenos.length) return null;
-      return jackPequenos[idxJackPequeno++];
-    }
-
-    
     function createInitialPageData(id) {
       return {
         id,
         circles: [
-          { id: `p${id}-g1`, size: 'grande', imageData: null, imageSrc: nextJackGrande() },
-          { id: `p${id}-g2`, size: 'grande', imageData: null, imageSrc: nextJackGrande() },
-          { id: `p${id}-p1`, size: 'pequeno', imageData: null, imageSrc: nextJackPequeno() },
-          { id: `p${id}-p2`, size: 'pequeno', imageData: null, imageSrc: nextJackPequeno() },
-          { id: `p${id}-p3`, size: 'pequeno', imageData: null, imageSrc: nextJackPequeno() },
-          { id: `p${id}-p4`, size: 'pequeno', imageData: null, imageSrc: nextJackPequeno() }
+          { id: `p${id}-g1`, size: 'grande', imageData: null, scale: 100, posX: 50, posY: 50, locked: false },
+          { id: `p${id}-g2`, size: 'grande', imageData: null, scale: 100, posX: 50, posY: 50, locked: false },
+          { id: `p${id}-p1`, size: 'pequeno', imageData: null, scale: 100, posX: 50, posY: 50, locked: false },
+          { id: `p${id}-p2`, size: 'pequeno', imageData: null, scale: 100, posX: 50, posY: 50, locked: false },
+          { id: `p${id}-p3`, size: 'pequeno', imageData: null, scale: 100, posX: 50, posY: 50, locked: false },
+          { id: `p${id}-p4`, size: 'pequeno', imageData: null, scale: 100, posX: 50, posY: 50, locked: false }
         ]
       };
     }
@@ -314,15 +512,19 @@
     function clearAll() {
       if (!confirm('¿Limpiar todas las hojas e imágenes?')) return;
       pages = [];
-      idxJackGrande = 0;
-      idxJackPequeno = 0;
       addPage();
+      closeEditPanel();
     }
 
     function handleCircleClick(pageId, circleId) {
-      circleToFill = { pageId, circleId };
-      fileInputHidden.value = '';
-      fileInputHidden.click();
+      const circle = findCircle(pageId, circleId);
+      if (circle && circle.imageData && !circle.locked) {
+        openEditPanel(pageId, circleId);
+      } else if (!circle.imageData) {
+        circleToFill = { pageId, circleId };
+        fileInputHidden.value = '';
+        fileInputHidden.click();
+      }
     }
 
     fileInputHidden.addEventListener('change', (e) => {
@@ -338,7 +540,7 @@
               ...page,
               circles: page.circles.map(c =>
                 c.id === circleToFill.circleId
-                  ? { ...c, imageData: dataUrl, imageSrc: dataUrl }
+                  ? { ...c, imageData: dataUrl, scale: 100, posX: 50, posY: 50, locked: false }
                   : c
               )
             };
@@ -351,19 +553,126 @@
       reader.readAsDataURL(file);
     });
 
-    function removeImage(pageId, circleId) {
+    function findCircle(pageId, circleId) {
+      const page = pages.find(p => p.id === pageId);
+      return page ? page.circles.find(c => c.id === circleId) : null;
+    }
+
+    function updateCircle(pageId, circleId, updates) {
       pages = pages.map(page => {
         if (page.id === pageId) {
           return {
             ...page,
             circles: page.circles.map(c =>
-              c.id === circleId ? { ...c, imageData: null, imageSrc: null } : c
+              c.id === circleId ? { ...c, ...updates } : c
             )
           };
         }
         return page;
       });
       renderPages();
+    }
+
+    function openEditPanel(pageId, circleId) {
+      const circle = findCircle(pageId, circleId);
+      if (!circle || !circle.imageData) return;
+
+      editingCircle = { pageId, circleId };
+      scaleSlider.value = circle.scale;
+      posXSlider.value = circle.posX;
+      posYSlider.value = circle.posY;
+      updateSliderValues();
+
+      scaleSlider.disabled = circle.locked;
+      posXSlider.disabled = circle.locked;
+      posYSlider.disabled = circle.locked;
+
+      btnLock.textContent = circle.locked ? '🔓 Desbloquear' : '🔒 Fijar Imagen';
+      btnLock.className = circle.locked ? 'edit-btn edit-btn-unlock' : 'edit-btn edit-btn-lock';
+
+      editPanel.classList.add('active');
+    }
+
+    function closeEditPanel() {
+      editPanel.classList.remove('active');
+      editingCircle = null;
+    }
+
+    function updateSliderValues() {
+      scaleValue.textContent = scaleSlider.value + '%';
+      posXValue.textContent = posXSlider.value + '%';
+      posYValue.textContent = posYSlider.value + '%';
+    }
+
+    scaleSlider.addEventListener('input', () => {
+      if (!editingCircle) return;
+      updateSliderValues();
+      updateCircle(editingCircle.pageId, editingCircle.circleId, {
+        scale: parseInt(scaleSlider.value)
+      });
+    });
+
+    posXSlider.addEventListener('input', () => {
+      if (!editingCircle) return;
+      updateSliderValues();
+      updateCircle(editingCircle.pageId, editingCircle.circleId, {
+        posX: parseInt(posXSlider.value)
+      });
+    });
+
+    posYSlider.addEventListener('input', () => {
+      if (!editingCircle) return;
+      updateSliderValues();
+      updateCircle(editingCircle.pageId, editingCircle.circleId, {
+        posY: parseInt(posYSlider.value)
+      });
+    });
+
+    btnLock.addEventListener('click', () => {
+      if (!editingCircle) return;
+      const circle = findCircle(editingCircle.pageId, editingCircle.circleId);
+      updateCircle(editingCircle.pageId, editingCircle.circleId, {
+        locked: !circle.locked
+      });
+      if (!circle.locked) {
+        closeEditPanel();
+      } else {
+        openEditPanel(editingCircle.pageId, editingCircle.circleId);
+      }
+    });
+
+    btnDeleteImage.addEventListener('click', () => {
+      if (!editingCircle) return;
+      if (confirm('¿Eliminar esta imagen?')) {
+        updateCircle(editingCircle.pageId, editingCircle.circleId, {
+          imageData: null,
+          scale: 100,
+          posX: 50,
+          posY: 50,
+          locked: false
+        });
+        closeEditPanel();
+      }
+    });
+
+    editClose.addEventListener('click', closeEditPanel);
+
+    function changeImage(pageId, circleId) {
+      circleToFill = { pageId, circleId };
+      fileInputHidden.value = '';
+      fileInputHidden.click();
+    }
+
+    function removeImage(pageId, circleId) {
+      if (confirm('¿Eliminar esta imagen?')) {
+        updateCircle(pageId, circleId, {
+          imageData: null,
+          scale: 100,
+          posX: 50,
+          posY: 50,
+          locked: false
+        });
+      }
     }
 
     function removePage(id) {
@@ -374,6 +683,7 @@
         id: idx + 1
       }));
       renderPages();
+      closeEditPanel();
     }
 
     function renderPages() {
@@ -386,17 +696,18 @@
         header.className = 'page-header';
 
         const title = document.createElement('h2');
-        title.textContent = `Hoja ${index + 1}`;
+        title.textContent = `📄 Hoja ${index + 1}`;
 
         const btnDelete = document.createElement('button');
         btnDelete.className = 'btn-danger';
-        btnDelete.textContent = 'Eliminar hoja';
-        btnDelete.style.fontSize = '0.75rem';
+        btnDelete.textContent = '🗑️ Eliminar Hoja';
+        btnDelete.style.fontSize = '0.85rem';
+        btnDelete.style.padding = '6px 12px';
         btnDelete.onclick = () => removePage(page.id);
         if (pages.length <= 1) {
           btnDelete.disabled = true;
           btnDelete.style.opacity = '0.5';
-          btnDelete.style.cursor = 'default';
+          btnDelete.style.cursor = 'not-allowed';
         }
 
         header.appendChild(title);
@@ -408,7 +719,6 @@
         const inner = document.createElement('div');
         inner.className = 'page-inner';
 
-        // posiciones similares a tu TSX
         const positions = {
           grande: [
             { left: '1.2cm', top: '2cm' },
@@ -428,6 +738,8 @@
         page.circles.forEach(circle => {
           const circleDiv = document.createElement('div');
           circleDiv.className = 'circle ' + (circle.size === 'grande' ? 'circle-grande' : 'circle-pequeno');
+          if (circle.locked) circleDiv.classList.add('locked');
+          
           const pos = circle.size === 'grande'
             ? positions.grande[gIndex++]
             : positions.pequeno[pIndex++];
@@ -435,43 +747,74 @@
 
           circleDiv.onclick = () => handleCircleClick(page.id, circle.id);
 
-          const hasImage = circle.imageData || circle.imageSrc;
-          if (hasImage) {
+          if (circle.imageData) {
             circleDiv.classList.add('has-image');
+            
+            const imgWrapper = document.createElement('div');
+            imgWrapper.className = 'circle-image-wrapper';
+            
             const img = document.createElement('img');
-            img.src = circle.imageData || circle.imageSrc;
+            img.src = circle.imageData;
             img.alt = 'Imagen círculo';
+            
+            // Aplicar transformaciones
+            const scale = circle.scale / 100;
+            const size = Math.max(circle.size === 'grande' ? 12 : 5, (circle.size === 'grande' ? 12 : 5) * scale);
+            img.style.width = size + 'cm';
+            img.style.height = size + 'cm';
+            img.style.left = circle.posX + '%';
+            img.style.top = circle.posY + '%';
+            img.style.transform = 'translate(-50%, -50%)';
 
-            const controls = document.createElement('div');
-            controls.className = 'circle-controls';
+            imgWrapper.appendChild(img);
+            circleDiv.appendChild(imgWrapper);
 
-            const chipChange = document.createElement('div');
-            chipChange.className = 'chip';
-            chipChange.textContent = 'Cambiar';
-            chipChange.onclick = (ev) => {
-              ev.stopPropagation();
-              handleCircleClick(page.id, circle.id);
-            };
+            if (circle.locked) {
+              const badge = document.createElement('div');
+              badge.className = 'locked-badge';
+              badge.textContent = 'FIJADA ✓';
+              circleDiv.appendChild(badge);
+            }
 
-            const chipRemove = document.createElement('div');
-            chipRemove.className = 'chip chip-danger';
-            chipRemove.textContent = 'Quitar';
-            chipRemove.onclick = (ev) => {
-              ev.stopPropagation();
-              removeImage(page.id, circle.id);
-            };
+            if (!circle.locked) {
+              const controls = document.createElement('div');
+              controls.className = 'circle-controls';
 
-            controls.appendChild(chipChange);
-            controls.appendChild(chipRemove);
+              const chipEdit = document.createElement('div');
+              chipEdit.className = 'chip';
+              chipEdit.textContent = '✏️ Editar';
+              chipEdit.onclick = (ev) => {
+                ev.stopPropagation();
+                openEditPanel(page.id, circle.id);
+              };
 
-            circleDiv.appendChild(img);
-            circleDiv.appendChild(controls);
+              const chipChange = document.createElement('div');
+              chipChange.className = 'chip';
+              chipChange.textContent = '📷 Cambiar';
+              chipChange.onclick = (ev) => {
+                ev.stopPropagation();
+                changeImage(page.id, circle.id);
+              };
+
+              const chipRemove = document.createElement('div');
+              chipRemove.className = 'chip chip-danger';
+              chipRemove.textContent = '✕';
+              chipRemove.onclick = (ev) => {
+                ev.stopPropagation();
+                removeImage(page.id, circle.id);
+              };
+
+              controls.appendChild(chipEdit);
+              controls.appendChild(chipChange);
+              controls.appendChild(chipRemove);
+              circleDiv.appendChild(controls);
+            }
           } else {
             const label = document.createElement('div');
             label.className = 'circle-label';
             label.innerHTML = circle.size === 'grande'
-              ? 'Clic para subir imagen<br>12 cm'
-              : 'Clic para subir imagen<br>5 cm';
+              ? '📷<br>Clic para subir imagen<br><strong>12 cm</strong>'
+              : '📷<br>Clic para subir imagen<br><strong>5 cm</strong>';
             circleDiv.appendChild(label);
           }
 
@@ -494,8 +837,17 @@
     btnAddPage.addEventListener('click', addPage);
     btnClearAll.addEventListener('click', clearAll);
 
-    // iniciar con una hoja
+    // Iniciar con una hoja
     addPage();
+
+    // Cerrar panel al hacer clic fuera
+    document.addEventListener('click', (e) => {
+      if (editPanel.classList.contains('active') && 
+          !editPanel.contains(e.target) && 
+          !e.target.closest('.circle')) {
+        closeEditPanel();
+      }
+    });
   </script>
 </body>
 </html>
