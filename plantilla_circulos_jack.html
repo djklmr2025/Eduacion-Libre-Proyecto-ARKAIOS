@@ -223,16 +223,84 @@
     let pages = []; // cada página: { id, circles: [ { id, size, imageData } ] }
     let circleToFill = null;
 
+    // Listas de imágenes pre-cortadas de Jack
+    const jackGrandes = [
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_0_0.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_0_1.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_0_2.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_0_3.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_0_4.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_1_0.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_1_1.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_1_2.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_1_3.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_1_4.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_2_0.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_2_1.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_2_2.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_2_3.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_2_4.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_3_0.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_3_1.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_3_2.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_3_3.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_3_4.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_4_0.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_4_1.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_4_2.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_4_3.png",
+      "Trabajo caritas de jack/Imagenes 12 cm/jack_4_4.png"
+    ];
+    const jackPequenos = [
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_0_0.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_0_1.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_0_2.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_0_3.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_0_4.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_1_0.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_1_1.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_1_2.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_1_3.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_1_4.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_2_0.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_2_1.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_2_2.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_2_3.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_2_4.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_3_0.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_3_1.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_3_2.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_3_3.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_3_4.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_4_0.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_4_1.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_4_2.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_4_3.png",
+      "Trabajo caritas de jack/imagenes 5 cm/jack5cm_4_4.png"
+    ];
+    let idxJackGrande = 0;
+    let idxJackPequeno = 0;
+
+    function nextJackGrande() {
+      if (idxJackGrande >= jackGrandes.length) return null;
+      return jackGrandes[idxJackGrande++];
+    }
+    function nextJackPequeno() {
+      if (idxJackPequeno >= jackPequenos.length) return null;
+      return jackPequenos[idxJackPequeno++];
+    }
+
+    
     function createInitialPageData(id) {
       return {
         id,
         circles: [
-          { id: `p${id}-g1`, size: 'grande', imageData: null },
-          { id: `p${id}-g2`, size: 'grande', imageData: null },
-          { id: `p${id}-p1`, size: 'pequeno', imageData: null },
-          { id: `p${id}-p2`, size: 'pequeno', imageData: null },
-          { id: `p${id}-p3`, size: 'pequeno', imageData: null },
-          { id: `p${id}-p4`, size: 'pequeno', imageData: null }
+          { id: `p${id}-g1`, size: 'grande', imageData: null, imageSrc: nextJackGrande() },
+          { id: `p${id}-g2`, size: 'grande', imageData: null, imageSrc: nextJackGrande() },
+          { id: `p${id}-p1`, size: 'pequeno', imageData: null, imageSrc: nextJackPequeno() },
+          { id: `p${id}-p2`, size: 'pequeno', imageData: null, imageSrc: nextJackPequeno() },
+          { id: `p${id}-p3`, size: 'pequeno', imageData: null, imageSrc: nextJackPequeno() },
+          { id: `p${id}-p4`, size: 'pequeno', imageData: null, imageSrc: nextJackPequeno() }
         ]
       };
     }
@@ -246,6 +314,8 @@
     function clearAll() {
       if (!confirm('¿Limpiar todas las hojas e imágenes?')) return;
       pages = [];
+      idxJackGrande = 0;
+      idxJackPequeno = 0;
       addPage();
     }
 
@@ -268,7 +338,7 @@
               ...page,
               circles: page.circles.map(c =>
                 c.id === circleToFill.circleId
-                  ? { ...c, imageData: dataUrl }
+                  ? { ...c, imageData: dataUrl, imageSrc: dataUrl }
                   : c
               )
             };
@@ -287,7 +357,7 @@
           return {
             ...page,
             circles: page.circles.map(c =>
-              c.id === circleId ? { ...c, imageData: null } : c
+              c.id === circleId ? { ...c, imageData: null, imageSrc: null } : c
             )
           };
         }
@@ -365,10 +435,11 @@
 
           circleDiv.onclick = () => handleCircleClick(page.id, circle.id);
 
-          if (circle.imageData) {
+          const hasImage = circle.imageData || circle.imageSrc;
+          if (hasImage) {
             circleDiv.classList.add('has-image');
             const img = document.createElement('img');
-            img.src = circle.imageData;
+            img.src = circle.imageData || circle.imageSrc;
             img.alt = 'Imagen círculo';
 
             const controls = document.createElement('div');
