@@ -713,24 +713,24 @@
     });
 
     // ========== SISTEMA DE IA CLAUDE ==========
-      const aiButton = document.getElementById('aiButton');
-      const aiPanel = document.getElementById('aiPanel');
-      const aiClose = document.getElementById('aiClose');
-      const aiExpand = document.getElementById('aiExpand');
-      const aiMessages = document.getElementById('aiMessages');
-      const aiInput = document.getElementById('aiInput');
-      const aiSend = document.getElementById('aiSend');
-      const typingIndicator = document.getElementById('typingIndicator');
-      const fileInput = document.getElementById('fileInput');
-      const attachButton = document.getElementById('attachButton');
-      const pendingAttachmentsEl = document.getElementById('pendingAttachments');
-      const workspaceList = document.getElementById('workspaceList');
-      const workspaceCount = document.getElementById('workspaceCount');
+    const aiButton = document.getElementById('aiButton');
+    const aiPanel = document.getElementById('aiPanel');
+    const aiClose = document.getElementById('aiClose');
+    const aiExpand = document.getElementById('aiExpand');
+    const aiMessages = document.getElementById('aiMessages');
+    const aiInput = document.getElementById('aiInput');
+    const aiSend = document.getElementById('aiSend');
+    const typingIndicator = document.getElementById('typingIndicator');
+    const fileInput = document.getElementById('fileInput');
+    const attachButton = document.getElementById('attachButton');
+    const pendingAttachmentsEl = document.getElementById('pendingAttachments');
+    const workspaceList = document.getElementById('workspaceList');
+    const workspaceCount = document.getElementById('workspaceCount');
 
-      const MODEL_NAME = 'claude-sonnet-4-5';
-      let conversationHistory = [];
-      let pendingAttachments = [];
-      let workspaceLibrary = [];
+    const MODEL_NAME = 'claude-sonnet-4-5';
+    let conversationHistory = [];
+    let pendingAttachments = [];
+    let workspaceLibrary = [];
 
     // Abrir/Cerrar panel
     aiButton.addEventListener('click', () => {
@@ -852,6 +852,28 @@
     fileInput.addEventListener('change', (e) => {
       handleFiles(e.target.files);
       fileInput.value = '';
+    });
+
+    aiInput.addEventListener('paste', (event) => {
+      const items = event.clipboardData?.items;
+      if (!items) return;
+
+      const pastedFiles = [];
+      for (const item of items) {
+        if (item.kind === 'file') {
+          const file = item.getAsFile();
+          if (file) {
+            pastedFiles.push(file);
+          }
+        }
+      }
+
+      if (pastedFiles.length) {
+        event.preventDefault();
+        handleFiles(pastedFiles);
+        aiPanel.classList.add('active');
+        aiInput.focus();
+      }
     });
 
     function renderWorkspace() {
