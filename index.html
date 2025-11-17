@@ -810,7 +810,16 @@
       aiInput.focus();
     });
 
-    async function ensurePuterClient() {
+    function resetPuterClient() {
+      puterClient = null;
+      puterReady = false;
+    }
+
+    async function ensurePuterClient(forceReconnect = false) {
+      if (forceReconnect) {
+        resetPuterClient();
+      }
+
       if (puterReady && puterClient) return puterClient;
 
       // Preferir instancia global ya creada
@@ -1346,12 +1355,23 @@ Conversa de forma amigable, educativa y práctica. Si detectas que el usuario qu
           ...conversationHistory.slice(-5)
         ];
 
-        const client = await ensurePuterClient();
+        let response;
+        let client = await ensurePuterClient();
 
-        const response = await client.ai.chat(chatMessages, {
-          model: MODEL_NAME,
-          stream: true
-        });
+        try {
+          response = await client.ai.chat(chatMessages, {
+            model: MODEL_NAME,
+            stream: true
+          });
+        } catch (primaryError) {
+          console.warn('Fallo en la primera llamada a Claude, reintentando...', primaryError);
+          addMessage('⏳ Se perdió la conexión con Claude. Intentando reconectar...', 'system');
+          client = await ensurePuterClient(true);
+          response = await client.ai.chat(chatMessages, {
+            model: MODEL_NAME,
+            stream: true
+          });
+        }
 
         let assistantText = '';
 
