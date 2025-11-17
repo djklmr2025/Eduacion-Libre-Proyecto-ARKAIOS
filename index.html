@@ -507,6 +507,7 @@
     const aiSend = document.getElementById('aiSend');
     const typingIndicator = document.getElementById('typingIndicator');
 
+    const MODEL_NAME = 'claude-sonnet-4-5';
     let conversationHistory = [];
 
     // Abrir/Cerrar panel
@@ -550,6 +551,27 @@
       sendMessage();
     }
 
+    // Extraer texto desde la respuesta de Puter
+    function extractResponseText(aiResponse) {
+      if (!aiResponse) return '';
+      if (typeof aiResponse === 'string') return aiResponse;
+
+      if (aiResponse.message?.content?.length) {
+        return aiResponse.message.content
+          .map(part => part.text || part)
+          .join('');
+      }
+
+      if (aiResponse.delta?.text) return aiResponse.delta.text;
+      if (aiResponse.text) return aiResponse.text;
+
+      try {
+        return JSON.stringify(aiResponse);
+      } catch (err) {
+        return '⚠️ No se pudo leer la respuesta de la IA';
+      }
+    }
+
     // Enviar mensaje a Claude
     async function sendMessage() {
       const message = aiInput.value.trim();
@@ -589,28 +611,40 @@ Plantilla actual abierta: ${currentTemplate}
 
 Conversa de forma amigable, educativa y práctica. Si detectas que el usuario quiere crear una plantilla nueva, genera el código HTML completo. Si necesitas generar imágenes, menciona que puedes usar DALL-E.`;
 
-        // Llamada a Claude vía Puter.js
-        const response = await puter.ai.chat(
-          [
-            {role: 'system', content: systemContext},
-            ...conversationHistory.slice(-5) // Últimos 5 mensajes de contexto
-          ],
-          { 
-            model: "claude-sonnet-4-20250514",
-            stream: false
+        // Llamada a Claude vía Puter.js (streaming habilitado)
+        const chatMessages = [
+          {role: 'system', content: systemContext},
+          ...conversationHistory.slice(-5)
+        ];
+
+        const response = await puter.ai.chat(chatMessages, {
+          model: MODEL_NAME,
+          stream: true
+        });
+
+        let assistantText = '';
+
+        if (response && typeof response[Symbol.asyncIterator] === 'function') {
+          const streamMessage = addMessage('', 'assistant', true);
+          for await (const part of response) {
+            assistantText += extractResponseText(part);
+            streamMessage.textContent = assistantText;
+            scrollToBottom();
           }
-        );
+          typingIndicator.classList.remove('active');
+        } else {
+          typingIndicator.classList.remove('active');
+          assistantText = extractResponseText(response);
+          addMessage(assistantText, 'assistant');
+        }
 
-        // Ocultar indicador
-        typingIndicator.classList.remove('active');
+        if (assistantText) {
+          conversationHistory.push({role: 'assistant', content: assistantText});
 
-        // Agregar respuesta de Claude
-        addMessage(response, 'assistant');
-        conversationHistory.push({role: 'assistant', content: response});
-
-        // Detectar si Claude generó código HTML
-        if (response.includes('<!DOCTYPE html>') || response.includes('<html')) {
-          addMessage('💡 Detecté que generé código HTML. ¿Quieres que lo agregue como nueva plantilla al menú?', 'system');
+          // Detectar si Claude generó código HTML
+          if (assistantText.includes('<!DOCTYPE html>') || assistantText.includes('<html')) {
+            addMessage('💡 Detecté que generé código HTML. ¿Quieres que lo agregue como nueva plantilla al menú?', 'system');
+          }
         }
 
       } catch (error) {
@@ -626,12 +660,13 @@ Conversa de forma amigable, educativa y práctica. Si detectas que el usuario qu
     }
 
     // Agregar mensaje al chat
-    function addMessage(text, type) {
+    function addMessage(text, type, returnRef = false) {
       const messageDiv = document.createElement('div');
       messageDiv.className = `message ${type}`;
       messageDiv.textContent = text;
       aiMessages.appendChild(messageDiv);
       scrollToBottom();
+      return returnRef ? messageDiv : null;
     }
 
     // Scroll automático
