@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARKAIOS: Mapa de Integración</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Warm Neutral Tech (Neutral-100 bg, White cards, Indigo/Blue accents) -->
+    <!-- Application Structure Plan: A single-page, scrolling dashboard with a sticky sidebar navigation (Resumen, Módulos, Plan, Futuro). This structure mirrors the logical flow of the source report (from high-level summary to specific actions and future vision) and makes it easy for a user to either get a quick overview or drill into specific details like code snippets. Interactions focus on toggling content (Módulos) and expanding details (Plan de Acción) to keep the UI clean by default. -->
+    <!-- Visualization & Content Choices: 1. Report Info: System architecture (ARK-AI-OS + Edu). Goal: Visualize connection. Viz: User's uploaded image (image_3676a2.jpg) paired with a clear, parallel HTML/Tailwind diagram (divs/arrows) to make the abstract image concrete. Interaction: None, static viz. Justification: Uses user's asset, clarifies with HTML. 2. Report Info: Module details (Core vs. Edu). Goal: Compare/Contrast. Viz: Tabbed/toggled content panes. Interaction: JS onClick to show/hide detail divs. Justification: Cleans UI, allows focused view. 3. Report Info: Action Plan (code snippets). Goal: Present actionable steps clearly. Viz: Accordion/collapsible sections. Interaction: JS onClick to expand/collapse. Justification: Hides complex code, presents as simple steps. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f5;
+            color: #1a1a1a;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            @apply block px-4 py-2 text-neutral-600 rounded-lg;
+        }
+        .nav-link:hover, .nav-link.active {
+            @apply bg-indigo-100 text-indigo-700 font-semibold;
+        }
+        .code-block {
+            @apply bg-gray-900 text-gray-200 p-4 rounded-lg overflow-x-auto text-sm;
+        }
+        .card {
+            @apply bg-white rounded-xl shadow-lg p-6 md:p-8;
+        }
+        .section-title {
+            @apply text-3xl font-bold text-neutral-800 mb-3;
+        }
+        .section-intro {
+            @apply text-lg text-neutral-600 mb-8 max-w-3xl;
+        }
+    </style>
+</head>
+<body class="bg-neutral-100">
+
+    <div class="md:flex">
+        <!-- Barra Lateral de Navegación -->
+        <aside class="p-4 bg-white shadow-md md:w-64 md:h-screen md:sticky md:top-0 md:flex md:flex-col">
+            <h1 class="text-2xl font-bold text-indigo-700 p-4">Proyecto ARKAIOS</h1>
+            <nav id="sidebar-nav" class="flex-1 md:mt-8 space-y-2">
+                <a href="#summary" class="nav-link active">Resumen</a>
+                <a href="#overview" class="nav-link">Visión General</a>
+                <a href="#modules" class="nav-link">Módulos del Sistema</a>
+                <a href="#plan" class="nav-link">Plan de Acción</a>
+                <a href="#future" class="nav-link">Visión Futura</a>
+            </nav>
+        </aside>
+
+        <!-- Contenido Principal -->
+        <main class="flex-1 p-6 md:p-12 h-full overflow-y-auto">
+
+            <!-- 1. Resumen -->
+            <section id="summary" class="mb-16">
+                <h2 class="section-title">Resumen de Integración</h2>
+                <p class="section-intro">
+                    Este panel describe el plan de integración para el ecosistema ARKAIOS. El objetivo es conectar oficialmente el "Centro de Plantillas Educativas" (el frontend) con el "Núcleo Financiero ARK-AI-OS" (el backend). Esta integración unificará el sistema, establecerá una hoja de ruta clara y preparará la infraestructura para futuras capacidades financieras y de reputación.
+                </p>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-4">Recursos Clave</h3>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li>
+                            <span class="font-semibold">Módulo Educación (Repo):</span>
+                            <a href="https://bit.ly/43zGcKF" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">bit.ly/43zGcKF</a>
+                        </li>
+                        <li>
+                            <span class="font-semibold">Módulo Educación (Sitio):</span>
+                            <a href="https://bit.ly/4pe0yRO" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">bit.ly/4pe0yRO</a>
+                        </li>
+                        <li>
+                            <span class="font-semibold">Núcleo Financiero (Repo):</span>
+                            <a href="https://github.com/djklmr2025/ARK-AI-OS" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">github.com/djklmr2025/ARK-AI-OS</a>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 2. Visión General del Ecosistema -->
+            <section id="overview" class="mb-16">
+                <h2 class="section-title">Visión General del Ecosistema</h2>
+                <p class="section-intro">
+                    El sistema ARKAIOS se compone de dos partes principales: el núcleo financiero (backend) y la plataforma educativa (frontend). El siguiente diagrama visualiza esta arquitectura, mostrando cómo la plataforma de educación sirve como una puerta de entrada al ecosistema más amplio.
+                </p>
+                <div class="card">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4">Mapa Conceptual</h3>
+                            <p class="text-neutral-600 mb-6">La imagen proporcionada (izquierda) muestra la visión conceptual del núcleo. El diagrama (derecha) clarifica la conexión funcional que se está implementando.</p>
+                            <div class="flex flex-col items-center justify-center space-y-6 md:flex-row md:space-y-0 md:space-x-4 p-4">
+                                <div class="p-6 bg-indigo-50 border-2 border-indigo-500 rounded-lg shadow-lg text-center">
+                                    <span class="text-2xl">Core</span>
+                                    <h4 class="font-bold text-lg text-indigo-800">ARK-AI-OS (Núcleo)</h4>
+                                    <p class="text-sm text-indigo-700">Daemon Financiero, AEIO-MR, AQR</p>
+                                </div>
+                                <div class="text-4xl text-neutral-400 font-light transform -rotate-90 md:rotate-0">&harr;</div>
+                                <div class="p-6 bg-green-50 border-2 border-green-600 rounded-lg shadow-lg text-center">
+                                    <span class="text-2xl">Web</span>
+                                    <h4 class="font-bold text-lg text-green-800">Educación Libre</h4>
+                                    <p class="text-sm text-green-700">Frontend, Plantillas, IA</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4">Visualización del Núcleo (Asset)</h3>
+                            <img src="image_3676a2.jpg" 
+                                 alt="Visualización del Núcleo ARKAIOS" 
+                                 class="w-full h-auto rounded-lg shadow-md border border-neutral-300"
+                                 id="core-image"
+                                 onerror="this.parentElement.innerHTML = '<div class=\'w-full h-64 bg-neutral-200 rounded-lg flex items-center justify-center\'><p class=\'text-neutral-500\'>Error al cargar image_3676a2.jpg</p></div>';">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Módulos del Sistema -->
+            <section id="modules" class="mb-16">
+                <h2 class="section-title">Módulos del Sistema</h2>
+                <p class="section-intro">
+                    Explore los dos componentes principales del ecosistema. Seleccione un módulo para ver sus detalles, propósito y enlaces directos.
+                </p>
+                
+                <div class="flex space-x-4 mb-6">
+                    <button id="btn-core" class="module-btn active text-lg font-semibold py-3 px-6 rounded-lg transition-all duration-300">
+                        Núcleo Financiero
+                    </button>
+                    <button id="btn-edu" class="module-btn text-lg font-semibold py-3 px-6 rounded-lg transition-all duration-300">
+                        Educación Libre
+                    </button>
+                </div>
+
+                <div id="content-core" class="module-content">
+                    <div class="card">
+                        <h3 class="text-2xl font-semibold mb-3">🎓 Núcleo Financiero: ARK-AI-OS</h3>
+                        <p class="text-neutral-600 mb-4">El "núcleo duro" del sistema. Es un daemon financiero diseñado para manejar cuentas, transacciones (AEIO-MR) y reputación (AQR) a través de una API segura.</p>
+                        <a href="https://github.com/djklmr2025/ARK-AI-OS" target="_blank" rel="noopener noreferrer" class="inline-block bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
+                            Ver Repositorio del Núcleo
+                        </a>
+                    </div>
+                </div>
+
+                <div id="content-edu" class="module-content" style="display: none;">
+                    <div class="card">
+                        <h3 class="text-2xl font-semibold mb-3">🌍 Módulo: Educación Libre</h3>
+                        <p class="text-neutral-600 mb-4">Una plataforma web gratuita con plantillas HTML listas para usar en educación. Sirve como la puerta de entrada principal y el frontend visible del ecosistema ARKAIOS.</p>
+                        <div class="flex space-x-4">
+                            <a href="https://github.com/djklmr2025/Eduacion-Libre-Proyecto-ARKAIOS" target="_blank" rel="noopener noreferrer" class="inline-block bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
+                                Ver Repositorio
+                            </a>
+                            <a href="https://djklmr2025.github.io/Eduacion-Libre-Proyecto-ARKAIOS/" target="_blank" rel="noopener noreferrer" class="inline-block bg-neutral-700 text-white font-semibold py-2 px-4 rounded-lg hover:bg-neutral-800 transition-colors">
+                                Ver Sitio Online
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. Plan de Acción Inmediato -->
+            <section id="plan" class="mb-16">
+                <h2 class="section-title">Plan de Acción Inmediato</h2>
+                <p class="section-intro">
+                    Para formalizar la integración, se han identificado dos pasos inmediatos. Haga clic en cada paso para ver los detalles técnicos y los fragmentos de código necesarios.
+                </p>
+                <div class="space-y-4">
+                    <!-- Paso 1 -->
+                    <div class="card">
+                        <button class="accordion-toggle flex justify-between items-center w-full text-left">
+                            <span class="text-xl font-semibold">Paso 1: Declarar Módulo en README.md</span>
+                            <span class="text-2xl font-light transform transition-transform duration-300">+</span>
+                        </button>
+                        <div class="accordion-content overflow-hidden max-h-0 transition-all duration-500 ease-in-out">
+                            <p class="mt-4 text-neutral-600">Añadir la siguiente sección al `README.md` del repositorio `ARK-AI-OS` para conectar oficialmente el módulo de educación.</p>
+                            <pre class="code-block mt-4">
+## 🌍 Módulo Conectado: Educación Libre – Proyecto ARKAIOS
+
+Este daemon financiero (AEIO-MR + AQR) forma parte del ecosistema completo **ARK-AI-OS**.
+Uno de los primeros módulos oficiales conectados es:
+
+### 🎓 Centro de Plantillas Educativas – ARKAIOS
+
+Plataforma web gratuita con plantillas HTML listas para usar en educación, potenciadas por IA.
+- Repo: https://github.com/djklmr2025/Eduacion-Libre-Proyecto-ARKAIOS
+- Versión online: https://djklmr2025.github.io/Eduacion-Libre-Proyecto-ARKAIOS/
+- Links cortos:
+  - Código: https://bit.ly/43zGcKF
+  - Sitio: https://bit.ly/4pe0yRO
+</pre>
+                        </div>
+                    </div>
+                    
+                    <!-- Paso 2 -->
+                    <div class="card">
+                        <button class="accordion-toggle flex justify-between items-center w-full text-left">
+                            <span class="text-xl font-semibold">Paso 2: Añadir Launcher en la UI</span>
+                            <span class="text-2xl font-light transform transition-transform duration-300">+</span>
+                        </button>
+                        <div class="accordion-content overflow-hidden max-h-0 transition-all duration-500 ease-in-out">
+                            <p class="mt-4 text-neutral-600">Agregar un enlace o "launcher" en la interfaz principal de `ARK-AI-OS` (por ejemplo, en `arkaios-integrated.html`) para dirigir a los usuarios al módulo educativo.</p>
+                            <pre class="code-block mt-4">
+&lt;!-- Opción 1: Tarjeta de Aplicación --&gt;
+&lt;div class="app-card"&gt;
+  &lt;h3&gt;Centro de Plantillas Educativas&lt;/h3&gt;
+  &lt;p&gt;Texto, fotos infantiles, plantillas visuales, IA integrada.&lt;/p&gt;
+  &lt;a href="https://bit.ly/4pe0yRO" target="_blank" rel="noopener noreferrer"&gt;
+    Abrir módulo educativo
+  &lt;/a&gt;
+&lt;/div&gt;
+
+&lt;!-- Opción 2: Enlace de Lista Simple --&gt;
+&lt;li&gt;
+  &lt;a href="https://bit.ly/4pe0yRO" target="_blank" rel="noopener noreferrer"&gt;
+    🎓 Centro de Plantillas Educativas – ARKAIOS
+  &lt;/a&gt;
+&lt;/li&gt;
+</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. Visión Futura -->
+            <section id="future" class="mb-16">
+                <h2 class="section-title">Visión Futura: Conexión Lógica</h2>
+                <p class="section-intro">
+                    Una vez completada la integración inicial, la próxima fase se centrará en la conexión lógica con el módulo financiero. El daemon `ARK-AI-OS` expone una API (ej. `/api/ai/invoke`) que permitirá las siguientes capacidades en la plataforma educativa:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="card text-center">
+                        <span class="text-4xl">🎓</span>
+                        <h3 class="text-xl font-semibold mt-3 mb-2">Cuentas Educativas</h3>
+                        <p class="text-neutral-600">Creación de cuentas `.arkaios` para escuelas, comunidades y estudiantes, gestionadas por el núcleo.</p>
+                    </div>
+                    <div class="card text-center">
+                        <span class="text-4xl">💎</span>
+                        <h3 class="text-xl font-semibold mt-3 mb-2">Créditos Simbólicos (AEIO-MR)</h3>
+                        <p class="text-neutral-600">Recompensar el uso, la colaboración y los aportes de plantillas con créditos simbólicos del sistema.</p>
+                    </div>
+                    <div class="card text-center">
+                        <span class="text-4xl">📈</span>
+                        <h3 class="text-xl font-semibold mt-3 mb-2">Reputación (AQR)</h3>
+                        <p class="text-neutral-600">Integración opcional con el sistema AQR para rastrear la reputación de maestros, estudiantes y proyectos.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- Lógica de Pestañas de Módulos (Sección 3) ---
+            const btnCore = document.getElementById('btn-core');
+            const btnEdu = document.getElementById('btn-edu');
+            const contentCore = document.getElementById('content-core');
+            const contentEdu = document.getElementById('content-edu');
+            const moduleBtns = document.querySelectorAll('.module-btn');
+
+            const activeBtnClasses = 'bg-indigo-600 text-white shadow-lg'.split(' ');
+            const inactiveBtnClasses = 'bg-neutral-200 text-neutral-700'.split(' ');
+
+            function updateButtonStyles() {
+                moduleBtns.forEach(btn => {
+                    btn.classList.remove(...activeBtnClasses, ...inactiveBtnClasses);
+                    if (btn.classList.contains('active')) {
+                        btn.classList.add(...activeBtnClasses);
+                    } else {
+                        btn.classList.add(...inactiveBtnClasses);
+                    }
+                });
+            }
+
+            btnCore.addEventListener('click', () => {
+                contentCore.style.display = 'block';
+                contentEdu.style.display = 'none';
+                btnCore.classList.add('active');
+                btnEdu.classList.remove('active');
+                updateButtonStyles();
+            });
+
+            btnEdu.addEventListener('click', () => {
+                contentCore.style.display = 'none';
+                contentEdu.style.display = 'block';
+                btnEdu.classList.add('active');
+                btnCore.classList.remove('active');
+                updateButtonStyles();
+            });
+            
+            updateButtonStyles();
+
+            // --- Lógica de Acordeón (Sección 4) ---
+            const accordions = document.querySelectorAll('.accordion-toggle');
+            accordions.forEach(accordion => {
+                accordion.addEventListener('click', () => {
+                    const content = accordion.nextElementSibling;
+                    const icon = accordion.querySelector('span:last-child');
+                    
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                        icon.style.transform = 'rotate(0deg)';
+                    } else {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                        icon.style.transform = 'rotate(45deg)';
+                    }
+                });
+            });
+
+            // --- Lógica de Navegación Activa (Sidebar) ---
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('#sidebar-nav a');
+            
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.4
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
