@@ -785,6 +785,8 @@
     let workspaceFolders = ['General'];
     let currentFolder = 'General';
     let includeWorkspaceInPrompt = true;
+    let puterClient = null;
+    let puterReady = false;
 
     // Abrir/Cerrar panel
     aiButton.addEventListener('click', () => {
@@ -807,6 +809,38 @@
       }
       aiInput.focus();
     });
+
+    async function ensurePuterClient() {
+      if (puterReady && puterClient) return puterClient;
+
+      // Preferir instancia global ya creada
+      if (window.puter?.ai?.chat) {
+        puterClient = window.puter;
+        puterReady = true;
+        return puterClient;
+      }
+
+      // Crear nueva instancia si existe el constructor
+      if (typeof Puter === 'function') {
+        puterClient = new Puter();
+      }
+
+      if (!puterClient?.ai?.chat) {
+        throw new Error('No se pudo inicializar Puter/Claude.');
+      }
+
+      try {
+        // Autenticar silenciosamente si el SDK lo permite
+        if (typeof puterClient.auth === 'function') {
+          await puterClient.auth({ silently: true }).catch(() => null);
+        }
+        puterReady = true;
+      } catch (err) {
+        console.warn('No se pudo autenticar con Puter:', err);
+      }
+
+      return puterClient;
+    }
 
     // Enviar mensaje con Enter
     function handleKeyPress(event) {
@@ -1312,7 +1346,9 @@ Conversa de forma amigable, educativa y práctica. Si detectas que el usuario qu
           ...conversationHistory.slice(-5)
         ];
 
-        const response = await puter.ai.chat(chatMessages, {
+        const client = await ensurePuterClient();
+
+        const response = await client.ai.chat(chatMessages, {
           model: MODEL_NAME,
           stream: true
         });
@@ -1380,9 +1416,15 @@ Conversa de forma amigable, educativa y práctica. Si detectas que el usuario qu
     }
 
     // ========== BIENVENIDA ==========
-    window.addEventListener('load', () => {
+    window.addEventListener('load', async () => {
       console.log('🎓 Centro de Plantillas Educativas - Proyecto ARKAIOS');
-      console.log('🤖 Claude IA está listo para ayudarte');
+      try {
+        await ensurePuterClient();
+        console.log('🤖 Claude IA está listo y conectado');
+      } catch (err) {
+        addMessage('⚠️ No se pudo conectar con Claude automáticamente. Intenta enviar un mensaje o recarga la página.', 'system');
+        console.error('Error inicializando Claude:', err);
+      }
       console.log('📚 Desarrollado para democratizar la educación');
     });
   </script>
