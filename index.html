@@ -227,6 +227,88 @@
       flex-wrap: wrap;
       border-bottom: 1px solid #1f2937;
     }
+    .workspace-panel {
+      background: rgba(15, 23, 42, 0.75);
+      border-top: 1px solid #1f2937;
+      border-bottom: 1px solid #1f2937;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .workspace-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .workspace-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+      max-height: 160px;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+    .workspace-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 10px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    .workspace-card .thumb {
+      height: 60px;
+      border-radius: 8px;
+      background: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px dashed #334155;
+      color: #94a3b8;
+    }
+    .workspace-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .workspace-name {
+      font-size: 0.78rem;
+      color: #e5e7eb;
+      line-height: 1.2;
+      word-break: break-word;
+    }
+    .workspace-meta {
+      font-size: 0.7rem;
+      color: #94a3b8;
+    }
+    .workspace-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .workspace-btn {
+      flex: 1;
+      min-width: 90px;
+      padding: 6px 8px;
+      background: #1f2937;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: #e5e7eb;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .workspace-btn:hover {
+      background: #3b82f6;
+      border-color: #60a5fa;
+    }
     .action-btn {
       padding: 6px 12px;
       background: #1f2937;
@@ -294,6 +376,62 @@
       font-size: 0.85rem;
       padding: 8px 12px;
     }
+    .attachment-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .attachment-chip {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 10px;
+      padding: 6px 8px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      color: #e5e7eb;
+      font-size: 0.8rem;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+    .attachment-thumb {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px dashed #334155;
+      color: #94a3b8;
+      font-size: 0.9rem;
+    }
+    .attachment-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .attachment-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .attachment-name {
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+    .attachment-meta {
+      font-size: 0.72rem;
+      color: #94a3b8;
+    }
+    .attachment-remove {
+      background: transparent;
+      border: none;
+      color: #f87171;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
 
     .ai-input-area {
       padding: 12px;
@@ -301,6 +439,8 @@
       border-radius: 0 0 14px 14px;
       display: flex;
       gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
     }
     .ai-input {
       flex: 1;
@@ -317,8 +457,8 @@
       border-color: #3b82f6;
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
-    .ai-send {
-      padding: 10px 18px;
+    .ai-send, .ai-attach {
+      padding: 10px 14px;
       background: linear-gradient(135deg, #3b82f6, #2563eb);
       border: none;
       border-radius: 8px;
@@ -326,12 +466,19 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
-    .ai-send:hover {
+    .ai-attach {
+      background: #1f2937;
+      border: 1px solid #3b82f6;
+    }
+    .ai-send:hover, .ai-attach:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
     }
-    .ai-send:disabled {
+    .ai-send:disabled, .ai-attach:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
@@ -458,6 +605,20 @@
       <button class="action-btn" onclick="quickAction('ayuda')">❓ Ayuda</button>
       <button class="action-btn" onclick="quickAction('contenido')">✨ Generar Contenido</button>
       <button class="action-btn" onclick="quickAction('explicar')">📚 Explicar Plantilla</button>
+      <button class="action-btn" onclick="quickAction('pdf')">📄 Pedir PDF imprimible</button>
+      <button class="action-btn" onclick="quickAction('zip')">🗜️ Crear ZIP de recursos</button>
+    </div>
+
+    <div class="workspace-panel">
+      <div class="workspace-header">
+        <span>📂 Espacio de archivos (Claude puede leerlos)</span>
+        <span id="workspaceCount">0 archivos</span>
+      </div>
+      <div class="workspace-list" id="workspaceList">
+        <div class="workspace-card" style="border-style: dashed; text-align: center; color: #94a3b8;">
+          Sube imágenes, PDFs, Word, ZIP y más. Aquí verás tus adjuntos listos para reutilizar.
+        </div>
+      </div>
     </div>
 
     <div class="ai-messages" id="aiMessages">
@@ -471,14 +632,17 @@
     </div>
 
     <div class="ai-input-area">
-      <input 
-        type="text" 
-        class="ai-input" 
-        id="aiInput" 
+      <input
+        type="text"
+        class="ai-input"
+        id="aiInput"
         placeholder="Escribe tu mensaje o pregunta..."
         onkeypress="handleKeyPress(event)"
       >
-      <button class="ai-send" id="aiSend" onclick="sendMessage()">📤</button>
+      <input type="file" id="fileInput" multiple style="display:none" accept="*/*">
+      <button class="ai-attach" id="attachButton" title="Adjuntar archivo">📎 Adjuntar</button>
+      <button class="ai-send" id="aiSend" onclick="sendMessage()">📤 Enviar</button>
+      <div class="attachment-preview" id="pendingAttachments"></div>
     </div>
   </div>
 
@@ -499,16 +663,23 @@
     });
 
     // ========== SISTEMA DE IA CLAUDE ==========
-    const aiButton = document.getElementById('aiButton');
-    const aiPanel = document.getElementById('aiPanel');
-    const aiClose = document.getElementById('aiClose');
-    const aiMessages = document.getElementById('aiMessages');
-    const aiInput = document.getElementById('aiInput');
-    const aiSend = document.getElementById('aiSend');
-    const typingIndicator = document.getElementById('typingIndicator');
+      const aiButton = document.getElementById('aiButton');
+      const aiPanel = document.getElementById('aiPanel');
+      const aiClose = document.getElementById('aiClose');
+      const aiMessages = document.getElementById('aiMessages');
+      const aiInput = document.getElementById('aiInput');
+      const aiSend = document.getElementById('aiSend');
+      const typingIndicator = document.getElementById('typingIndicator');
+      const fileInput = document.getElementById('fileInput');
+      const attachButton = document.getElementById('attachButton');
+      const pendingAttachmentsEl = document.getElementById('pendingAttachments');
+      const workspaceList = document.getElementById('workspaceList');
+      const workspaceCount = document.getElementById('workspaceCount');
 
-    const MODEL_NAME = 'claude-sonnet-4-5';
-    let conversationHistory = [];
+      const MODEL_NAME = 'claude-sonnet-4-5';
+      let conversationHistory = [];
+      let pendingAttachments = [];
+      let workspaceLibrary = [];
 
     // Abrir/Cerrar panel
     aiButton.addEventListener('click', () => {
@@ -546,10 +717,184 @@
         case 'explicar':
           message = `Explícame cómo usar la plantilla: ${currentTemplate}`;
           break;
+        case 'pdf':
+          message = 'Quiero un PDF imprimible listo para descargar desde la plantilla actual.';
+          break;
+        case 'zip':
+          message = 'Necesito un archivo .zip con todos los recursos de la plantilla y adjuntos.';
+          break;
       }
       aiInput.value = message;
       sendMessage();
     }
+
+    // ====== Adjuntos y espacio de trabajo ======
+    function formatBytes(bytes) {
+      if (!bytes && bytes !== 0) return '0 B';
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), sizes.length - 1);
+      const value = bytes / Math.pow(1024, i);
+      return `${value.toFixed(value >= 10 || value % 1 === 0 ? 0 : 1)} ${sizes[i]}`;
+    }
+
+    function fileIcon(type, name = '') {
+      if (type?.startsWith('image/')) return '🖼️';
+      if (type?.includes('pdf')) return '📕';
+      if (type?.includes('zip')) return '🗜️';
+      if (type?.includes('word') || name.endsWith('.doc') || name.endsWith('.docx')) return '📝';
+      if (type?.includes('sheet') || name.endsWith('.xls') || name.endsWith('.xlsx')) return '📊';
+      return '📎';
+    }
+
+    function loadWorkspace() {
+      const saved = localStorage.getItem('arkaios-ai-workspace');
+      if (saved) {
+        try {
+          workspaceLibrary = JSON.parse(saved);
+        } catch (e) {
+          workspaceLibrary = [];
+        }
+      }
+      renderWorkspace();
+    }
+
+    function saveWorkspace() {
+      localStorage.setItem('arkaios-ai-workspace', JSON.stringify(workspaceLibrary));
+    }
+
+    function handleFiles(files) {
+      const fileArray = Array.from(files || []);
+      fileArray.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const dataUrl = event.target?.result;
+          const attachment = {
+            id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${file.name}`,
+            name: file.name,
+            type: file.type || 'desconocido',
+            size: file.size,
+            dataUrl,
+            isImage: file.type?.startsWith('image/'),
+            addedAt: new Date().toISOString()
+          };
+          workspaceLibrary.unshift(attachment);
+          pendingAttachments.unshift(attachment);
+          renderWorkspace();
+          renderPendingAttachments();
+          saveWorkspace();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    attachButton.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      handleFiles(e.target.files);
+      fileInput.value = '';
+    });
+
+    function renderWorkspace() {
+      workspaceList.innerHTML = '';
+      if (!workspaceLibrary.length) {
+        workspaceList.innerHTML = '<div class="workspace-card" style="border-style:dashed; text-align:center; color:#94a3b8;">Aún no hay archivos cargados.</div>';
+      } else {
+        workspaceLibrary.forEach(file => {
+          const card = document.createElement('div');
+          card.className = 'workspace-card';
+
+          const thumb = document.createElement('div');
+          thumb.className = 'thumb';
+          if (file.isImage && file.dataUrl) {
+            const img = document.createElement('img');
+            img.src = file.dataUrl;
+            img.alt = file.name;
+            thumb.appendChild(img);
+          } else {
+            thumb.textContent = fileIcon(file.type, file.name);
+          }
+
+          const name = document.createElement('div');
+          name.className = 'workspace-name';
+          name.textContent = file.name;
+
+          const meta = document.createElement('div');
+          meta.className = 'workspace-meta';
+          meta.textContent = `${file.type || 'desconocido'} · ${formatBytes(file.size)}`;
+
+          const actions = document.createElement('div');
+          actions.className = 'workspace-actions';
+
+          const reuseBtn = document.createElement('button');
+          reuseBtn.className = 'workspace-btn';
+          reuseBtn.textContent = 'Añadir al mensaje';
+          reuseBtn.onclick = () => {
+            pendingAttachments.unshift(file);
+            renderPendingAttachments();
+          };
+
+          actions.appendChild(reuseBtn);
+          card.appendChild(thumb);
+          card.appendChild(name);
+          card.appendChild(meta);
+          card.appendChild(actions);
+          workspaceList.appendChild(card);
+        });
+      }
+      workspaceCount.textContent = `${workspaceLibrary.length} archivo${workspaceLibrary.length === 1 ? '' : 's'}`;
+    }
+
+    function createAttachmentChip(att, allowRemove = false) {
+      const chip = document.createElement('div');
+      chip.className = 'attachment-chip';
+
+      const thumb = document.createElement('div');
+      thumb.className = 'attachment-thumb';
+      if (att.isImage && att.dataUrl) {
+        const img = document.createElement('img');
+        img.src = att.dataUrl;
+        img.alt = att.name;
+        thumb.appendChild(img);
+      } else {
+        thumb.textContent = fileIcon(att.type, att.name);
+      }
+
+      const info = document.createElement('div');
+      info.className = 'attachment-info';
+      const name = document.createElement('div');
+      name.className = 'attachment-name';
+      name.textContent = att.name;
+      const meta = document.createElement('div');
+      meta.className = 'attachment-meta';
+      meta.textContent = `${att.type || 'sin tipo'} · ${formatBytes(att.size)}`;
+      info.appendChild(name);
+      info.appendChild(meta);
+
+      chip.appendChild(thumb);
+      chip.appendChild(info);
+
+      if (allowRemove) {
+        const remove = document.createElement('button');
+        remove.className = 'attachment-remove';
+        remove.title = 'Quitar adjunto del mensaje';
+        remove.textContent = '✖';
+        remove.onclick = () => {
+          pendingAttachments = pendingAttachments.filter(item => item.id !== att.id);
+          renderPendingAttachments();
+        };
+        chip.appendChild(remove);
+      }
+
+      return chip;
+    }
+
+    function renderPendingAttachments() {
+      pendingAttachmentsEl.innerHTML = '';
+      pendingAttachments.forEach(att => {
+        pendingAttachmentsEl.appendChild(createAttachmentChip(att, true));
+      });
+    }
+
+    loadWorkspace();
 
     // Extraer texto desde la respuesta de Puter
     function extractResponseText(aiResponse) {
@@ -575,16 +920,37 @@
     // Enviar mensaje a Claude
     async function sendMessage() {
       const message = aiInput.value.trim();
-      if (!message) return;
+      if (!message && !pendingAttachments.length) return;
 
       // Deshabilitar input
       aiInput.disabled = true;
       aiSend.disabled = true;
       aiInput.value = '';
 
-      // Agregar mensaje del usuario
-      addMessage(message, 'user');
-      conversationHistory.push({role: 'user', content: message});
+      const attachmentsForMessage = [...pendingAttachments];
+      pendingAttachments = [];
+      renderPendingAttachments();
+
+      const visibleMessage = message || '🗂️ Archivos adjuntos enviados';
+      addMessage(visibleMessage, 'user', false, attachmentsForMessage);
+
+      const attachmentSummary = attachmentsForMessage.length
+        ? attachmentsForMessage.map((att, idx) => {
+            const snippet = att.dataUrl?.split(',')[1]?.slice(0, 120) || '';
+            const virtualPath = `/workspace/ai-archivos/${att.name}`;
+            const baseLine = `Archivo ${idx + 1}: ${att.name} (${att.type || 'sin tipo'}, ${formatBytes(att.size)}). Ubicación virtual: ${virtualPath}.`;
+            if (att.isImage && snippet) {
+              return `${baseLine} Imagen codificada (base64 inicio): ${snippet}...`;
+            }
+            return baseLine;
+          }).join('\n')
+        : '';
+
+      const messageForAI = attachmentSummary
+        ? `${message || 'El usuario envió archivos sin texto adicional.'}\n\n[Adjuntos disponibles en el espacio de trabajo]\n${attachmentSummary}`
+        : message;
+
+      conversationHistory.push({role: 'user', content: messageForAI});
 
       // Mostrar indicador de escritura
       typingIndicator.classList.add('active');
@@ -592,14 +958,18 @@
 
       try {
         // Contexto del sistema
-        const systemContext = `Eres Claude, un asistente educativo integrado en el "Centro de Plantillas Educativas - Proyecto ARKAIOS". 
-        
+        const systemContext = `Eres Claude, un asistente educativo integrado en el "Centro de Plantillas Educativas - Proyecto ARKAIOS".
+
 Tu misión es ayudar a estudiantes y maestros con:
 - Crear nuevas plantillas HTML educativas
 - Explicar cómo usar las plantillas existentes
 - Generar contenido educativo (textos, ideas, ejercicios)
 - Resolver dudas técnicas
 - Dar tutoriales paso a paso
+
+Cuentas con un espacio de archivos en "/workspace/ai-archivos" donde el usuario adjunta imágenes, PDFs, Word, ZIP u otros formatos.
+Se te enviará la lista de adjuntos y, para imágenes, fragmentos en base64. Interpreta y describe el contenido cuando se solicite.
+Si piden un PDF imprimible o un ZIP, organiza el contenido y explica cómo entregarlo o generarlo con enlaces/base64 si procede.
 
 Plantillas disponibles:
 1. Carta MX - Índice + Texto (para tareas escolares)
@@ -660,10 +1030,18 @@ Conversa de forma amigable, educativa y práctica. Si detectas que el usuario qu
     }
 
     // Agregar mensaje al chat
-    function addMessage(text, type, returnRef = false) {
+    function addMessage(text, type, returnRef = false, attachments = []) {
       const messageDiv = document.createElement('div');
       messageDiv.className = `message ${type}`;
       messageDiv.textContent = text;
+
+      if (attachments.length) {
+        const preview = document.createElement('div');
+        preview.className = 'attachment-preview';
+        attachments.forEach(att => preview.appendChild(createAttachmentChip(att)));
+        messageDiv.appendChild(preview);
+      }
+
       aiMessages.appendChild(messageDiv);
       scrollToBottom();
       return returnRef ? messageDiv : null;
