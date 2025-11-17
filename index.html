@@ -169,10 +169,12 @@
       position: fixed;
       bottom: 100px;
       right: 24px;
-      width: 420px;
+      width: 520px;
       max-width: calc(100vw - 48px);
-      height: 600px;
+      height: 720px;
       max-height: calc(100vh - 140px);
+      min-width: 360px;
+      min-height: 460px;
       background: #1e293b;
       border-radius: 16px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.8);
@@ -180,10 +182,26 @@
       flex-direction: column;
       z-index: 999;
       border: 2px solid #3b82f6;
+      resize: both;
+      overflow: hidden;
+      transition: width 0.15s ease, height 0.15s ease, top 0.2s ease, right 0.2s ease, bottom 0.2s ease, left 0.2s ease;
     }
     .ai-panel.active {
       display: flex;
       animation: slideUp 0.3s ease-out;
+    }
+
+    .ai-panel.fullscreen {
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      width: auto;
+      height: auto;
+      max-width: none;
+      max-height: none;
+      border-radius: 18px;
+      resize: none;
     }
     @keyframes slideUp {
       from { transform: translateY(20px); opacity: 0; }
@@ -197,12 +215,19 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
     }
     .ai-header h3 {
       font-size: 1.1rem;
       color: white;
       font-weight: 700;
     }
+    .ai-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ai-control,
     .ai-close {
       background: rgba(255,255,255,0.2);
       border: none;
@@ -213,10 +238,18 @@
       cursor: pointer;
       font-size: 18px;
       transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
+    .ai-control:hover,
     .ai-close:hover {
       background: rgba(255,255,255,0.3);
       transform: rotate(90deg);
+    }
+    .ai-control.toggled {
+      background: rgba(255,255,255,0.28);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.18);
     }
 
     .ai-actions {
@@ -528,6 +561,20 @@
         width: calc(100vw - 32px);
         right: 16px;
         bottom: 90px;
+        height: calc(100vh - 160px);
+        min-width: 320px;
+      }
+
+      .ai-panel.fullscreen {
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+      }
+
+      .ai-panel .ai-header h3 { font-size: 1rem; }
+      .ai-panel .ai-header-actions button { width: 30px; height: 30px; }
+      .ai-panel .ai-messages { padding: 12px; }
       }
       .ai-button {
         width: 56px;
@@ -597,7 +644,10 @@
   <div class="ai-panel" id="aiPanel">
     <div class="ai-header">
       <h3>🤖 Asistente Claude</h3>
-      <button class="ai-close" id="aiClose">×</button>
+      <div class="ai-header-actions">
+        <button class="ai-control" id="aiExpand" title="Maximizar/Restaurar chat">⤢</button>
+        <button class="ai-close" id="aiClose" title="Cerrar">×</button>
+      </div>
     </div>
 
     <div class="ai-actions">
@@ -666,6 +716,7 @@
       const aiButton = document.getElementById('aiButton');
       const aiPanel = document.getElementById('aiPanel');
       const aiClose = document.getElementById('aiClose');
+      const aiExpand = document.getElementById('aiExpand');
       const aiMessages = document.getElementById('aiMessages');
       const aiInput = document.getElementById('aiInput');
       const aiSend = document.getElementById('aiSend');
@@ -691,6 +742,16 @@
 
     aiClose.addEventListener('click', () => {
       aiPanel.classList.remove('active');
+    });
+
+    aiExpand.addEventListener('click', () => {
+      const isFull = aiPanel.classList.toggle('fullscreen');
+      aiExpand.textContent = isFull ? '🗖' : '⤢';
+      aiExpand.classList.toggle('toggled', isFull);
+      if (!aiPanel.classList.contains('active')) {
+        aiPanel.classList.add('active');
+      }
+      aiInput.focus();
     });
 
     // Enviar mensaje con Enter
