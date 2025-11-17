@@ -169,10 +169,12 @@
       position: fixed;
       bottom: 100px;
       right: 24px;
-      width: 420px;
+      width: 520px;
       max-width: calc(100vw - 48px);
-      height: 600px;
+      height: 720px;
       max-height: calc(100vh - 140px);
+      min-width: 360px;
+      min-height: 460px;
       background: #1e293b;
       border-radius: 16px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.8);
@@ -180,10 +182,26 @@
       flex-direction: column;
       z-index: 999;
       border: 2px solid #3b82f6;
+      resize: both;
+      overflow: hidden;
+      transition: width 0.15s ease, height 0.15s ease, top 0.2s ease, right 0.2s ease, bottom 0.2s ease, left 0.2s ease;
     }
     .ai-panel.active {
       display: flex;
       animation: slideUp 0.3s ease-out;
+    }
+
+    .ai-panel.fullscreen {
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      width: auto;
+      height: auto;
+      max-width: none;
+      max-height: none;
+      border-radius: 18px;
+      resize: none;
     }
     @keyframes slideUp {
       from { transform: translateY(20px); opacity: 0; }
@@ -197,12 +215,19 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
     }
     .ai-header h3 {
       font-size: 1.1rem;
       color: white;
       font-weight: 700;
     }
+    .ai-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ai-control,
     .ai-close {
       background: rgba(255,255,255,0.2);
       border: none;
@@ -213,10 +238,18 @@
       cursor: pointer;
       font-size: 18px;
       transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
+    .ai-control:hover,
     .ai-close:hover {
       background: rgba(255,255,255,0.3);
       transform: rotate(90deg);
+    }
+    .ai-control.toggled {
+      background: rgba(255,255,255,0.28);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.18);
     }
 
     .ai-actions {
@@ -226,6 +259,126 @@
       gap: 8px;
       flex-wrap: wrap;
       border-bottom: 1px solid #1f2937;
+    }
+    .workspace-panel {
+      background: rgba(15, 23, 42, 0.75);
+      border-top: 1px solid #1f2937;
+      border-bottom: 1px solid #1f2937;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .workspace-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: space-between;
+      align-items: center;
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .workspace-path {
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+    .workspace-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      width: 100%;
+    }
+    .workspace-select {
+      background: #0f172a;
+      color: #e5e7eb;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 6px 10px;
+      min-width: 180px;
+      font-size: 0.85rem;
+    }
+    .workspace-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+    .workspace-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 10px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      position: relative;
+    }
+    .workspace-card .thumb {
+      height: 60px;
+      border-radius: 8px;
+      background: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px dashed #334155;
+      color: #94a3b8;
+    }
+    .workspace-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .workspace-name {
+      font-size: 0.78rem;
+      color: #e5e7eb;
+      line-height: 1.2;
+      word-break: break-word;
+    }
+    .workspace-meta {
+      font-size: 0.7rem;
+      color: #94a3b8;
+    }
+    .workspace-label {
+      font-size: 0.68rem;
+      color: #22d3ee;
+    }
+    .workspace-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .workspace-btn {
+      flex: 1;
+      min-width: 90px;
+      padding: 6px 8px;
+      background: #1f2937;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: #e5e7eb;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .workspace-btn:hover {
+      background: #3b82f6;
+      border-color: #60a5fa;
+    }
+    .workspace-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #22c55e;
+      color: #0b1727;
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid #16a34a;
     }
     .action-btn {
       padding: 6px 12px;
@@ -294,6 +447,62 @@
       font-size: 0.85rem;
       padding: 8px 12px;
     }
+    .attachment-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .attachment-chip {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 10px;
+      padding: 6px 8px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      color: #e5e7eb;
+      font-size: 0.8rem;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+    .attachment-thumb {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px dashed #334155;
+      color: #94a3b8;
+      font-size: 0.9rem;
+    }
+    .attachment-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .attachment-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .attachment-name {
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+    .attachment-meta {
+      font-size: 0.72rem;
+      color: #94a3b8;
+    }
+    .attachment-remove {
+      background: transparent;
+      border: none;
+      color: #f87171;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
 
     .ai-input-area {
       padding: 12px;
@@ -301,6 +510,8 @@
       border-radius: 0 0 14px 14px;
       display: flex;
       gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
     }
     .ai-input {
       flex: 1;
@@ -317,8 +528,8 @@
       border-color: #3b82f6;
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
-    .ai-send {
-      padding: 10px 18px;
+    .ai-send, .ai-attach {
+      padding: 10px 14px;
       background: linear-gradient(135deg, #3b82f6, #2563eb);
       border: none;
       border-radius: 8px;
@@ -326,12 +537,19 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
-    .ai-send:hover {
+    .ai-attach {
+      background: #1f2937;
+      border: 1px solid #3b82f6;
+    }
+    .ai-send:hover, .ai-attach:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
     }
-    .ai-send:disabled {
+    .ai-send:disabled, .ai-attach:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
@@ -381,6 +599,20 @@
         width: calc(100vw - 32px);
         right: 16px;
         bottom: 90px;
+        height: calc(100vh - 160px);
+        min-width: 320px;
+      }
+
+      .ai-panel.fullscreen {
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+      }
+
+      .ai-panel .ai-header h3 { font-size: 1rem; }
+      .ai-panel .ai-header-actions button { width: 30px; height: 30px; }
+      .ai-panel .ai-messages { padding: 12px; }
       }
       .ai-button {
         width: 56px;
@@ -450,7 +682,10 @@
   <div class="ai-panel" id="aiPanel">
     <div class="ai-header">
       <h3>🤖 Asistente Claude</h3>
-      <button class="ai-close" id="aiClose">×</button>
+      <div class="ai-header-actions">
+        <button class="ai-control" id="aiExpand" title="Maximizar/Restaurar chat">⤢</button>
+        <button class="ai-close" id="aiClose" title="Cerrar">×</button>
+      </div>
     </div>
 
     <div class="ai-actions">
@@ -458,6 +693,28 @@
       <button class="action-btn" onclick="quickAction('ayuda')">❓ Ayuda</button>
       <button class="action-btn" onclick="quickAction('contenido')">✨ Generar Contenido</button>
       <button class="action-btn" onclick="quickAction('explicar')">📚 Explicar Plantilla</button>
+      <button class="action-btn" onclick="quickAction('pdf')">📄 Pedir PDF imprimible</button>
+      <button class="action-btn" onclick="quickAction('zip')">🗜️ Crear ZIP de recursos</button>
+    </div>
+
+    <div class="workspace-panel">
+      <div class="workspace-header">
+        <span>📂 Espacio de archivos (Claude puede leerlos)</span>
+        <span id="workspaceCount">0 archivos</span>
+      </div>
+      <div class="workspace-path">Carpeta virtual: /workspace/ai-archivos</div>
+      <div class="workspace-controls">
+        <select id="workspaceFolder" class="workspace-select"></select>
+        <button class="workspace-btn" id="newFolderBtn" style="flex:0 0 auto; min-width:140px;">📁 Nueva carpeta</button>
+        <button class="workspace-btn" id="clearFolderBtn" style="flex:0 0 auto; min-width:140px;">🧹 Vaciar carpeta</button>
+        <button class="workspace-btn" id="shareWorkspaceBtn" style="flex:0 0 auto; min-width:170px;">📤 Enviar carpeta a Claude</button>
+        <button class="workspace-btn" id="clearSelectionBtn" style="flex:0 0 auto; min-width:150px;">✖ Limpiar adjuntos</button>
+      </div>
+      <div class="workspace-list" id="workspaceList">
+        <div class="workspace-card" style="border-style: dashed; text-align: center; color: #94a3b8;">
+          Sube imágenes, PDFs, Word, ZIP y más. Aquí verás tus adjuntos listos para reutilizar.
+        </div>
+      </div>
     </div>
 
     <div class="ai-messages" id="aiMessages">
@@ -471,14 +728,17 @@
     </div>
 
     <div class="ai-input-area">
-      <input 
-        type="text" 
-        class="ai-input" 
-        id="aiInput" 
+      <input
+        type="text"
+        class="ai-input"
+        id="aiInput"
         placeholder="Escribe tu mensaje o pregunta..."
         onkeypress="handleKeyPress(event)"
       >
-      <button class="ai-send" id="aiSend" onclick="sendMessage()">📤</button>
+      <input type="file" id="fileInput" multiple style="display:none" accept="*/*">
+      <button class="ai-attach" id="attachButton" title="Adjuntar archivo">📎 Adjuntar</button>
+      <button class="ai-send" id="aiSend" onclick="sendMessage()">📤 Enviar</button>
+      <div class="attachment-preview" id="pendingAttachments"></div>
     </div>
   </div>
 
@@ -502,12 +762,31 @@
     const aiButton = document.getElementById('aiButton');
     const aiPanel = document.getElementById('aiPanel');
     const aiClose = document.getElementById('aiClose');
+    const aiExpand = document.getElementById('aiExpand');
     const aiMessages = document.getElementById('aiMessages');
     const aiInput = document.getElementById('aiInput');
     const aiSend = document.getElementById('aiSend');
     const typingIndicator = document.getElementById('typingIndicator');
+    const fileInput = document.getElementById('fileInput');
+    const attachButton = document.getElementById('attachButton');
+    const pendingAttachmentsEl = document.getElementById('pendingAttachments');
+    const workspaceList = document.getElementById('workspaceList');
+    const workspaceCount = document.getElementById('workspaceCount');
+    const workspaceFolder = document.getElementById('workspaceFolder');
+    const newFolderBtn = document.getElementById('newFolderBtn');
+    const clearFolderBtn = document.getElementById('clearFolderBtn');
+    const shareWorkspaceBtn = document.getElementById('shareWorkspaceBtn');
+    const clearSelectionBtn = document.getElementById('clearSelectionBtn');
 
+    const MODEL_NAME = 'claude-sonnet-4-5';
     let conversationHistory = [];
+    let pendingAttachments = [];
+    let workspaceLibrary = [];
+    let workspaceFolders = ['General'];
+    let currentFolder = 'General';
+    let includeWorkspaceInPrompt = true;
+    let puterClient = null;
+    let puterReady = false;
 
     // Abrir/Cerrar panel
     aiButton.addEventListener('click', () => {
@@ -520,6 +799,48 @@
     aiClose.addEventListener('click', () => {
       aiPanel.classList.remove('active');
     });
+
+    aiExpand.addEventListener('click', () => {
+      const isFull = aiPanel.classList.toggle('fullscreen');
+      aiExpand.textContent = isFull ? '🗖' : '⤢';
+      aiExpand.classList.toggle('toggled', isFull);
+      if (!aiPanel.classList.contains('active')) {
+        aiPanel.classList.add('active');
+      }
+      aiInput.focus();
+    });
+
+    async function ensurePuterClient() {
+      if (puterReady && puterClient) return puterClient;
+
+      // Preferir instancia global ya creada
+      if (window.puter?.ai?.chat) {
+        puterClient = window.puter;
+        puterReady = true;
+        return puterClient;
+      }
+
+      // Crear nueva instancia si existe el constructor
+      if (typeof Puter === 'function') {
+        puterClient = new Puter();
+      }
+
+      if (!puterClient?.ai?.chat) {
+        throw new Error('No se pudo inicializar Puter/Claude.');
+      }
+
+      try {
+        // Autenticar silenciosamente si el SDK lo permite
+        if (typeof puterClient.auth === 'function') {
+          await puterClient.auth({ silently: true }).catch(() => null);
+        }
+        puterReady = true;
+      } catch (err) {
+        console.warn('No se pudo autenticar con Puter:', err);
+      }
+
+      return puterClient;
+    }
 
     // Enviar mensaje con Enter
     function handleKeyPress(event) {
@@ -545,24 +866,448 @@
         case 'explicar':
           message = `Explícame cómo usar la plantilla: ${currentTemplate}`;
           break;
+        case 'pdf':
+          message = 'Quiero un PDF imprimible listo para descargar desde la plantilla actual.';
+          break;
+        case 'zip':
+          message = 'Necesito un archivo .zip con todos los recursos de la plantilla y adjuntos.';
+          break;
       }
       aiInput.value = message;
       sendMessage();
     }
 
+    // ====== Adjuntos y espacio de trabajo ======
+    function formatBytes(bytes) {
+      if (!bytes && bytes !== 0) return '0 B';
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), sizes.length - 1);
+      const value = bytes / Math.pow(1024, i);
+      return `${value.toFixed(value >= 10 || value % 1 === 0 ? 0 : 1)} ${sizes[i]}`;
+    }
+
+    function fileIcon(type, name = '') {
+      if (type?.startsWith('image/')) return '🖼️';
+      if (type?.includes('pdf')) return '📕';
+      if (type?.includes('zip')) return '🗜️';
+      if (type?.includes('word') || name.endsWith('.doc') || name.endsWith('.docx')) return '📝';
+      if (type?.includes('sheet') || name.endsWith('.xls') || name.endsWith('.xlsx')) return '📊';
+      return '📎';
+    }
+
+    function loadWorkspace() {
+      const saved = localStorage.getItem('arkaios-ai-workspace');
+      const savedFolders = localStorage.getItem('arkaios-ai-folders');
+      const savedCurrent = localStorage.getItem('arkaios-ai-folder-current');
+      const savedShare = localStorage.getItem('arkaios-ai-workspace-share');
+
+      if (saved) {
+        try {
+          workspaceLibrary = JSON.parse(saved);
+        } catch (e) {
+          workspaceLibrary = [];
+        }
+      }
+
+      if (savedFolders) {
+        try {
+          const parsed = JSON.parse(savedFolders);
+          if (Array.isArray(parsed) && parsed.length) {
+            workspaceFolders = parsed;
+          }
+        } catch {}
+      }
+
+      if (savedCurrent && workspaceFolders.includes(savedCurrent)) {
+        currentFolder = savedCurrent;
+      }
+
+      includeWorkspaceInPrompt = savedShare ? savedShare === 'true' : true;
+      syncFoldersFromFiles();
+      updateShareButton();
+      renderFolderOptions();
+      renderWorkspace();
+    }
+
+    function saveWorkspace() {
+      localStorage.setItem('arkaios-ai-workspace', JSON.stringify(workspaceLibrary));
+      localStorage.setItem('arkaios-ai-folders', JSON.stringify(workspaceFolders));
+      localStorage.setItem('arkaios-ai-folder-current', currentFolder);
+      localStorage.setItem('arkaios-ai-workspace-share', includeWorkspaceInPrompt ? 'true' : 'false');
+    }
+
+    function handleFiles(files) {
+      const fileArray = Array.from(files || []);
+      fileArray.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const dataUrl = event.target?.result;
+          const attachment = {
+            id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${file.name}`,
+            name: file.name,
+            type: file.type || 'desconocido',
+            size: file.size,
+            dataUrl,
+            isImage: file.type?.startsWith('image/'),
+            addedAt: new Date().toISOString(),
+            folder: currentFolder,
+            saved: true
+          };
+          workspaceLibrary.unshift(attachment);
+          pendingAttachments.unshift(attachment);
+          renderWorkspace();
+          renderPendingAttachments();
+          saveWorkspace();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderFolderOptions() {
+      workspaceFolder.innerHTML = '';
+      workspaceFolders.forEach(folder => {
+        const option = document.createElement('option');
+        option.value = folder;
+        option.textContent = folder;
+        option.selected = folder === currentFolder;
+        workspaceFolder.appendChild(option);
+      });
+    }
+
+    function addFolder(name) {
+      if (!name) return;
+      if (!workspaceFolders.includes(name)) {
+        workspaceFolders.push(name);
+      }
+      currentFolder = name;
+      renderFolderOptions();
+      renderWorkspace();
+      saveWorkspace();
+    }
+
+    function syncFoldersFromFiles() {
+      workspaceLibrary.forEach(file => {
+        const folder = file.folder || 'General';
+        if (!workspaceFolders.includes(folder)) {
+          workspaceFolders.push(folder);
+        }
+      });
+      if (!workspaceFolders.includes(currentFolder)) {
+        currentFolder = workspaceFolders[0] || 'General';
+      }
+      renderFolderOptions();
+    }
+
+    function clearCurrentFolder() {
+      const keep = workspaceLibrary.filter(file => file.folder !== currentFolder);
+      workspaceLibrary = keep;
+      renderWorkspace();
+      saveWorkspace();
+    }
+
+    function toggleWorkspaceShare() {
+      includeWorkspaceInPrompt = !includeWorkspaceInPrompt;
+      updateShareButton();
+      saveWorkspace();
+    }
+
+    function updateShareButton() {
+      shareWorkspaceBtn.textContent = includeWorkspaceInPrompt
+        ? '📤 Carpeta visible para Claude'
+        : '🙈 Ocultar carpeta a Claude';
+      shareWorkspaceBtn.classList.toggle('toggled', includeWorkspaceInPrompt);
+    }
+
+    attachButton.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      handleFiles(e.target.files);
+      fileInput.value = '';
+    });
+
+    aiInput.addEventListener('paste', (event) => {
+      const items = event.clipboardData?.items;
+      if (!items) return;
+
+      const pastedFiles = [];
+      for (const item of items) {
+        if (item.kind === 'file') {
+          const file = item.getAsFile();
+          if (file) {
+            pastedFiles.push(file);
+          }
+        }
+      }
+
+      if (pastedFiles.length) {
+        event.preventDefault();
+        handleFiles(pastedFiles);
+        aiPanel.classList.add('active');
+        aiInput.focus();
+      }
+    });
+
+    clearSelectionBtn.addEventListener('click', () => {
+      pendingAttachments = [];
+      renderPendingAttachments();
+    });
+
+    newFolderBtn.addEventListener('click', () => {
+      const name = prompt('Nombre de la nueva carpeta:');
+      if (name) addFolder(name.trim());
+    });
+
+    workspaceFolder.addEventListener('change', (e) => {
+      currentFolder = e.target.value;
+      renderWorkspace();
+      saveWorkspace();
+    });
+
+    clearFolderBtn.addEventListener('click', () => {
+      if (confirm(`¿Vaciar la carpeta "${currentFolder}"?`)) {
+        clearCurrentFolder();
+      }
+    });
+
+    shareWorkspaceBtn.addEventListener('click', toggleWorkspaceShare);
+
+    function renderWorkspace() {
+      workspaceList.innerHTML = '';
+      const visibleFiles = workspaceLibrary.filter(file => file.folder === currentFolder);
+
+      if (!visibleFiles.length) {
+        workspaceList.innerHTML = '<div class="workspace-card" style="border-style:dashed; text-align:center; color:#94a3b8;">Aún no hay archivos cargados en esta carpeta.</div>';
+      } else {
+        visibleFiles.forEach(file => {
+          const card = document.createElement('div');
+          card.className = 'workspace-card';
+
+          if (file.saved) {
+            const badge = document.createElement('div');
+            badge.className = 'workspace-badge';
+            badge.textContent = 'Guardado';
+            card.appendChild(badge);
+          }
+
+          const thumb = document.createElement('div');
+          thumb.className = 'thumb';
+          if (file.isImage && file.dataUrl) {
+            const img = document.createElement('img');
+            img.src = file.dataUrl;
+            img.alt = file.name;
+            thumb.appendChild(img);
+          } else {
+            thumb.textContent = fileIcon(file.type, file.name);
+          }
+
+          const name = document.createElement('div');
+          name.className = 'workspace-name';
+          name.textContent = file.name;
+
+          const meta = document.createElement('div');
+          meta.className = 'workspace-meta';
+          meta.textContent = `${file.type || 'desconocido'} · ${formatBytes(file.size)}`;
+
+          const folderLabel = document.createElement('div');
+          folderLabel.className = 'workspace-label';
+          folderLabel.textContent = `Carpeta: ${file.folder || 'General'}`;
+
+          const actions = document.createElement('div');
+          actions.className = 'workspace-actions';
+
+          const reuseBtn = document.createElement('button');
+          reuseBtn.className = 'workspace-btn';
+          reuseBtn.textContent = 'Añadir al mensaje';
+          reuseBtn.onclick = () => {
+            pendingAttachments.unshift(file);
+            renderPendingAttachments();
+          };
+
+          const keepBtn = document.createElement('button');
+          keepBtn.className = 'workspace-btn';
+          keepBtn.textContent = file.saved ? '💾 Guardado' : '💾 Guardar';
+          keepBtn.onclick = () => {
+            file.saved = !file.saved;
+            renderWorkspace();
+            saveWorkspace();
+          };
+
+          const moveBtn = document.createElement('button');
+          moveBtn.className = 'workspace-btn';
+          moveBtn.textContent = '📁 Mover aquí';
+          moveBtn.onclick = () => {
+            file.folder = currentFolder;
+            renderWorkspace();
+            saveWorkspace();
+          };
+
+          const removeBtn = document.createElement('button');
+          removeBtn.className = 'workspace-btn';
+          removeBtn.textContent = '🗑️ Eliminar';
+          removeBtn.onclick = () => {
+            workspaceLibrary = workspaceLibrary.filter(item => item.id !== file.id);
+            pendingAttachments = pendingAttachments.filter(item => item.id !== file.id);
+            renderWorkspace();
+            renderPendingAttachments();
+            saveWorkspace();
+          };
+
+          actions.appendChild(reuseBtn);
+          actions.appendChild(keepBtn);
+          actions.appendChild(moveBtn);
+          actions.appendChild(removeBtn);
+
+          card.appendChild(thumb);
+          card.appendChild(name);
+          card.appendChild(meta);
+          card.appendChild(folderLabel);
+          card.appendChild(actions);
+          workspaceList.appendChild(card);
+        });
+      }
+      workspaceCount.textContent = `${workspaceLibrary.length} archivo${workspaceLibrary.length === 1 ? '' : 's'}`;
+    }
+
+    function buildWorkspaceContext(limitPerFolder = 6) {
+      if (!includeWorkspaceInPrompt || !workspaceLibrary.length) return '';
+
+      const grouped = {};
+      workspaceLibrary.forEach(file => {
+        const folder = file.folder || 'General';
+        if (!grouped[folder]) grouped[folder] = [];
+        if (grouped[folder].length < limitPerFolder) {
+          const baseSnippet = file.isImage && file.dataUrl
+            ? file.dataUrl.split(',')[1]?.slice(0, 80)
+            : '';
+          grouped[folder].push({
+            name: file.name,
+            type: file.type,
+            size: formatBytes(file.size),
+            snippet: baseSnippet
+          });
+        }
+      });
+
+      return Object.entries(grouped).map(([folder, files]) => {
+        const lines = files.map((file, idx) => {
+          const baseLine = `${idx + 1}. ${file.name} (${file.type || 'sin tipo'}, ${file.size}) en /workspace/ai-archivos/${folder}/`;
+          if (file.snippet) {
+            return `${baseLine} · imagen base64 inicio: ${file.snippet}...`;
+          }
+          return baseLine;
+        });
+        return `Carpeta ${folder} (máx ${limitPerFolder}):\n${lines.join('\n')}`;
+      }).join('\n\n');
+    }
+
+    function createAttachmentChip(att, allowRemove = false) {
+      const chip = document.createElement('div');
+      chip.className = 'attachment-chip';
+
+      const thumb = document.createElement('div');
+      thumb.className = 'attachment-thumb';
+      if (att.isImage && att.dataUrl) {
+        const img = document.createElement('img');
+        img.src = att.dataUrl;
+        img.alt = att.name;
+        thumb.appendChild(img);
+      } else {
+        thumb.textContent = fileIcon(att.type, att.name);
+      }
+
+      const info = document.createElement('div');
+      info.className = 'attachment-info';
+      const name = document.createElement('div');
+      name.className = 'attachment-name';
+      name.textContent = att.name;
+      const meta = document.createElement('div');
+      meta.className = 'attachment-meta';
+      meta.textContent = `${att.type || 'sin tipo'} · ${formatBytes(att.size)}`;
+      info.appendChild(name);
+      info.appendChild(meta);
+
+      chip.appendChild(thumb);
+      chip.appendChild(info);
+
+      if (allowRemove) {
+        const remove = document.createElement('button');
+        remove.className = 'attachment-remove';
+        remove.title = 'Quitar adjunto del mensaje';
+        remove.textContent = '✖';
+        remove.onclick = () => {
+          pendingAttachments = pendingAttachments.filter(item => item.id !== att.id);
+          renderPendingAttachments();
+        };
+        chip.appendChild(remove);
+      }
+
+      return chip;
+    }
+
+    function renderPendingAttachments() {
+      pendingAttachmentsEl.innerHTML = '';
+      pendingAttachments.forEach(att => {
+        pendingAttachmentsEl.appendChild(createAttachmentChip(att, true));
+      });
+    }
+
+    loadWorkspace();
+
+    // Extraer texto desde la respuesta de Puter
+    function extractResponseText(aiResponse) {
+      if (!aiResponse) return '';
+      if (typeof aiResponse === 'string') return aiResponse;
+
+      if (aiResponse.message?.content?.length) {
+        return aiResponse.message.content
+          .map(part => part.text || part)
+          .join('');
+      }
+
+      if (aiResponse.delta?.text) return aiResponse.delta.text;
+      if (aiResponse.text) return aiResponse.text;
+
+      try {
+        return JSON.stringify(aiResponse);
+      } catch (err) {
+        return '⚠️ No se pudo leer la respuesta de la IA';
+      }
+    }
+
     // Enviar mensaje a Claude
     async function sendMessage() {
       const message = aiInput.value.trim();
-      if (!message) return;
+      if (!message && !pendingAttachments.length) return;
 
       // Deshabilitar input
       aiInput.disabled = true;
       aiSend.disabled = true;
       aiInput.value = '';
 
-      // Agregar mensaje del usuario
-      addMessage(message, 'user');
-      conversationHistory.push({role: 'user', content: message});
+      const attachmentsForMessage = [...pendingAttachments];
+      pendingAttachments = [];
+      renderPendingAttachments();
+
+      const visibleMessage = message || '🗂️ Archivos adjuntos enviados';
+      addMessage(visibleMessage, 'user', false, attachmentsForMessage);
+
+      const attachmentSummary = attachmentsForMessage.length
+        ? attachmentsForMessage.map((att, idx) => {
+            const snippet = att.dataUrl?.split(',')[1]?.slice(0, 120) || '';
+            const folderPath = att.folder || 'General';
+            const virtualPath = `/workspace/ai-archivos/${folderPath}/${att.name}`;
+            const baseLine = `Archivo ${idx + 1}: ${att.name} (${att.type || 'sin tipo'}, ${formatBytes(att.size)}). Ubicación virtual: ${virtualPath}.`;
+            if (att.isImage && snippet) {
+              return `${baseLine} Imagen codificada (base64 inicio): ${snippet}...`;
+            }
+            return baseLine;
+          }).join('\n')
+        : '';
+
+      const messageForAI = attachmentSummary
+        ? `${message || 'El usuario envió archivos sin texto adicional.'}\n\n[Adjuntos disponibles en el espacio de trabajo]\n${attachmentSummary}`
+        : message;
+
+      conversationHistory.push({role: 'user', content: messageForAI});
 
       // Mostrar indicador de escritura
       typingIndicator.classList.add('active');
@@ -570,14 +1315,20 @@
 
       try {
         // Contexto del sistema
-        const systemContext = `Eres Claude, un asistente educativo integrado en el "Centro de Plantillas Educativas - Proyecto ARKAIOS". 
-        
+        const workspaceContext = buildWorkspaceContext();
+        const systemContext = `Eres Claude, un asistente educativo integrado en el "Centro de Plantillas Educativas - Proyecto ARKAIOS".
+
 Tu misión es ayudar a estudiantes y maestros con:
 - Crear nuevas plantillas HTML educativas
 - Explicar cómo usar las plantillas existentes
 - Generar contenido educativo (textos, ideas, ejercicios)
 - Resolver dudas técnicas
 - Dar tutoriales paso a paso
+
+Cuentas con un espacio de archivos en "/workspace/ai-archivos" donde el usuario adjunta imágenes, PDFs, Word, ZIP u otros formatos.
+Se te enviará la lista de adjuntos y, para imágenes, fragmentos en base64. Interpreta y describe el contenido cuando se solicite.
+Si piden un PDF imprimible o un ZIP, organiza el contenido y explica cómo entregarlo o generarlo con enlaces/base64 si procede.
+${workspaceContext ? `\nContenido cargado actualmente por el usuario:\n${workspaceContext}` : ''}
 
 Plantillas disponibles:
 1. Carta MX - Índice + Texto (para tareas escolares)
@@ -589,28 +1340,42 @@ Plantilla actual abierta: ${currentTemplate}
 
 Conversa de forma amigable, educativa y práctica. Si detectas que el usuario quiere crear una plantilla nueva, genera el código HTML completo. Si necesitas generar imágenes, menciona que puedes usar DALL-E.`;
 
-        // Llamada a Claude vía Puter.js
-        const response = await puter.ai.chat(
-          [
-            {role: 'system', content: systemContext},
-            ...conversationHistory.slice(-5) // Últimos 5 mensajes de contexto
-          ],
-          { 
-            model: "claude-sonnet-4-20250514",
-            stream: false
+        // Llamada a Claude vía Puter.js (streaming habilitado)
+        const chatMessages = [
+          {role: 'system', content: systemContext},
+          ...conversationHistory.slice(-5)
+        ];
+
+        const client = await ensurePuterClient();
+
+        const response = await client.ai.chat(chatMessages, {
+          model: MODEL_NAME,
+          stream: true
+        });
+
+        let assistantText = '';
+
+        if (response && typeof response[Symbol.asyncIterator] === 'function') {
+          const streamMessage = addMessage('', 'assistant', true);
+          for await (const part of response) {
+            assistantText += extractResponseText(part);
+            streamMessage.textContent = assistantText;
+            scrollToBottom();
           }
-        );
+          typingIndicator.classList.remove('active');
+        } else {
+          typingIndicator.classList.remove('active');
+          assistantText = extractResponseText(response);
+          addMessage(assistantText, 'assistant');
+        }
 
-        // Ocultar indicador
-        typingIndicator.classList.remove('active');
+        if (assistantText) {
+          conversationHistory.push({role: 'assistant', content: assistantText});
 
-        // Agregar respuesta de Claude
-        addMessage(response, 'assistant');
-        conversationHistory.push({role: 'assistant', content: response});
-
-        // Detectar si Claude generó código HTML
-        if (response.includes('<!DOCTYPE html>') || response.includes('<html')) {
-          addMessage('💡 Detecté que generé código HTML. ¿Quieres que lo agregue como nueva plantilla al menú?', 'system');
+          // Detectar si Claude generó código HTML
+          if (assistantText.includes('<!DOCTYPE html>') || assistantText.includes('<html')) {
+            addMessage('💡 Detecté que generé código HTML. ¿Quieres que lo agregue como nueva plantilla al menú?', 'system');
+          }
         }
 
       } catch (error) {
@@ -626,12 +1391,21 @@ Conversa de forma amigable, educativa y práctica. Si detectas que el usuario qu
     }
 
     // Agregar mensaje al chat
-    function addMessage(text, type) {
+    function addMessage(text, type, returnRef = false, attachments = []) {
       const messageDiv = document.createElement('div');
       messageDiv.className = `message ${type}`;
       messageDiv.textContent = text;
+
+      if (attachments.length) {
+        const preview = document.createElement('div');
+        preview.className = 'attachment-preview';
+        attachments.forEach(att => preview.appendChild(createAttachmentChip(att)));
+        messageDiv.appendChild(preview);
+      }
+
       aiMessages.appendChild(messageDiv);
       scrollToBottom();
+      return returnRef ? messageDiv : null;
     }
 
     // Scroll automático
@@ -642,9 +1416,15 @@ Conversa de forma amigable, educativa y práctica. Si detectas que el usuario qu
     }
 
     // ========== BIENVENIDA ==========
-    window.addEventListener('load', () => {
+    window.addEventListener('load', async () => {
       console.log('🎓 Centro de Plantillas Educativas - Proyecto ARKAIOS');
-      console.log('🤖 Claude IA está listo para ayudarte');
+      try {
+        await ensurePuterClient();
+        console.log('🤖 Claude IA está listo y conectado');
+      } catch (err) {
+        addMessage('⚠️ No se pudo conectar con Claude automáticamente. Intenta enviar un mensaje o recarga la página.', 'system');
+        console.error('Error inicializando Claude:', err);
+      }
       console.log('📚 Desarrollado para democratizar la educación');
     });
   </script>
