@@ -1,3 +1,4 @@
+![Proyecto arkaios-neural-agent](https://raw.githubusercontent.com/djklmr2025/arkaios-neural-agent/main/assets/arkaios_spin_bar.png)
 Eduacion Libre Proyecto ARKAIOS:
 # 🎓 Centro de Plantillas Educativas - Proyecto ARKAIOS
 
