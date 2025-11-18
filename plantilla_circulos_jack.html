@@ -64,6 +64,24 @@
       transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(59, 130, 246, 0.6);
     }
+    .btn-success {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+    .btn-success:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.6);
+    }
+    .btn-warning {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    }
+    .btn-warning:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.6);
+    }
     .btn-danger {
       background: linear-gradient(135deg, #ef4444, #dc2626);
       color: white;
@@ -167,7 +185,7 @@
       border-width: 4px;
     }
     
-    /* Imagen dentro del círculo */
+    /* Imagen dentro del círculo con drag */
     .circle-image-wrapper {
       position: relative;
       width: 100%;
@@ -178,6 +196,13 @@
     .circle img {
       position: absolute;
       object-fit: cover;
+      cursor: grab;
+    }
+    .circle img.dragging {
+      cursor: grabbing;
+    }
+    .circle.locked img {
+      cursor: default;
       pointer-events: none;
     }
     
@@ -331,6 +356,17 @@
       border: none;
     }
 
+    .edit-info {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid #3b82f6;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: #93c5fd;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
     .edit-buttons {
       display: flex;
       flex-direction: column;
@@ -427,10 +463,12 @@
     <div>
       <h1>🎃 Plantilla Educativa - Círculos Jack Skellington</h1>
       <p class="info">
-        ✨ 2 círculos grandes (12cm) + 4 pequeños (5cm) • Edita, ajusta, mueve y fija imágenes
+        ✨ Carga en lote • Ajuste libre con arrastre • Edición completa • Sistema de fijado
       </p>
     </div>
     <div class="actions">
+      <button class="btn-success" id="btnBulkLarge">📦 Cargar Lote 12cm</button>
+      <button class="btn-warning" id="btnBulkSmall">📦 Cargar Lote 5cm</button>
       <button class="btn-primary" id="btnAddPage">➕ Agregar Hoja</button>
       <button class="btn-primary" onclick="window.print()">🖨️ Imprimir</button>
       <button class="btn-danger" id="btnClearAll">🗑️ Limpiar Todo</button>
@@ -446,19 +484,13 @@
       <button class="edit-close" id="editClose">×</button>
     </div>
     
+    <div class="edit-info">
+      💡 <strong>Tip:</strong> Arrastra la imagen con el mouse para moverla libremente dentro del círculo
+    </div>
+
     <div class="edit-control">
       <label>Tamaño: <span class="value" id="scaleValue">100%</span></label>
       <input type="range" id="scaleSlider" min="50" max="200" value="100">
-    </div>
-
-    <div class="edit-control">
-      <label>Posición Horizontal: <span class="value" id="posXValue">50%</span></label>
-      <input type="range" id="posXSlider" min="0" max="100" value="50">
-    </div>
-
-    <div class="edit-control">
-      <label>Posición Vertical: <span class="value" id="posYValue">50%</span></label>
-      <input type="range" id="posYSlider" min="0" max="100" value="50">
     </div>
 
     <div class="edit-buttons">
@@ -468,26 +500,33 @@
   </div>
 
   <input type="file" id="fileInputHidden" accept="image/*" style="display:none">
+  <input type="file" id="fileInputBulkLarge" accept="image/*" multiple style="display:none">
+  <input type="file" id="fileInputBulkSmall" accept="image/*" multiple style="display:none">
 
   <script>
     const pagesContainer = document.getElementById('pagesContainer');
     const fileInputHidden = document.getElementById('fileInputHidden');
+    const fileInputBulkLarge = document.getElementById('fileInputBulkLarge');
+    const fileInputBulkSmall = document.getElementById('fileInputBulkSmall');
     const btnAddPage = document.getElementById('btnAddPage');
     const btnClearAll = document.getElementById('btnClearAll');
+    const btnBulkLarge = document.getElementById('btnBulkLarge');
+    const btnBulkSmall = document.getElementById('btnBulkSmall');
     const editPanel = document.getElementById('editPanel');
     const editClose = document.getElementById('editClose');
     const scaleSlider = document.getElementById('scaleSlider');
-    const posXSlider = document.getElementById('posXSlider');
-    const posYSlider = document.getElementById('posYSlider');
     const scaleValue = document.getElementById('scaleValue');
-    const posXValue = document.getElementById('posXValue');
-    const posYValue = document.getElementById('posYValue');
     const btnLock = document.getElementById('btnLock');
     const btnDeleteImage = document.getElementById('btnDeleteImage');
 
     let pages = [];
     let circleToFill = null;
     let editingCircle = null;
+    let draggedImage = null;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let imageStartX = 0;
+    let imageStartY = 0;
 
     function createInitialPageData(id) {
       return {
@@ -516,175 +555,9 @@
       closeEditPanel();
     }
 
-    function handleCircleClick(pageId, circleId) {
-      const circle = findCircle(pageId, circleId);
-      if (circle && circle.imageData && !circle.locked) {
-        openEditPanel(pageId, circleId);
-      } else if (!circle.imageData) {
-        circleToFill = { pageId, circleId };
-        fileInputHidden.value = '';
-        fileInputHidden.click();
-      }
-    }
-
-    fileInputHidden.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file || !circleToFill) return;
-
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const dataUrl = ev.target.result;
-        pages = pages.map(page => {
-          if (page.id === circleToFill.pageId) {
-            return {
-              ...page,
-              circles: page.circles.map(c =>
-                c.id === circleToFill.circleId
-                  ? { ...c, imageData: dataUrl, scale: 100, posX: 50, posY: 50, locked: false }
-                  : c
-              )
-            };
-          }
-          return page;
-        });
-        circleToFill = null;
-        renderPages();
-      };
-      reader.readAsDataURL(file);
-    });
-
-    function findCircle(pageId, circleId) {
-      const page = pages.find(p => p.id === pageId);
-      return page ? page.circles.find(c => c.id === circleId) : null;
-    }
-
-    function updateCircle(pageId, circleId, updates) {
-      pages = pages.map(page => {
-        if (page.id === pageId) {
-          return {
-            ...page,
-            circles: page.circles.map(c =>
-              c.id === circleId ? { ...c, ...updates } : c
-            )
-          };
-        }
-        return page;
-      });
-      renderPages();
-    }
-
-    function openEditPanel(pageId, circleId) {
-      const circle = findCircle(pageId, circleId);
-      if (!circle || !circle.imageData) return;
-
-      editingCircle = { pageId, circleId };
-      scaleSlider.value = circle.scale;
-      posXSlider.value = circle.posX;
-      posYSlider.value = circle.posY;
-      updateSliderValues();
-
-      scaleSlider.disabled = circle.locked;
-      posXSlider.disabled = circle.locked;
-      posYSlider.disabled = circle.locked;
-
-      btnLock.textContent = circle.locked ? '🔓 Desbloquear' : '🔒 Fijar Imagen';
-      btnLock.className = circle.locked ? 'edit-btn edit-btn-unlock' : 'edit-btn edit-btn-lock';
-
-      editPanel.classList.add('active');
-    }
-
-    function closeEditPanel() {
-      editPanel.classList.remove('active');
-      editingCircle = null;
-    }
-
-    function updateSliderValues() {
-      scaleValue.textContent = scaleSlider.value + '%';
-      posXValue.textContent = posXSlider.value + '%';
-      posYValue.textContent = posYSlider.value + '%';
-    }
-
-    scaleSlider.addEventListener('input', () => {
-      if (!editingCircle) return;
-      updateSliderValues();
-      updateCircle(editingCircle.pageId, editingCircle.circleId, {
-        scale: parseInt(scaleSlider.value)
-      });
-    });
-
-    posXSlider.addEventListener('input', () => {
-      if (!editingCircle) return;
-      updateSliderValues();
-      updateCircle(editingCircle.pageId, editingCircle.circleId, {
-        posX: parseInt(posXSlider.value)
-      });
-    });
-
-    posYSlider.addEventListener('input', () => {
-      if (!editingCircle) return;
-      updateSliderValues();
-      updateCircle(editingCircle.pageId, editingCircle.circleId, {
-        posY: parseInt(posYSlider.value)
-      });
-    });
-
-    btnLock.addEventListener('click', () => {
-      if (!editingCircle) return;
-      const circle = findCircle(editingCircle.pageId, editingCircle.circleId);
-      updateCircle(editingCircle.pageId, editingCircle.circleId, {
-        locked: !circle.locked
-      });
-      if (!circle.locked) {
-        closeEditPanel();
-      } else {
-        openEditPanel(editingCircle.pageId, editingCircle.circleId);
-      }
-    });
-
-    btnDeleteImage.addEventListener('click', () => {
-      if (!editingCircle) return;
-      if (confirm('¿Eliminar esta imagen?')) {
-        updateCircle(editingCircle.pageId, editingCircle.circleId, {
-          imageData: null,
-          scale: 100,
-          posX: 50,
-          posY: 50,
-          locked: false
-        });
-        closeEditPanel();
-      }
-    });
-
-    editClose.addEventListener('click', closeEditPanel);
-
-    function changeImage(pageId, circleId) {
-      circleToFill = { pageId, circleId };
-      fileInputHidden.value = '';
-      fileInputHidden.click();
-    }
-
-    function removeImage(pageId, circleId) {
-      if (confirm('¿Eliminar esta imagen?')) {
-        updateCircle(pageId, circleId, {
-          imageData: null,
-          scale: 100,
-          posX: 50,
-          posY: 50,
-          locked: false
-        });
-      }
-    }
-
-    function removePage(id) {
-      if (pages.length <= 1) return;
-      if (!confirm('¿Eliminar esta hoja completa?')) return;
-      pages = pages.filter(p => p.id !== id).map((p, idx) => ({
-        ...p,
-        id: idx + 1
-      }));
-      renderPages();
-      closeEditPanel();
-    }
+    // ===== RENDERIZAR =====
+    const CIRCULO_GRANDE = 12 * 37.795; // 12cm en píxeles
+    const CIRCULO_PEQUENO = 5 * 37.795; // 5cm en píxeles
 
     function renderPages() {
       pagesContainer.innerHTML = '';
@@ -765,6 +638,11 @@
             img.style.left = circle.posX + '%';
             img.style.top = circle.posY + '%';
             img.style.transform = 'translate(-50%, -50%)';
+
+            // Setup drag si no está bloqueada
+            if (!circle.locked) {
+              setupImageDrag(img, page.id, circle.id);
+            }
 
             imgWrapper.appendChild(img);
             circleDiv.appendChild(imgWrapper);
@@ -850,4 +728,271 @@
     });
   </script>
 </body>
-</html>
+</html> CARGA EN LOTE =====
+    btnBulkLarge.addEventListener('click', () => fileInputBulkLarge.click());
+    btnBulkSmall.addEventListener('click', () => fileInputBulkSmall.click());
+
+    fileInputBulkLarge.addEventListener('change', (e) => {
+      handleBulkUpload(e.target.files, 'grande');
+    });
+
+    fileInputBulkSmall.addEventListener('change', (e) => {
+      handleBulkUpload(e.target.files, 'pequeno');
+    });
+
+    function handleBulkUpload(files, size) {
+      if (!files || files.length === 0) return;
+
+      const filesArray = Array.from(files);
+      const circlesPerPage = size === 'grande' ? 2 : 4;
+      const pagesNeeded = Math.ceil(filesArray.length / circlesPerPage);
+
+      // Asegurar que tengamos suficientes páginas
+      while (pages.length < pagesNeeded) {
+        addPage();
+      }
+
+      // Cargar cada imagen
+      filesArray.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const dataUrl = ev.target.result;
+          const pageIndex = Math.floor(index / circlesPerPage);
+          const circleIndex = index % circlesPerPage;
+
+          if (pages[pageIndex]) {
+            const circles = pages[pageIndex].circles;
+            const targetCircle = size === 'grande' 
+              ? circles.filter(c => c.size === 'grande')[circleIndex]
+              : circles.filter(c => c.size === 'pequeno')[circleIndex];
+
+            if (targetCircle) {
+              targetCircle.imageData = dataUrl;
+              targetCircle.scale = 100;
+              targetCircle.posX = 50;
+              targetCircle.posY = 50;
+              targetCircle.locked = false;
+            }
+          }
+
+          // Renderizar cuando se complete la última imagen
+          if (index === filesArray.length - 1) {
+            renderPages();
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ===== CARGA INDIVIDUAL =====
+    function handleCircleClick(pageId, circleId) {
+      const circle = findCircle(pageId, circleId);
+      if (circle && circle.imageData && !circle.locked) {
+        openEditPanel(pageId, circleId);
+      } else if (!circle.imageData) {
+        circleToFill = { pageId, circleId };
+        fileInputHidden.value = '';
+        fileInputHidden.click();
+      }
+    }
+
+    fileInputHidden.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file || !circleToFill) return;
+
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const dataUrl = ev.target.result;
+        pages = pages.map(page => {
+          if (page.id === circleToFill.pageId) {
+            return {
+              ...page,
+              circles: page.circles.map(c =>
+                c.id === circleToFill.circleId
+                  ? { ...c, imageData: dataUrl, scale: 100, posX: 50, posY: 50, locked: false }
+                  : c
+              )
+            };
+          }
+          return page;
+        });
+        circleToFill = null;
+        renderPages();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // ===== FUNCIONES DE EDICIÓN =====
+    function findCircle(pageId, circleId) {
+      const page = pages.find(p => p.id === pageId);
+      return page ? page.circles.find(c => c.id === circleId) : null;
+    }
+
+    function updateCircle(pageId, circleId, updates) {
+      pages = pages.map(page => {
+        if (page.id === pageId) {
+          return {
+            ...page,
+            circles: page.circles.map(c =>
+              c.id === circleId ? { ...c, ...updates } : c
+            )
+          };
+        }
+        return page;
+      });
+      renderPages();
+    }
+
+    function openEditPanel(pageId, circleId) {
+      const circle = findCircle(pageId, circleId);
+      if (!circle || !circle.imageData) return;
+
+      editingCircle = { pageId, circleId };
+      scaleSlider.value = circle.scale;
+      updateSliderValues();
+
+      scaleSlider.disabled = circle.locked;
+
+      btnLock.textContent = circle.locked ? '🔓 Desbloquear' : '🔒 Fijar Imagen';
+      btnLock.className = circle.locked ? 'edit-btn edit-btn-unlock' : 'edit-btn edit-btn-lock';
+
+      editPanel.classList.add('active');
+    }
+
+    function closeEditPanel() {
+      editPanel.classList.remove('active');
+      editingCircle = null;
+    }
+
+    function updateSliderValues() {
+      scaleValue.textContent = scaleSlider.value + '%';
+    }
+
+    scaleSlider.addEventListener('input', () => {
+      if (!editingCircle) return;
+      updateSliderValues();
+      updateCircle(editingCircle.pageId, editingCircle.circleId, {
+        scale: parseInt(scaleSlider.value)
+      });
+    });
+
+    btnLock.addEventListener('click', () => {
+      if (!editingCircle) return;
+      const circle = findCircle(editingCircle.pageId, editingCircle.circleId);
+      updateCircle(editingCircle.pageId, editingCircle.circleId, {
+        locked: !circle.locked
+      });
+      if (!circle.locked) {
+        closeEditPanel();
+      } else {
+        openEditPanel(editingCircle.pageId, editingCircle.circleId);
+      }
+    });
+
+    btnDeleteImage.addEventListener('click', () => {
+      if (!editingCircle) return;
+      if (confirm('¿Eliminar esta imagen?')) {
+        updateCircle(editingCircle.pageId, editingCircle.circleId, {
+          imageData: null,
+          scale: 100,
+          posX: 50,
+          posY: 50,
+          locked: false
+        });
+        closeEditPanel();
+      }
+    });
+
+    editClose.addEventListener('click', closeEditPanel);
+
+    // ===== DRAG DE IMAGEN =====
+    function setupImageDrag(img, pageId, circleId) {
+      img.addEventListener('mousedown', (e) => {
+        const circle = findCircle(pageId, circleId);
+        if (circle && circle.locked) return;
+
+        e.preventDefault();
+        draggedImage = { img, pageId, circleId };
+        img.classList.add('dragging');
+        
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        
+        const currentLeft = parseFloat(img.style.left) || 50;
+        const currentTop = parseFloat(img.style.top) || 50;
+        imageStartX = currentLeft;
+        imageStartY = currentTop;
+      });
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      if (!draggedImage) return;
+      e.preventDefault();
+
+      const deltaX = e.clientX - dragStartX;
+      const deltaY = e.clientY - dragStartY;
+      
+      // Convertir píxeles a porcentaje (aproximado)
+      const circle = findCircle(draggedImage.pageId, draggedImage.circleId);
+      const circleSize = circle.size === 'grande' ? CIRCULO_GRANDE : CIRCULO_PEQUENO;
+      const percentX = (deltaX / circleSize) * 100;
+      const percentY = (deltaY / circleSize) * 100;
+
+      const newX = Math.max(0, Math.min(100, imageStartX + percentX));
+      const newY = Math.max(0, Math.min(100, imageStartY + percentY));
+
+      draggedImage.img.style.left = newX + '%';
+      draggedImage.img.style.top = newY + '%';
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (!draggedImage) return;
+
+      const img = draggedImage.img;
+      const pageId = draggedImage.pageId;
+      const circleId = draggedImage.circleId;
+
+      img.classList.remove('dragging');
+
+      const finalX = parseFloat(img.style.left) || 50;
+      const finalY = parseFloat(img.style.top) || 50;
+
+      updateCircle(pageId, circleId, {
+        posX: finalX,
+        posY: finalY
+      });
+
+      draggedImage = null;
+    });
+
+    // ===== OTRAS FUNCIONES =====
+    function changeImage(pageId, circleId) {
+      circleToFill = { pageId, circleId };
+      fileInputHidden.value = '';
+      fileInputHidden.click();
+    }
+
+    function removeImage(pageId, circleId) {
+      if (confirm('¿Eliminar esta imagen?')) {
+        updateCircle(pageId, circleId, {
+          imageData: null,
+          scale: 100,
+          posX: 50,
+          posY: 50,
+          locked: false
+        });
+      }
+    }
+
+    function removePage(id) {
+      if (pages.length <= 1) return;
+      if (!confirm('¿Eliminar esta hoja completa?')) return;
+      pages = pages.filter(p => p.id !== id).map((p, idx) => ({
+        ...p,
+        id: idx + 1
+      }));
+      renderPages();
+      closeEditPanel();
+    }
+
+    // =====
