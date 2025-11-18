@@ -217,20 +217,24 @@
       align-items: center;
       gap: 12px;
     }
-    .ai-header h3 {
-      font-size: 1.1rem;
-      color: white;
-      font-weight: 700;
-    }
-    .ai-header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .ai-control,
-    .ai-close {
-      background: rgba(255,255,255,0.2);
-      border: none;
+      .ai-header h3 {
+        font-size: 1.1rem;
+        color: white;
+        font-weight: 700;
+        margin: 0;
+        flex: 1;
+        min-width: 0;
+      }
+      .ai-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .ai-control,
+      .ai-close {
+        background: rgba(255,255,255,0.2);
+        border: none;
       width: 32px;
       height: 32px;
       border-radius: 50%;
@@ -242,15 +246,15 @@
       align-items: center;
       justify-content: center;
     }
-    .ai-control:hover,
-    .ai-close:hover {
-      background: rgba(255,255,255,0.3);
-      transform: rotate(90deg);
-    }
-    .ai-control.toggled {
-      background: rgba(255,255,255,0.28);
-      box-shadow: 0 0 0 2px rgba(255,255,255,0.18);
-    }
+      .ai-control:hover,
+      .ai-close:hover {
+        background: rgba(255,255,255,0.3);
+        transform: rotate(90deg);
+      }
+      .ai-control.toggled {
+        background: rgba(255,255,255,0.28);
+        box-shadow: 0 0 0 2px rgba(255,255,255,0.18);
+      }
 
     .ai-actions {
       padding: 12px;
@@ -800,15 +804,31 @@
       aiPanel.classList.remove('active');
     });
 
-    aiExpand.addEventListener('click', () => {
-      const isFull = aiPanel.classList.toggle('fullscreen');
-      aiExpand.textContent = isFull ? '🗖' : '⤢';
+    function setExpandState(isFull) {
+      aiPanel.classList.toggle('fullscreen', isFull);
+      aiExpand.textContent = isFull ? '🗗' : '⤢';
       aiExpand.classList.toggle('toggled', isFull);
+      aiExpand.setAttribute('aria-pressed', isFull ? 'true' : 'false');
+      aiExpand.title = isFull ? 'Restaurar tamaño' : 'Maximizar chat';
+    }
+
+    aiExpand.addEventListener('click', () => {
+      const isFull = !aiPanel.classList.contains('fullscreen');
       if (!aiPanel.classList.contains('active')) {
         aiPanel.classList.add('active');
       }
+      setExpandState(isFull);
       aiInput.focus();
     });
+
+    // Permitir restaurar con doble clic en el encabezado para garantizar accesibilidad
+    document.querySelector('.ai-header').addEventListener('dblclick', () => {
+      const isFull = !aiPanel.classList.contains('fullscreen');
+      setExpandState(isFull);
+    });
+
+    // Sincronizar el estado inicial del botón de maximizar
+    setExpandState(false);
 
     function resetPuterClient() {
       puterClient = null;
