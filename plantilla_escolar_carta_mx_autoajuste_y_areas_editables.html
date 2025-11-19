@@ -13,79 +13,405 @@
 
     @media print {
       @page { size: 21.59cm 27.94cm; margin: 1.9cm; }
-      html, body { margin: 0 !important; padding: 0 !important; }
-      header, footer, .toolbar, .instructions { display: none !important; }
-      .page-container { box-shadow: none; margin: 0; page-break-after: always; page-break-inside: avoid; }
-      .page-container:last-child { page-break-after: auto; }
+
+      /* Colores y proporciones tal cual */
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 21.59cm !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+
+      header, footer, .toolbar, .instructions {
+        display: none !important;
+      }
+
+      .page-container {
+        box-shadow: none !important;
+        margin: 0;
+        page-break-after: always;
+        page-break-inside: avoid;
+        width: 100% !important;
+        min-height: auto !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+
+      .page-container:last-child {
+        page-break-after: auto;
+      }
+
       /* Quitar contornos visuales en impresión */
-      .field-input, .references-input, .text-block, .image-slot { border: none !important; background: white !important; }
-      .image-slot .placeholder, .image-slot .add-btn, .image-slot .remove-btn, .image-slot .drag-handle { display: none !important; }
-      .image-slot:not(.has-image) { display: none; }
+      .field-input,
+      .references-input,
+      .text-block,
+      .image-slot {
+        border: none !important;
+        background: white !important;
+      }
+
+      /* Evitar recortes de contenido en impresión */
+      .references-wrap,
+      .text-block {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+
+      .text-block .content,
+      #referencesInput {
+        height: auto !important;
+        overflow: visible !important;
+      }
+
+      .image-slot .placeholder,
+      .image-slot .add-btn,
+      .image-slot .remove-btn,
+      .image-slot .drag-handle {
+        display: none !important;
+      }
+
+      .image-slot:not(.has-image) {
+        display: none;
+      }
     }
 
-    body { font-family: Arial, Helvetica, sans-serif; background: #f0f0f0; padding: 20px; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f0f0f0;
+      padding: 20px;
+    }
 
-    .toolbar { background: #2c3e50; padding: 15px; margin-bottom: 20px; border-radius: 8px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; color: #fff; }
-    .toolbar button { background: #3498db; color: #fff; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 700; }
+    .toolbar {
+      background: #2c3e50;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+      color: #fff;
+    }
+
+    .toolbar button {
+      background: #3498db;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
     .toolbar button.success { background: #27ae60; }
     .toolbar button.danger { background: #e74c3c; }
-    .toolbar select { padding: 8px 12px; border-radius: 6px; border: none; }
 
-    .page-container { background: #fff; width: 21.59cm; min-height: 27.94cm; margin: 0 auto 28px; padding: 1.9cm; box-shadow: 0 0 20px rgba(0,0,0,.18); position: relative; }
+    .toolbar select {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    .page-container {
+      background: #fff;
+      width: 21.59cm;
+      min-height: 27.94cm;
+      margin: 0 auto 28px;
+      padding: 1.9cm;
+      box-shadow: 0 0 20px rgba(0,0,0,.18);
+      position: relative;
+    }
 
     /* HOJA 1 - ÍNDICE */
-    .index-title { text-align: center; margin-bottom: 0.9cm; padding-bottom: 12px; border-bottom: 3px solid #2c3e50; }
-    .index-title h1 { font-size: 24pt; color: #2c3e50; }
+    .index-title {
+      text-align: center;
+      margin-bottom: 0.9cm;
+      padding-bottom: 12px;
+      border-bottom: 3px solid #2c3e50;
+    }
 
-    .index-fields { display: grid; gap: 12px; margin-bottom: 14px; }
-    .field-row { display: grid; grid-template-columns: 150px 1fr; gap: 12px; align-items: center; }
-    .field-label { font-weight: 700; color: #2c3e50; font-size: 12pt; text-align: right; padding: 8px; background: #ecf0f1; border-radius: 6px; }
-    .field-input { border: 2px solid #95a5a6; padding: 10px; font-size: 11pt; border-radius: 6px; background: #f9f9f9; outline: none; }
-    .field-input.filled { border-color: #27ae60; background: #fff; }
+    .index-title h1 {
+      font-size: 24pt;
+      color: #2c3e50;
+    }
 
-    .references-section { display: flex; flex-direction: column; border-top: 2px solid #bdc3c7; padding-top: 14px; }
-    .references-section h3 { text-align: center; color: #2c3e50; margin-bottom: 10px; font-size: 14pt; }
+    .index-fields {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
 
-    /* Contenedor con altura controlada dinámicamente */
-    .references-wrap { border: 2px solid #95a5a6; border-radius: 6px; background: #f9f9f9; overflow: hidden; }
-    .references-input { padding: 14px; font-size: 10.5pt; line-height: 1.55; outline: none; height: 100%; overflow: auto; }
-    .references-input a { color: #0066cc; text-decoration: underline; }
+    .field-row {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .field-label {
+      font-weight: 700;
+      color: #2c3e50;
+      font-size: 12pt;
+      text-align: right;
+      padding: 8px;
+      background: #ecf0f1;
+      border-radius: 6px;
+    }
+
+    .field-input {
+      border: 2px solid #95a5a6;
+      padding: 10px;
+      font-size: 11pt;
+      border-radius: 6px;
+      background: #f9f9f9;
+      outline: none;
+    }
+
+    .field-input.filled {
+      border-color: #27ae60;
+      background: #fff;
+    }
+
+    .references-section {
+      display: flex;
+      flex-direction: column;
+      border-top: 2px solid #bdc3c7;
+      padding-top: 14px;
+    }
+
+    .references-section h3 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 10px;
+      font-size: 14pt;
+    }
+
+    .references-wrap {
+      border: 2px solid #95a5a6;
+      border-radius: 6px;
+      background: #f9f9f9;
+      overflow: hidden;
+    }
+
+    .references-input {
+      padding: 14px;
+      font-size: 10.5pt;
+      line-height: 1.55;
+      outline: none;
+      height: 100%;
+      overflow: auto;
+    }
+
+    .references-input a {
+      color: #0066cc;
+      text-decoration: underline;
+    }
 
     /* HOJA 2 - TEXTO */
-    .page-header { text-align: center; margin-bottom: 0.8cm; padding-bottom: 12px; border-bottom: 3px solid #8b4513; }
-    .page-header h1 { font-size: 20pt; color: #2c3e50; }
-    .page-header .subtitle { font-size: 12pt; color: #7f8c8d; font-style: italic; }
+    .page-header {
+      text-align: center;
+      margin-bottom: 0.4cm;
+      padding-bottom: 12px;
+      border-bottom: 3px solid #8b4513;
+    }
 
-    .text-page { display: flex; flex-direction: column; gap: 0.6cm; }
-    .text-block { border: 2px dashed #95a5a6; background: #f9f9f9; padding: 16px; min-height: 11.5cm; border-radius: 8px; page-break-inside: avoid; overflow: hidden; }
-    .text-block.has-content { border-color: #27ae60; background: #fff; }
-    .text-block .content { text-align: justify; line-height: 1.6; color: #2c3e50; outline: none; font-size: 1em; }
-    .text-block .content h2 { color: #8b4513; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 2px solid #d2691e; font-size: 1.2em; }
+    .page-header h1 {
+      font-size: 20pt;
+      color: #2c3e50;
+    }
+
+    .page-header .subtitle {
+      font-size: 12pt;
+      color: #7f8c8d;
+      font-style: italic;
+    }
+
+    /* Nuevo: cajita de tema/subtema */
+    .topic-box {
+      margin: 0.4cm 0 0.6cm;
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .topic-label {
+      font-weight: 700;
+      color: #2c3e50;
+      text-align: right;
+      padding: 6px 8px;
+      background: #ecf0f1;
+      border-radius: 6px;
+    }
+
+    .topic-input {
+      border: 2px solid #95a5a6;
+      border-radius: 6px;
+      padding: 8px 10px;
+      background: #f9f9f9;
+      min-height: 1.2em;
+      outline: none;
+    }
+
+    .topic-input.filled {
+      border-color: #27ae60;
+      background: #fff;
+    }
+
+    .text-page {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6cm;
+    }
+
+    .text-block {
+      border: 2px dashed #95a5a6;
+      background: #f9f9f9;
+      padding: 16px;
+      min-height: 17cm; /* un solo cuadro grande */
+      border-radius: 8px;
+      page-break-inside: avoid;
+      overflow: hidden;
+    }
+
+    .text-block.has-content {
+      border-color: #27ae60;
+      background: #fff;
+    }
+
+    .text-block .content {
+      text-align: justify;
+      line-height: 1.6;
+      color: #2c3e50;
+      outline: none;
+      font-size: 1em;
+    }
+
+    .text-block .content h2 {
+      color: #8b4513;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 2px solid #d2691e;
+      font-size: 1.2em;
+    }
+
     .text-block .content p { margin-bottom: 10px; }
-    .text-block .content sup { color: #e74c3c; font-weight: 700; }
 
-    /* HOJA 3 - IMÁGENES */
-    .image-page { display: grid; gap: 0.6cm; }
-    .image-page.grid-3 { grid-template-columns: 1fr; }
-    .image-page.grid-6 { grid-template-columns: repeat(2, 1fr); }
-    .image-page.grid-9 { grid-template-columns: repeat(3, 1fr); }
+    .text-block .content sup {
+      color: #e74c3c;
+      font-weight: 700;
+    }
 
-    .image-slot { border: 3px dashed #95a5a6; background: #ecf0f1; display: flex; align-items: center; justify-content: center; position: relative; cursor: move; transition: .2s; overflow: hidden; min-height: 7.2cm; }
-    .image-slot.has-image { border-style: solid; border-color: #27ae60; background: #fff; }
-    .image-slot img { max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none; }
-    .image-slot .add-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #3498db; color: #fff; width: 56px; height: 56px; border-radius: 50%; border: 0; font-size: 30px; font-weight: 700; }
+    /* HOJA 3 - IMÁGENES (solo imágenes) */
+    .image-page {
+      display: grid;
+      gap: 0.6cm;
+    }
+
+    .image-page.grid-3  { grid-template-columns: 1fr; }
+    .image-page.grid-6  { grid-template-columns: repeat(2, 1fr); }
+    .image-page.grid-9  { grid-template-columns: repeat(3, 1fr); }
+    .image-page.grid-12 { grid-template-columns: repeat(3, 1fr); }
+
+    /* Alturas según cantidad para que quepan mejor en la hoja */
+    .image-page.grid-3  .image-slot { min-height: 7cm; }
+    .image-page.grid-6  .image-slot { min-height: 6cm; }
+    .image-page.grid-9  .image-slot { min-height: 5cm; }
+    .image-page.grid-12 .image-slot { min-height: 4.2cm; }
+
+    .image-slot {
+      border: 3px dashed #95a5a6;
+      background: #ecf0f1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: move;
+      transition: .2s;
+      overflow: hidden;
+    }
+
+    .image-slot.has-image {
+      border-style: solid;
+      border-color: #27ae60;
+      background: #fff;
+    }
+
+    .image-slot img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .image-slot .add-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #3498db;
+      color: #fff;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 0;
+      font-size: 30px;
+      font-weight: 700;
+    }
+
     .image-slot.has-image .add-btn { display: none; }
-    .image-slot .remove-btn { position: absolute; top: 8px; right: 8px; width: 34px; height: 34px; border-radius: 50%; background: #e74c3c; color: #fff; border: 0; font-weight: 700; display: none; }
+
+    .image-slot .remove-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #e74c3c;
+      color: #fff;
+      border: 0;
+      font-weight: 700;
+      display: none;
+    }
+
     .image-slot.has-image .remove-btn { display: block; }
-    .image-slot .drag-handle { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); background: rgba(52,152,219,.9); color: #fff; padding: 4px 12px; border-radius: 14px; font-size: 10pt; display: none; }
+
+    .image-slot .drag-handle {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(52,152,219,.9);
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 14px;
+      font-size: 10pt;
+      display: none;
+    }
+
     .image-slot.has-image .drag-handle { display: block; }
 
-    /* Área editable bajo el subtítulo de la Hoja 3 */
-    .image-notes { border: 2px dashed #95a5a6; background: #f9f9f9; padding: 12px; border-radius: 8px; margin-bottom: 0.6cm; min-height: 3.6cm; overflow: hidden; }
-    .image-notes.has-content { border-color: #27ae60; background: #fff; }
-    .image-notes .content { outline: none; line-height: 1.55; text-align: justify; font-size: 1em; }
+    .instructions {
+      background: #fff9e6;
+      border-left: 4px solid #f39c12;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+    }
 
-    .instructions { background: #fff9e6; border-left: 4px solid #f39c12; padding: 15px; margin-bottom: 20px; border-radius: 6px; }
+    /* Modo impresión sin cambiar tamaños de letra */
+    .print-mode .text-block .content,
+    .print-mode #referencesInput {
+      font-size: inherit !important;
+    }
   </style>
 </head>
 <body>
@@ -97,6 +423,7 @@
       <option value="3">3 imágenes</option>
       <option value="6">6 imágenes</option>
       <option value="9">9 imágenes</option>
+      <option value="12">12 imágenes</option>
     </select>
     <button onclick="document.getElementById('bulkFileInput').click()">📁 Cargar Imágenes</button>
     <input type="file" id="bulkFileInput" multiple accept="image/*" style="display:none" onchange="loadBulkImages(event)">
@@ -133,7 +460,11 @@
     <div class="references-section">
       <h3>Referencias y Fuentes Consultadas</h3>
       <div class="references-wrap" id="refsWrap">
-        <div class="references-input" id="referencesInput" contenteditable="true" oninput="detectLinks(); fitToHeight('#referencesInput', {min:9,max:12,step:.5});" onpaste="handleReferencePaste(event)">Pega aquí tus referencias bibliográficas y enlaces web…</div>
+        <div class="references-input" id="referencesInput" contenteditable="true"
+             oninput="detectLinks(); fitToHeight('#referencesInput', {min:9,max:12,step:.5});"
+             onpaste="handleReferencePaste(event)">
+          Pega aquí tus referencias bibliográficas y enlaces web…
+        </div>
       </div>
     </div>
   </div>
@@ -145,36 +476,32 @@
       <div class="subtitle" contenteditable="true">Purépechas, Mazahuas y Huastecos</div>
     </div>
 
+    <!-- Nuevo: cajita pequeña de tema/subtema -->
+    <div class="topic-box">
+      <div class="topic-label">Subtema:</div>
+      <div class="topic-input" id="topicInput" contenteditable="true" oninput="checkTopicFilled()">Los Purépechas</div>
+    </div>
+
     <div class="text-page">
-      <div class="text-block has-content" id="textBlock1">
-        <div class="content" contenteditable="true" oninput="markHasContent(this); fitToHeight('#textBlock1', {min:9,max:16});">
-          <h2>Los Purépechas</h2>
+      <div class="text-block has-content" id="textBlockMain">
+        <div class="content" contenteditable="true"
+             oninput="markHasContent(this); fitToHeight('#textBlockMain', {min:9,max:16});">
+          <h2>Desarrollo</h2>
           <p>Para las comunidades purépechas de Michoacán, la celebración del Día de Muertos es conocida como <em>Animeecheri Kúinchekua</em>, que significa "Fiesta de las Ánimas". Esta tradición no es una celebración a la muerte, sino a la vida continuada o "la otra vida"…<sup>1</sup></p>
           <p>Los purépechas afirman que cuando alguien muere, su cuerpo se sepulta, pero su alma sigue viviendo…<sup>2</sup></p>
           <p>Uno de los elementos que distingue esta celebración son los grandes altares…<sup>3</sup> …leyenda que cuenta que estas mariposas son las almas que regresan…<sup>4</sup></p>
-        </div>
-      </div>
-
-      <div class="text-block has-content" id="textBlock2">
-        <div class="content" contenteditable="true" oninput="markHasContent(this); fitToHeight('#textBlock2', {min:9,max:16});">
-          <h2>Los Mazahuas</h2>
           <p>La comunidad mazahua, ubicada principalmente en el Estado de México y Michoacán…<sup>5</sup> …pétalos del cempasúchil…<sup>6</sup> …copal…<sup>7</sup></p>
-          <h2>Los Huastecos</h2>
-          <p>En la región Huasteca… <em>Xantolo</em> …del 30 de octubre al 2 de noviembre…<sup>10</sup> …danzas tradicionales conocidas como "vinuetes".<sup>11</sup></p>
+          <p>En la región Huasteca se celebra el <em>Xantolo</em>, una festividad que se extiende del 30 de octubre al 2 de noviembre…<sup>10</sup> …con danzas tradicionales conocidas como "vinuetes".<sup>11</sup></p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- HOJA 3: IMÁGENES -->
+  <!-- HOJA 3: IMÁGENES (sin cuadros de texto, solo imágenes) -->
   <div class="page-container" id="page3">
     <div class="page-header">
       <h1>Imágenes Representativas</h1>
       <div class="subtitle">Tradiciones del Día de Muertos</div>
-    </div>
-
-    <div class="image-notes" id="imageNotes">
-      <div class="content" contenteditable="true" oninput="markHasContent(this); fitToHeight('#imageNotes', {min:9,max:14});">Escribe aquí una breve explicación o pie de imágenes. Este bloque es editable y se autoajusta para no desbordarse.</div>
     </div>
 
     <div class="image-page grid-3" id="imagePage"></div>
@@ -182,131 +509,296 @@
 
   <script>
     /* ===== Utilidades ===== */
-    function checkFilled(input){ input.value.trim() ? input.classList.add('filled') : input.classList.remove('filled'); }
-    function ensureLabel(node){ const t=node.innerText.trim(); if(!t.endsWith(':')) node.innerText=t+':'; }
-    function markHasContent(el){ const box=el.closest('.text-block, .image-notes'); if(box) box.classList.add('has-content'); }
-    function updateTopic(){ const title=document.getElementById('mainTitle').innerText.trim(); const topic=document.getElementById('fieldTopic'); topic.value=title; checkFilled(topic); }
+    function checkFilled(input) {
+      input.value.trim()
+        ? input.classList.add('filled')
+        : input.classList.remove('filled');
+    }
+
+    function ensureLabel(node) {
+      const t = node.innerText.trim();
+      if (!t.endsWith(':')) node.innerText = t + ':';
+    }
+
+    function markHasContent(el) {
+      const box = el.closest('.text-block');
+      if (box) box.classList.add('has-content');
+    }
+
+    function updateTopic() {
+      const title = document.getElementById('mainTitle').innerText.trim();
+      const topic = document.getElementById('fieldTopic');
+      topic.value = title;
+      checkFilled(topic);
+    }
+
+    function checkTopicFilled() {
+      const el = document.getElementById('topicInput');
+      if (!el) return;
+      const t = el.innerText.trim();
+      t ? el.classList.add('filled') : el.classList.remove('filled');
+    }
 
     // Detectar URLs pegadas en referencias y convertirlas a <a>
-    function detectLinks(){ const ref=document.getElementById('referencesInput'); const html=ref.innerHTML; const url=/\b(https?:\/\/[^\s<]+)/g; const updated=html.replace(url,(u)=> html.includes(`<a href="${u}"`) ? u : `<a href="${u}" target="_blank">${u}</a>`); if(updated!==html){ ref.innerHTML=updated; placeCaretAtEnd(ref); } }
-    function handleReferencePaste(){ setTimeout(detectLinks, 80); }
-    function placeCaretAtEnd(el){ el.focus(); if(typeof window.getSelection!='undefined' && typeof document.createRange!='undefined'){ const range=document.createRange(); range.selectNodeContents(el); range.collapse(false); const sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(range); } }
+    function detectLinks() {
+      const ref = document.getElementById('referencesInput');
+      const html = ref.innerHTML;
+      const url = /\b(https?:\/\/[^\s<]+)/g;
+      const updated = html.replace(url, (u) =>
+        html.includes(`<a href="${u}"`) ? u : `<a href="${u}" target="_blank">${u}</a>`
+      );
+      if (updated !== html) {
+        ref.innerHTML = updated;
+        placeCaretAtEnd(ref);
+      }
+    }
 
-    /* ===== Autoajuste de texto con márgenes fijos =====
-       - Ajusta el tamaño de fuente del contenedor (no de cada párrafo) para conservar proporciones.
-       - Aplica a: #textBlock1, #textBlock2, #imageNotes, #referencesInput
-    */
-    function fitToHeight(selector, opts){
-      const options = Object.assign({ min: 9, max: 16, step: 0.5 }, opts||{});
+    function handleReferencePaste() {
+      setTimeout(detectLinks, 80);
+    }
+
+    function placeCaretAtEnd(el) {
+      el.focus();
+      if (typeof window.getSelection != 'undefined' && typeof document.createRange != 'undefined') {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    }
+
+    /* ===== Autoajuste de texto con márgenes fijos ===== */
+    function fitToHeight(selector, opts) {
+      const options = Object.assign({ min: 9, max: 16, step: 0.5 }, opts || {});
       const box = document.querySelector(selector);
-      if(!box) return;
-      const container = box.classList.contains('content') ? box.parentElement : box; // aceptar llamados con content
-      // Target: si es .content, escalamos el padre (.text-block|.image-notes|.references-wrap)
+      if (!box) return;
+
+      const container = box.classList.contains('content') ? box.parentElement : box;
       const target = container;
-      const inner = target.querySelector('.content') || target; // referencias usa el propio nodo
-      // Empezar grande e ir bajando hasta que quepa
+      const inner = target.querySelector('.content') || target;
+
       let size = options.max;
       inner.style.fontSize = size + 'pt';
-      // loop protector
-      for(let i=0;i<60;i++){
-        if(target.scrollHeight <= target.clientHeight + 1) break;
+
+      for (let i = 0; i < 60; i++) {
+        if (target.scrollHeight <= target.clientHeight + 1) break;
         size -= options.step;
-        if(size <= options.min){ size = options.min; break; }
+        if (size <= options.min) {
+          size = options.min;
+          break;
+        }
         inner.style.fontSize = size + 'pt';
       }
     }
 
-    // Calcular altura máxima para referencias en Hoja 1 respetando el marco
-    function sizeReferencesBox(){
+    // Calcular altura máxima para referencias en Hoja 1
+    function sizeReferencesBox() {
       const page = document.getElementById('page1');
       const wrap = document.getElementById('refsWrap');
       const titleH = page.querySelector('.index-title').offsetHeight;
       const fieldsH = page.querySelector('.index-fields').offsetHeight;
       const secHeadH = page.querySelector('.references-section h3').offsetHeight;
-      const pageInnerH = page.clientHeight; // altura disponible dentro de padding
-      const paddingFix = 18; // respiración visual
+      const pageInnerH = page.clientHeight;
+      const paddingFix = 18;
       const maxH = pageInnerH - (titleH + fieldsH + secHeadH + 40 + paddingFix);
       wrap.style.maxHeight = Math.max(160, maxH) + 'px';
-      fitToHeight('#referencesInput', {min:9, max:12, step:.5});
+      fitToHeight('#referencesInput', { min: 9, max: 12, step: .5 });
     }
 
     /* ===== Imágenes: slots y drag ===== */
-    const imageSlots = {}; let selectedSlot=null; let draggedSlot=null;
+    const imageSlots = {};
+    let selectedSlot = null;
+    let draggedSlot = null;
 
-    function createImageSlots(count){
-      const imagePage=document.getElementById('imagePage');
-      imagePage.innerHTML='';
-      const titles=['Purépechas','Mazahuas','Huastecos','Imagen 4','Imagen 5','Imagen 6','Imagen 7','Imagen 8','Imagen 9'];
-      for(let i=0;i<count;i++){
-        const slot=document.createElement('div');
-        slot.className='image-slot'; slot.dataset.index=i; slot.draggable=false;
-        const saved=imageSlots[i];
-        if(saved){
-          slot.classList.add('has-image'); slot.draggable=true;
-          slot.innerHTML=`<img src="${saved}" alt="Imagen ${i+1}"><button class='remove-btn' onclick='removeImage(${i}, event)'>✕</button><div class='drag-handle'>↕️ Arrastrar</div>`;
-        }else{
-          slot.innerHTML=`<button class='add-btn' onclick='addImageToSlot(${i})'>+</button><input type='file' id='fileInput${i}' accept='image/*' style='display:none' onchange='loadSingleImage(${i}, event)'>`;
+    function createImageSlots(count) {
+      const imagePage = document.getElementById('imagePage');
+      imagePage.innerHTML = '';
+      const titles = [
+        'Purépechas',
+        'Mazahuas',
+        'Huastecos',
+        'Imagen 4',
+        'Imagen 5',
+        'Imagen 6',
+        'Imagen 7',
+        'Imagen 8',
+        'Imagen 9',
+        'Imagen 10',
+        'Imagen 11',
+        'Imagen 12'
+      ];
+
+      for (let i = 0; i < count; i++) {
+        const slot = document.createElement('div');
+        slot.className = 'image-slot';
+        slot.dataset.index = i;
+        slot.draggable = false;
+
+        const saved = imageSlots[i];
+        if (saved) {
+          slot.classList.add('has-image');
+          slot.draggable = true;
+          slot.innerHTML = `
+            <img src="${saved}" alt="${titles[i] || ('Imagen ' + (i+1))}">
+            <button class='remove-btn' onclick='removeImage(${i}, event)'>✕</button>
+            <div class='drag-handle'>↕️ Arrastrar</div>`;
+        } else {
+          slot.innerHTML = `
+            <button class='add-btn' onclick='addImageToSlot(${i})'>+</button>
+            <input type='file' id='fileInput${i}' accept='image/*' style='display:none'
+                   onchange='loadSingleImage(${i}, event)'>`;
         }
-        slot.addEventListener('click',()=>{ selectedSlot=i; });
+
+        slot.addEventListener('click', () => { selectedSlot = i; });
         slot.addEventListener('dragstart', handleDragStart);
         slot.addEventListener('dragover', handleDragOver);
         slot.addEventListener('drop', handleDrop);
         slot.addEventListener('dragend', handleDragEnd);
+
         imagePage.appendChild(slot);
       }
     }
 
-    function changeImageLayout(){
-      const layout=document.getElementById('imageLayout').value;
-      const page=document.getElementById('imagePage');
-      page.className=`image-page grid-${layout}`;
-      createImageSlots(parseInt(layout));
+    function changeImageLayout() {
+      const layout = parseInt(document.getElementById('imageLayout').value, 10);
+      const page = document.getElementById('imagePage');
+      page.className = `image-page grid-${layout}`;
+      createImageSlots(layout);
     }
 
-    function addImageToSlot(i){ document.getElementById(`fileInput${i}`).click(); }
-    function loadSingleImage(i,e){ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=(ev)=>{ imageSlots[i]=ev.target.result; changeImageLayout(); }; r.readAsDataURL(f); }
-    function loadBulkImages(e){ const files=Array.from(e.target.files); const layout=parseInt(document.getElementById('imageLayout').value); files.slice(0,layout).forEach((f,idx)=>{ const r=new FileReader(); r.onload=(ev)=>{ imageSlots[idx]=ev.target.result; if(idx===Math.min(files.length,layout)-1) changeImageLayout(); }; r.readAsDataURL(f); }); }
-    function clearAllImages(){ if(confirm('¿Eliminar todas las imágenes?')){ Object.keys(imageSlots).forEach(k=>delete imageSlots[k]); changeImageLayout(); } }
-    function removeImage(i,ev){ ev.stopPropagation(); delete imageSlots[i]; changeImageLayout(); }
+    function addImageToSlot(i) {
+      document.getElementById(`fileInput${i}`).click();
+    }
+
+    function loadSingleImage(i, e) {
+      const f = e.target.files[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = (ev) => {
+        imageSlots[i] = ev.target.result;
+        changeImageLayout();
+      };
+      r.readAsDataURL(f);
+    }
+
+    function loadBulkImages(e) {
+      const files = Array.from(e.target.files);
+      const layout = parseInt(document.getElementById('imageLayout').value, 10);
+      files.slice(0, layout).forEach((f, idx) => {
+        const r = new FileReader();
+        r.onload = (ev) => {
+          imageSlots[idx] = ev.target.result;
+          if (idx === Math.min(files.length, layout) - 1) changeImageLayout();
+        };
+        r.readAsDataURL(f);
+      });
+    }
+
+    function clearAllImages() {
+      if (confirm('¿Eliminar todas las imágenes?')) {
+        Object.keys(imageSlots).forEach(k => delete imageSlots[k]);
+        changeImageLayout();
+      }
+    }
+
+    function removeImage(i, ev) {
+      ev.stopPropagation();
+      delete imageSlots[i];
+      changeImageLayout();
+    }
 
     // Drag & drop
-    function handleDragStart(e){ draggedSlot=parseInt(this.dataset.index); this.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; }
-    function handleDragOver(e){ e.preventDefault(); e.dataTransfer.dropEffect='move'; }
-    function handleDrop(e){ e.stopPropagation(); const target=parseInt(this.dataset.index); if(draggedSlot===target) return; const tmp=imageSlots[draggedSlot]; imageSlots[draggedSlot]=imageSlots[target]; imageSlots[target]=tmp; changeImageLayout(); }
-    function handleDragEnd(){ this.classList.remove('dragging'); }
+    function handleDragStart(e) {
+      draggedSlot = parseInt(this.dataset.index, 10);
+      this.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    }
+
+    function handleDrop(e) {
+      e.stopPropagation();
+      const target = parseInt(this.dataset.index, 10);
+      if (draggedSlot === target) return;
+      const tmp = imageSlots[draggedSlot];
+      imageSlots[draggedSlot] = imageSlots[target];
+      imageSlots[target] = tmp;
+      changeImageLayout();
+    }
+
+    function handleDragEnd() {
+      this.classList.remove('dragging');
+    }
 
     // Pegado directo de imágenes al slot seleccionado
-    document.addEventListener('paste', (e)=>{
-      if(selectedSlot===null) return; const items=e.clipboardData.items; for(const it of items){ if(it.type.indexOf('image')!==-1){ const blob=it.getAsFile(); const r=new FileReader(); r.onload=(ev)=>{ imageSlots[selectedSlot]=ev.target.result; changeImageLayout(); }; r.readAsDataURL(blob); break; } }
+    document.addEventListener('paste', (e) => {
+      if (selectedSlot === null) return;
+      const items = e.clipboardData.items;
+      for (const it of items) {
+        if (it.type.indexOf('image') !== -1) {
+          const blob = it.getAsFile();
+          const r = new FileReader();
+          r.onload = (ev) => {
+            imageSlots[selectedSlot] = ev.target.result;
+            changeImageLayout();
+          };
+          r.readAsDataURL(blob);
+          break;
+        }
+      }
     });
 
-    /* ===== Eventos de impresión: reajuste inteligente ===== */
-    function fitAll(){
+    /* ===== Eventos de impresión ===== */
+    function fitAll() {
       sizeReferencesBox();
-      fitToHeight('#textBlock1', {min:9, max:16});
-      fitToHeight('#textBlock2', {min:9, max:16});
-      fitToHeight('#imageNotes', {min:9, max:14});
+      fitToHeight('#textBlockMain', { min: 9, max: 16 });
     }
 
-    window.addEventListener('resize', ()=>{ sizeReferencesBox(); fitAll(); });
+    window.addEventListener('resize', () => {
+      sizeReferencesBox();
+      fitAll();
+    });
 
-    // Antes / después de imprimir (soporta navegadores modernos)
-    if(window.matchMedia){
+    function enterPrintMode() {
+      document.body.classList.add('print-mode');
+    }
+
+    function exitPrintMode() {
+      document.body.classList.remove('print-mode');
+    }
+
+    if (window.matchMedia) {
       const mql = window.matchMedia('print');
-      mql.addListener((mq)=>{ if(mq.matches){ fitAll(); } });
+      mql.addListener((mq) => {
+        if (mq.matches) enterPrintMode();
+        else exitPrintMode();
+      });
     }
-    window.onbeforeprint = ()=>{ fitAll(); };
+
+    window.onbeforeprint = enterPrintMode;
+    window.onafterprint = exitPrintMode;
 
     /* ===== Init ===== */
-    window.addEventListener('load', ()=>{
+    window.addEventListener('load', () => {
       // Fecha actual
-      const today=new Date(); const d=String(today.getDate()).padStart(2,'0'); const m=String(today.getMonth()+1).padStart(2,'0'); const y=today.getFullYear();
-      const dateField=document.getElementById('field3'); dateField.value=`${d}/${m}/${y}`; checkFilled(dateField);
+      const today = new Date();
+      const d = String(today.getDate()).padStart(2, '0');
+      const m = String(today.getMonth() + 1).padStart(2, '0');
+      const y = today.getFullYear();
+      const dateField = document.getElementById('field3');
+      dateField.value = `${d}/${m}/${y}`;
+      checkFilled(dateField);
 
       changeImageLayout();
       updateTopic();
       sizeReferencesBox();
       fitAll();
+      checkTopicFilled();
     });
   </script>
 </body>
