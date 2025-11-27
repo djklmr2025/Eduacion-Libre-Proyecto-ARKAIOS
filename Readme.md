@@ -15,7 +15,7 @@ Eduacion Libre Proyecto ARKAIOS:
 
 ### *"El conocimiento debe ser libre, accesible y para todos"*
 
-[🚀 Demo en Vivo](#https://djklmr2025.github.io/Eduacion-Libre-Proyecto-ARKAIOS/) | [📚 Documentación](#documentación) | [🤝 Contribuir](#cómo-contribuir) | [💬 Comunidad](#comunidad)
+[🚀 Demo en Vivo](https://djklmr2025.github.io/Eduacion-Libre-Proyecto-ARKAIOS) | [📚 Documentación](#documentación) | [🤝 Contribuir](#cómo-contribuir) | [💬 Comunidad](#comunidad)
 
 </div>
 
