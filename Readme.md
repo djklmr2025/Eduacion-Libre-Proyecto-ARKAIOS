@@ -1,9 +1,10 @@
 ![Proyecto arkaios-neural-agent]
-(<p align="center">
-  <img src="https://github.com/djklmr2025/ARK-AI-OS/blob/main/images/62b30d8e-4988-4687-b867-025bd828f685.png?raw=true" alt="ARK-AI-OS Banner" width="100%">
 </p>)
 Eduacion Libre Proyecto ARKAIOS:
 # 🎓 Centro de Plantillas Educativas - Proyecto ARKAIOS
+(<p align="center">
+  <img src="https://github.com/djklmr2025/ARK-AI-OS/blob/main/images/62b30d8e-4988-4687-b867-025bd828f685.png?raw=true" alt="ARK-AI-OS Banner" width="100%">
+
 
 <div align="center">
 
