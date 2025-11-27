@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Centro de Plantillas Educativas - Arkaios</title>
   
-  <!-- Puter.js para acceso gratuito a Claude -->
+  <!-- Puter.js para acceso gratuito a ARKAIOS vía Puter -->
   <script src="https://js.puter.com/v2/"></script>
   
   <!-- jsPDF para exportación a PDF -->
@@ -568,14 +568,14 @@
   </div>
 
   <!-- Botón Flotante del Asistente IA -->
-  <button class="ai-button" id="aiButton" title="Asistente Claude IA">
+  <button class="ai-button" id="aiButton" title="Asistente ARKAIOS IA">
     🤖
   </button>
 
   <!-- Panel del Chat IA -->
   <div class="ai-panel" id="aiPanel">
     <div class="ai-header">
-      <h3>🤖 Asistente Claude</h3>
+      <h3>🤖 Asistente ARKAIOS</h3>
       <div class="ai-header-actions">
         <button class="ai-control" id="aiExpand" title="Maximizar/Restaurar chat">⤢</button>
         <button class="ai-close" id="aiClose" title="Cerrar">×</button>
@@ -591,7 +591,7 @@
 
     <div class="ai-messages" id="aiMessages">
       <div class="message system">
-        ¡Hola! Soy Claude, tu asistente inteligente. Ahora cuentas con funciones de guardado automático y exportación a PDF. ¿En qué puedo ayudarte? 😊
+        ¡Hola! Soy ARKAIOS, tu asistente conectado a Puter. Ahora cuentas con funciones de guardado automático y exportación a PDF. ¿En qué puedo ayudarte? 😊
       </div>
     </div>
 
@@ -804,19 +804,147 @@
     const frame = document.getElementById('plantillaFrame');
     let currentTemplate = 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html';
 
-    buttons.forEach(btn => {
+    function setTemplate(target) {
+      if (!target) return;
+      currentTemplate = target;
+      frame.src = target;
+      buttons.forEach((b) => {
+        const isActive = b.getAttribute('data-target') === target;
+        b.classList.toggle('active', isActive);
+      });
+    }
+
+    buttons.forEach((btn) => {
       btn.addEventListener('click', () => {
-        buttons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
         const target = btn.getAttribute('data-target');
-        currentTemplate = target;
-        frame.src = target;
+        setTemplate(target);
       });
     });
 
-    // ========== SISTEMA DE IA CLAUDE (SIMPLIFICADO) ==========
+    frame.addEventListener('load', () => {
+      // Avisar a la plantilla que el marco se cargó y sincronizar el autosave
+      try {
+        frame.contentWindow?.postMessage(
+          { type: 'ARKAIOS_TEMPLATE_READY', template: currentTemplate },
+          '*'
+        );
+      } catch (error) {
+        console.warn('No se pudo notificar a la plantilla cargada:', error);
+      }
+      ARKAIOS.autoSave();
+    });
+
+    // ========== SISTEMA DE IA ARKAIOS (Puter) ==========
     const aiButton = document.getElementById('aiButton');
     const aiPanel = document.getElementById('aiPanel');
     const aiClose = document.getElementById('aiClose');
     const aiExpand = document.getElementById('aiExpand');
     const aiMessages = document.getElementById('aiMessages');
+    const aiInput = document.getElementById('aiInput');
+    const aiSend = document.getElementById('aiSend');
+    const typingIndicator = document.getElementById('typingIndicator');
+
+    const aiState = {
+      model: localStorage.getItem('arkaios:model') || 'gpt-4o-mini',
+      history: [
+        {
+          role: 'system',
+          content:
+            'Eres ARKAIOS, un asistente educativo con superpoderes. Hablas en español claro, das pasos accionables, propones mejoras y sabes trabajar con plantillas HTML. Usa tono motivador y breve. Prioriza dar código listo para copiar cuando sea útil.'
+        },
+        {
+          role: 'system',
+          content:
+            'Contexto: estás dentro del Centro de Plantillas Educativas. Plantillas disponibles: carta MX, generador de fotos infantiles, imágenes v2, cuadros de imágenes y círculos Jack. Si el usuario pide cambiar de plantilla, menciona el nombre del archivo.'
+        }
+      ]
+    };
+
+    function appendMessage(role, content) {
+      const div = document.createElement('div');
+      div.className = `message ${role}`;
+      div.textContent = content;
+      aiMessages.appendChild(div);
+      aiMessages.scrollTop = aiMessages.scrollHeight;
+    }
+
+    function togglePanel() {
+      aiPanel.classList.toggle('active');
+    }
+
+    aiButton.addEventListener('click', togglePanel);
+    aiClose.addEventListener('click', () => aiPanel.classList.remove('active'));
+    aiExpand.addEventListener('click', () => aiPanel.classList.toggle('fullscreen'));
+
+    async function callArkaios(messages) {
+      if (!window.puter?.ai?.chat?.completions?.create) {
+        throw new Error('Puter AI no está disponible en este navegador.');
+      }
+
+      const completion = await window.puter.ai.chat.completions.create({
+        model: aiState.model,
+        temperature: 0.35,
+        max_tokens: 800,
+        messages
+      });
+
+      const content = completion?.choices?.[0]?.message?.content;
+      if (!content) throw new Error('No se recibió respuesta del modelo ARKAIOS.');
+      return typeof content === 'string' ? content : content?.join(' ');
+    }
+
+    async function sendMessage() {
+      const userText = aiInput.value.trim();
+      if (!userText) return;
+
+      appendMessage('user', userText);
+      aiState.history.push({ role: 'user', content: userText });
+      aiInput.value = '';
+      aiSend.disabled = true;
+      typingIndicator.classList.add('active');
+
+      try {
+        const reply = await callArkaios(aiState.history);
+        aiState.history.push({ role: 'assistant', content: reply });
+        appendMessage('assistant', reply);
+      } catch (error) {
+        console.error(error);
+        appendMessage(
+          'assistant',
+          'No pude conectar con ARKAIOS desde Puter. Verifica tu conexión o vuelve a intentarlo en unos segundos.'
+        );
+      } finally {
+        aiSend.disabled = false;
+        typingIndicator.classList.remove('active');
+        aiInput.focus();
+      }
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    }
+
+    function quickAction(type) {
+      const hints = {
+        plantilla: 'Crea una plantilla nueva en HTML, lista para usar, con estilos inline minimalistas.',
+        ayuda: 'Explícame cómo usar las plantillas del panel y cómo exportar a PDF.',
+        contenido: 'Genera contenido educativo breve para llenar la plantilla actual.',
+        explicar: 'Explica la estructura de la plantilla actual y cómo adaptarla.'
+      };
+      aiInput.value = hints[type] || '';
+      aiInput.focus();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      ARKAIOS.init();
+      appendMessage(
+        'system',
+        '¡Hola! Soy ARKAIOS, tu asistente conectado a Puter. Puedo crear plantillas, mejorar contenido y guiarte paso a paso.'
+      );
+    });
+  </script>
+</body>
+</html>
