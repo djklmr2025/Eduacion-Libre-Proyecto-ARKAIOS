@@ -1,4 +1,6 @@
-![Proyecto arkaios-neural-agent](https://raw.githubusercontent.com/djklmr2025/arkaios-neural-agent/main/assets/arkaios_spin_bar.png)
+![Proyecto arkaios-neural-agent](<p align="center">
+  <img src="https://github.com/djklmr2025/ARK-AI-OS/blob/main/images/62b30d8e-4988-4687-b867-025bd828f685.png?raw=true" alt="ARK-AI-OS Banner" width="100%">
+</p>)
 Eduacion Libre Proyecto ARKAIOS:
 # 🎓 Centro de Plantillas Educativas - Proyecto ARKAIOS
 
@@ -11,7 +13,7 @@ Eduacion Libre Proyecto ARKAIOS:
 
 ### *"El conocimiento debe ser libre, accesible y para todos"*
 
-[🚀 Demo en Vivo](#) | [📚 Documentación](#documentación) | [🤝 Contribuir](#cómo-contribuir) | [💬 Comunidad](#comunidad)
+[🚀 Demo en Vivo](#https://djklmr2025.github.io/Eduacion-Libre-Proyecto-ARKAIOS/) | [📚 Documentación](#documentación) | [🤝 Contribuir](#cómo-contribuir) | [💬 Comunidad](#comunidad)
 
 </div>
 
