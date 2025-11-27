@@ -10,7 +10,7 @@ Eduacion Libre Proyecto ARKAIOS:
 
 ![Proyecto ARKAIOS](https://img.shields.io/badge/Proyecto-ARKAIOS-orange?style=for-the-badge)
 ![Licencia](https://img.shields.io/badge/Licencia-MIT-green?style=for-the-badge)
-![IA Integrada](https://img.shields.io/badge/IA-Claude%20Integrado-blue?style=for-the-badge)
+![IA Integrada](https://img.shields.io/badge/IA-ARKAIOS%20Integrado-blue?style=for-the-badge)
 ![Educación Libre](https://img.shields.io/badge/Educaci%C3%B3n-Libre%20y%20Gratuita-red?style=for-the-badge)
 
 ### *"El conocimiento debe ser libre, accesible y para todos"*
