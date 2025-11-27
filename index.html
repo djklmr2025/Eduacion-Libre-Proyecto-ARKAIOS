@@ -312,6 +312,11 @@
       background: rgba(255,255,255,0.25);
       color: #0b1220;
     }
+    .ai-status-warning {
+      font-size: 0.78rem;
+      color: #f97316;
+      margin-top: 4px;
+    }
     .ai-header-actions {
       display: flex;
       align-items: center;
@@ -876,6 +881,7 @@
     const typingIndicator = document.getElementById('typingIndicator');
     const aiStatus = document.getElementById('aiStatus');
     let puterReady = false;
+    let usingPerplexity = false;
 
     const aiState = {
       model: localStorage.getItem('arkaios:model') || 'gpt-4o-mini',
@@ -900,7 +906,57 @@
     }
 
     function openPuterApp() {
-      window.open('https://puter.com/app', '_blank', 'noopener');
+      window.open('https://app.puter.com', '_blank', 'noopener');
+    }
+
+    function getPplxKey() {
+      let key = localStorage.getItem('arkaios:pplxKey');
+      if (!key) {
+        key = prompt('Pega tu API key de Perplexity (se guarda en este navegador)');
+        if (key) localStorage.setItem('arkaios:pplxKey', key.trim());
+      }
+      return key;
+    }
+
+    async function callPerplexity(messages) {
+      const key = getPplxKey();
+      if (!key) {
+        throw new Error('No se proporcionó API key de Perplexity');
+      }
+
+      const response = await fetch('https://api.perplexity.ai/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${key}`
+        },
+        body: JSON.stringify({
+          model: 'llama-3.1-sonar-large-32k-online',
+          temperature: 0.35,
+          max_tokens: 800,
+          messages
+        })
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Perplexity error: ${response.status} ${text}`);
+      }
+
+      const data = await response.json();
+      const content = data?.choices?.[0]?.message?.content;
+      if (!content) throw new Error('Perplexity no devolvió contenido.');
+      return typeof content === 'string' ? content : content?.join(' ');
+    }
+
+    function checkEnvironment() {
+      if (location.protocol === 'file:') {
+        setAIStatus('error', 'Abre desde https:// (no file://)');
+        appendMessage(
+          'system',
+          'Para conectar con Puter, abre este proyecto desde una URL con https (ej. GitHub Pages) o un server local. En file:// el SDK de Puter no funciona.'
+        );
+      }
     }
 
     // Espera a que Puter cargue y, si es posible, fuerza el inicio de sesión del usuario
@@ -962,21 +1018,31 @@
     aiExpand.addEventListener('click', () => aiPanel.classList.toggle('fullscreen'));
 
     async function callArkaios(messages) {
-      await ensurePuterAI();
-      if (!window.puter?.ai?.chat?.completions?.create) {
-        throw new Error('Puter AI no está disponible en este navegador.');
+      usingPerplexity = false;
+      try {
+        await ensurePuterAI();
+        if (!window.puter?.ai?.chat?.completions?.create) {
+          throw new Error('Puter AI no está disponible en este navegador.');
+        }
+
+        const completion = await window.puter.ai.chat.completions.create({
+          model: aiState.model,
+          temperature: 0.35,
+          max_tokens: 800,
+          messages
+        });
+
+        const content = completion?.choices?.[0]?.message?.content;
+        if (!content) throw new Error('No se recibió respuesta del modelo ARKAIOS.');
+        return typeof content === 'string' ? content : content?.join(' ');
+      } catch (err) {
+        console.warn('Fallo Puter, usando Perplexity', err);
+        setAIStatus('pending', 'Usando Perplexity…');
+        usingPerplexity = true;
+        const content = await callPerplexity(messages);
+        setAIStatus('ready', 'Perplexity listo');
+        return content;
       }
-
-      const completion = await window.puter.ai.chat.completions.create({
-        model: aiState.model,
-        temperature: 0.35,
-        max_tokens: 800,
-        messages
-      });
-
-      const content = completion?.choices?.[0]?.message?.content;
-      if (!content) throw new Error('No se recibió respuesta del modelo ARKAIOS.');
-      return typeof content === 'string' ? content : content?.join(' ');
     }
 
     async function sendMessage() {
@@ -994,14 +1060,14 @@
         const reply = await callArkaios(aiState.history);
         aiState.history.push({ role: 'assistant', content: reply });
         appendMessage('assistant', reply);
-        setAIStatus('ready', 'Puter listo');
+        setAIStatus('ready', usingPerplexity ? 'Perplexity listo' : 'Puter listo');
       } catch (error) {
         console.error(error);
         appendMessage(
           'assistant',
           'No pude conectar con ARKAIOS desde Puter. Verifica tu conexión o vuelve a intentarlo en unos segundos.'
         );
-        setAIStatus('error', 'Sin conexión con Puter');
+        setAIStatus('error', 'Sin conexión con Puter ni Perplexity');
       } finally {
         aiSend.disabled = false;
         typingIndicator.classList.remove('active');
@@ -1030,6 +1096,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       ARKAIOS.init();
       setAIStatus('pending', 'Conectando a Puter…');
+      checkEnvironment();
       appendMessage(
         'system',
         '¡Hola! Soy ARKAIOS, tu asistente conectado a Puter. Puedo crear plantillas, mejorar contenido y guiarte paso a paso.'
