@@ -924,16 +924,20 @@
         throw new Error('No se proporcionó API key de Perplexity');
       }
 
-      const response = await fetch('https://api.perplexity.ai/chat/completions', {
+      // Usar el proxy serverless para evitar CORS
+      // Si estamos en local, intentar usar el proxy de producción (requiere CORS en el servidor)
+      const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
+      const endpoint = isLocal 
+        ? 'https://eduacion-libre-proyecto-arkaios.vercel.app/api/pplx' 
+        : '/api/pplx';
+
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${key}`
         },
         body: JSON.stringify({
-          model: 'llama-3.1-sonar-large-32k-online',
-          temperature: 0.35,
-          max_tokens: 800,
           messages
         })
       });

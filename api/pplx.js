@@ -3,6 +3,21 @@
 // Resuelve el problema de CORS al llamar al API desde el servidor
 
 export default async function handler(req, res) {
+  // Configurar CORS
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
+  );
+
+  // Manejar preflight request
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   // Validar método HTTP - solo POST permitido
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -14,10 +29,19 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing messages' });
   }
 
-  // Obtener API key desde variable de entorno (configurada en Vercel Dashboard)
-  const key = process.env.PPLX_API_KEY;
+  // Obtener API key: primero intentar desde header Authorization, luego variable de entorno
+  let key = process.env.PPLX_API_KEY;
+
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const clientKey = authHeader.split(' ')[1];
+    if (clientKey && clientKey.trim() !== '') {
+      key = clientKey;
+    }
+  }
+
   if (!key) {
-    return res.status(500).json({ error: 'Missing PPLX_API_KEY environment variable' });
+    return res.status(401).json({ error: 'Missing API Key. Please provide it in the settings or configure PPLX_API_KEY in Vercel.' });
   }
 
   try {
@@ -38,7 +62,7 @@ export default async function handler(req, res) {
 
     // Obtener respuesta como texto para manejar errores
     const text = await r.text();
-    
+
     // Si la respuesta no es exitosa, retornar el error
     if (!r.ok) {
       return res.status(r.status).send(text);
@@ -50,17 +74,17 @@ export default async function handler(req, res) {
       return res.status(200).json(data);
     } catch (parseError) {
       // Si el JSON es inválido, retornar error descriptivo
-      return res.status(500).json({ 
-        error: 'Invalid JSON from Perplexity', 
-        raw: text 
+      return res.status(500).json({
+        error: 'Invalid JSON from Perplexity',
+        raw: text
       });
     }
   } catch (error) {
     // Manejar errores de red u otros errores inesperados
     console.error('Error calling Perplexity API:', error);
-    return res.status(500).json({ 
-      error: 'Internal server error', 
-      message: error.message 
+    return res.status(500).json({
+      error: 'Internal server error',
+      message: error.message
     });
   }
 }
