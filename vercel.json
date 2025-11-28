@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/arkaios.js": {
+      "maxDuration": 30
+    },
+    "api/arkaios-tools.js": {
+      "maxDuration": 30
+    }
+  }
+}
