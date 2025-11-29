@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Centro de Plantillas Educativas - Arkaios</title>
-  
+
   <!-- Puter.js para acceso gratuito a ARKAIOS vía Puter -->
   <script src="https://js.puter.com/v2/"></script>
-  
+
   <!-- jsPDF para exportación a PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #0f172a;
@@ -22,6 +28,7 @@
       display: flex;
       flex-direction: column;
     }
+
     header {
       padding: 16px 24px;
       background: linear-gradient(135deg, #1e293b 0%, #020617 100%);
@@ -31,8 +38,9 @@
       align-items: center;
       gap: 16px;
       flex-wrap: wrap;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     }
+
     header h1 {
       font-size: 1.5rem;
       font-weight: 700;
@@ -41,6 +49,7 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+
     .badge {
       background: linear-gradient(135deg, #22c55e, #0ea5e9);
       padding: 6px 12px;
@@ -50,6 +59,7 @@
       color: #0f172a;
       white-space: nowrap;
     }
+
     .arkaios-badge {
       background: linear-gradient(135deg, #f59e0b, #ef4444);
       padding: 6px 12px;
@@ -59,13 +69,14 @@
       color: white;
       white-space: nowrap;
     }
-    
+
     /* Botones de sistema universal */
     .system-actions {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
     }
+
     .system-btn {
       padding: 8px 16px;
       background: linear-gradient(135deg, #22c55e, #16a34a);
@@ -80,22 +91,26 @@
       align-items: center;
       gap: 6px;
     }
+
     .system-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
     }
+
     .system-btn.pdf {
       background: linear-gradient(135deg, #ef4444, #dc2626);
     }
+
     .system-btn.pdf:hover {
       box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
     }
-    
+
     .layout {
       flex: 1;
       display: flex;
       min-height: 0;
     }
+
     nav {
       width: 260px;
       max-width: 100%;
@@ -107,6 +122,7 @@
       gap: 12px;
       overflow-y: auto;
     }
+
     nav h2 {
       font-size: 0.9rem;
       text-transform: uppercase;
@@ -115,6 +131,7 @@
       margin-bottom: 4px;
       margin-top: 8px;
     }
+
     .btn {
       width: 100%;
       text-align: left;
@@ -130,17 +147,24 @@
       align-items: center;
       transition: all 0.2s;
     }
-    .btn span.icon { opacity: 0.8; font-size: 1rem; }
+
+    .btn span.icon {
+      opacity: 0.8;
+      font-size: 1rem;
+    }
+
     .btn:hover {
       background: #1f2937;
       transform: translateY(-1px);
       box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
     }
+
     .btn.active {
       background: linear-gradient(135deg, #3b82f6, #8b5cf6);
       color: #f9fafb;
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
     }
+
     main {
       flex: 1;
       padding: 8px;
@@ -150,20 +174,23 @@
       min-width: 0;
       position: relative;
     }
+
     .frame-wrapper {
       flex: 1;
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid #1f2937;
       background: #000;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.6);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
     }
+
     iframe {
       width: 100%;
       height: 100%;
       border: none;
       background: white;
     }
+
     .hint {
       font-size: 0.8rem;
       color: #9ca3af;
@@ -188,12 +215,21 @@
       z-index: 1001;
       animation: slideIn 0.3s ease-out;
     }
+
     .auto-save-indicator.show {
       display: flex;
     }
+
     @keyframes slideIn {
-      from { transform: translateX(100px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+      from {
+        transform: translateX(100px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
 
     /* ASISTENTE IA CLAUDE - Botón Flotante */
@@ -216,13 +252,22 @@
       z-index: 1000;
       animation: pulse 2s infinite;
     }
+
     .ai-button:hover {
       transform: scale(1.1) rotate(10deg);
       box-shadow: 0 12px 32px rgba(59, 130, 246, 0.8);
     }
+
     @keyframes pulse {
-      0%, 100% { box-shadow: 0 8px 24px rgba(59, 130, 246, 0.6); }
-      50% { box-shadow: 0 8px 32px rgba(139, 92, 246, 0.8); }
+
+      0%,
+      100% {
+        box-shadow: 0 8px 24px rgba(59, 130, 246, 0.6);
+      }
+
+      50% {
+        box-shadow: 0 8px 32px rgba(139, 92, 246, 0.8);
+      }
     }
 
     /* Panel del Chat IA */
@@ -238,7 +283,7 @@
       min-height: 460px;
       background: #1e293b;
       border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
       display: none;
       flex-direction: column;
       z-index: 999;
@@ -247,10 +292,12 @@
       overflow: hidden;
       transition: all 0.3s ease;
     }
+
     .ai-panel.active {
       display: flex;
       animation: slideUp 0.3s ease-out;
     }
+
     .ai-panel.fullscreen {
       top: 16px;
       left: 16px;
@@ -263,9 +310,17 @@
       border-radius: 18px;
       resize: none;
     }
+
     @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
 
     .ai-header {
@@ -277,6 +332,7 @@
       align-items: center;
       gap: 12px;
     }
+
     .ai-header h3 {
       font-size: 1.1rem;
       color: white;
@@ -285,46 +341,67 @@
       flex: 1;
       min-width: 0;
     }
+
     .ai-status {
       font-size: 0.75rem;
       padding: 4px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.35);
-      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.12);
       color: #e2e8f0;
       white-space: nowrap;
     }
-    .ai-status[data-status="pending"] { background: rgba(255,255,255,0.12); color: #e2e8f0; }
-    .ai-status[data-status="ready"] { background: #22c55e; color: #0b1220; border-color: #16a34a; }
-    .ai-status[data-status="error"] { background: #ef4444; color: #0b1220; border-color: #b91c1c; }
+
+    .ai-status[data-status="pending"] {
+      background: rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+    }
+
+    .ai-status[data-status="ready"] {
+      background: #22c55e;
+      color: #0b1220;
+      border-color: #16a34a;
+    }
+
+    .ai-status[data-status="error"] {
+      background: #ef4444;
+      color: #0b1220;
+      border-color: #b91c1c;
+    }
+
     .ai-open-puter {
       padding: 6px 10px;
       border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.3);
-      background: rgba(15,23,42,0.35);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(15, 23, 42, 0.35);
       color: #e5e7eb;
       cursor: pointer;
       font-size: 0.8rem;
       transition: all 0.2s;
       white-space: nowrap;
     }
+
     .ai-open-puter:hover {
-      background: rgba(255,255,255,0.25);
+      background: rgba(255, 255, 255, 0.25);
       color: #0b1220;
     }
+
     .ai-status-warning {
       font-size: 0.78rem;
       color: #f97316;
       margin-top: 4px;
     }
+
     .ai-header-actions {
       display: flex;
       align-items: center;
       gap: 8px;
       flex-shrink: 0;
     }
-    .ai-control, .ai-close {
-      background: rgba(255,255,255,0.2);
+
+    .ai-control,
+    .ai-close {
+      background: rgba(255, 255, 255, 0.2);
       border: none;
       width: 32px;
       height: 32px;
@@ -337,13 +414,16 @@
       align-items: center;
       justify-content: center;
     }
-    .ai-control:hover, .ai-close:hover {
-      background: rgba(255,255,255,0.3);
+
+    .ai-control:hover,
+    .ai-close:hover {
+      background: rgba(255, 255, 255, 0.3);
       transform: rotate(90deg);
     }
+
     .ai-control.toggled {
-      background: rgba(255,255,255,0.28);
-      box-shadow: 0 0 0 2px rgba(255,255,255,0.18);
+      background: rgba(255, 255, 255, 0.28);
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.18);
     }
 
     .ai-actions {
@@ -354,6 +434,7 @@
       flex-wrap: wrap;
       border-bottom: 1px solid #1f2937;
     }
+
     .action-btn {
       padding: 6px 12px;
       background: #1f2937;
@@ -365,6 +446,7 @@
       transition: all 0.2s;
       white-space: nowrap;
     }
+
     .action-btn:hover {
       background: #3b82f6;
       transform: translateY(-1px);
@@ -378,12 +460,15 @@
       flex-direction: column;
       gap: 12px;
     }
+
     .ai-messages::-webkit-scrollbar {
       width: 8px;
     }
+
     .ai-messages::-webkit-scrollbar-track {
       background: #0f172a;
     }
+
     .ai-messages::-webkit-scrollbar-thumb {
       background: #3b82f6;
       border-radius: 4px;
@@ -396,16 +481,26 @@
       word-wrap: break-word;
       animation: fadeIn 0.3s ease-out;
     }
+
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
     .message.user {
       background: linear-gradient(135deg, #3b82f6, #2563eb);
       color: white;
       align-self: flex-end;
       border-bottom-right-radius: 4px;
     }
+
     .message.assistant {
       background: #1f2937;
       color: #e5e7eb;
@@ -413,6 +508,7 @@
       border-bottom-left-radius: 4px;
       border: 1px solid #374151;
     }
+
     .message.system {
       background: linear-gradient(135deg, #8b5cf6, #7c3aed);
       color: white;
@@ -431,6 +527,7 @@
       align-items: center;
       flex-wrap: wrap;
     }
+
     .ai-input {
       flex: 1;
       padding: 10px 14px;
@@ -442,10 +539,12 @@
       outline: none;
       transition: all 0.2s;
     }
+
     .ai-input:focus {
       border-color: #3b82f6;
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
+
     .ai-send {
       padding: 10px 14px;
       background: linear-gradient(135deg, #3b82f6, #2563eb);
@@ -459,10 +558,12 @@
       align-items: center;
       gap: 6px;
     }
+
     .ai-send:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
     }
+
     .ai-send:disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -476,9 +577,11 @@
       align-self: flex-start;
       border: 1px solid #374151;
     }
+
     .typing-indicator.active {
       display: block;
     }
+
     .typing-indicator span {
       display: inline-block;
       width: 8px;
@@ -488,27 +591,45 @@
       margin: 0 2px;
       animation: typing 1.4s infinite;
     }
+
     .typing-indicator span:nth-child(2) {
       animation-delay: 0.2s;
     }
+
     .typing-indicator span:nth-child(3) {
       animation-delay: 0.4s;
     }
+
     @keyframes typing {
-      0%, 60%, 100% { transform: translateY(0); }
-      30% { transform: translateY(-10px); }
+
+      0%,
+      60%,
+      100% {
+        transform: translateY(0);
+      }
+
+      30% {
+        transform: translateY(-10px);
+      }
     }
 
     @media (max-width: 800px) {
-      .layout { flex-direction: column; }
-      nav { 
-        width: 100%; 
-        border-right: none; 
-        border-bottom: 1px solid #1f2937; 
-        flex-direction: row; 
-        overflow-x: auto; 
+      .layout {
+        flex-direction: column;
       }
-      .btn { min-width: 200px; }
+
+      nav {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #1f2937;
+        flex-direction: row;
+        overflow-x: auto;
+      }
+
+      .btn {
+        min-width: 200px;
+      }
+
       .ai-panel {
         width: calc(100vw - 32px);
         right: 16px;
@@ -516,12 +637,14 @@
         height: calc(100vh - 160px);
         min-width: 320px;
       }
+
       .ai-panel.fullscreen {
         top: 12px;
         left: 12px;
         right: 12px;
         bottom: 12px;
       }
+
       .ai-button {
         width: 56px;
         height: 56px;
@@ -531,6 +654,7 @@
     }
   </style>
 </head>
+
 <body>
   <header>
     <div>
@@ -562,6 +686,10 @@
           <span>📄 Carta MX · Índice + Texto</span>
           <span class="icon">✏️</span>
         </button>
+        <button class="btn" data-target="hoja_milimetrica_interactiva.html">
+          <span>📏 Hoja Milimétrica</span>
+          <span class="icon">📐</span>
+        </button>
       </div>
       <div>
         <h2>Fotografías</h2>
@@ -589,12 +717,11 @@
 
     <main>
       <div class="frame-wrapper">
-        <iframe id="plantillaFrame"
-          src="plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html"
-        ></iframe>
+        <iframe id="plantillaFrame" src="plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html"></iframe>
       </div>
       <p class="hint">
-        💡 Tip: Usa los botones "Guardar/Cargar Proyecto" para no perder tu trabajo. El sistema guarda automáticamente cada 30 segundos.
+        💡 Tip: Usa los botones "Guardar/Cargar Proyecto" para no perder tu trabajo. El sistema guarda automáticamente
+        cada 30 segundos.
       </p>
     </main>
   </div>
@@ -610,7 +737,8 @@
       <h3>🤖 Asistente ARKAIOS</h3>
       <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
         <span class="ai-status" id="aiStatus" data-status="pending">Conectando a Puter…</span>
-        <button class="ai-open-puter" onclick="openPuterApp()" title="Abrir Puter para iniciar sesión">Abrir Puter</button>
+        <button class="ai-open-puter" onclick="openPuterApp()" title="Abrir Puter para iniciar sesión">Abrir
+          Puter</button>
       </div>
       <div class="ai-header-actions">
         <button class="ai-control" id="aiExpand" title="Maximizar/Restaurar chat">⤢</button>
@@ -627,7 +755,8 @@
 
     <div class="ai-messages" id="aiMessages">
       <div class="message system">
-        ¡Hola! Soy ARKAIOS, tu asistente conectado a Puter. Ahora cuentas con funciones de guardado automático y exportación a PDF. ¿En qué puedo ayudarte? 😊
+        ¡Hola! Soy ARKAIOS, tu asistente conectado a Puter. Ahora cuentas con funciones de guardado automático y
+        exportación a PDF. ¿En qué puedo ayudarte? 😊
       </div>
     </div>
 
@@ -636,13 +765,8 @@
     </div>
 
     <div class="ai-input-area">
-      <input
-        type="text"
-        class="ai-input"
-        id="aiInput"
-        placeholder="Escribe tu mensaje o pregunta..."
-        onkeypress="handleKeyPress(event)"
-      >
+      <input type="text" class="ai-input" id="aiInput" placeholder="Escribe tu mensaje o pregunta..."
+        onkeypress="handleKeyPress(event)">
       <button class="ai-send" id="aiSend" onclick="sendMessage()">📤 Enviar</button>
     </div>
   </div>
@@ -654,13 +778,13 @@
     const ARKAIOS = {
       version: '2.0',
       autoSaveInterval: null,
-      
+
       // Inicializar sistema
       init() {
         console.log('🚀 Sistema Universal ARKAIOS v' + this.version);
         this.startAutoSave();
         this.loadAutoSave();
-        
+
         // Comunicación con iframes
         window.addEventListener('message', (event) => {
           if (event.data.type === 'ARKAIOS_DATA_UPDATE') {
@@ -668,7 +792,7 @@
           }
         });
       },
-      
+
       // Guardar proyecto
       saveProject() {
         try {
@@ -679,7 +803,7 @@
             template: currentTemplate,
             templateData: null
           };
-          
+
           // Intentar obtener datos del iframe
           try {
             if (frame.contentWindow && frame.contentWindow.ARKAIOS_getData) {
@@ -688,7 +812,7 @@
           } catch (e) {
             console.warn('No se pudieron obtener datos del iframe:', e);
           }
-          
+
           // Descargar como JSON
           const blob = new Blob([JSON.stringify(projectData, null, 2)], {
             type: 'application/json'
@@ -699,32 +823,32 @@
           a.download = `proyecto-arkaios-${Date.now()}.json`;
           a.click();
           URL.revokeObjectURL(url);
-          
+
           this.showSaveIndicator('Proyecto guardado correctamente');
         } catch (error) {
           console.error('Error al guardar proyecto:', error);
           alert('Error al guardar el proyecto');
         }
       },
-      
+
       // Cargar proyecto
       loadProject() {
         const input = document.getElementById('projectLoader');
         input.onchange = (e) => {
           const file = e.target.files[0];
           if (!file) return;
-          
+
           const reader = new FileReader();
           reader.onload = (event) => {
             try {
               const projectData = JSON.parse(event.target.result);
-              
+
               // Cargar plantilla correspondiente
               if (projectData.template) {
                 currentTemplate = projectData.template;
                 const frame = document.getElementById('plantillaFrame');
                 frame.src = projectData.template;
-                
+
                 // Esperar a que cargue el iframe
                 frame.onload = () => {
                   if (projectData.templateData && frame.contentWindow.ARKAIOS_setData) {
@@ -742,21 +866,21 @@
         };
         input.click();
       },
-      
+
       // Exportar a PDF
       async exportToPDF() {
         const frame = document.getElementById('plantillaFrame');
-        
+
         try {
           this.showSaveIndicator('Generando PDF, por favor espera...');
-          
+
           // Método 1: Si el iframe tiene función de exportación propia
           if (frame.contentWindow && frame.contentWindow.ARKAIOS_exportPDF) {
             await frame.contentWindow.ARKAIOS_exportPDF();
             this.showSaveIndicator('PDF generado correctamente');
             return;
           }
-          
+
           // Método 2: Usar html2canvas + jsPDF
           const { jsPDF } = window.jspdf;
           const canvas = await html2canvas(frame.contentDocument.body, {
@@ -765,34 +889,34 @@
             logging: false,
             backgroundColor: '#ffffff'
           });
-          
+
           const imgData = canvas.toDataURL('image/png');
           const pdf = new jsPDF({
             orientation: 'portrait',
             unit: 'mm',
             format: 'letter'
           });
-          
+
           const imgWidth = 215.9;
           const imgHeight = (canvas.height * imgWidth) / canvas.width;
-          
+
           pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
           pdf.save(`plantilla-arkaios-${Date.now()}.pdf`);
-          
+
           this.showSaveIndicator('PDF generado correctamente');
         } catch (error) {
           console.error('Error al exportar PDF:', error);
           alert('Error al generar el PDF. Intenta usar el botón de imprimir de la plantilla.');
         }
       },
-      
+
       // Guardado automático
       startAutoSave() {
         this.autoSaveInterval = setInterval(() => {
           this.autoSave();
         }, 30000); // Cada 30 segundos
       },
-      
+
       autoSave() {
         try {
           const frame = document.getElementById('plantillaFrame');
@@ -801,30 +925,30 @@
             template: currentTemplate,
             templateData: null
           };
-          
+
           if (frame.contentWindow && frame.contentWindow.ARKAIOS_getData) {
             autoSaveData.templateData = frame.contentWindow.ARKAIOS_getData();
           }
-          
+
           localStorage.setItem('arkaios-autosave', JSON.stringify(autoSaveData));
           this.showSaveIndicator('💾 Auto-guardado');
         } catch (error) {
           console.warn('Error en auto-guardado:', error);
         }
       },
-      
+
       loadAutoSave() {
         const saved = localStorage.getItem('arkaios-autosave');
         if (saved) {
           console.log('✓ Datos de auto-guardado disponibles');
         }
       },
-      
+
       handleDataUpdate(data) {
         console.log('Datos actualizados desde plantilla:', data);
         this.autoSave();
       },
-      
+
       showSaveIndicator(message) {
         const indicator = document.getElementById('autoSaveIndicator');
         indicator.textContent = message;
@@ -927,8 +1051,8 @@
       // Usar el proxy serverless para evitar CORS
       // Si estamos en local, intentar usar el proxy de producción (requiere CORS en el servidor)
       const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
-      const endpoint = isLocal 
-        ? 'https://eduacion-libre-proyecto-arkaios.vercel.app/api/pplx' 
+      const endpoint = isLocal
+        ? 'https://eduacion-libre-proyecto-arkaios.vercel.app/api/pplx'
         : '/api/pplx';
 
       const response = await fetch(endpoint, {
@@ -1108,4 +1232,5 @@
     });
   </script>
 </body>
+
 </html>
