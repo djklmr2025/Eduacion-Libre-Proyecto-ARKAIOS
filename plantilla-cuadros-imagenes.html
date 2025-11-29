@@ -90,6 +90,7 @@
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
+      justify-content: center;
     }
 
     .btn {
@@ -421,112 +422,357 @@
       appearance: none;
       width: 18px;
       height: 18px;
+      border-radius: 50%;
+      background: #667eea;
+      cursor: pointer;
+    }
 
-      <div class="panel-control"></button><button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir hojas </button><button class="btn btn-danger" onclick="limpiarTodo()">🗑️ Limpiar todo </button></div><div class="stats"><div class="stat-item"><div class="stat-value" id="stat-imagenes">0</div><div class="stat-label">Imágenes</div></div><div class="stat-item"><div class="stat-value" id="stat-hojas">0</div><div class="stat-label">Hojas</div></div><div class="stat-item"><div class="stat-value" id="stat-cuadros">0</div><div class="stat-label">Cuadros/Hoja</div></div></div></div><div id="hojas-container" class="hojas-container"></div></div><div id="modal-editor" class="modal-editor"><div class="modal-contenido"><div class="modal-header"><h3>✏️ Editar Imagen</h3><button class="btn-cerrar" onclick="cerrarEditor()">✕ Cerrar</button></div><div class="editor-preview" id="editor-preview"><img id="editor-img" src="" alt=""></div><div class="controles-editor"><div class="control-zoom"><label>🔍 Zoom:</label><input type="range" id="zoom-slider" min="100" max="200" value="100" step="1"><span class="zoom-valor" id="zoom-valor">100%</span></div><button class="btn btn-primary" onclick="aplicarEdicion()">✓ Aplicar cambios</button></div></div>archivos.forEach(archivo=> {
-          const reader=new FileReader();
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
 
-          reader.onload=function (ev) {
-            imagenes.push(ev.target.result);
+      .panel-control,
+      .modal-editor,
+      #pixabay-credit,
+      #aiModal {
+        display: none !important;
+      }
 
-            estadosImagen.push({
-              zoom: 100, x: 0, y: 0, fijada: false
-            });
-          cargados++;
+      .page-wrapper {
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+        border-radius: 0;
+      }
 
-          if (cargados===archivos.length) {
-            generarPlantilla();
-          }
+      .page-container {
+        box-shadow: none;
+        margin: 0;
+        page-break-after: always;
+      }
+
+      .botones-celda,
+      .num-celda,
+      .celda-vacia {
+        display: none !important;
+      }
+
+      .celda-imagen {
+        border: 1px solid #ccc;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="panel-control">
+      <div class="header">
+        <h1>🖼️ Plantilla de Impresión de Imágenes</h1>
+        <p>Sube tus imágenes, ajusta el tamaño y genera tu PDF listo para imprimir</p>
+      </div>
+
+      <div class="controles-grid">
+        <div class="control-group">
+          <label>📏 Tamaño de cuadros:</label>
+          <select id="selector-tamano">
+            <option value="3">3 cm (Pasaporte/Infantil)</option>
+            <option value="4">4 cm</option>
+            <option value="5" selected>5 cm (Credencial)</option>
+            <option value="6">6 cm</option>
+            <option value="7">7 cm</option>
+            <option value="8">8 cm</option>
+            <option value="9">9 cm</option>
+            <option value="10">10 cm</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label>📂 Agregar imágenes:</label>
+          <input type="file" id="input-imagenes" multiple accept="image/*" style="display: none;">
+          <button class="btn btn-primary" onclick="document.getElementById('input-imagenes').click()">
+            Seleccionar archivos
+          </button>
+        </div>
+      </div>
+
+      <div class="botones-accion">
+        <button class="btn btn-primary" onclick="searchPexels()" style="background: #05a081;">📸 Pexels</button>
+        <button class="btn btn-primary" onclick="searchFreepik()" style="background: #336aea;">🎨 Freepik</button>
+        <button class="btn btn-primary" onclick="openAIModal()" style="background: #8e44ad;">✨ Crear con IA</button>
+        <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir hojas</button>
+        <button class="btn btn-danger" onclick="limpiarTodo()">🗑️ Limpiar todo</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-value" id="stat-imagenes">0</div>
+          <div class="stat-label">Imágenes</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-hojas">0</div>
+          <div class="stat-label">Hojas</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-cuadros">0</div>
+          <div class="stat-label">Cuadros/Hoja</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="hojas-container" class="hojas-container">
+      <!-- Las hojas se generarán aquí -->
+    </div>
+  </div>
+
+  <!-- Input oculto para cambios individuales -->
+  <input type="file" id="input-individual" accept="image/*" style="display: none;">
+
+  <!-- Modal Editor -->
+  <div id="modal-editor" class="modal-editor">
+    <div class="modal-contenido">
+      <div class="modal-header">
+        <h3>✏️ Editar Imagen</h3>
+        <button class="btn-cerrar" onclick="cerrarEditor()">✕ Cerrar</button>
+      </div>
+      <div class="editor-preview" id="editor-preview">
+        <img id="editor-img" src="" alt="">
+      </div>
+      <div class="controles-editor">
+        <div class="control-zoom">
+          <label>🔍 Zoom:</label>
+          <input type="range" id="zoom-slider" min="100" max="200" value="100" step="1">
+          <span class="zoom-valor" id="zoom-valor">100%</span>
+        </div>
+        <button class="btn btn-primary" onclick="aplicarEdicion()">✓ Aplicar cambios</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal IA -->
+  <div id="aiModal"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;">
+    <div
+      style="background: #1f2937; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; border: 1px solid #3b82f6;">
+      <h3 style="color: #3b82f6; margin-bottom: 15px;">✨ Generar Imagen con IA</h3>
+
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Tu API Key de OpenAI:</label>
+        <input type="password" id="openaiKey" placeholder="sk-..."
+          style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
+        <small style="color: #9ca3af;">Se guardará localmente en tu navegador.</small>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Describe tu imagen:</label>
+        <textarea id="aiPrompt" rows="4" placeholder="Un paisaje espacial con planetas coloridos..."
+          style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;"></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button onclick="closeAIModal()"
+          style="background: #4b5563; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Cancelar</button>
+        <button onclick="generateAIImage()"
+          style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Generar</button>
+      </div>
+
+      <div id="aiStatus" style="margin-top: 10px; color: #e5e7eb; font-size: 0.9rem;"></div>
+    </div>
+  </div>
+
+  <script>
+    const inputImagenes = document.getElementById('input-imagenes');
+    const inputIndividual = document.getElementById('input-individual');
+    const hojasContainer = document.getElementById('hojas-container');
+    const selectorTamano = document.getElementById('selector-tamano');
+
+    // Editor
+    const modalEditor = document.getElementById('modal-editor');
+    const editorImg = document.getElementById('editor-img');
+    const zoomSlider = document.getElementById('zoom-slider');
+    const zoomValor = document.getElementById('zoom-valor');
+
+    let imagenes = [];
+    let estadosImagen = []; // { zoom: 100, x: 0, y: 0, fijada: false }
+    let indiceEditando = -1;
+    let indiceDragInicio = -1;
+
+    // ===== API KEYS & INTEGRATION =====
+    const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
+    const FREEPIK_API_KEY = 'FPSX890e70b7164ab7a1b05182a68d64ad06';
+
+    function applyExternalImages(urls, sourceName) {
+      rellenarConPixabay(urls, sourceName);
+    }
+
+    async function searchPexels() {
+      const query = prompt("¿Qué imágenes buscas en Pexels?");
+      if (!query) return;
+
+      try {
+        const response = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=12`, {
+          headers: { Authorization: PEXELS_API_KEY }
+        });
+        const data = await response.json();
+        const images = data.photos.map(photo => photo.src.large);
+        applyExternalImages(images, `Pexels: ${query}`);
+      } catch (error) {
+        console.error(error);
+        alert('Error al buscar en Pexels');
+      }
+    }
+
+    async function searchFreepik() {
+      const query = prompt("¿Qué imágenes buscas en Freepik?");
+      if (!query) return;
+
+      try {
+        const response = await fetch(`https://api.freepik.com/v1/resources?locale=es-ES&q=${encodeURIComponent(query)}&limit=12`, {
+          headers: { 'X-Freepik-API-Key': FREEPIK_API_KEY }
+        });
+        const data = await response.json();
+        const images = data.data.map(item => item.image.source.url);
+        applyExternalImages(images, `Freepik: ${query}`);
+      } catch (error) {
+        console.error(error);
+        alert('Error al buscar en Freepik');
+      }
+    }
+
+    // ===== AI GENERATION =====
+    function openAIModal() {
+      const storedKey = localStorage.getItem('openai_api_key');
+      if (storedKey) document.getElementById('openaiKey').value = storedKey;
+      document.getElementById('aiModal').style.display = 'flex';
+    }
+
+    function closeAIModal() {
+      document.getElementById('aiModal').style.display = 'none';
+      document.getElementById('aiStatus').textContent = '';
+    }
+
+    async function generateAIImage() {
+      const apiKey = document.getElementById('openaiKey').value.trim();
+      const prompt = document.getElementById('aiPrompt').value.trim();
+      const statusDiv = document.getElementById('aiStatus');
+
+      if (!apiKey) {
+        alert('Por favor ingresa tu API Key de OpenAI');
+        return;
+      }
+      if (!prompt) {
+        alert('Por favor describe la imagen');
+        return;
+      }
+
+      localStorage.setItem('openai_api_key', apiKey);
+      statusDiv.textContent = '⏳ Generando imagen... (esto puede tomar unos segundos)';
+
+      try {
+        const response = await fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: "dall-e-3",
+            prompt: prompt,
+            n: 1,
+            size: "1024x1024"
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          throw new Error(data.error.message);
         }
 
-        ;
+        const imageUrl = data.data[0].url;
+        applyExternalImages([imageUrl], `IA: ${prompt}`);
+        closeAIModal();
+
+      } catch (error) {
+        console.error(error);
+        statusDiv.textContent = '❌ Error: ' + error.message;
+      }
+    }
+
+    // Event Listeners
+    selectorTamano.addEventListener('change', generarPlantilla);
+
+    inputImagenes.addEventListener('change', function (e) {
+      const archivos = Array.from(e.target.files);
+      let cargados = 0;
+
+      archivos.forEach(archivo => {
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          imagenes.push(ev.target.result);
+          estadosImagen.push({ zoom: 100, x: 0, y: 0, fijada: false });
+          cargados++;
+          if (cargados === archivos.length) {
+            generarPlantilla();
+          }
+        };
         reader.readAsDataURL(archivo);
       });
-
-    e.target.value='';
+      e.target.value = '';
     });
 
     inputIndividual.addEventListener('change', function (e) {
-        const archivo=e.target.files[0];
-        if ( !archivo) return;
+      const archivo = e.target.files[0];
+      if (!archivo) return;
 
-        const reader=new FileReader();
-
-        reader.onload=function (ev) {
-          if (indiceEditando >=0) {
-            imagenes[indiceEditando]=ev.target.result;
-
-            estadosImagen[indiceEditando]= {
-              zoom: 100, x: 0, y: 0, fijada: false
-            }
-
-            ;
-            generarPlantilla();
-          }
+      const reader = new FileReader();
+      reader.onload = function (ev) {
+        if (indiceEditando >= 0) {
+          imagenes[indiceEditando] = ev.target.result;
+          estadosImagen[indiceEditando] = { zoom: 100, x: 0, y: 0, fijada: false };
+          generarPlantilla();
         }
-
-        ;
-        reader.readAsDataURL(archivo);
-
-        e.target.value='';
-      });
+      };
+      reader.readAsDataURL(archivo);
+      e.target.value = '';
+    });
 
     function generarPlantilla() {
-      hojasContainer.innerHTML='';
-
-      const tamano=parseInt(selectorTamano.value);
-      const filas=Math.floor(27.94 / tamano);
-      const cols=Math.floor(21.59 / tamano);
-      const cuadrosPorHoja=filas * cols;
-      const hojasNecesarias=Math.max(1, Math.ceil(imagenes.length / cuadrosPorHoja));
+      hojasContainer.innerHTML = '';
+      const tamano = parseInt(selectorTamano.value);
+      const filas = Math.floor(27.94 / tamano);
+      const cols = Math.floor(21.59 / tamano);
+      const cuadrosPorHoja = filas * cols;
+      const hojasNecesarias = Math.max(1, Math.ceil(imagenes.length / cuadrosPorHoja));
 
       actualizarEstadisticas(imagenes.length, hojasNecesarias, cuadrosPorHoja);
 
-      for (let h=0; h < hojasNecesarias; h++) {
-        const pageWrapper=document.createElement('div');
-        pageWrapper.className='page-wrapper';
-        const pageInfo=document.createElement('div');
-        pageInfo.className='page-info';
+      for (let h = 0; h < hojasNecesarias; h++) {
+        const pageWrapper = document.createElement('div');
+        pageWrapper.className = 'page-wrapper';
 
-        pageInfo.textContent=`Hoja $ {
-          h+1
-        }
-
-        de $ {
-          hojasNecesarias
-        }
-
-        `;
+        const pageInfo = document.createElement('div');
+        pageInfo.className = 'page-info';
+        pageInfo.textContent = `Hoja ${h + 1} de ${hojasNecesarias}`;
         pageWrapper.appendChild(pageInfo);
-        const pageContainer=document.createElement('div');
-        pageContainer.className='page-container';
-        const cuadricula=document.createElement('div');
-        cuadricula.className='cuadricula';
 
-        cuadricula.style.gridTemplateColumns=`repeat($ {
-            cols
-          }
+        const pageContainer = document.createElement('div');
+        pageContainer.className = 'page-container';
 
-          , $ {
-            tamano
-          }
+        const cuadricula = document.createElement('div');
+        cuadricula.className = 'cuadricula';
+        cuadricula.style.gridTemplateColumns = `repeat(${cols}, ${tamano}cm)`;
+        cuadricula.style.gridTemplateRows = `repeat(${filas}, ${tamano}cm)`;
 
-          cm)`;
+        const inicio = h * cuadrosPorHoja;
+        const fin = Math.min(inicio + cuadrosPorHoja, imagenes.length);
 
-        cuadricula.style.gridTemplateRows=`repeat($ {
-            filas
-          }
-
-          , $ {
-            tamano
-          }
-
-          cm)`;
-        const inicio=h * cuadrosPorHoja;
-        const fin=Math.min(inicio + cuadrosPorHoja, imagenes.length);
-
-        for (let i=0; i < cuadrosPorHoja; i++) {
-          const idx=inicio+i;
-          const celda=crearCelda(idx, tamano);
+        for (let i = 0; i < cuadrosPorHoja; i++) {
+          const idx = inicio + i;
+          const celda = crearCelda(idx, tamano);
           cuadricula.appendChild(celda);
         }
 
@@ -536,81 +782,59 @@
       }
     }
 
-    function crearCelda(idx,
-      tamano) {
-      const celda=document.createElement('div');
-      celda.className='celda-imagen arkaios-image-slot';
+    function crearCelda(idx, tamano) {
+      const celda = document.createElement('div');
+      celda.className = 'celda-imagen arkaios-image-slot';
+      celda.style.width = `${tamano}cm`;
+      celda.style.height = `${tamano}cm`;
+      celda.draggable = imagenes[idx] ? true : false;
+      celda.dataset.idx = idx;
 
-      celda.style.width=`$ {
-        tamano
-      }
-
-      cm`;
-
-      celda.style.height=`$ {
-        tamano
-      }
-
-      cm`;
-      celda.draggable=imagenes[idx] ? true : false;
-      celda.dataset.idx=idx;
-      const numCelda=document.createElement('span');
-      numCelda.className='num-celda';
-      numCelda.textContent=idx+1;
+      const numCelda = document.createElement('span');
+      numCelda.className = 'num-celda';
+      numCelda.textContent = idx + 1;
       celda.appendChild(numCelda);
 
       if (imagenes[idx]) {
-        const imgContainer=document.createElement('div');
-        imgContainer.className='img-container';
-        const img=document.createElement('img');
-        img.src=imagenes[idx];
-        img.className='img-preview';
+        const imgContainer = document.createElement('div');
+        imgContainer.className = 'img-container';
 
-        const estado=estadosImagen[idx] || {
-          zoom: 100, x: 0, y: 0, fijada: false
-        }
+        const img = document.createElement('img');
+        img.src = imagenes[idx];
+        img.className = 'img-preview';
 
-        ;
+        const estado = estadosImagen[idx] || { zoom: 100, x: 0, y: 0, fijada: false };
+        img.style.transform = `scale(${estado.zoom / 100})`;
 
-        img.style.transform=`scale($ {
-            estado.zoom / 100
-          })`;
         imgContainer.appendChild(img);
         celda.appendChild(imgContainer);
-        const botones=document.createElement('div');
-        botones.className='botones-celda';
-        const btnEditar=document.createElement('button');
-        btnEditar.className='btn-celda btn-editar';
-        btnEditar.textContent='✏️';
 
-        btnEditar.onclick=(e)=> {
+        const botones = document.createElement('div');
+        botones.className = 'botones-celda';
+
+        const btnEditar = document.createElement('button');
+        btnEditar.className = 'btn-celda btn-editar';
+        btnEditar.textContent = '✏️';
+        btnEditar.onclick = (e) => {
           e.stopPropagation();
           abrirEditor(idx);
-        }
+        };
 
-        ;
-
-        const btnFijar=document.createElement('button');
-        btnFijar.className='btn-celda btn-fijar';
-        btnFijar.textContent=estado.fijada ? '🔓' : '📌';
-
-        btnFijar.onclick=(e)=> {
+        const btnFijar = document.createElement('button');
+        btnFijar.className = 'btn-celda btn-fijar';
+        btnFijar.textContent = estado.fijada ? '🔓' : '📌';
+        btnFijar.onclick = (e) => {
           e.stopPropagation();
           toggleFijar(idx);
-        }
+        };
 
-        ;
-
-        const btnEliminar=document.createElement('button');
-        btnEliminar.className='btn-celda btn-eliminar';
-        btnEliminar.textContent='🗑️';
-
-        btnEliminar.onclick=(e)=> {
+        const btnEliminar = document.createElement('button');
+        btnEliminar.className = 'btn-celda btn-eliminar';
+        btnEliminar.textContent = '🗑️';
+        btnEliminar.onclick = (e) => {
           e.stopPropagation();
           eliminarImagen(idx);
-        }
-
-        ;
+        };
 
         botones.appendChild(btnEditar);
         botones.appendChild(btnFijar);
@@ -621,123 +845,95 @@
         celda.addEventListener('dragover', handleDragOver);
         celda.addEventListener('drop', handleDrop);
         celda.addEventListener('dragend', handleDragEnd);
-      }
-
-      else {
-        const icono=document.createElement('span');
-        icono.className='celda-vacia';
-        icono.textContent='+';
+      } else {
+        const icono = document.createElement('span');
+        icono.className = 'celda-vacia';
+        icono.textContent = '+';
         celda.appendChild(icono);
-
-        celda.onclick=function () {
-          indiceEditando=idx;
+        celda.onclick = function () {
+          indiceEditando = idx;
           inputIndividual.click();
-        }
-
-        ;
+        };
       }
 
       return celda;
     }
 
     function handleDragStart(e) {
-      const idx=parseInt(e.currentTarget.dataset.idx);
-
+      const idx = parseInt(e.currentTarget.dataset.idx);
       if (estadosImagen[idx]?.fijada) {
         e.preventDefault();
         return;
       }
-
-      indiceDragInicio=idx;
+      indiceDragInicio = idx;
       e.currentTarget.classList.add('dragging');
-      e.dataTransfer.effectAllowed='move';
+      e.dataTransfer.effectAllowed = 'move';
     }
 
     function handleDragOver(e) {
       e.preventDefault();
       e.currentTarget.classList.add('drag-over');
-      e.dataTransfer.dropEffect='move';
+      e.dataTransfer.dropEffect = 'move';
     }
 
     function handleDrop(e) {
       e.preventDefault();
       e.currentTarget.classList.remove('drag-over');
+      const idxDestino = parseInt(e.currentTarget.dataset.idx);
 
-      const idxDestino=parseInt(e.currentTarget.dataset.idx);
-
-      if (indiceDragInicio !==-1 && indiceDragInicio !==idxDestino) {
-        const temp=imagenes[indiceDragInicio];
-        const tempEstado=estadosImagen[indiceDragInicio];
-
-        imagenes[indiceDragInicio]=imagenes[idxDestino];
-        estadosImagen[indiceDragInicio]=estadosImagen[idxDestino];
-
-        imagenes[idxDestino]=temp;
-        estadosImagen[idxDestino]=tempEstado;
-
+      if (indiceDragInicio !== -1 && indiceDragInicio !== idxDestino) {
+        const temp = imagenes[indiceDragInicio];
+        const tempEstado = estadosImagen[indiceDragInicio];
+        imagenes[indiceDragInicio] = imagenes[idxDestino];
+        estadosImagen[indiceDragInicio] = estadosImagen[idxDestino];
+        imagenes[idxDestino] = temp;
+        estadosImagen[idxDestino] = tempEstado;
         generarPlantilla();
       }
     }
 
     function handleDragEnd(e) {
       e.currentTarget.classList.remove('dragging');
-
-      document.querySelectorAll('.drag-over').forEach(el=> {
-          el.classList.remove('drag-over');
-        });
-      indiceDragInicio=-1;
+      document.querySelectorAll('.drag-over').forEach(el => {
+        el.classList.remove('drag-over');
+      });
+      indiceDragInicio = -1;
     }
 
     function abrirEditor(idx) {
-      indiceEditando=idx;
-      editorImg.src=imagenes[idx];
-
-      const estado=estadosImagen[idx] || {
-        zoom: 100
-      }
-
-      ;
-      zoomSlider.value=estado.zoom;
-      zoomValor.textContent=estado.zoom+'%';
-
-      editorImg.style.transform=`scale($ {
-          estado.zoom / 100
-        })`;
+      indiceEditando = idx;
+      editorImg.src = imagenes[idx];
+      const estado = estadosImagen[idx] || { zoom: 100 };
+      zoomSlider.value = estado.zoom;
+      zoomValor.textContent = estado.zoom + '%';
+      editorImg.style.transform = `scale(${estado.zoom / 100})`;
       modalEditor.classList.add('activo');
     }
 
     function cerrarEditor() {
       modalEditor.classList.remove('activo');
-      indiceEditando=-1;
+      indiceEditando = -1;
     }
 
     zoomSlider.addEventListener('input', function () {
-        const zoom=parseInt(this.value);
-        zoomValor.textContent=zoom + '%';
-
-        editorImg.style.transform=`scale($ {
-            zoom / 100
-          })`;
-      });
+      const zoom = parseInt(this.value);
+      zoomValor.textContent = zoom + '%';
+      editorImg.style.transform = `scale(${zoom / 100})`;
+    });
 
     function aplicarEdicion() {
-      if (indiceEditando >=0) {
-        estadosImagen[indiceEditando].zoom=parseInt(zoomSlider.value);
+      if (indiceEditando >= 0) {
+        estadosImagen[indiceEditando].zoom = parseInt(zoomSlider.value);
         generarPlantilla();
         cerrarEditor();
       }
     }
 
     function toggleFijar(idx) {
-      if ( !estadosImagen[idx]) {
-        estadosImagen[idx]= {
-          zoom: 100, x: 0, y: 0, fijada: false
-        }
-
-        ;
+      if (!estadosImagen[idx]) {
+        estadosImagen[idx] = { zoom: 100, x: 0, y: 0, fijada: false };
       }
-
-      estadosImagen[idx].fijada= !estadosImagen[idx].fijada;
+      estadosImagen[idx].fijada = !estadosImagen[idx].fijada;
       generarPlantilla();
     }
 
@@ -751,56 +947,47 @@
 
     function limpiarTodo() {
       if (confirm('¿Eliminar todas las imágenes?')) {
-        imagenes=[];
-        estadosImagen=[];
+        imagenes = [];
+        estadosImagen = [];
         generarPlantilla();
       }
     }
 
     function actualizarEstadisticas(numImagenes, numHojas, cuadrosPorHoja) {
-      document.getElementById('stat-imagenes').textContent=numImagenes;
-      document.getElementById('stat-hojas').textContent=numHojas;
-      document.getElementById('stat-cuadros').textContent=cuadrosPorHoja;
+      document.getElementById('stat-imagenes').textContent = numImagenes;
+      document.getElementById('stat-hojas').textContent = numHojas;
+      document.getElementById('stat-cuadros').textContent = cuadrosPorHoja;
     }
 
     function mostrarCreditoPixabay(topic, count) {
-      let credit=document.getElementById('pixabay-credit');
-
-      if ( !credit) {
-        credit=document.createElement('div');
-        credit.id='pixabay-credit';
-        const container=document.querySelector('.container');
+      let credit = document.getElementById('pixabay-credit');
+      if (!credit) {
+        credit = document.createElement('div');
+        credit.id = 'pixabay-credit';
+        const container = document.querySelector('.container');
         container?.insertBefore(credit, container.firstChild);
       }
-
-      const cleanTopic=topic || 'Pixabay';
-
-      credit.textContent=`Imágenes de Pixabay ($ {
-          count
-
-        }) · Tema: $ {
-        cleanTopic
-      }
-
-      `;
+      const cleanTopic = topic || 'Pixabay';
+      credit.textContent = `Imágenes de Pixabay (${count}) · Tema: ${cleanTopic}`;
     }
 
-    function rellenarConPixabay(urls=[], topic='Pixabay') {
-      if ( !Array.isArray(urls) || urls.length===0) return;
-      imagenes=urls.slice();
-
-      estadosImagen=imagenes.map(()=> ({
-          zoom: 100, x: 0, y: 0, fijada: false
-        }));
-    generarPlantilla();
-    mostrarCreditoPixabay(topic, urls.length);
+    function rellenarConPixabay(urls = [], topic = 'Pixabay') {
+      if (!Array.isArray(urls) || urls.length === 0) return;
+      imagenes = urls.slice();
+      estadosImagen = imagenes.map(() => ({ zoom: 100, x: 0, y: 0, fijada: false }));
+      generarPlantilla();
+      mostrarCreditoPixabay(topic, urls.length);
     }
 
-    window.addEventListener('message', (event)=> {
-        const data=event.data;
-        if ( !data || data.type !=='ARKAIOS_PIXABAY_IMAGES') return;
-        rellenarConPixabay(data.images || [], data.topic || 'Pixabay');
-      });
+    window.addEventListener('message', (event) => {
+      const data = event.data;
+      if (!data || data.type !== 'ARKAIOS_PIXABAY_IMAGES') return;
+      rellenarConPixabay(data.images || [], data.topic || 'Pixabay');
+    });
 
+    // Iniciar
     generarPlantilla();
-    </script></body></html>
+  </script>
+</body>
+
+</html>

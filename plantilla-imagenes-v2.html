@@ -280,132 +280,373 @@
             background: white;
             padding: 15px;
             border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
 
-            <div style="text-align: center;"><h1>📚 Plantilla Escolar v2.0</h1><span class="version-badge">🚀 VERSIÓN AVANZADA</span></div><div class="controls-row"><div class="control-group"><label for="gridSize">Configuración: </label> <select id="gridSize" > <option value="2x2" >2x2 (4 imágenes)</option> <option value="3x3" >3x3 (9 imágenes)</option> <option value="4x4" selected>4x4 (16 imágenes)</option> <option value="5x5" >5x5 (25 imágenes)</option> <option value="6x6" >6x6 (36 imágenes)</option> <option value="8x8" >8x8 (64 imágenes)</option> </select> </div> <div class="control-group" > <label for="sortOrder" >Ordenar:</label> <select id="sortOrder" > <option value="none" >Sin ordenar</option> <option value="alphabetic" >Alfabético (A-Z)</option> <option value="numeric" >Numérico (0-9)</option> </select> </div> <button onclick="selectFiles()" >📁 Seleccionar Archivos</button> <button onclick="clearAll()" >🗑️ Limpiar Todo</button> <button onclick="window.print()" >🖨️ Imprimir</button> </div> <div class="controls-row" > <div class="control-group" style="width: 100%;" > <label>Recursos Externos:</label> <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;" > <button onclick="promptForImage('pexels')" style="background: #05a081;" >📸 Pexels</button> <button onclick="promptForImage('freepik')" style="background: #336aea;" >🎨 Freepik</button> <button onclick="openAIModal()" style="background: #8e44ad;" >🤖 Crear con IA</button> </div> </div> </div> <div class="drop-zone" id="dropZone" > <h3>🎯 Arrastra y Suelta tus Imágenes Aquí</h3> <p>O haz clic para seleccionar archivos • También puedes pegar (Ctrl+V)</p> </div> <div class="info" > <strong>💡 Instrucciones:</strong><br> • Arrastra múltiples imágenes a la zona azul o haz clic para seleccionar<br> • Las imágenes se llenarán automáticamente de izquierda a derecha<br> • Arrastra cualquier imagen para cambiarla de posición<br> • Si hay más imágenes que espacios, se crearán plantillas adicionales<br> • Usa Ctrl+V para pegar imágenes del portapapeles </div> </div> <div class="stats" id="stats" style="display: none;" > <span class="stats-item" >📊 Total de imágenes: <span class="stats-number" id="totalImages" >0</span></span> <span class="stats-item" >📄 Plantillas generadas: <span class="stats-number" id="totalTemplates" >0</span></span> </div> dropZone.addEventListener('dragover', (e)=> {
-                    e.preventDefault();
-                    dropZone.classList.add('dragover');
+        .stats-item {
+            display: inline-block;
+            margin: 0 15px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .stats-number {
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .controls,
+            .drop-zone,
+            .info,
+            .template-label,
+            #pixabay-credit,
+            .stats,
+            #aiModal {
+                display: none !important;
+            }
+
+            .page-container {
+                box-shadow: none;
+                margin: 0;
+                page-break-after: always;
+            }
+
+            .delete-button,
+            .cell-number,
+            .empty-cell-text {
+                display: none !important;
+            }
+
+            .grid-cell {
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="controls">
+        <div style="text-align: center;">
+            <h1>📚 Plantilla Escolar v2.0</h1>
+            <span class="version-badge">🚀 VERSIÓN AVANZADA</span>
+        </div>
+
+        <div class="controls-row">
+            <div class="control-group">
+                <label for="gridSize">Configuración:</label>
+                <select id="gridSize">
+                    <option value="2x2">2x2 (4 imágenes)</option>
+                    <option value="3x3">3x3 (9 imágenes)</option>
+                    <option value="4x4" selected>4x4 (16 imágenes)</option>
+                    <option value="5x5">5x5 (25 imágenes)</option>
+                    <option value="6x6">6x6 (36 imágenes)</option>
+                    <option value="8x8">8x8 (64 imágenes)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="sortOrder">Ordenar:</label>
+                <select id="sortOrder">
+                    <option value="none">Sin ordenar</option>
+                    <option value="alphabetic">Alfabético (A-Z)</option>
+                    <option value="numeric">Numérico (0-9)</option>
+                </select>
+            </div>
+
+            <button onclick="selectFiles()">📁 Seleccionar Archivos</button>
+            <button onclick="clearAll()">🗑️ Limpiar Todo</button>
+            <button onclick="window.print()">🖨️ Imprimir</button>
+        </div>
+
+        <div class="controls-row">
+            <div class="control-group" style="width: 100%;">
+                <label>Recursos Externos:</label>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                    <button onclick="searchPexels()" style="background: #05a081;">📸 Pexels</button>
+                    <button onclick="searchFreepik()" style="background: #336aea;">🎨 Freepik</button>
+                    <button onclick="openAIModal()" style="background: #8e44ad;">✨ Crear con IA</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="drop-zone" id="dropZone">
+            <h3>🎯 Arrastra y Suelta tus Imágenes Aquí</h3>
+            <p>O haz clic para seleccionar archivos • También puedes pegar (Ctrl+V)</p>
+        </div>
+
+        <div class="info">
+            <strong>💡 Instrucciones:</strong><br>
+            • Arrastra múltiples imágenes a la zona azul o haz clic para seleccionar<br>
+            • Las imágenes se llenarán automáticamente de izquierda a derecha<br>
+            • Arrastra cualquier imagen para cambiarla de posición<br>
+            • Si hay más imágenes que espacios, se crearán plantillas adicionales<br>
+            • Usa Ctrl+V para pegar imágenes del portapapeles
+        </div>
+    </div>
+
+    <div class="stats" id="stats" style="display: none;">
+        <span class="stats-item">📊 Total de imágenes: <span class="stats-number" id="totalImages">0</span></span>
+        <span class="stats-item">📄 Plantillas generadas: <span class="stats-number" id="totalTemplates">0</span></span>
+    </div>
+
+    <div class="templates-container" id="templatesContainer">
+        <!-- Las plantillas se generarán aquí -->
+    </div>
+
+    <input type="file" id="fileInput" multiple accept="image/*">
+
+    <!-- Modal IA -->
+    <div id="aiModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;">
+        <div
+            style="background: #1f2937; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; border: 1px solid #3b82f6;">
+            <h3 style="color: #3b82f6; margin-bottom: 15px;">✨ Generar Imagen con IA</h3>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Tu API Key de OpenAI:</label>
+                <input type="password" id="openaiKey" placeholder="sk-..."
+                    style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
+                <small style="color: #9ca3af;">Se guardará localmente en tu navegador.</small>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Describe tu imagen:</label>
+                <textarea id="aiPrompt" rows="4" placeholder="Un paisaje espacial con planetas coloridos..."
+                    style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;"></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button onclick="closeAIModal()"
+                    style="background: #4b5563; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Cancelar</button>
+                <button onclick="generateAIImage()"
+                    style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Generar</button>
+            </div>
+
+            <div id="aiStatus" style="margin-top: 10px; color: #e5e7eb; font-size: 0.9rem;"></div>
+        </div>
+    </div>
+
+    <script>
+        let allImages = [];
+        let gridConfig = { rows: 4, cols: 4 };
+        let draggedElement = null;
+        let draggedIndex = null;
+
+        // ===== API KEYS & INTEGRATION =====
+        const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
+        const FREEPIK_API_KEY = 'FPSX890e70b7164ab7a1b05182a68d64ad06';
+
+        function applyExternalImages(urls, sourceName) {
+            applyPixabayImages(urls, sourceName);
+        }
+
+        async function searchPexels() {
+            const query = prompt("¿Qué imágenes buscas en Pexels?");
+            if (!query) return;
+
+            try {
+                const response = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=12`, {
+                    headers: { Authorization: PEXELS_API_KEY }
+                });
+                const data = await response.json();
+                const images = data.photos.map(photo => photo.src.large);
+                applyExternalImages(images, `Pexels: ${query}`);
+            } catch (error) {
+                console.error(error);
+                alert('Error al buscar en Pexels');
+            }
+        }
+
+        async function searchFreepik() {
+            const query = prompt("¿Qué imágenes buscas en Freepik?");
+            if (!query) return;
+
+            try {
+                const response = await fetch(`https://api.freepik.com/v1/resources?locale=es-ES&q=${encodeURIComponent(query)}&limit=12`, {
+                    headers: { 'X-Freepik-API-Key': FREEPIK_API_KEY }
+                });
+                const data = await response.json();
+                const images = data.data.map(item => item.image.source.url);
+                applyExternalImages(images, `Freepik: ${query}`);
+            } catch (error) {
+                console.error(error);
+                alert('Error al buscar en Freepik');
+            }
+        }
+
+        // ===== AI GENERATION =====
+        function openAIModal() {
+            const storedKey = localStorage.getItem('openai_api_key');
+            if (storedKey) document.getElementById('openaiKey').value = storedKey;
+            document.getElementById('aiModal').style.display = 'flex';
+        }
+
+        function closeAIModal() {
+            document.getElementById('aiModal').style.display = 'none';
+            document.getElementById('aiStatus').textContent = '';
+        }
+
+        async function generateAIImage() {
+            const apiKey = document.getElementById('openaiKey').value.trim();
+            const prompt = document.getElementById('aiPrompt').value.trim();
+            const statusDiv = document.getElementById('aiStatus');
+
+            if (!apiKey) {
+                alert('Por favor ingresa tu API Key de OpenAI');
+                return;
+            }
+            if (!prompt) {
+                alert('Por favor describe la imagen');
+                return;
+            }
+
+            localStorage.setItem('openai_api_key', apiKey);
+            statusDiv.textContent = '⏳ Generando imagen... (esto puede tomar unos segundos)';
+
+            try {
+                const response = await fetch('https://api.openai.com/v1/images/generations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "dall-e-3",
+                        prompt: prompt,
+                        n: 1,
+                        size: "1024x1024"
+                    })
                 });
 
-            dropZone.addEventListener('dragleave', ()=> {
-                    dropZone.classList.remove('dragover');
-                });
+                const data = await response.json();
 
-            dropZone.addEventListener('drop', (e)=> {
-                    e.preventDefault();
-                    dropZone.classList.remove('dragover');
-                    handleFiles(e.dataTransfer.files);
-                });
+                if (data.error) {
+                    throw new Error(data.error.message);
+                }
 
-            fileInput.addEventListener('change', (e)=> {
-                    handleFiles(e.target.files);
-                });
+                const imageUrl = data.data[0].url;
+                applyExternalImages([imageUrl], `IA: ${prompt}`);
+                closeAIModal();
 
-            document.addEventListener('paste', (e)=> {
-                    const items=e.clipboardData.items;
+            } catch (error) {
+                console.error(error);
+                statusDiv.textContent = '❌ Error: ' + error.message;
+            }
+        }
 
-                    for (let item of items) {
-                        if (item.type.indexOf('image') !==-1) {
-                            const file=item.getAsFile();
-                            handleFiles([file]);
-                        }
+        function initializeApp() {
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+
+            document.addEventListener('paste', (e) => {
+                const items = e.clipboardData.items;
+                for (let item of items) {
+                    if (item.type.indexOf('image') !== -1) {
+                        const file = item.getAsFile();
+                        handleFiles([file]);
                     }
-                });
+                }
+            });
 
-            document.getElementById('gridSize').addEventListener('change', (e)=> {
-                    const [rows, cols]=e.target.value.split('x').map(Number);
+            document.getElementById('gridSize').addEventListener('change', (e) => {
+                const [rows, cols] = e.target.value.split('x').map(Number);
+                gridConfig = { rows, cols };
+                renderTemplates();
+            });
 
-                    gridConfig= {
-                        rows, cols
-                    }
-
-                    ;
-                    renderTemplates();
-                });
-
-            document.getElementById('sortOrder').addEventListener('change', ()=> {
-                    sortImages();
-                    renderTemplates();
-                });
+            document.getElementById('sortOrder').addEventListener('change', () => {
+                sortImages();
+                renderTemplates();
+            });
 
             createEmptyTemplate();
         }
 
         function handleFiles(files) {
-            const newImages=Array.from(files).filter(file=> file.type.startsWith ('image/'));
+            const newImages = Array.from(files).filter(file => file.type.startsWith('image/'));
+            let filesProcessed = 0;
 
-            let filesProcessed=0;
-
-            newImages.forEach(file=> {
-                    const reader=new FileReader();
-
-                    reader.onload=(e)=> {
-                        allImages.push({
-                            data: e.target.result,
-                            name: file.name
-                        });
+            newImages.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    allImages.push({
+                        data: e.target.result,
+                        name: file.name
+                    });
                     filesProcessed++;
-
-                    if (filesProcessed===newImages.length) {
+                    if (filesProcessed === newImages.length) {
                         sortImages();
                         renderTemplates();
                         updateStats();
                     }
-                }
-
-                ;
+                };
                 reader.readAsDataURL(file);
             });
         }
 
         function sortImages() {
-            const sortOrder=document.getElementById('sortOrder').value;
-
-            if (sortOrder==='alphabetic') {
-                allImages.sort((a, b)=> a.name.localeCompare(b.name));
-            }
-
-            else if (sortOrder==='numeric') {
-                allImages.sort((a, b)=> {
-                        const numA=parseInt(a.name.match(/\d+/)?.[0] || '0');
-                        const numB=parseInt(b.name.match(/\d+/)?.[0] || '0');
-                        return numA - numB;
-                    });
+            const sortOrder = document.getElementById('sortOrder').value;
+            if (sortOrder === 'alphabetic') {
+                allImages.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sortOrder === 'numeric') {
+                allImages.sort((a, b) => {
+                    const numA = parseInt(a.name.match(/\d+/)?.[0] || '0');
+                    const numB = parseInt(b.name.match(/\d+/)?.[0] || '0');
+                    return numA - numB;
+                });
             }
         }
 
         function createEmptyTemplate() {
-            const container=document.getElementById('templatesContainer');
-            container.innerHTML='';
+            const container = document.getElementById('templatesContainer');
+            container.innerHTML = '';
 
-            const wrapper=document.createElement('div');
-            wrapper.className='template-wrapper';
+            const wrapper = document.createElement('div');
+            wrapper.className = 'template-wrapper';
 
-            const label=document.createElement('div');
-            label.className='template-label';
-            label.textContent='Plantilla 1';
+            const label = document.createElement('div');
+            label.className = 'template-label';
+            label.textContent = 'Plantilla 1';
 
-            const pageContainer=document.createElement('div');
-            pageContainer.className='page-container';
+            const pageContainer = document.createElement('div');
+            pageContainer.className = 'page-container';
 
-            const gridContainer=document.createElement('div');
-            gridContainer.className='grid-container';
+            const gridContainer = document.createElement('div');
+            gridContainer.className = 'grid-container';
+            gridContainer.style.gridTemplateColumns = `repeat(${gridConfig.cols}, 1fr)`;
+            gridContainer.style.gridTemplateRows = `repeat(${gridConfig.rows}, 1fr)`;
 
-            gridContainer.style.gridTemplateColumns=`repeat($ {
-                    gridConfig.cols
-                }
-
-                , 1fr)`;
-
-            gridContainer.style.gridTemplateRows=`repeat($ {
-                    gridConfig.rows
-                }
-
-                , 1fr)`;
-
-            const totalCells=gridConfig.rows * gridConfig.cols;
-
-            for (let i=0; i < totalCells; i++) {
-                const cell=createCell(i, null, 0);
+            const totalCells = gridConfig.rows * gridConfig.cols;
+            for (let i = 0; i < totalCells; i++) {
+                const cell = createCell(i, null, 0);
                 gridContainer.appendChild(cell);
             }
 
@@ -416,50 +657,38 @@
         }
 
         function renderTemplates() {
-            const container=document.getElementById('templatesContainer');
-            container.innerHTML='';
+            const container = document.getElementById('templatesContainer');
+            container.innerHTML = '';
 
-            if (allImages.length===0) {
+            if (allImages.length === 0) {
                 createEmptyTemplate();
                 return;
             }
 
-            const imagesPerTemplate=gridConfig.rows * gridConfig.cols;
-            const numTemplates=Math.ceil(allImages.length / imagesPerTemplate);
+            const imagesPerTemplate = gridConfig.rows * gridConfig.cols;
+            const numTemplates = Math.ceil(allImages.length / imagesPerTemplate);
 
-            for (let t=0; t < numTemplates; t++) {
-                const wrapper=document.createElement('div');
-                wrapper.className='template-wrapper';
-                const label=document.createElement('div');
-                label.className='template-label';
+            for (let t = 0; t < numTemplates; t++) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'template-wrapper';
 
-                label.textContent=`Plantilla $ {
-                    t+1
-                }
+                const label = document.createElement('div');
+                label.className = 'template-label';
+                label.textContent = `Plantilla ${t + 1}`;
 
-                `;
-                const pageContainer=document.createElement('div');
-                pageContainer.className='page-container';
-                const gridContainer=document.createElement('div');
-                gridContainer.className='grid-container';
+                const pageContainer = document.createElement('div');
+                pageContainer.className = 'page-container';
 
-                gridContainer.style.gridTemplateColumns=`repeat($ {
-                        gridConfig.cols
-                    }
+                const gridContainer = document.createElement('div');
+                gridContainer.className = 'grid-container';
+                gridContainer.style.gridTemplateColumns = `repeat(${gridConfig.cols}, 1fr)`;
+                gridContainer.style.gridTemplateRows = `repeat(${gridConfig.rows}, 1fr)`;
 
-                    , 1fr)`;
-
-                gridContainer.style.gridTemplateRows=`repeat($ {
-                        gridConfig.rows
-                    }
-
-                    , 1fr)`;
-                const totalCells=gridConfig.rows * gridConfig.cols;
-
-                for (let i=0; i < totalCells; i++) {
-                    const globalIndex=t * imagesPerTemplate+i;
-                    const image=allImages[globalIndex] || null;
-                    const cell=createCell(i, image, globalIndex);
+                const totalCells = gridConfig.rows * gridConfig.cols;
+                for (let i = 0; i < totalCells; i++) {
+                    const globalIndex = t * imagesPerTemplate + i;
+                    const image = allImages[globalIndex] || null;
+                    const cell = createCell(i, image, globalIndex);
                     gridContainer.appendChild(cell);
                 }
 
@@ -470,75 +699,70 @@
             }
         }
 
-        function createCell(localIndex, image,
-            globalIndex) {
-            const cell=document.createElement('div');
-            cell.className='grid-cell arkaios-image-slot';
-            cell.draggable=image ? true: false;
-            cell.dataset.index=globalIndex;
+        function createCell(localIndex, image, globalIndex) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell arkaios-image-slot';
+            cell.draggable = image ? true : false;
+            cell.dataset.index = globalIndex;
 
             if (image) {
                 cell.classList.add('has-image');
             }
 
-            const cellNumber=document.createElement('div');
-            cellNumber.className='cell-number';
-            cellNumber.textContent=globalIndex+1;
-            const img=document.createElement('img');
-            img.className='image-preview';
+            const cellNumber = document.createElement('div');
+            cellNumber.className = 'cell-number';
+            cellNumber.textContent = globalIndex + 1;
 
+            const img = document.createElement('img');
+            img.className = 'image-preview';
             if (image) {
-                img.src=image.data;
+                img.src = image.data;
                 img.classList.add('active');
             }
 
-            const emptyText=document.createElement('div');
-            emptyText.className='empty-cell-text';
-            emptyText.textContent='🖼️';
-            const deleteBtn=document.createElement('button');
-            deleteBtn.className='delete-button';
-            deleteBtn.textContent='×';
+            const emptyText = document.createElement('div');
+            emptyText.className = 'empty-cell-text';
+            emptyText.textContent = '🖼️';
 
-            deleteBtn.onclick=(e)=> {
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-button';
+            deleteBtn.textContent = '×';
+            deleteBtn.onclick = (e) => {
                 e.stopPropagation();
                 deleteImage(globalIndex);
-            }
+            };
 
-            ;
+            cell.addEventListener('dragstart', (e) => {
+                if (image) {
+                    draggedElement = cell;
+                    draggedIndex = globalIndex;
+                    cell.classList.add('dragging');
+                }
+            });
 
-            cell.addEventListener('dragstart', (e)=> {
-                    if (image) {
-                        draggedElement=cell;
-                        draggedIndex=globalIndex;
-                        cell.classList.add('dragging');
-                    }
-                });
+            cell.addEventListener('dragend', () => {
+                cell.classList.remove('dragging');
+            });
 
-            cell.addEventListener('dragend', ()=> {
-                    cell.classList.remove('dragging');
-                });
+            cell.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                if (draggedElement && draggedElement !== cell) {
+                    cell.classList.add('drag-over');
+                }
+            });
 
-            cell.addEventListener('dragover', (e)=> {
-                    e.preventDefault();
+            cell.addEventListener('dragleave', () => {
+                cell.classList.remove('drag-over');
+            });
 
-                    if (draggedElement && draggedElement !==cell) {
-                        cell.classList.add('drag-over');
-                    }
-                });
-
-            cell.addEventListener('dragleave', ()=> {
-                    cell.classList.remove('drag-over');
-                });
-
-            cell.addEventListener('drop', (e)=> {
-                    e.preventDefault();
-                    cell.classList.remove('drag-over');
-
-                    if (draggedElement && draggedElement !==cell) {
-                        const targetIndex=parseInt(cell.dataset.index);
-                        swapImages(draggedIndex, targetIndex);
-                    }
-                });
+            cell.addEventListener('drop', (e) => {
+                e.preventDefault();
+                cell.classList.remove('drag-over');
+                if (draggedElement && draggedElement !== cell) {
+                    const targetIndex = parseInt(cell.dataset.index);
+                    swapImages(draggedIndex, targetIndex);
+                }
+            });
 
             cell.appendChild(cellNumber);
             cell.appendChild(img);
@@ -549,12 +773,10 @@
         }
 
         function swapImages(index1, index2) {
-            if (index1===index2) return;
-
-            const temp=allImages[index1];
-            allImages[index1]=allImages[index2];
-            allImages[index2]=temp;
-
+            if (index1 === index2) return;
+            const temp = allImages[index1];
+            allImages[index1] = allImages[index2];
+            allImages[index2] = temp;
             renderTemplates();
         }
 
@@ -570,72 +792,52 @@
 
         function clearAll() {
             if (confirm('¿Estás seguro de que quieres eliminar todas las imágenes?')) {
-                allImages=[];
+                allImages = [];
                 renderTemplates();
                 updateStats();
             }
         }
 
         function updateStats() {
-            const stats=document.getElementById('stats');
-            const imagesPerTemplate=gridConfig.rows * gridConfig.cols;
-            const numTemplates=Math.ceil(allImages.length / imagesPerTemplate) || 1;
-
-            document.getElementById('totalImages').textContent=allImages.length;
-            document.getElementById('totalTemplates').textContent=numTemplates;
-
-            stats.style.display=allImages.length>0 ? 'block': 'none';
+            const stats = document.getElementById('stats');
+            const imagesPerTemplate = gridConfig.rows * gridConfig.cols;
+            const numTemplates = Math.ceil(allImages.length / imagesPerTemplate) || 1;
+            document.getElementById('totalImages').textContent = allImages.length;
+            document.getElementById('totalTemplates').textContent = numTemplates;
+            stats.style.display = allImages.length > 0 ? 'block' : 'none';
         }
 
         function showPixabayCredit(topic, count) {
-            let credit=document.getElementById('pixabay-credit');
-
-            if ( !credit) {
-                credit=document.createElement('div');
-                credit.id='pixabay-credit';
+            let credit = document.getElementById('pixabay-credit');
+            if (!credit) {
+                credit = document.createElement('div');
+                credit.id = 'pixabay-credit';
                 document.body.insertBefore(credit, document.body.firstChild);
             }
-
-            const cleanTopic=topic || 'Pixabay';
-
-            credit.textContent=`Imágenes de Pixabay ($ {
-                    count
-
-                }) · Tema: $ {
-                cleanTopic
-            }
-
-            `;
+            const cleanTopic = topic || 'Pixabay';
+            credit.textContent = `Imágenes de Pixabay (${count}) · Tema: ${cleanTopic}`;
         }
 
-        function applyPixabayImages(urls=[], topic='Pixabay') {
-            if ( !Array.isArray(urls) || urls.length===0) return;
-
-            allImages=urls.map((url, idx)=> ({
-
-                    data: url,
-                    name: `$ {
-                        topic || 'pixabay'
-                    }
-
-                    -$ {
-                        idx + 1
-                    }
-
-                    .jpg`
-                }));
-
-        sortImages();
-        renderTemplates();
-        updateStats();
-        showPixabayCredit(topic, urls.length);
+        function applyPixabayImages(urls = [], topic = 'Pixabay') {
+            if (!Array.isArray(urls) || urls.length === 0) return;
+            allImages = urls.map((url, idx) => ({
+                data: url,
+                name: `${topic || 'pixabay'}-${idx + 1}.jpg`
+            }));
+            sortImages();
+            renderTemplates();
+            updateStats();
+            showPixabayCredit(topic, urls.length);
         }
 
-        window.addEventListener('message', (event)=> {
-                const data=event.data;
-                if ( !data || data.type !=='ARKAIOS_PIXABAY_IMAGES') return;
-                applyPixabayImages(data.images || [], data.topic || 'Pixabay');
-            });
+        window.addEventListener('message', (event) => {
+            const data = event.data;
+            if (!data || data.type !== 'ARKAIOS_PIXABAY_IMAGES') return;
+            applyPixabayImages(data.images || [], data.topic || 'Pixabay');
+        });
 
         initializeApp();
-        </script></body></html>
+    </script>
+</body>
+
+</html>
