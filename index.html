@@ -784,8 +784,8 @@
       useBackend: true,
       endpoint: '/api/pixabay',
       // SOLO si no usas backend (no recomendado)
-      // Clave provista por el solicitante para fallback directo
-      directKey: '53456758-e7788c27d5c820739d362581f'
+      // Clave provista por el solicitante para fallback directo (NO EXPONGAS EN PRODUCCIÓN)
+        directKey: ''
     };
 
     async function fetchPixabayImages(topic, count = 8) {
