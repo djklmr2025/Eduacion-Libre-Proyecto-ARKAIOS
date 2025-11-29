@@ -4,56 +4,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plantilla Escolar v2.0 - Arrastrar y Soltar</title>
+    <title>Plantilla Escolar v2.0 | ARKAIOS</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
             padding: 20px;
+            min-height: 100vh;
         }
 
         .controls {
             background: white;
             padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px;
-            max-width: 900px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
         }
 
-        .controls h1 {
-            color: #667eea;
-            margin-bottom: 10px;
-            text-align: center;
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 24px;
         }
 
         .version-badge {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: #667eea;
             color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
+            padding: 4px 8px;
+            border-radius: 4px;
             font-size: 12px;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 15px;
+            vertical-align: middle;
         }
 
         .controls-row {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             align-items: center;
             flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 15px;
+            margin-top: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
         }
 
         .control-group {
@@ -62,9 +56,9 @@
             gap: 5px;
         }
 
-        .control-group label {
+        label {
             font-weight: bold;
-            color: #333;
+            color: #555;
             font-size: 14px;
         }
 
@@ -72,14 +66,16 @@
         button {
             padding: 10px 15px;
             border-radius: 8px;
-            border: 2px solid #667eea;
+            border: 1px solid #ddd;
             font-size: 14px;
             cursor: pointer;
             transition: all 0.3s;
         }
 
-        select {
-            background: white;
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
         }
 
         button {
@@ -87,21 +83,24 @@
             color: white;
             border: none;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         button:hover {
-            background: #5568d3;
+            background: #5a6fd6;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
 
         .drop-zone {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border: 3px dashed #667eea;
+            border: 3px dashed #cbd5e0;
             border-radius: 15px;
             padding: 40px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-top: 20px;
+            background: #f8fafc;
             transition: all 0.3s;
             cursor: pointer;
         }
@@ -308,6 +307,7 @@
             .info,
             .template-label,
             #pixabay-credit,
+            .no-print,
             .stats,
             #aiModal {
                 display: none !important;
@@ -812,6 +812,7 @@
             if (!credit) {
                 credit = document.createElement('div');
                 credit.id = 'pixabay-credit';
+                credit.classList.add('no-print');
                 document.body.insertBefore(credit, document.body.firstChild);
             }
             const cleanTopic = topic || 'Pixabay';
@@ -835,6 +836,16 @@
             if (!data || data.type !== 'ARKAIOS_PIXABAY_IMAGES') return;
             applyPixabayImages(data.images || [], data.topic || 'Pixabay');
         });
+
+        // Nuclear fix for printing
+        window.onbeforeprint = function () {
+            const credit = document.getElementById('pixabay-credit');
+            if (credit) credit.style.setProperty('display', 'none', 'important');
+        };
+        window.onafterprint = function () {
+            const credit = document.getElementById('pixabay-credit');
+            if (credit) credit.style.display = 'block';
+        };
 
         initializeApp();
     </script>

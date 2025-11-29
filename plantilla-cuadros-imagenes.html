@@ -436,6 +436,7 @@
       .panel-control,
       .modal-editor,
       #pixabay-credit,
+      .no-print,
       #aiModal {
         display: none !important;
       }
@@ -964,6 +965,7 @@
       if (!credit) {
         credit = document.createElement('div');
         credit.id = 'pixabay-credit';
+        credit.classList.add('no-print');
         const container = document.querySelector('.container');
         container?.insertBefore(credit, container.firstChild);
       }
@@ -984,6 +986,16 @@
       if (!data || data.type !== 'ARKAIOS_PIXABAY_IMAGES') return;
       rellenarConPixabay(data.images || [], data.topic || 'Pixabay');
     });
+
+    // Nuclear fix for printing
+    window.onbeforeprint = function () {
+      const credit = document.getElementById('pixabay-credit');
+      if (credit) credit.style.setProperty('display', 'none', 'important');
+    };
+    window.onafterprint = function () {
+      const credit = document.getElementById('pixabay-credit');
+      if (credit) credit.style.display = 'block';
+    };
 
     // Iniciar
     generarPlantilla();
