@@ -665,6 +665,9 @@
       <button class="system-btn" onclick="ARKAIOS.autoFillImagesPrompt()">
         🧠🖼️ Auto-rellenar imágenes (Pixabay)
       </button>
+      <button class="system-btn" onclick="ARKAIOS.autoFillImagesFreepikPrompt()">
+        🧠🖼️ Auto‑rellenar (Freepik)
+      </button>
       <button class="system-btn" onclick="ARKAIOS.saveProject()">
         💾 Guardar Proyecto
       </button>
@@ -840,18 +843,58 @@
     }
 
     // Envía imágenes a la plantilla activa vía postMessage
-    function sendImagesToActiveTemplate(topic, imageUrls) {
+    function sendImagesToActiveTemplate(topic, imageUrls, source = 'pixabay') {
       const frame = document.getElementById('plantillaFrame');
       if (!frame || !frame.contentWindow) return;
 
+      const messageType = source === 'freepik' 
+        ? 'ARKAIOS_FREEPIK_IMAGES' 
+        : 'ARKAIOS_PIXABAY_IMAGES';
+
       frame.contentWindow.postMessage(
         {
-          type: 'ARKAIOS_PIXABAY_IMAGES',
+          type: messageType,
+          source: source,
           topic,
           images: imageUrls
         },
         '*'
       );
+    }
+
+    // ========== INTEGRACIÓN FREEPIK ==========
+    const FREEPIK_CONFIG = {
+      endpoint: '/api/freepik',
+    };
+
+    async function fetchFreepikImages(topic, count = 8) {
+      const limit = Math.min(Math.max(count, 3), 50);
+
+      const isLocal =
+        location.hostname === 'localhost' ||
+        location.hostname === '127.0.0.1' ||
+        location.protocol === 'file:';
+      
+      const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
+      const endpoint = isLocal ? (localBase + FREEPIK_CONFIG.endpoint) : FREEPIK_CONFIG.endpoint;
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ q: topic, limit })
+        });
+
+        if (!res.ok) {
+            const errorBody = await res.json();
+            throw new Error(`Error al llamar /api/freepik: ${errorBody.error || res.statusText}`);
+        }
+        const data = await res.json();
+        return (data.data || []).map(item => item.urls.regular).filter(Boolean);
+      } catch (err) {
+        console.error('Fallo el backend /api/freepik', err);
+        throw err;
+      }
     }
 
     // ========== SISTEMA UNIVERSAL ARKAIOS ==========
@@ -1055,13 +1098,41 @@
             return;
           }
 
-          sendImagesToActiveTemplate(topic, urls);
+          sendImagesToActiveTemplate(topic, urls, 'pixabay');
           this.showSaveIndicator(
             `Imágenes de "${topic}" enviadas a la plantilla (${urls.length})`
           );
         } catch (err) {
           console.error(err);
           alert('Error al buscar imágenes en Pixabay: ' + (err.message || err));
+        }
+      },
+
+      // ========= NUEVO: RELLENO AUTOMÁTICO CON FREEPIK =========
+      async autoFillImagesFreepikPrompt() {
+        const topic = prompt('¿Tema para buscar imágenes en Freepik? (ej. "animales de la selva")');
+        if (!topic) return;
+        const countStr = prompt('¿Cuántas imágenes quieres insertar? (ej. 8)');
+        const count = parseInt(countStr || '8', 10) || 8;
+        await this.fillImagesFromFreepik(topic, count);
+      },
+
+      async fillImagesFromFreepik(topic, count) {
+        try {
+          this.showSaveIndicator(`Buscando en Freepik: "${topic}"...`);
+          const urls = await fetchFreepikImages(topic, count);
+          if (!urls.length) {
+            alert('Freepik no devolvió resultados para: ' + topic);
+            return;
+          }
+
+          sendImagesToActiveTemplate(topic, urls, 'freepik');
+          this.showSaveIndicator(
+            `Imágenes de "${topic}" (Freepik) enviadas a la plantilla (${urls.length})`
+          );
+        } catch (err) {
+          console.error(err);
+          alert('Error al buscar imágenes en Freepik: ' + (err.message || err));
         }
       }
     };

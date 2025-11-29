@@ -42,6 +42,22 @@ El proyecto incluye un endpoint serverless `/api/pixabay` para buscar imágenes 
   - Si alguna clave fue expuesta accidentalmente (en commits o en chat), revócala y crea una nueva.
 
 ---
+## 🔗 Integración con Freepik (Imágenes)
+
+De forma similar a Pixabay, el proyecto incluye un endpoint serverless `/api/freepik` para buscar imágenes desde Freepik.
+
+- 1) Configura la variable de entorno `FREEPIK_API_KEY` en Vercel:
+  - Ve a tu proyecto en Vercel → Settings → Environment Variables → Add New
+  - Name: `FREEPIK_API_KEY`
+  - Value: tu clave de Freepik que puedes obtener en [Freepik API](https://www.freepik.com/developers/docs/authenticate-and-authorize/api-keys)
+  - Environment: `Production` (y `Preview`/`Development` si lo deseas)
+
+- 2) Deploy: realiza un nuevo deploy en Vercel.
+
+- 3) Crédito:
+  - Recuerda que al usar la API de Freepik, debes darles crédito. Este proyecto lo hará automáticamente en futuras versiones. Por ahora, considera añadir un texto como "Imágenes de Freepik".
+
+---
 
 Si quieres, puedo integrar una caché persistente con Upstash/Redis y documentar los pasos para obtener las credenciales.
 
