@@ -662,6 +662,9 @@
       <span class="arkaios-badge">⚡ Proyecto ARKAIOS</span>
     </div>
     <div class="system-actions">
+      <button class="system-btn" onclick="ARKAIOS.autoFillImagesPrompt()">
+        🧠🖼️ Auto-rellenar imágenes (Pixabay)
+      </button>
       <button class="system-btn" onclick="ARKAIOS.saveProject()">
         💾 Guardar Proyecto
       </button>
@@ -774,6 +777,82 @@
   <input type="file" id="projectLoader" accept=".json" style="display:none">
 
   <script>
+    // ========== INTEGRACIÓN PIXABAY ==========
+    // Si usas backend en Vercel deja endpoint = '/api/pixabay'
+    // Si quieres llamar directo a Pixabay cambia useBackend = false
+    const PIXABAY_CONFIG = {
+      useBackend: true,
+      endpoint: '/api/pixabay',
+      // SOLO si no usas backend (no recomendado)
+      // Clave provista por el solicitante para fallback directo
+      directKey: '53456758-e7788c27d5c820739d362581f'
+    };
+
+    async function fetchPixabayImages(topic, count = 8) {
+      const per_page = Math.min(Math.max(count, 3), 50); // entre 3 y 50
+
+      const isLocal =
+        location.hostname === 'localhost' ||
+        location.hostname === '127.0.0.1' ||
+        location.protocol === 'file:';
+
+      // Opción segura: usar backend en Vercel
+      if (PIXABAY_CONFIG.useBackend) {
+        const endpoint = isLocal
+          ? 'https://eduacion-libre-proyecto-arkaios.vercel.app' + PIXABAY_CONFIG.endpoint
+          : PIXABAY_CONFIG.endpoint;
+
+        try {
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ q: topic, per_page })
+          });
+
+          if (!res.ok) throw new Error('Error al llamar /api/pixabay');
+          const data = await res.json();
+          return (data.hits || []).map((h) => h.webformatURL || h.previewURL).filter(Boolean);
+        } catch (err) {
+          console.warn('Fallo backend /api/pixabay, intentando llamado directo...', err);
+          // Fallback a llamada directa si tenemos key configurada
+          if (!PIXABAY_CONFIG.directKey) {
+            throw err;
+          }
+        }
+      }
+
+      // Opción directa (expone la key en el navegador)
+      const url =
+        'https://pixabay.com/api/?' +
+        new URLSearchParams({
+          key: PIXABAY_CONFIG.directKey,
+          q: topic,
+          image_type: 'photo',
+          safesearch: 'true',
+          per_page: String(per_page)
+        }).toString();
+
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Error al llamar Pixabay directo');
+      const data = await res.json();
+      return (data.hits || []).map((h) => h.webformatURL || h.previewURL).filter(Boolean);
+    }
+
+    // Envía imágenes a la plantilla activa vía postMessage
+    function sendImagesToActiveTemplate(topic, imageUrls) {
+      const frame = document.getElementById('plantillaFrame');
+      if (!frame || !frame.contentWindow) return;
+
+      frame.contentWindow.postMessage(
+        {
+          type: 'ARKAIOS_PIXABAY_IMAGES',
+          topic,
+          images: imageUrls
+        },
+        '*'
+      );
+    }
+
     // ========== SISTEMA UNIVERSAL ARKAIOS ==========
     const ARKAIOS = {
       version: '2.0',
@@ -956,6 +1035,33 @@
         setTimeout(() => {
           indicator.classList.remove('show');
         }, 3000);
+      },
+
+      // ========= NUEVO: RELLENO AUTOMÁTICO CON PIXABAY =========
+      async autoFillImagesPrompt() {
+        const topic = prompt('¿Tema para buscar imágenes en Pixabay? (ej. "sistema solar")');
+        if (!topic) return;
+        const countStr = prompt('¿Cuántas imágenes quieres insertar? (ej. 8)');
+        const count = parseInt(countStr || '8', 10) || 8;
+        await this.fillImagesFromPixabay(topic, count);
+      },
+
+      async fillImagesFromPixabay(topic, count) {
+        try {
+          const urls = await fetchPixabayImages(topic, count);
+          if (!urls.length) {
+            alert('Pixabay no devolvió resultados para: ' + topic);
+            return;
+          }
+
+          sendImagesToActiveTemplate(topic, urls);
+          this.showSaveIndicator(
+            `Imágenes de "${topic}" enviadas a la plantilla (${urls.length})`
+          );
+        } catch (err) {
+          console.error(err);
+          alert('Error al buscar imágenes en Pixabay: ' + (err.message || err));
+        }
       }
     };
 
@@ -1013,7 +1119,8 @@
         {
           role: 'system',
           content:
-            'Eres ARKAIOS, un asistente educativo con superpoderes. Hablas en español claro, das pasos accionables, propones mejoras y sabes trabajar con plantillas HTML. Usa tono motivador y breve. Prioriza dar código listo para copiar cuando sea útil.'
+            'Eres ARKAIOS, un asistente educativo con superpoderes. Hablas en español claro, das pasos accionables, propones mejoras y sabes trabajar con plantillas HTML. Usa tono motivador y breve. Prioriza dar código listo para copiar cuando sea útil. ' +
+            'Si el usuario pide rellenar automáticamente las plantillas con imágenes, NO expliques nada: responde SOLO con un JSON como este: {"type":"pixabay_fill","topic":"sistema solar","count":8}.'
         },
         {
           role: 'system',
@@ -1186,8 +1293,38 @@
 
       try {
         const reply = await callArkaios(aiState.history);
-        aiState.history.push({ role: 'assistant', content: reply });
-        appendMessage('assistant', reply);
+
+        let handledCommand = false;
+
+        // Intentar interpretar la respuesta como comando JSON para Pixabay
+        try {
+          const cmd = JSON.parse(reply);
+          if (cmd && cmd.type === 'pixabay_fill') {
+            const topic = cmd.topic || 'educación';
+            const count = parseInt(cmd.count || 8, 10) || 8;
+
+            appendMessage(
+              'assistant',
+              `Voy a rellenar la plantilla con ~${count} imágenes de Pixabay sobre "${topic}".`
+            );
+
+            aiState.history.push({
+              role: 'assistant',
+              content: `Comando Pixabay recibido para ${topic} (${count} imágenes).`
+            });
+
+            handledCommand = true;
+            await ARKAIOS.fillImagesFromPixabay(topic, count);
+          }
+        } catch (e) {
+          // No era JSON, continuar flujo normal
+        }
+
+        if (!handledCommand) {
+          aiState.history.push({ role: 'assistant', content: reply });
+          appendMessage('assistant', reply);
+        }
+
         setAIStatus('ready', usingPerplexity ? 'Perplexity listo' : 'Puter listo');
       } catch (error) {
         console.error(error);

@@ -305,19 +305,32 @@
       background: #f56565;
     }
 
-    .btn-eliminar:hover {
-      background: #e53e3e;
-    }
+  .btn-eliminar:hover {
+    background: #e53e3e;
+  }
 
-    .celda-vacia {
-      color: #cbd5e0;
-      font-size: 32px;
-      font-weight: 300;
-    }
+  .celda-vacia {
+    color: #cbd5e0;
+    font-size: 32px;
+    font-weight: 300;
+  }
 
-    .modal-editor {
-      display: none;
-      position: fixed;
+  #pixabay-credit {
+    margin: 12px auto;
+    background: #f8fafc;
+    border: 1px solid #d1d5db;
+    padding: 10px 14px;
+    border-radius: 10px;
+    color: #1f2937;
+    font-weight: 600;
+    max-width: 960px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  }
+
+  .modal-editor {
+    display: none;
+    position: fixed;
       top: 0;
       left: 0;
       width: 100%;
@@ -660,7 +673,7 @@
 
     function crearCelda(idx, tamano) {
       const celda = document.createElement('div');
-      celda.className = 'celda-imagen';
+      celda.className = 'celda-imagen arkaios-image-slot';
       celda.style.width = `${tamano}cm`;
       celda.style.height = `${tamano}cm`;
       celda.draggable = imagenes[idx] ? true : false;
@@ -839,6 +852,32 @@
       document.getElementById('stat-hojas').textContent = numHojas;
       document.getElementById('stat-cuadros').textContent = cuadrosPorHoja;
     }
+
+    function mostrarCreditoPixabay(topic, count) {
+      let credit = document.getElementById('pixabay-credit');
+      if (!credit) {
+        credit = document.createElement('div');
+        credit.id = 'pixabay-credit';
+        const container = document.querySelector('.container');
+        container?.insertBefore(credit, container.firstChild);
+      }
+      const cleanTopic = topic || 'Pixabay';
+      credit.textContent = `Imágenes de Pixabay (${count}) · Tema: ${cleanTopic}`;
+    }
+
+    function rellenarConPixabay(urls = [], topic = 'Pixabay') {
+      if (!Array.isArray(urls) || urls.length === 0) return;
+      imagenes = urls.slice();
+      estadosImagen = imagenes.map(() => ({ zoom: 100, x: 0, y: 0, fijada: false }));
+      generarPlantilla();
+      mostrarCreditoPixabay(topic, urls.length);
+    }
+
+    window.addEventListener('message', (event) => {
+      const data = event.data;
+      if (!data || data.type !== 'ARKAIOS_PIXABAY_IMAGES') return;
+      rellenarConPixabay(data.images || [], data.topic || 'Pixabay');
+    });
 
     generarPlantilla();
   </script>

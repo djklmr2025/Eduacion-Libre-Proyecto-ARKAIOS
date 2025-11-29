@@ -120,6 +120,18 @@
             font-size: 14px;
         }
 
+        #pixabay-credit {
+            margin: 12px auto 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            color: #374151;
+            padding: 10px 16px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            font-weight: 600;
+            max-width: 900px;
+            text-align: center;
+        }
+
         .info {
             background: #e3f2fd;
             padding: 15px;
@@ -540,11 +552,11 @@
                 gridContainer.style.gridTemplateColumns = `repeat(${gridConfig.cols}, 1fr)`;
                 gridContainer.style.gridTemplateRows = `repeat(${gridConfig.rows}, 1fr)`;
                 
-                const totalCells = gridConfig.rows * gridConfig.cols;
-                for (let i = 0; i < totalCells; i++) {
-                    const globalIndex = t * imagesPerTemplate + i;
-                    const image = allImages[globalIndex] || null;
-                    const cell = createCell(i, image, globalIndex);
+            const totalCells = gridConfig.rows * gridConfig.cols;
+            for (let i = 0; i < totalCells; i++) {
+                const globalIndex = t * imagesPerTemplate + i;
+                const image = allImages[globalIndex] || null;
+                const cell = createCell(i, image, globalIndex);
                     gridContainer.appendChild(cell);
                 }
                 
@@ -557,7 +569,7 @@
 
         function createCell(localIndex, image, globalIndex) {
             const cell = document.createElement('div');
-            cell.className = 'grid-cell';
+            cell.className = 'grid-cell arkaios-image-slot';
             cell.draggable = image ? true : false;
             cell.dataset.index = globalIndex;
 
@@ -661,12 +673,42 @@
             const stats = document.getElementById('stats');
             const imagesPerTemplate = gridConfig.rows * gridConfig.cols;
             const numTemplates = Math.ceil(allImages.length / imagesPerTemplate) || 1;
-            
+
             document.getElementById('totalImages').textContent = allImages.length;
             document.getElementById('totalTemplates').textContent = numTemplates;
-            
+
             stats.style.display = allImages.length > 0 ? 'block' : 'none';
         }
+
+        function showPixabayCredit(topic, count) {
+            let credit = document.getElementById('pixabay-credit');
+            if (!credit) {
+                credit = document.createElement('div');
+                credit.id = 'pixabay-credit';
+                document.body.insertBefore(credit, document.body.firstChild);
+            }
+            const cleanTopic = topic || 'Pixabay';
+            credit.textContent = `Imágenes de Pixabay (${count}) · Tema: ${cleanTopic}`;
+        }
+
+        function applyPixabayImages(urls = [], topic = 'Pixabay') {
+            if (!Array.isArray(urls) || urls.length === 0) return;
+            allImages = urls.map((url, idx) => ({
+                data: url,
+                name: `${topic || 'pixabay'}-${idx + 1}.jpg`
+            }));
+
+            sortImages();
+            renderTemplates();
+            updateStats();
+            showPixabayCredit(topic, urls.length);
+        }
+
+        window.addEventListener('message', (event) => {
+            const data = event.data;
+            if (!data || data.type !== 'ARKAIOS_PIXABAY_IMAGES') return;
+            applyPixabayImages(data.images || [], data.topic || 'Pixabay');
+        });
 
         initializeApp();
     </script>
