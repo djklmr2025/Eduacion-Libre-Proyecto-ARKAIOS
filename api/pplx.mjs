@@ -53,8 +53,8 @@ export default async function handler(req, res) {
         Authorization: `Bearer ${key}`,
       },
       body: JSON.stringify({
-55
-model: 'sonar',        max_tokens: 800,
+        model: 'sonar',
+        max_tokens: 800,
         messages,
       }),
     });
