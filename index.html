@@ -798,9 +798,10 @@
 
       // Opción segura: usar backend en Vercel
       if (PIXABAY_CONFIG.useBackend) {
-        const endpoint = isLocal
-          ? 'https://eduacion-libre-proyecto-arkaios.vercel.app' + PIXABAY_CONFIG.endpoint
-          : PIXABAY_CONFIG.endpoint;
+        // When running locally prefer the current origin (e.g. http://localhost:3000).
+        // If opened from file:// use localhost as a sensible default.
+        const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
+        const endpoint = isLocal ? (localBase + PIXABAY_CONFIG.endpoint) : PIXABAY_CONFIG.endpoint;
 
         try {
           const res = await fetch(endpoint, {
