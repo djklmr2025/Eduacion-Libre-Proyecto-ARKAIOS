@@ -96,6 +96,19 @@
       margin-top: 4px;
     }
 
+    #pixabay-credit {
+      margin: 12px auto;
+      background: #0b1220;
+      color: #e5e7eb;
+      padding: 10px 14px;
+      border-radius: 10px;
+      max-width: 900px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      border: 1px solid #1f2937;
+      font-weight: 600;
+    }
+
     /* Contenedor de páginas */
     .pages-container {
       display: flex;
@@ -610,7 +623,7 @@
 
         page.circles.forEach(circle => {
           const circleDiv = document.createElement('div');
-          circleDiv.className = 'circle ' + (circle.size === 'grande' ? 'circle-grande' : 'circle-pequeno');
+          circleDiv.className = 'circle ' + (circle.size === 'grande' ? 'circle-grande' : 'circle-pequeno') + ' arkaios-image-slot';
           if (circle.locked) circleDiv.classList.add('locked');
           
           const pos = circle.size === 'grande'
@@ -993,6 +1006,54 @@
       renderPages();
       closeEditPanel();
     }
+
+    function showPixabayCredit(topic, count) {
+      let credit = document.getElementById('pixabay-credit');
+      if (!credit) {
+        credit = document.createElement('div');
+        credit.id = 'pixabay-credit';
+        const container = document.querySelector('.container');
+        container?.insertBefore(credit, container.firstChild);
+      }
+      const cleanTopic = topic || 'Pixabay';
+      credit.textContent = `Imágenes de Pixabay (${count}) · Tema: ${cleanTopic}`;
+    }
+
+    function ensurePagesForImages(totalImages) {
+      const slotsPerPage = 6;
+      const requiredPages = Math.ceil(totalImages / slotsPerPage) || 1;
+      while (pages.length < requiredPages) {
+        pages.push(createInitialPageData(pages.length + 1));
+      }
+    }
+
+    function fillCirclesFromPixabay(urls = [], topic = 'Pixabay') {
+      if (!Array.isArray(urls) || urls.length === 0) return;
+      ensurePagesForImages(urls.length);
+
+      let idx = 0;
+      pages.forEach((page) => {
+        page.circles.forEach((circle) => {
+          const url = urls[idx];
+          if (!url) return;
+          circle.imageData = url;
+          circle.scale = 100;
+          circle.posX = 50;
+          circle.posY = 50;
+          circle.locked = false;
+          idx++;
+        });
+      });
+
+      renderPages();
+      showPixabayCredit(topic, urls.length);
+    }
+
+    window.addEventListener('message', (event) => {
+      const data = event.data;
+      if (!data || data.type !== 'ARKAIOS_PIXABAY_IMAGES') return;
+      fillCirclesFromPixabay(data.images || [], data.topic || 'Pixabay');
+    });
 
     // ===== FIN DEL SCRIPT =====
   </script>

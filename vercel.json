@@ -5,6 +5,9 @@
     },
     "api/arkaios-tools.js": {
       "maxDuration": 30
+    },
+    "api/pixabay.js": {
+      "maxDuration": 15
     }
   }
 }
