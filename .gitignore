@@ -10,3 +10,5 @@
 
 # Evitar indexar el repositorio/carpeta embebida
 cosmos-den/
+.vercel
+.env*.local
