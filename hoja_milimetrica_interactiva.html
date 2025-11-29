@@ -120,7 +120,7 @@
       flex: 1;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       padding: 20px;
       overflow: auto;
       background: rgba(0,0,0,0.1);
@@ -128,10 +128,13 @@
     
     .page-container {
       position: relative;
-      width: 816px;  /* 21.59cm a 96dpi */
-      height: 1056px; /* 27.94cm a 96dpi */
+      width: 100%;
+      max-width: 816px;  /* 21.59cm a 96dpi */
+      height: auto;
+      aspect-ratio: 21.59 / 27.94;
       background: white;
       box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      margin: 0 auto;
     }
     
     /* Canvas de dibujo sobre la plantilla */
@@ -139,6 +142,8 @@
       position: absolute;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
       cursor: crosshair;
       z-index: 10;
     }
@@ -187,32 +192,6 @@
       width: 702px;  /* 185.9mm */
       height: 903px; /* 239.4mm */
       background: #fff8f0;
-    }
-    
-    .info-table {
-      position: absolute;
-      bottom: 20px;
-      right: 57px;
-      width: 300px;
-      border: 2px solid #333;
-      background: white;
-      font-size: 11px;
-    }
-    
-    .info-table table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    
-    .info-table td {
-      border: 1px solid #666;
-      padding: 6px;
-    }
-    
-    .info-table td:first-child {
-      font-weight: bold;
-      width: 35%;
-      background: #f0f0f0;
     }
     
     .watermark {
@@ -350,31 +329,7 @@
           </svg>
         </div>
         
-        <!-- Cuadro de información -->
-        <div class="info-table">
-          <table>
-            <tr>
-              <td>NOMBRE:</td>
-              <td><input type="text" id="nombreInput" style="width: 100%; border: none; background: transparent;"></td>
-            </tr>
-            <tr>
-              <td>MATERIA:</td>
-              <td><input type="text" id="materiaInput" style="width: 100%; border: none; background: transparent;"></td>
-            </tr>
-            <tr>
-              <td>FECHA:</td>
-              <td><input type="text" id="fechaInput" style="width: 100%; border: none; background: transparent;"></td>
-            </tr>
-            <tr>
-              <td>ESCALA:</td>
-              <td>1:1</td>
-            </tr>
-            <tr>
-              <td>GRADO:</td>
-              <td><input type="text" id="gradoInput" style="width: 100%; border: none; background: transparent;"></td>
-            </tr>
-          </table>
-        </div>
+
         
         <!-- Marca de agua -->
         <div class="watermark">
@@ -438,9 +393,11 @@
     // ==================== OBTENER POSICIÓN ====================
     function getMousePos(e) {
       const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
       return {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY
       };
     }
     
@@ -503,7 +460,10 @@
     
     canvas.addEventListener('mousemove', (e) => {
       const pos = getMousePos(e);
-      document.getElementById('coords').textContent = `X: ${Math.round(pos.x)}px, Y: ${Math.round(pos.y)}px`;
+      const rect = canvas.getBoundingClientRect();
+      const displayX = e.clientX - rect.left;
+      const displayY = e.clientY - rect.top;
+      document.getElementById('coords').textContent = `X: ${Math.round(displayX)}px, Y: ${Math.round(displayY)}px`;
       
       if (!state.isDrawing) return;
       
@@ -645,8 +605,6 @@
     });
     
     // Auto-completar fecha
-    document.getElementById('fechaInput').value = new Date().toLocaleDateString('es-MX');
-    
     // Inicializar
     saveState();
   </script>
