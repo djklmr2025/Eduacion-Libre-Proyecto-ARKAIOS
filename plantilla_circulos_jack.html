@@ -400,6 +400,7 @@
       background: #1f2937;
       outline: none;
       -webkit-appearance: none;
+      appearance: none;
     }
 
     .edit-control input[type="range"]::-webkit-slider-thumb {
@@ -546,57 +547,106 @@
 <body>
   <div class="no-print-bar">
     <div>
-      <h1>🎃 Plantilla Educativa - Círculos Jack Skellington</h1>
-      <p class="info">
-        ✨ Carga en lote • Ajuste libre con arrastre • Edición completa • Sistema de fijado
-      </p>
+      <!-- Panel de edición flotante -->
+      <div class="edit-panel" id="editPanel">
+        <div class="edit-header">
+          <h3>✏️ Editor de Círculo</h3>
+          <button class="edit-close" id="editClose">×</button>
+        </div>
+
+        <div class="edit-info">
+          💡 <strong>Tip:</strong> Arrastra la imagen con el mouse para moverla libremente dentro del círculo
+        </div>
+
+        <div class="edit-control">
+          <label>Tamaño: <span class="value" id="scaleValue">100%</span></label>
+          <input type="range" id="scaleSlider" min="50" max="200" value="100">
+        </div>
+
+        <div class="edit-buttons">
+          <button class="edit-btn edit-btn-lock" id="btnLock">🔒 Fijar Imagen</button>
+          <button class="edit-btn edit-btn-delete" id="btnDeleteImage">🗑️ Eliminar Imagen</button>
+        </div>
+      </div>
+      <h1>Plantilla Educativa - Círculos Jack Skellington (Completa)</h1>
+      <div class="info">Sube imágenes, edita y genera el PDF para imprimir.</div>
     </div>
     <div class="actions">
-      <button class="btn-success" id="btnBulkLarge">📦 Cargar Lote 12cm</button>
-      <button class="btn-warning" id="btnBulkSmall">📦 Cargar Lote 5cm</button>
       <button class="btn-primary" id="btnAddPage">➕ Agregar Hoja</button>
-      <button class="btn-primary" onclick="window.print()">🖨️ Imprimir</button>
+      <button class="btn-success" onclick="window.print()">🖨️ Imprimir PDF</button>
       <button class="btn-danger" id="btnClearAll">🗑️ Limpiar Todo</button>
+      <button class="btn-warning" id="btnBulkLarge">📂 Cargar Lote (Grandes)</button>
+      <button class="btn-warning" id="btnBulkSmall">📂 Cargar Lote (Pequeños)</button>
+      <button class="btn-primary" onclick="searchPexels()">📸 Pexels</button>
+      <button class="btn-primary" onclick="searchFreepik()">🎨 Freepik</button>
+      <button class="btn-primary" onclick="openAIModal()">✨ Crear con IA</button>
     </div>
   </div>
 
-  <div class="pages-container" id="pagesContainer"></div>
-
-  <!-- Panel de edición flotante -->
-  <div class="edit-panel" id="editPanel">
-    <div class="edit-header">
-      <h3>✏️ Editor de Círculo</h3>
-      <button class="edit-close" id="editClose">×</button>
-    </div>
-
-    <div class="edit-info">
-      💡 <strong>Tip:</strong> Arrastra la imagen con el mouse para moverla libremente dentro del círculo
-    </div>
-
-    <div class="edit-control">
-      <label>Tamaño: <span class="value" id="scaleValue">100%</span></label>
-      <input type="range" id="scaleSlider" min="50" max="200" value="100">
-    </div>
-
-    <div class="edit-buttons">
-      <button class="edit-btn edit-btn-lock" id="btnLock">🔒 Fijar Imagen</button>
-      <button class="edit-btn edit-btn-delete" id="btnDeleteImage">🗑️ Eliminar Imagen</button>
-    </div>
+  <div class="pages-container" id="pagesContainer">
+    <!-- Las páginas se generarán aquí -->
   </div>
 
-  <input type="file" id="fileInputHidden" accept="image/*" style="display:none">
-  <input type="file" id="fileInputBulkLarge" accept="image/*" multiple style="display:none">
-  <input type="file" id="fileInputBulkSmall" accept="image/*" multiple style="display:none">
+  <!-- Inputs ocultos -->
+  <input type="file" id="fileInputHidden" accept="image/*" style="display: none;">
+  <input type="file" id="fileInputBulkLarge" accept="image/*" multiple style="display: none;">
+  <input type="file" id="fileInputBulkSmall" accept="image/*" multiple style="display: none;">
+
+  <!-- Modal IA -->
+  <div id="aiModal"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;">
+    <div
+      style="background: #1f2937; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; border: 1px solid #3b82f6;">
+      <h3 style="color: #3b82f6; margin-bottom: 15px;">✨ Generar Imagen con IA</h3>
+
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Tu API Key de OpenAI:</label>
+        <input type="password" id="openaiKey" placeholder="sk-..."
+          style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
+        <small style="color: #9ca3af;">Se guardará localmente en tu navegador.</small>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Describe tu imagen:</label>
+        <textarea id="aiPrompt" rows="4" placeholder="Un paisaje espacial con planetas coloridos..."
+          style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;"></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button onclick="closeAIModal()"
+          style="background: #4b5563; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Cancelar</button>
+        <button onclick="generateAIImage()"
+          style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Generar</button>
+      </div>
+
+      <div id="aiStatus" style="margin-top: 10px; color: #e5e7eb; font-size: 0.9rem;"></div>
+    </div>
+  </div>
 
   <script>
+    // ===== ESTADO =====
+    let pages = [];
+    let editingCircle = null; // { pageId, circleId }
+    let circleToFill = null; // { pageId, circleId }
+    let draggedImage = null; // { img, pageId, circleId, startX, startY }
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let imageStartX = 0;
+    let imageStartY = 0;
+
+    // Referencias DOM
     const pagesContainer = document.getElementById('pagesContainer');
-    const fileInputHidden = document.getElementById('fileInputHidden');
-    const fileInputBulkLarge = document.getElementById('fileInputBulkLarge');
-    const fileInputBulkSmall = document.getElementById('fileInputBulkSmall');
     const btnAddPage = document.getElementById('btnAddPage');
     const btnClearAll = document.getElementById('btnClearAll');
+    const fileInputHidden = document.getElementById('fileInputHidden');
+
+    // Bulk inputs
     const btnBulkLarge = document.getElementById('btnBulkLarge');
     const btnBulkSmall = document.getElementById('btnBulkSmall');
+    const fileInputBulkLarge = document.getElementById('fileInputBulkLarge');
+    const fileInputBulkSmall = document.getElementById('fileInputBulkSmall');
+
+    // Panel de edición
     const editPanel = document.getElementById('editPanel');
     const editClose = document.getElementById('editClose');
     const scaleSlider = document.getElementById('scaleSlider');
@@ -604,18 +654,128 @@
     const btnLock = document.getElementById('btnLock');
     const btnDeleteImage = document.getElementById('btnDeleteImage');
 
-    let pages = [];
-    let circleToFill = null;
-    let editingCircle = null;
-    let draggedImage = null;
-    let dragStartX = 0;
-    let dragStartY = 0;
-    let imageStartX = 0;
-    let imageStartY = 0;
+    editClose.addEventListener('click', closeEditPanel);
+
+    // ===== API KEYS & INTEGRATION =====
+    const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
+    const FREEPIK_API_KEY = 'FPSX890e70b7164ab7a1b05182a68d64ad06';
+
+    function applyExternalImages(urls, sourceName) {
+      if (!urls || urls.length === 0) {
+        alert('No se encontraron imágenes.');
+        return;
+      }
+
+      // Llenar círculos vacíos o crear nuevas páginas
+      fillCirclesFromPixabay(urls, sourceName);
+    }
+
+    async function searchPexels() {
+      const query = prompt("¿Qué imágenes buscas en Pexels?");
+      if (!query) return;
+
+      try {
+        const response = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=12`, {
+          headers: { Authorization: PEXELS_API_KEY }
+        });
+        const data = await response.json();
+        const images = data.photos.map(photo => photo.src.large);
+        applyExternalImages(images, `Pexels: ${query}`);
+      } catch (error) {
+        console.error(error);
+        alert('Error al buscar en Pexels');
+      }
+    }
+
+    async function searchFreepik() {
+      const query = prompt("¿Qué imágenes buscas en Freepik?");
+      if (!query) return;
+
+      try {
+        const response = await fetch(`https://api.freepik.com/v1/resources?locale=es-ES&q=${encodeURIComponent(query)}&limit=12`, {
+          headers: { 'X-Freepik-API-Key': FREEPIK_API_KEY }
+        });
+        const data = await response.json();
+        const images = data.data.map(item => item.image.source.url);
+        applyExternalImages(images, `Freepik: ${query}`);
+      } catch (error) {
+        console.error(error);
+        alert('Error al buscar en Freepik');
+      }
+    }
+
+    // ===== AI GENERATION =====
+    function openAIModal() {
+      const storedKey = localStorage.getItem('openai_api_key');
+      if (storedKey) document.getElementById('openaiKey').value = storedKey;
+      document.getElementById('aiModal').style.display = 'flex';
+    }
+
+    function closeAIModal() {
+      document.getElementById('aiModal').style.display = 'none';
+      document.getElementById('aiStatus').textContent = '';
+    }
+
+    async function generateAIImage() {
+      const apiKey = document.getElementById('openaiKey').value.trim();
+      const prompt = document.getElementById('aiPrompt').value.trim();
+      const statusDiv = document.getElementById('aiStatus');
+
+      if (!apiKey) {
+        alert('Por favor ingresa tu API Key de OpenAI');
+        return;
+      }
+      if (!prompt) {
+        alert('Por favor describe la imagen');
+        return;
+      }
+
+      localStorage.setItem('openai_api_key', apiKey);
+      statusDiv.textContent = '⏳ Generando imagen... (esto puede tomar unos segundos)';
+
+      try {
+        const response = await fetch('https://api.openai.com/v1/images/generations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: "dall-e-3",
+            prompt: prompt,
+            n: 1,
+            size: "1024x1024"
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          throw new Error(data.error.message);
+        }
+
+        const imageUrl = data.data[0].url;
+        // Para evitar problemas de CORS con la URL directa de OpenAI, idealmente usaríamos un proxy,
+        // pero para este demo intentaremos usarla directo o convertirla a base64 si fuera posible.
+        // Como es una URL pública temporal, debería funcionar para mostrarla.
+
+        // Sin embargo, para guardarla en el canvas/círculo, necesitamos que sea accesible.
+        // Vamos a intentar usarla directamente.
+
+        applyExternalImages([imageUrl], `IA: ${prompt}`);
+        closeAIModal();
+
+      } catch (error) {
+        console.error(error);
+        statusDiv.textContent = '❌ Error: ' + error.message;
+      }
+    }
+
+    // ===== LOGICA PRINCIPAL =====
 
     function createInitialPageData(id) {
       return {
-        id,
+        id: id,
         circles: [
           { id: `p${id}-g1`, size: 'grande', imageData: null, scale: 100, posX: 50, posY: 50, locked: false },
           { id: `p${id}-g2`, size: 'grande', imageData: null, scale: 100, posX: 50, posY: 50, locked: false },
@@ -677,6 +837,10 @@
         const inner = document.createElement('div');
         inner.className = 'page-inner';
 
+        // Posiciones fijas para los círculos
+        // Grande: 12cm, Pequeño: 5cm
+        // Hoja carta: 21.59cm x 27.94cm
+        // Márgenes internos: 1.5cm
         const positions = {
           grande: [
             { left: '1.2cm', top: '2cm' },
@@ -701,6 +865,7 @@
           const pos = circle.size === 'grande'
             ? positions.grande[gIndex++]
             : positions.pequeno[pIndex++];
+
           Object.assign(circleDiv.style, pos);
 
           circleDiv.onclick = () => handleCircleClick(page.id, circle.id);
@@ -717,7 +882,9 @@
 
             // Aplicar transformaciones
             const scale = circle.scale / 100;
+            // Calcular tamaño visual
             const size = Math.max(circle.size === 'grande' ? 12 : 5, (circle.size === 'grande' ? 12 : 5) * scale);
+
             img.style.width = size + 'cm';
             img.style.height = size + 'cm';
             img.style.left = circle.posX + '%';
@@ -987,21 +1154,17 @@
       }
     });
 
-    editClose.addEventListener('click', closeEditPanel);
-
-    // ===== DRAG DE IMAGEN =====
+    // ===== ARRASTRAR IMAGEN =====
     function setupImageDrag(img, pageId, circleId) {
       img.addEventListener('mousedown', (e) => {
-        const circle = findCircle(pageId, circleId);
-        if (circle && circle.locked) return;
-
         e.preventDefault();
         draggedImage = { img, pageId, circleId };
-        img.classList.add('dragging');
-
         dragStartX = e.clientX;
         dragStartY = e.clientY;
 
+        img.classList.add('dragging');
+
+        // Obtener posición actual
         const currentLeft = parseFloat(img.style.left) || 50;
         const currentTop = parseFloat(img.style.top) || 50;
         imageStartX = currentLeft;
@@ -1071,6 +1234,7 @@
     function removePage(id) {
       if (pages.length <= 1) return;
       if (!confirm('¿Eliminar esta hoja completa?')) return;
+
       pages = pages.filter(p => p.id !== id).map((p, idx) => ({
         ...p,
         id: idx + 1
@@ -1101,6 +1265,7 @@
 
     function fillCirclesFromPixabay(urls = [], topic = 'Pixabay') {
       if (!Array.isArray(urls) || urls.length === 0) return;
+
       ensurePagesForImages(urls.length);
 
       let idx = 0;
@@ -1108,11 +1273,13 @@
         page.circles.forEach((circle) => {
           const url = urls[idx];
           if (!url) return;
+
           circle.imageData = url;
           circle.scale = 100;
           circle.posX = 50;
           circle.posY = 50;
           circle.locked = false;
+
           idx++;
         });
       });
