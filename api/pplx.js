@@ -53,8 +53,7 @@ export default async function handler(req, res) {
         Authorization: `Bearer ${key}`,
       },
       body: JSON.stringify({
-        model: 'llama-3.1-sonar-large-32k-online',
-        temperature: 0.35,
+model: 'llama-3.1-sonar-small-32k-online',        temperature: 0.35,
         max_tokens: 800,
         messages,
       }),
