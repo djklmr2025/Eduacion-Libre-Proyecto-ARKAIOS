@@ -668,6 +668,9 @@
       <button class="system-btn" onclick="ARKAIOS.autoFillImagesFreepikPrompt()">
         🧠🖼️ Auto‑rellenar (Freepik)
       </button>
+      <button class="system-btn" onclick="ARKAIOS.autoFillImagesPexelsPrompt()">
+        🧠🖼️ Auto‑rellenar (Pexels)
+      </button>
       <button class="system-btn" onclick="ARKAIOS.saveProject()">
         💾 Guardar Proyecto
       </button>
@@ -847,9 +850,12 @@
       const frame = document.getElementById('plantillaFrame');
       if (!frame || !frame.contentWindow) return;
 
-      const messageType = source === 'freepik' 
-        ? 'ARKAIOS_FREEPIK_IMAGES' 
-        : 'ARKAIOS_PIXABAY_IMAGES';
+      let messageType = 'ARKAIOS_PIXABAY_IMAGES';
+      if (source === 'freepik') {
+        messageType = 'ARKAIOS_FREEPIK_IMAGES';
+      } else if (source === 'pexels') {
+        messageType = 'ARKAIOS_PEXELS_IMAGES';
+      }
 
       frame.contentWindow.postMessage(
         {
@@ -895,6 +901,41 @@
         console.error('Fallo el backend /api/freepik', err);
         throw err;
       }
+    }
+
+    // ========== INTEGRACIÓN PEXELS ==========
+    const PEXELS_CONFIG = {
+      endpoint: '/api/pexels',
+    };
+
+    async function fetchPexelsImages(topic, count = 8) {
+        const per_page = Math.min(Math.max(count, 3), 50);
+
+        const isLocal =
+            location.hostname === 'localhost' ||
+            location.hostname === '127.0.0.1' ||
+            location.protocol === 'file:';
+
+        const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
+        const endpoint = isLocal ? (localBase + PEXELS_CONFIG.endpoint) : PEXELS_CONFIG.endpoint;
+
+        try {
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ q: topic, per_page })
+            });
+
+            if (!res.ok) {
+                const errorBody = await res.json();
+                throw new Error(`Error al llamar /api/pexels: ${errorBody.error || res.statusText}`);
+            }
+            const data = await res.json();
+            return (data.photos || []).map(p => p.src.large).filter(Boolean);
+        } catch (err) {
+            console.error('Fallo el backend /api/pexels', err);
+            throw err;
+        }
     }
 
     // ========== SISTEMA UNIVERSAL ARKAIOS ==========
@@ -1133,6 +1174,34 @@
         } catch (err) {
           console.error(err);
           alert('Error al buscar imágenes en Freepik: ' + (err.message || err));
+        }
+      },
+
+      // ========= NUEVO: RELLENO AUTOMÁTICO CON PEXELS =========
+      async autoFillImagesPexelsPrompt() {
+        const topic = prompt('¿Tema para buscar imágenes en Pexels? (ej. "naturaleza")');
+        if (!topic) return;
+        const countStr = prompt('¿Cuántas imágenes quieres insertar? (ej. 8)');
+        const count = parseInt(countStr || '8', 10) || 8;
+        await this.fillImagesFromPexels(topic, count);
+      },
+
+      async fillImagesFromPexels(topic, count) {
+        try {
+          this.showSaveIndicator(`Buscando en Pexels: "${topic}"...`);
+          const urls = await fetchPexelsImages(topic, count);
+          if (!urls.length) {
+            alert('Pexels no devolvió resultados para: ' + topic);
+            return;
+          }
+
+          sendImagesToActiveTemplate(topic, urls, 'pexels');
+          this.showSaveIndicator(
+            `Imágenes de "${topic}" (Pexels) enviadas a la plantilla (${urls.length})`
+          );
+        } catch (err) {
+          console.error(err);
+          alert('Error al buscar imágenes en Pexels: ' + (err.message || err));
         }
       }
     };

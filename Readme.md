@@ -54,8 +54,21 @@ De forma similar a Pixabay, el proyecto incluye un endpoint serverless `/api/fre
 
 - 2) Deploy: realiza un nuevo deploy en Vercel.
 
-- 3) Crédito:
+  - Crédito:
   - Recuerda que al usar la API de Freepik, debes darles crédito. Este proyecto lo hará automáticamente en futuras versiones. Por ahora, considera añadir un texto como "Imágenes de Freepik".
+
+---
+## 🔗 Integración con Pexels (Imágenes y Videos)
+
+El proyecto también soporta Pexels a través del endpoint `/api/pexels`.
+
+- 1) Configura la variable de entorno `PEXELS_API_KEY` en Vercel:
+  - Name: `PEXELS_API_KEY`
+  - Value: tu clave de Pexels que puedes obtener en [Pexels API](https://www.pexels.com/api/new/)
+  - Environment: `Production`
+
+- 2) Crédito:
+  - Es requisito de Pexels mostrar un enlace a su sitio. Futuras versiones lo harán automáticamente. Mientras tanto, puedes añadir "Fotos de Pexels".
 
 ---
 
