@@ -3,26 +3,7 @@
 // - Añade cache simple (24h) por query para respetar la política de Pixabay
 // - Propaga headers de rate-limit (si Pixabay los devuelve)
 
-const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 horas
-const cache = new Map(); // key -> { ts, data }
-
-function getCached(key) {
-  const e = cache.get(key);
-  if (!e) return null;
-  if (Date.now() - e.ts > CACHE_TTL_MS) {
-    cache.delete(key);
-    return null;
-  }
-  return e.data;
-}
-
-function setCached(key, data) {
-  try {
-    cache.set(key, { ts: Date.now(), data });
-  } catch (e) {
-    // Ignore cache failures
-  }
-}
+import { getCached, setCached } from '../lib/pixabayCache.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -61,7 +42,7 @@ export default async function handler(req, res) {
   const per = String(Math.min(Math.max(per_page, 3), 50));
   const cacheKey = `${q}::${per}`;
 
-  const cached = getCached(cacheKey);
+  const cached = await getCached(cacheKey);
   if (cached) {
     res.setHeader('X-Cache', 'HIT');
     res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=86400');
@@ -98,7 +79,7 @@ export default async function handler(req, res) {
 
     // Cachear la respuesta (estructura completa de Pixabay)
     try {
-      setCached(cacheKey, data);
+      await setCached(cacheKey, data);
     } catch (e) {
       // ignore
     }
