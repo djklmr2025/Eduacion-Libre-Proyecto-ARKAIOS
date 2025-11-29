@@ -421,309 +421,386 @@
       appearance: none;
       width: 18px;
       height: 18px;
-      border-radius: 50%;
-      background: #667eea;
-      cursor: pointer;
-    }
 
-    .zoom-valor {
-      font-weight: 600;
-      margin: 0;
-    }
-  </style>
-</head>
+      <div class="panel-control"></button><button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir hojas </button><button class="btn btn-danger" onclick="limpiarTodo()">🗑️ Limpiar todo </button></div><div class="stats"><div class="stat-item"><div class="stat-value" id="stat-imagenes">0</div><div class="stat-label">Imágenes</div></div><div class="stat-item"><div class="stat-value" id="stat-hojas">0</div><div class="stat-label">Hojas</div></div><div class="stat-item"><div class="stat-value" id="stat-cuadros">0</div><div class="stat-label">Cuadros/Hoja</div></div></div></div><div id="hojas-container" class="hojas-container"></div></div><div id="modal-editor" class="modal-editor"><div class="modal-contenido"><div class="modal-header"><h3>✏️ Editar Imagen</h3><button class="btn-cerrar" onclick="cerrarEditor()">✕ Cerrar</button></div><div class="editor-preview" id="editor-preview"><img id="editor-img" src="" alt=""></div><div class="controles-editor"><div class="control-zoom"><label>🔍 Zoom:</label><input type="range" id="zoom-slider" min="100" max="200" value="100" step="1"><span class="zoom-valor" id="zoom-valor">100%</span></div><button class="btn btn-primary" onclick="aplicarEdicion()">✓ Aplicar cambios</button></div></div>archivos.forEach(archivo=> {
+          const reader=new FileReader();
 
-<body>
-  <div class="container">
-    <div class="panel-control">
-      </button>
-      <button class="btn btn-secondary" onclick="window.print()">
-        🖨️ Imprimir hojas
-      </button>
-      <button class="btn btn-danger" onclick="limpiarTodo()">
-        🗑️ Limpiar todo
-      </button>
-    </div>
+          reader.onload=function (ev) {
+            imagenes.push(ev.target.result);
 
-    <div class="stats">
-      <div class="stat-item">
-        <div class="stat-value" id="stat-imagenes">0</div>
-        <div class="stat-label">Imágenes</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value" id="stat-hojas">0</div>
-        <div class="stat-label">Hojas</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value" id="stat-cuadros">0</div>
-        <div class="stat-label">Cuadros/Hoja</div>
-      </div>
-    </div>
-  </div>
+            estadosImagen.push({
+              zoom: 100, x: 0, y: 0, fijada: false
+            });
+          cargados++;
 
-  <div id="hojas-container" class="hojas-container"></div>
-  </div>
+          if (cargados===archivos.length) {
+            generarPlantilla();
+          }
+        }
 
-  <div id="modal-editor" class="modal-editor">
-    <div class="modal-contenido">
-      <div class="modal-header">
-        <h3>✏️ Editar Imagen</h3>
-        <button class="btn-cerrar" onclick="cerrarEditor()">✕ Cerrar</button>
-      </div>
-      <div class="editor-preview" id="editor-preview">
-        <img id="editor-img" src="" alt="">
-      </div>
-      <div class="controles-editor">
-        <div class="control-zoom">
-          <label>🔍 Zoom:</label>
-          <input type="range" id="zoom-slider" min="100" max="200" value="100" step="1">
-          <span class="zoom-valor" id="zoom-valor">100%</span>
-        </div>
-        <button class="btn btn-primary" onclick="aplicarEdicion()">✓ Aplicar cambios</button>
-      </div>
-    </div>
+        ;
+        reader.readAsDataURL(archivo);
+      });
 
-    archivos.forEach(archivo => {
-    const reader = new FileReader();
-    reader.onload = function (ev) {
-    imagenes.push(ev.target.result);
-    estadosImagen.push({ zoom: 100, x: 0, y: 0, fijada: false });
-    cargados++;
-    if (cargados === archivos.length) {
-    generarPlantilla();
-    }
-    };
-    reader.readAsDataURL(archivo);
-    });
-
-    e.target.value = '';
+    e.target.value='';
     });
 
     inputIndividual.addEventListener('change', function (e) {
-    const archivo = e.target.files[0];
-    if (!archivo) return;
+        const archivo=e.target.files[0];
+        if ( !archivo) return;
 
-    const reader = new FileReader();
-    reader.onload = function (ev) {
-    if (indiceEditando >= 0) {
-    imagenes[indiceEditando] = ev.target.result;
-    estadosImagen[indiceEditando] = { zoom: 100, x: 0, y: 0, fijada: false };
-    generarPlantilla();
-    }
-    };
-    reader.readAsDataURL(archivo);
+        const reader=new FileReader();
 
-    e.target.value = '';
-    });
+        reader.onload=function (ev) {
+          if (indiceEditando >=0) {
+            imagenes[indiceEditando]=ev.target.result;
+
+            estadosImagen[indiceEditando]= {
+              zoom: 100, x: 0, y: 0, fijada: false
+            }
+
+            ;
+            generarPlantilla();
+          }
+        }
+
+        ;
+        reader.readAsDataURL(archivo);
+
+        e.target.value='';
+      });
 
     function generarPlantilla() {
-    hojasContainer.innerHTML = '';
+      hojasContainer.innerHTML='';
 
-    const tamano = parseInt(selectorTamano.value);
-    const filas = Math.floor(27.94 / tamano);
-    const cols = Math.floor(21.59 / tamano);
-    const cuadrosPorHoja = filas * cols;
-    const hojasNecesarias = Math.max(1, Math.ceil(imagenes.length / cuadrosPorHoja));
+      const tamano=parseInt(selectorTamano.value);
+      const filas=Math.floor(27.94 / tamano);
+      const cols=Math.floor(21.59 / tamano);
+      const cuadrosPorHoja=filas * cols;
+      const hojasNecesarias=Math.max(1, Math.ceil(imagenes.length / cuadrosPorHoja));
 
-    actualizarEstadisticas(imagenes.length, hojasNecesarias, cuadrosPorHoja);
+      actualizarEstadisticas(imagenes.length, hojasNecesarias, cuadrosPorHoja);
 
-    for (let h = 0; h < hojasNecesarias; h++) { const pageWrapper=document.createElement('div');
-      pageWrapper.className='page-wrapper' ; const pageInfo=document.createElement('div');
-      pageInfo.className='page-info' ; pageInfo.textContent=`Hoja ${h + 1} de ${hojasNecesarias}`;
-      pageWrapper.appendChild(pageInfo); const pageContainer=document.createElement('div');
-      pageContainer.className='page-container' ; const cuadricula=document.createElement('div');
-      cuadricula.className='cuadricula' ; cuadricula.style.gridTemplateColumns=`repeat(${cols}, ${tamano}cm)`;
-      cuadricula.style.gridTemplateRows=`repeat(${filas}, ${tamano}cm)`; const inicio=h * cuadrosPorHoja; const
-      fin=Math.min(inicio + cuadrosPorHoja, imagenes.length); for (let i=0; i < cuadrosPorHoja; i++) { const idx=inicio
-      + i; const celda=crearCelda(idx, tamano); cuadricula.appendChild(celda); } pageContainer.appendChild(cuadricula);
-      pageWrapper.appendChild(pageContainer); hojasContainer.appendChild(pageWrapper); } } function crearCelda(idx,
-      tamano) { const celda=document.createElement('div'); celda.className='celda-imagen arkaios-image-slot' ;
-      celda.style.width=`${tamano}cm`; celda.style.height=`${tamano}cm`; celda.draggable=imagenes[idx] ? true : false;
-      celda.dataset.idx=idx; const numCelda=document.createElement('span'); numCelda.className='num-celda' ;
-      numCelda.textContent=idx + 1; celda.appendChild(numCelda); if (imagenes[idx]) { const
-      imgContainer=document.createElement('div'); imgContainer.className='img-container' ; const
-      img=document.createElement('img'); img.src=imagenes[idx]; img.className='img-preview' ; const
-      estado=estadosImagen[idx] || { zoom: 100, x: 0, y: 0, fijada: false }; img.style.transform=`scale(${estado.zoom /
-      100})`; imgContainer.appendChild(img); celda.appendChild(imgContainer); const
-      botones=document.createElement('div'); botones.className='botones-celda' ; const
-      btnEditar=document.createElement('button'); btnEditar.className='btn-celda btn-editar' ;
-      btnEditar.textContent='✏️' ; btnEditar.onclick=(e)=> {
-      e.stopPropagation();
-      abrirEditor(idx);
-      };
+      for (let h=0; h < hojasNecesarias; h++) {
+        const pageWrapper=document.createElement('div');
+        pageWrapper.className='page-wrapper';
+        const pageInfo=document.createElement('div');
+        pageInfo.className='page-info';
 
-      const btnFijar = document.createElement('button');
-      btnFijar.className = 'btn-celda btn-fijar';
-      btnFijar.textContent = estado.fijada ? '🔓' : '📌';
-      btnFijar.onclick = (e) => {
-      e.stopPropagation();
-      toggleFijar(idx);
-      };
+        pageInfo.textContent=`Hoja $ {
+          h+1
+        }
 
-      const btnEliminar = document.createElement('button');
-      btnEliminar.className = 'btn-celda btn-eliminar';
-      btnEliminar.textContent = '🗑️';
-      btnEliminar.onclick = (e) => {
-      e.stopPropagation();
-      eliminarImagen(idx);
-      };
+        de $ {
+          hojasNecesarias
+        }
 
-      botones.appendChild(btnEditar);
-      botones.appendChild(btnFijar);
-      botones.appendChild(btnEliminar);
-      celda.appendChild(botones);
+        `;
+        pageWrapper.appendChild(pageInfo);
+        const pageContainer=document.createElement('div');
+        pageContainer.className='page-container';
+        const cuadricula=document.createElement('div');
+        cuadricula.className='cuadricula';
 
-      celda.addEventListener('dragstart', handleDragStart);
-      celda.addEventListener('dragover', handleDragOver);
-      celda.addEventListener('drop', handleDrop);
-      celda.addEventListener('dragend', handleDragEnd);
-      } else {
-      const icono = document.createElement('span');
-      icono.className = 'celda-vacia';
-      icono.textContent = '+';
-      celda.appendChild(icono);
+        cuadricula.style.gridTemplateColumns=`repeat($ {
+            cols
+          }
 
-      celda.onclick = function () {
-      indiceEditando = idx;
-      inputIndividual.click();
-      };
+          , $ {
+            tamano
+          }
+
+          cm)`;
+
+        cuadricula.style.gridTemplateRows=`repeat($ {
+            filas
+          }
+
+          , $ {
+            tamano
+          }
+
+          cm)`;
+        const inicio=h * cuadrosPorHoja;
+        const fin=Math.min(inicio + cuadrosPorHoja, imagenes.length);
+
+        for (let i=0; i < cuadrosPorHoja; i++) {
+          const idx=inicio+i;
+          const celda=crearCelda(idx, tamano);
+          cuadricula.appendChild(celda);
+        }
+
+        pageContainer.appendChild(cuadricula);
+        pageWrapper.appendChild(pageContainer);
+        hojasContainer.appendChild(pageWrapper);
+      }
+    }
+
+    function crearCelda(idx,
+      tamano) {
+      const celda=document.createElement('div');
+      celda.className='celda-imagen arkaios-image-slot';
+
+      celda.style.width=`$ {
+        tamano
+      }
+
+      cm`;
+
+      celda.style.height=`$ {
+        tamano
+      }
+
+      cm`;
+      celda.draggable=imagenes[idx] ? true : false;
+      celda.dataset.idx=idx;
+      const numCelda=document.createElement('span');
+      numCelda.className='num-celda';
+      numCelda.textContent=idx+1;
+      celda.appendChild(numCelda);
+
+      if (imagenes[idx]) {
+        const imgContainer=document.createElement('div');
+        imgContainer.className='img-container';
+        const img=document.createElement('img');
+        img.src=imagenes[idx];
+        img.className='img-preview';
+
+        const estado=estadosImagen[idx] || {
+          zoom: 100, x: 0, y: 0, fijada: false
+        }
+
+        ;
+
+        img.style.transform=`scale($ {
+            estado.zoom / 100
+          })`;
+        imgContainer.appendChild(img);
+        celda.appendChild(imgContainer);
+        const botones=document.createElement('div');
+        botones.className='botones-celda';
+        const btnEditar=document.createElement('button');
+        btnEditar.className='btn-celda btn-editar';
+        btnEditar.textContent='✏️';
+
+        btnEditar.onclick=(e)=> {
+          e.stopPropagation();
+          abrirEditor(idx);
+        }
+
+        ;
+
+        const btnFijar=document.createElement('button');
+        btnFijar.className='btn-celda btn-fijar';
+        btnFijar.textContent=estado.fijada ? '🔓' : '📌';
+
+        btnFijar.onclick=(e)=> {
+          e.stopPropagation();
+          toggleFijar(idx);
+        }
+
+        ;
+
+        const btnEliminar=document.createElement('button');
+        btnEliminar.className='btn-celda btn-eliminar';
+        btnEliminar.textContent='🗑️';
+
+        btnEliminar.onclick=(e)=> {
+          e.stopPropagation();
+          eliminarImagen(idx);
+        }
+
+        ;
+
+        botones.appendChild(btnEditar);
+        botones.appendChild(btnFijar);
+        botones.appendChild(btnEliminar);
+        celda.appendChild(botones);
+
+        celda.addEventListener('dragstart', handleDragStart);
+        celda.addEventListener('dragover', handleDragOver);
+        celda.addEventListener('drop', handleDrop);
+        celda.addEventListener('dragend', handleDragEnd);
+      }
+
+      else {
+        const icono=document.createElement('span');
+        icono.className='celda-vacia';
+        icono.textContent='+';
+        celda.appendChild(icono);
+
+        celda.onclick=function () {
+          indiceEditando=idx;
+          inputIndividual.click();
+        }
+
+        ;
       }
 
       return celda;
-      }
+    }
 
-      function handleDragStart(e) {
-      const idx = parseInt(e.currentTarget.dataset.idx);
+    function handleDragStart(e) {
+      const idx=parseInt(e.currentTarget.dataset.idx);
+
       if (estadosImagen[idx]?.fijada) {
-      e.preventDefault();
-      return;
-      }
-      indiceDragInicio = idx;
-      e.currentTarget.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
+        e.preventDefault();
+        return;
       }
 
-      function handleDragOver(e) {
+      indiceDragInicio=idx;
+      e.currentTarget.classList.add('dragging');
+      e.dataTransfer.effectAllowed='move';
+    }
+
+    function handleDragOver(e) {
       e.preventDefault();
       e.currentTarget.classList.add('drag-over');
-      e.dataTransfer.dropEffect = 'move';
-      }
+      e.dataTransfer.dropEffect='move';
+    }
 
-      function handleDrop(e) {
+    function handleDrop(e) {
       e.preventDefault();
       e.currentTarget.classList.remove('drag-over');
 
-      const idxDestino = parseInt(e.currentTarget.dataset.idx);
+      const idxDestino=parseInt(e.currentTarget.dataset.idx);
 
-      if (indiceDragInicio !== -1 && indiceDragInicio !== idxDestino) {
-      const temp = imagenes[indiceDragInicio];
-      const tempEstado = estadosImagen[indiceDragInicio];
+      if (indiceDragInicio !==-1 && indiceDragInicio !==idxDestino) {
+        const temp=imagenes[indiceDragInicio];
+        const tempEstado=estadosImagen[indiceDragInicio];
 
-      imagenes[indiceDragInicio] = imagenes[idxDestino];
-      estadosImagen[indiceDragInicio] = estadosImagen[idxDestino];
+        imagenes[indiceDragInicio]=imagenes[idxDestino];
+        estadosImagen[indiceDragInicio]=estadosImagen[idxDestino];
 
-      imagenes[idxDestino] = temp;
-      estadosImagen[idxDestino] = tempEstado;
+        imagenes[idxDestino]=temp;
+        estadosImagen[idxDestino]=tempEstado;
 
-      generarPlantilla();
+        generarPlantilla();
       }
-      }
+    }
 
-      function handleDragEnd(e) {
+    function handleDragEnd(e) {
       e.currentTarget.classList.remove('dragging');
-      document.querySelectorAll('.drag-over').forEach(el => {
-      el.classList.remove('drag-over');
-      });
-      indiceDragInicio = -1;
+
+      document.querySelectorAll('.drag-over').forEach(el=> {
+          el.classList.remove('drag-over');
+        });
+      indiceDragInicio=-1;
+    }
+
+    function abrirEditor(idx) {
+      indiceEditando=idx;
+      editorImg.src=imagenes[idx];
+
+      const estado=estadosImagen[idx] || {
+        zoom: 100
       }
 
-      function abrirEditor(idx) {
-      indiceEditando = idx;
-      editorImg.src = imagenes[idx];
-      const estado = estadosImagen[idx] || { zoom: 100 };
-      zoomSlider.value = estado.zoom;
-      zoomValor.textContent = estado.zoom + '%';
-      editorImg.style.transform = `scale(${estado.zoom / 100})`;
+      ;
+      zoomSlider.value=estado.zoom;
+      zoomValor.textContent=estado.zoom+'%';
+
+      editorImg.style.transform=`scale($ {
+          estado.zoom / 100
+        })`;
       modalEditor.classList.add('activo');
-      }
+    }
 
-      function cerrarEditor() {
+    function cerrarEditor() {
       modalEditor.classList.remove('activo');
-      indiceEditando = -1;
-      }
+      indiceEditando=-1;
+    }
 
-      zoomSlider.addEventListener('input', function () {
-      const zoom = parseInt(this.value);
-      zoomValor.textContent = zoom + '%';
-      editorImg.style.transform = `scale(${zoom / 100})`;
+    zoomSlider.addEventListener('input', function () {
+        const zoom=parseInt(this.value);
+        zoomValor.textContent=zoom + '%';
+
+        editorImg.style.transform=`scale($ {
+            zoom / 100
+          })`;
       });
 
-      function aplicarEdicion() {
-      if (indiceEditando >= 0) {
-      estadosImagen[indiceEditando].zoom = parseInt(zoomSlider.value);
-      generarPlantilla();
-      cerrarEditor();
+    function aplicarEdicion() {
+      if (indiceEditando >=0) {
+        estadosImagen[indiceEditando].zoom=parseInt(zoomSlider.value);
+        generarPlantilla();
+        cerrarEditor();
       }
+    }
+
+    function toggleFijar(idx) {
+      if ( !estadosImagen[idx]) {
+        estadosImagen[idx]= {
+          zoom: 100, x: 0, y: 0, fijada: false
+        }
+
+        ;
       }
 
-      function toggleFijar(idx) {
-      if (!estadosImagen[idx]) {
-      estadosImagen[idx] = { zoom: 100, x: 0, y: 0, fijada: false };
-      }
-      estadosImagen[idx].fijada = !estadosImagen[idx].fijada;
+      estadosImagen[idx].fijada= !estadosImagen[idx].fijada;
       generarPlantilla();
-      }
+    }
 
-      function eliminarImagen(idx) {
+    function eliminarImagen(idx) {
       if (confirm('¿Eliminar esta imagen?')) {
-      imagenes.splice(idx, 1);
-      estadosImagen.splice(idx, 1);
-      generarPlantilla();
+        imagenes.splice(idx, 1);
+        estadosImagen.splice(idx, 1);
+        generarPlantilla();
       }
-      }
+    }
 
-      function limpiarTodo() {
+    function limpiarTodo() {
       if (confirm('¿Eliminar todas las imágenes?')) {
-      imagenes = [];
-      estadosImagen = [];
-      generarPlantilla();
+        imagenes=[];
+        estadosImagen=[];
+        generarPlantilla();
       }
+    }
+
+    function actualizarEstadisticas(numImagenes, numHojas, cuadrosPorHoja) {
+      document.getElementById('stat-imagenes').textContent=numImagenes;
+      document.getElementById('stat-hojas').textContent=numHojas;
+      document.getElementById('stat-cuadros').textContent=cuadrosPorHoja;
+    }
+
+    function mostrarCreditoPixabay(topic, count) {
+      let credit=document.getElementById('pixabay-credit');
+
+      if ( !credit) {
+        credit=document.createElement('div');
+        credit.id='pixabay-credit';
+        const container=document.querySelector('.container');
+        container?.insertBefore(credit, container.firstChild);
       }
 
-      function actualizarEstadisticas(numImagenes, numHojas, cuadrosPorHoja) {
-      document.getElementById('stat-imagenes').textContent = numImagenes;
-      document.getElementById('stat-hojas').textContent = numHojas;
-      document.getElementById('stat-cuadros').textContent = cuadrosPorHoja;
+      const cleanTopic=topic || 'Pixabay';
+
+      credit.textContent=`Imágenes de Pixabay ($ {
+          count
+
+        }) · Tema: $ {
+        cleanTopic
       }
 
-      function mostrarCreditoPixabay(topic, count) {
-      let credit = document.getElementById('pixabay-credit');
-      if (!credit) {
-      credit = document.createElement('div');
-      credit.id = 'pixabay-credit';
-      const container = document.querySelector('.container');
-      container?.insertBefore(credit, container.firstChild);
-      }
-      const cleanTopic = topic || 'Pixabay';
-      credit.textContent = `Imágenes de Pixabay (${count}) · Tema: ${cleanTopic}`;
-      }
+      `;
+    }
 
-      function rellenarConPixabay(urls = [], topic = 'Pixabay') {
-      if (!Array.isArray(urls) || urls.length === 0) return;
-      imagenes = urls.slice();
-      estadosImagen = imagenes.map(() => ({ zoom: 100, x: 0, y: 0, fijada: false }));
-      generarPlantilla();
-      mostrarCreditoPixabay(topic, urls.length);
-      }
+    function rellenarConPixabay(urls=[], topic='Pixabay') {
+      if ( !Array.isArray(urls) || urls.length===0) return;
+      imagenes=urls.slice();
 
-      window.addEventListener('message', (event) => {
-      const data = event.data;
-      if (!data || data.type !== 'ARKAIOS_PIXABAY_IMAGES') return;
-      rellenarConPixabay(data.images || [], data.topic || 'Pixabay');
+      estadosImagen=imagenes.map(()=> ({
+          zoom: 100, x: 0, y: 0, fijada: false
+        }));
+    generarPlantilla();
+    mostrarCreditoPixabay(topic, urls.length);
+    }
+
+    window.addEventListener('message', (event)=> {
+        const data=event.data;
+        if ( !data || data.type !=='ARKAIOS_PIXABAY_IMAGES') return;
+        rellenarConPixabay(data.images || [], data.topic || 'Pixabay');
       });
 
-      generarPlantilla();
-      </script>
-</body>
-
-</html>
+    generarPlantilla();
+    </script></body></html>
