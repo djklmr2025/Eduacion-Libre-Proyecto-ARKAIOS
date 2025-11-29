@@ -7,3 +7,6 @@
 # Archivos de tokens y claves
 **/API*KEY*.txt
 **/repos*.txt
+
+# Evitar indexar el repositorio/carpeta embebida
+cosmos-den/
