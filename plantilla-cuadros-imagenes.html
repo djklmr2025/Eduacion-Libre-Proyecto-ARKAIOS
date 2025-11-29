@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -305,32 +306,32 @@
       background: #f56565;
     }
 
-  .btn-eliminar:hover {
-    background: #e53e3e;
-  }
+    .btn-eliminar:hover {
+      background: #e53e3e;
+    }
 
-  .celda-vacia {
-    color: #cbd5e0;
-    font-size: 32px;
-    font-weight: 300;
-  }
+    .celda-vacia {
+      color: #cbd5e0;
+      font-size: 32px;
+      font-weight: 300;
+    }
 
-  #pixabay-credit {
-    margin: 12px auto;
-    background: #f8fafc;
-    border: 1px solid #d1d5db;
-    padding: 10px 14px;
-    border-radius: 10px;
-    color: #1f2937;
-    font-weight: 600;
-    max-width: 960px;
-    text-align: center;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-  }
+    #pixabay-credit {
+      margin: 12px auto;
+      background: #f8fafc;
+      border: 1px solid #d1d5db;
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: #1f2937;
+      font-weight: 600;
+      max-width: 960px;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    }
 
-  .modal-editor {
-    display: none;
-    position: fixed;
+    .modal-editor {
+      display: none;
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
@@ -427,77 +428,11 @@
 
     .zoom-valor {
       font-weight: 600;
-      color: #667eea;
-      min-width: 50px;
-      text-align: right;
-    }
-
-    input[type="file"] {
-      display: none;
-    }
-
-@media print {
-  body {
-    background: white;
-    padding: 0;
-  }
-
-  .container {
-    max-width: none;
-  }
-
-  /* 🔹 Solo ocultamos el panel de controles, NO la hoja */
-  .panel-control {
-    display: none !important;
-  }
-
-  /* La hoja se imprime completa, sin sombras ni bordes redondeados */
-  .page-wrapper {
-    box-shadow: none;
-    border-radius: 0;
-    padding: 0;
-  }
-
-  /* Si no quieres el texto "Hoja 1 de 1", lo puedes ocultar */
-  .page-info {
-    display: none !important;
-  }
-
-  .hojas-container {
-    gap: 0;
-  }
-
-  .page-container {
-    box-shadow: none;
-    border-radius: 0;
-    page-break-after: always;
-    margin: 0;
-    width: 21.59cm;
-    height: 27.94cm;
-  }
-
-  .num-celda,
-  .botones-celda,
-  .btn-celda {
-    display: none !important;
-  }
-
-  .celda-imagen {
-    border: 1px solid #e0e0e0;
-  }
-
-  .celda-vacia {
-    display: none;
-  }
-}
-
-
-    @page {
-      size: letter;
       margin: 0;
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="panel-control">
@@ -591,13 +526,13 @@
 
     selectorTamano.addEventListener('change', generarPlantilla);
 
-    inputLote.addEventListener('change', function(e) {
+    inputLote.addEventListener('change', function (e) {
       const archivos = Array.from(e.target.files);
       let cargados = 0;
-      
+
       archivos.forEach(archivo => {
         const reader = new FileReader();
-        reader.onload = function(ev) {
+        reader.onload = function (ev) {
           imagenes.push(ev.target.result);
           estadosImagen.push({ zoom: 100, x: 0, y: 0, fijada: false });
           cargados++;
@@ -607,16 +542,16 @@
         };
         reader.readAsDataURL(archivo);
       });
-      
+
       e.target.value = '';
     });
 
-    inputIndividual.addEventListener('change', function(e) {
+    inputIndividual.addEventListener('change', function (e) {
       const archivo = e.target.files[0];
       if (!archivo) return;
-      
+
       const reader = new FileReader();
-      reader.onload = function(ev) {
+      reader.onload = function (ev) {
         if (indiceEditando >= 0) {
           imagenes[indiceEditando] = ev.target.result;
           estadosImagen[indiceEditando] = { zoom: 100, x: 0, y: 0, fijada: false };
@@ -624,47 +559,47 @@
         }
       };
       reader.readAsDataURL(archivo);
-      
+
       e.target.value = '';
     });
 
     function generarPlantilla() {
       hojasContainer.innerHTML = '';
-      
+
       const tamano = parseInt(selectorTamano.value);
       const filas = Math.floor(27.94 / tamano);
       const cols = Math.floor(21.59 / tamano);
       const cuadrosPorHoja = filas * cols;
       const hojasNecesarias = Math.max(1, Math.ceil(imagenes.length / cuadrosPorHoja));
-      
+
       actualizarEstadisticas(imagenes.length, hojasNecesarias, cuadrosPorHoja);
-      
+
       for (let h = 0; h < hojasNecesarias; h++) {
         const pageWrapper = document.createElement('div');
         pageWrapper.className = 'page-wrapper';
-        
+
         const pageInfo = document.createElement('div');
         pageInfo.className = 'page-info';
         pageInfo.textContent = `Hoja ${h + 1} de ${hojasNecesarias}`;
         pageWrapper.appendChild(pageInfo);
-        
+
         const pageContainer = document.createElement('div');
         pageContainer.className = 'page-container';
-        
+
         const cuadricula = document.createElement('div');
         cuadricula.className = 'cuadricula';
         cuadricula.style.gridTemplateColumns = `repeat(${cols}, ${tamano}cm)`;
         cuadricula.style.gridTemplateRows = `repeat(${filas}, ${tamano}cm)`;
-        
+
         const inicio = h * cuadrosPorHoja;
         const fin = Math.min(inicio + cuadrosPorHoja, imagenes.length);
-        
+
         for (let i = 0; i < cuadrosPorHoja; i++) {
           const idx = inicio + i;
           const celda = crearCelda(idx, tamano);
           cuadricula.appendChild(celda);
         }
-        
+
         pageContainer.appendChild(cuadricula);
         pageWrapper.appendChild(pageContainer);
         hojasContainer.appendChild(pageWrapper);
@@ -678,29 +613,29 @@
       celda.style.height = `${tamano}cm`;
       celda.draggable = imagenes[idx] ? true : false;
       celda.dataset.idx = idx;
-      
+
       const numCelda = document.createElement('span');
       numCelda.className = 'num-celda';
       numCelda.textContent = idx + 1;
       celda.appendChild(numCelda);
-      
+
       if (imagenes[idx]) {
         const imgContainer = document.createElement('div');
         imgContainer.className = 'img-container';
-        
+
         const img = document.createElement('img');
         img.src = imagenes[idx];
         img.className = 'img-preview';
-        
+
         const estado = estadosImagen[idx] || { zoom: 100, x: 0, y: 0, fijada: false };
         img.style.transform = `scale(${estado.zoom / 100})`;
-        
+
         imgContainer.appendChild(img);
         celda.appendChild(imgContainer);
-        
+
         const botones = document.createElement('div');
         botones.className = 'botones-celda';
-        
+
         const btnEditar = document.createElement('button');
         btnEditar.className = 'btn-celda btn-editar';
         btnEditar.textContent = '✏️';
@@ -708,7 +643,7 @@
           e.stopPropagation();
           abrirEditor(idx);
         };
-        
+
         const btnFijar = document.createElement('button');
         btnFijar.className = 'btn-celda btn-fijar';
         btnFijar.textContent = estado.fijada ? '🔓' : '📌';
@@ -716,7 +651,7 @@
           e.stopPropagation();
           toggleFijar(idx);
         };
-        
+
         const btnEliminar = document.createElement('button');
         btnEliminar.className = 'btn-celda btn-eliminar';
         btnEliminar.textContent = '🗑️';
@@ -724,12 +659,12 @@
           e.stopPropagation();
           eliminarImagen(idx);
         };
-        
+
         botones.appendChild(btnEditar);
         botones.appendChild(btnFijar);
         botones.appendChild(btnEliminar);
         celda.appendChild(botones);
-        
+
         celda.addEventListener('dragstart', handleDragStart);
         celda.addEventListener('dragover', handleDragOver);
         celda.addEventListener('drop', handleDrop);
@@ -739,13 +674,13 @@
         icono.className = 'celda-vacia';
         icono.textContent = '+';
         celda.appendChild(icono);
-        
-        celda.onclick = function() {
+
+        celda.onclick = function () {
           indiceEditando = idx;
           inputIndividual.click();
         };
       }
-      
+
       return celda;
     }
 
@@ -769,19 +704,19 @@
     function handleDrop(e) {
       e.preventDefault();
       e.currentTarget.classList.remove('drag-over');
-      
+
       const idxDestino = parseInt(e.currentTarget.dataset.idx);
-      
+
       if (indiceDragInicio !== -1 && indiceDragInicio !== idxDestino) {
         const temp = imagenes[indiceDragInicio];
         const tempEstado = estadosImagen[indiceDragInicio];
-        
+
         imagenes[indiceDragInicio] = imagenes[idxDestino];
         estadosImagen[indiceDragInicio] = estadosImagen[idxDestino];
-        
+
         imagenes[idxDestino] = temp;
         estadosImagen[idxDestino] = tempEstado;
-        
+
         generarPlantilla();
       }
     }
@@ -809,7 +744,7 @@
       indiceEditando = -1;
     }
 
-    zoomSlider.addEventListener('input', function() {
+    zoomSlider.addEventListener('input', function () {
       const zoom = parseInt(this.value);
       zoomValor.textContent = zoom + '%';
       editorImg.style.transform = `scale(${zoom / 100})`;
@@ -882,4 +817,5 @@
     generarPlantilla();
   </script>
 </body>
+
 </html>

@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Plantilla Educativa - Círculos Jack Skellington (Completa)</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #111827;
@@ -16,7 +22,7 @@
       flex-direction: column;
       gap: 16px;
     }
-    
+
     /* Barra superior */
     .no-print-bar {
       background: linear-gradient(135deg, #1e293b 0%, #020617 100%);
@@ -30,6 +36,7 @@
       border: 2px solid #3b82f6;
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
+
     .no-print-bar h1 {
       font-size: 1.3rem;
       font-weight: 700;
@@ -38,11 +45,13 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+
     .actions {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
     }
+
     button {
       border: none;
       border-radius: 8px;
@@ -55,41 +64,50 @@
       gap: 6px;
       transition: all 0.2s;
     }
+
     .btn-primary {
       background: linear-gradient(135deg, #3b82f6, #2563eb);
       color: white;
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
     }
-    .btn-primary:hover { 
+
+    .btn-primary:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(59, 130, 246, 0.6);
     }
+
     .btn-success {
       background: linear-gradient(135deg, #10b981, #059669);
       color: white;
       box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
     }
-    .btn-success:hover { 
+
+    .btn-success:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(16, 185, 129, 0.6);
     }
+
     .btn-warning {
       background: linear-gradient(135deg, #f59e0b, #d97706);
       color: white;
       box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
     }
-    .btn-warning:hover { 
+
+    .btn-warning:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(245, 158, 11, 0.6);
     }
+
     .btn-danger {
       background: linear-gradient(135deg, #ef4444, #dc2626);
       color: white;
     }
-    .btn-danger:hover { 
+
+    .btn-danger:hover {
       transform: translateY(-2px);
       background: linear-gradient(135deg, #dc2626, #b91c1c);
     }
+
     .info {
       font-size: 0.85rem;
       color: #9ca3af;
@@ -104,7 +122,7 @@
       border-radius: 10px;
       max-width: 900px;
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
       border: 1px solid #1f2937;
       font-weight: 600;
     }
@@ -116,11 +134,13 @@
       gap: 32px;
       padding-bottom: 32px;
     }
+
     .page-wrapper {
       max-width: 900px;
       margin: 0 auto;
       width: 100%;
     }
+
     .page-header {
       display: flex;
       justify-content: space-between;
@@ -130,6 +150,7 @@
       background: #1f2937;
       border-radius: 8px;
     }
+
     .page-header h2 {
       font-size: 1rem;
       font-weight: 700;
@@ -144,16 +165,18 @@
       width: 21.59cm;
       height: 27.94cm;
       margin: 0 auto;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
       border-radius: 4px;
       overflow: visible;
     }
+
     .page-inner {
       position: relative;
       width: 100%;
       height: 100%;
       padding: 1.5cm;
     }
+
     .page-note {
       position: absolute;
       bottom: 0.8cm;
@@ -175,29 +198,34 @@
       cursor: pointer;
       transition: all 0.3s;
     }
+
     .circle:hover {
       border-color: #3b82f6;
       box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
       transform: scale(1.02);
     }
+
     .circle.circle-grande {
       width: 12cm;
       height: 12cm;
     }
+
     .circle.circle-pequeno {
       width: 5cm;
       height: 5cm;
     }
+
     .circle.has-image {
       border-style: solid;
       border-color: #22c55e;
       background: #000;
     }
+
     .circle.locked {
       border-color: #10b981;
       border-width: 4px;
     }
-    
+
     /* Imagen dentro del círculo con drag */
     .circle-image-wrapper {
       position: relative;
@@ -206,26 +234,29 @@
       overflow: hidden;
       border-radius: 50%;
     }
+
     .circle img {
       position: absolute;
       object-fit: cover;
       cursor: grab;
     }
+
     .circle img.dragging {
       cursor: grabbing;
     }
+
     .circle.locked img {
       cursor: default;
       pointer-events: none;
     }
-    
+
     .circle-label {
       font-size: 11px;
       color: #4b5563;
       text-align: center;
       line-height: 1.4;
     }
-    
+
     /* Controles del círculo */
     .circle-controls {
       position: absolute;
@@ -236,25 +267,29 @@
       gap: 4px;
       z-index: 10;
     }
+
     .chip {
       padding: 4px 8px;
       border-radius: 999px;
-      background: rgba(15,23,42,0.9);
+      background: rgba(15, 23, 42, 0.9);
       color: #e5e7eb;
       cursor: pointer;
-      border: 1px solid rgba(148,163,184,0.5);
+      border: 1px solid rgba(148, 163, 184, 0.5);
       font-size: 10px;
       font-weight: 600;
       transition: all 0.2s;
     }
+
     .chip:hover {
       background: rgba(59, 130, 246, 0.9);
       transform: scale(1.05);
     }
+
     .chip-danger {
-      background: rgba(185,28,28,0.9);
-      border-color: rgba(248,113,113,0.7);
+      background: rgba(185, 28, 28, 0.9);
+      border-color: rgba(248, 113, 113, 0.7);
     }
+
     .chip-danger:hover {
       background: rgba(220, 38, 38, 0.9);
     }
@@ -285,17 +320,26 @@
       border: 3px solid #3b82f6;
       border-radius: 16px;
       padding: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
       display: none;
       z-index: 1000;
     }
+
     .edit-panel.active {
       display: block;
       animation: slideIn 0.3s ease-out;
     }
+
     @keyframes slideIn {
-      from { transform: translateY(-50%) translateX(20px); opacity: 0; }
-      to { transform: translateY(-50%) translateX(0); opacity: 1; }
+      from {
+        transform: translateY(-50%) translateX(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(-50%) translateX(0);
+        opacity: 1;
+      }
     }
 
     .edit-header {
@@ -306,11 +350,13 @@
       padding-bottom: 12px;
       border-bottom: 2px solid #3b82f6;
     }
+
     .edit-header h3 {
       font-size: 1.1rem;
       color: #3b82f6;
       font-weight: 700;
     }
+
     .edit-close {
       background: rgba(239, 68, 68, 0.2);
       border: 1px solid #ef4444;
@@ -323,6 +369,7 @@
       font-weight: bold;
       transition: all 0.2s;
     }
+
     .edit-close:hover {
       background: #ef4444;
       color: white;
@@ -332,6 +379,7 @@
     .edit-control {
       margin-bottom: 16px;
     }
+
     .edit-control label {
       display: block;
       font-size: 0.9rem;
@@ -339,10 +387,12 @@
       color: #e5e7eb;
       margin-bottom: 8px;
     }
+
     .edit-control .value {
       color: #3b82f6;
       font-weight: bold;
     }
+
     .edit-control input[type="range"] {
       width: 100%;
       height: 6px;
@@ -351,6 +401,7 @@
       outline: none;
       -webkit-appearance: none;
     }
+
     .edit-control input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 18px;
@@ -360,6 +411,7 @@
       cursor: pointer;
       box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
     }
+
     .edit-control input[type="range"]::-moz-range-thumb {
       width: 18px;
       height: 18px;
@@ -386,6 +438,7 @@
       gap: 8px;
       margin-top: 20px;
     }
+
     .edit-btn {
       width: 100%;
       padding: 10px;
@@ -395,18 +448,22 @@
       cursor: pointer;
       transition: all 0.2s;
     }
+
     .edit-btn-lock {
       background: linear-gradient(135deg, #10b981, #059669);
       color: white;
     }
+
     .edit-btn-lock:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
     }
+
     .edit-btn-unlock {
       background: linear-gradient(135deg, #ef4444, #dc2626);
       color: white;
     }
+
     .edit-btn-delete {
       background: #1f2937;
       color: #ef4444;
@@ -418,27 +475,34 @@
         background: white;
         padding: 0;
       }
+
       .no-print-bar,
       .edit-panel,
-      .page-header { 
-        display: none !important; 
+      .page-header,
+      #pixabay-credit {
+        display: none !important;
       }
+
       .pages-container {
         gap: 0;
         padding: 0;
       }
+
       .page-wrapper {
         max-width: none;
       }
+
       .page {
         box-shadow: none;
         margin: 0;
         border-radius: 0;
         page-break-after: always;
       }
+
       .page:last-child {
         page-break-after: auto;
       }
+
       .circle-controls,
       .locked-badge {
         display: none !important;
@@ -461,16 +525,24 @@
         transform: none;
         border-radius: 16px 16px 0 0;
       }
+
       .edit-panel.active {
         animation: slideUp 0.3s ease-out;
       }
+
       @keyframes slideUp {
-        from { transform: translateY(100%); }
-        to { transform: translateY(0); }
+        from {
+          transform: translateY(100%);
+        }
+
+        to {
+          transform: translateY(0);
+        }
       }
     }
   </style>
 </head>
+
 <body>
   <div class="no-print-bar">
     <div>
@@ -496,7 +568,7 @@
       <h3>✏️ Editor de Círculo</h3>
       <button class="edit-close" id="editClose">×</button>
     </div>
-    
+
     <div class="edit-info">
       💡 <strong>Tip:</strong> Arrastra la imagen con el mouse para moverla libremente dentro del círculo
     </div>
@@ -625,7 +697,7 @@
           const circleDiv = document.createElement('div');
           circleDiv.className = 'circle ' + (circle.size === 'grande' ? 'circle-grande' : 'circle-pequeno') + ' arkaios-image-slot';
           if (circle.locked) circleDiv.classList.add('locked');
-          
+
           const pos = circle.size === 'grande'
             ? positions.grande[gIndex++]
             : positions.pequeno[pIndex++];
@@ -635,14 +707,14 @@
 
           if (circle.imageData) {
             circleDiv.classList.add('has-image');
-            
+
             const imgWrapper = document.createElement('div');
             imgWrapper.className = 'circle-image-wrapper';
-            
+
             const img = document.createElement('img');
             img.src = circle.imageData;
             img.alt = 'Imagen círculo';
-            
+
             // Aplicar transformaciones
             const scale = circle.scale / 100;
             const size = Math.max(circle.size === 'grande' ? 12 : 5, (circle.size === 'grande' ? 12 : 5) * scale);
@@ -733,9 +805,9 @@
 
     // Cerrar panel al hacer clic fuera
     document.addEventListener('click', (e) => {
-      if (editPanel.classList.contains('active') && 
-          !editPanel.contains(e.target) && 
-          !e.target.closest('.circle')) {
+      if (editPanel.classList.contains('active') &&
+        !editPanel.contains(e.target) &&
+        !e.target.closest('.circle')) {
         closeEditPanel();
       }
     });
@@ -774,7 +846,7 @@
 
           if (pages[pageIndex]) {
             const circles = pages[pageIndex].circles;
-            const targetCircle = size === 'grande' 
+            const targetCircle = size === 'grande'
               ? circles.filter(c => c.size === 'grande')[circleIndex]
               : circles.filter(c => c.size === 'pequeno')[circleIndex];
 
@@ -926,10 +998,10 @@
         e.preventDefault();
         draggedImage = { img, pageId, circleId };
         img.classList.add('dragging');
-        
+
         dragStartX = e.clientX;
         dragStartY = e.clientY;
-        
+
         const currentLeft = parseFloat(img.style.left) || 50;
         const currentTop = parseFloat(img.style.top) || 50;
         imageStartX = currentLeft;
@@ -943,7 +1015,7 @@
 
       const deltaX = e.clientX - dragStartX;
       const deltaY = e.clientY - dragStartY;
-      
+
       // Convertir píxeles a porcentaje (aproximado)
       const circle = findCircle(draggedImage.pageId, draggedImage.circleId);
       const circleSize = circle.size === 'grande' ? CIRCULO_GRANDE : CIRCULO_PEQUENO;
@@ -1058,4 +1130,5 @@
     // ===== FIN DEL SCRIPT =====
   </script>
 </body>
+
 </html>
