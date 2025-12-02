@@ -705,6 +705,8 @@
         <button class="btn" data-target="generador-fotos-infantiles.html">
           <span>📸 Fotos infantiles 2.5×3 cm</span>
           <span class="icon">👶</span>
+        </button>
+        <button class="btn" data-target="plantilla_circulos_jack.html">
           <span>🎃 Círculos Jack Skellington</span>
           <span class="icon">⚙️</span>
         </button>
@@ -844,15 +846,11 @@
         messageType = 'ARKAIOS_PEXELS_IMAGES';
       }
 
-      frame.contentWindow.postMessage(
-        {
-          type: messageType,
-          source: source,
-          topic,
-          images: imageUrls
-        },
-        '*'
-      );
+      frame.contentWindow.postMessage({
+        type: messageType,
+        images: imageUrls,
+        topic: topic
+      }, '*');
     }
 
     // ========== INTEGRACIÓN FREEPIK ==========
@@ -1021,7 +1019,6 @@
       // Exportar a PDF
       async exportToPDF() {
         const frame = document.getElementById('plantillaFrame');
-
         try {
           this.showSaveIndicator('Generando PDF, por favor espera...');
 
@@ -1069,433 +1066,244 @@
       },
 
       autoSave() {
+        // Implementación simplificada de auto-guardado en localStorage
         try {
           const frame = document.getElementById('plantillaFrame');
-          const autoSaveData = {
-            timestamp: new Date().toISOString(),
-            template: currentTemplate,
-            templateData: null
-          };
-
           if (frame.contentWindow && frame.contentWindow.ARKAIOS_getData) {
-            autoSaveData.templateData = frame.contentWindow.ARKAIOS_getData();
+            const data = frame.contentWindow.ARKAIOS_getData();
+            localStorage.setItem('arkaios_autosave', JSON.stringify({
+              template: currentTemplate,
+              data: data,
+              timestamp: Date.now()
+            }));
+            this.showSaveIndicator('Guardado automático');
           }
-
-          localStorage.setItem('arkaios-autosave', JSON.stringify(autoSaveData));
-          this.showSaveIndicator('💾 Auto-guardado');
-        } catch (error) {
-          console.warn('Error en auto-guardado:', error);
+        } catch (e) {
+          // Ignorar errores silenciosamente en auto-save
         }
       },
 
       loadAutoSave() {
-        const saved = localStorage.getItem('arkaios-autosave');
+        const saved = localStorage.getItem('arkaios_autosave');
         if (saved) {
-          console.log('✓ Datos de auto-guardado disponibles');
+          console.log('Auto-save encontrado');
+          // Podríamos ofrecer restaurar aquí
         }
       },
 
-      handleDataUpdate(data) {
-        console.log('Datos actualizados desde plantilla:', data);
-        this.autoSave();
-      },
-
-      showSaveIndicator(message) {
+      showSaveIndicator(msg) {
         const indicator = document.getElementById('autoSaveIndicator');
-        indicator.textContent = message;
+        indicator.textContent = '✓ ' + msg;
         indicator.classList.add('show');
         setTimeout(() => {
           indicator.classList.remove('show');
         }, 3000);
       },
 
-      // ========= NUEVO: RELLENO AUTOMÁTICO CON PIXABAY =========
+      handleDataUpdate(data) {
+        console.log('Datos actualizados desde iframe:', data);
+      },
+
+      // Nuevas funciones para auto-relleno de imágenes
       async autoFillImagesPrompt() {
-        const topic = prompt('¿Tema para buscar imágenes en Pixabay? (ej. "sistema solar")');
+        const topic = prompt('¿Sobre qué tema quieres imágenes? (Ej: "sistema solar", "animales marinos")');
         if (!topic) return;
-        const countStr = prompt('¿Cuántas imágenes quieres insertar? (ej. 8)');
-        const count = parseInt(countStr || '8', 10) || 8;
-        await this.fillImagesFromPixabay(topic, count);
-      },
 
-      async fillImagesFromPixabay(topic, count) {
+        this.showSaveIndicator('Buscando imágenes en Pixabay...');
         try {
-          const urls = await fetchPixabayImages(topic, count);
-          if (!urls.length) {
-            alert('Pixabay no devolvió resultados para: ' + topic);
+          const images = await fetchPixabayImages(topic);
+          if (images.length === 0) {
+            alert('No se encontraron imágenes para: ' + topic);
             return;
           }
-
-          sendImagesToActiveTemplate(topic, urls, 'pixabay');
-          this.showSaveIndicator(
-            `Imágenes de "${topic}" enviadas a la plantilla (${urls.length})`
-          );
+          sendImagesToActiveTemplate(topic, images, 'pixabay');
+          this.showSaveIndicator(`Enviadas ${images.length} imágenes de Pixabay`);
         } catch (err) {
           console.error(err);
-          alert('Error al buscar imágenes en Pixabay: ' + (err.message || err));
+          alert('Error al buscar imágenes: ' + err.message);
         }
       },
 
-      // ========= NUEVO: RELLENO AUTOMÁTICO CON FREEPIK =========
       async autoFillImagesFreepikPrompt() {
-        const topic = prompt('¿Tema para buscar imágenes en Freepik? (ej. "animales de la selva")');
+        const topic = prompt('¿Sobre qué tema quieres imágenes de Freepik?');
         if (!topic) return;
-        const countStr = prompt('¿Cuántas imágenes quieres insertar? (ej. 8)');
-        const count = parseInt(countStr || '8', 10) || 8;
-        await this.fillImagesFromFreepik(topic, count);
-      },
 
-      async fillImagesFromFreepik(topic, count) {
+        this.showSaveIndicator('Buscando imágenes en Freepik...');
         try {
-          this.showSaveIndicator(`Buscando en Freepik: "${topic}"...`);
-          const urls = await fetchFreepikImages(topic, count);
-          if (!urls.length) {
-            alert('Freepik no devolvió resultados para: ' + topic);
+          const images = await fetchFreepikImages(topic);
+          if (images.length === 0) {
+            alert('No se encontraron imágenes para: ' + topic);
             return;
           }
-
-          sendImagesToActiveTemplate(topic, urls, 'freepik');
-          this.showSaveIndicator(
-            `Imágenes de "${topic}" (Freepik) enviadas a la plantilla (${urls.length})`
-          );
+          sendImagesToActiveTemplate(topic, images, 'freepik');
+          this.showSaveIndicator(`Enviadas ${images.length} imágenes de Freepik`);
         } catch (err) {
           console.error(err);
-          alert('Error al buscar imágenes en Freepik: ' + (err.message || err));
+          alert('Error al buscar imágenes: ' + err.message);
         }
       },
 
-      // ========= NUEVO: RELLENO AUTOMÁTICO CON PEXELS =========
       async autoFillImagesPexelsPrompt() {
-        const topic = prompt('¿Tema para buscar imágenes en Pexels? (ej. "naturaleza")');
+        const topic = prompt('¿Sobre qué tema quieres imágenes de Pexels?');
         if (!topic) return;
-        const countStr = prompt('¿Cuántas imágenes quieres insertar? (ej. 8)');
-        const count = parseInt(countStr || '8', 10) || 8;
-        await this.fillImagesFromPexels(topic, count);
-      },
 
-      async fillImagesFromPexels(topic, count) {
+        this.showSaveIndicator('Buscando imágenes en Pexels...');
         try {
-          this.showSaveIndicator(`Buscando en Pexels: "${topic}"...`);
-          const urls = await fetchPexelsImages(topic, count);
-          if (!urls.length) {
-            alert('Pexels no devolvió resultados para: ' + topic);
+          const images = await fetchPexelsImages(topic);
+          if (images.length === 0) {
+            alert('No se encontraron imágenes para: ' + topic);
             return;
           }
-
-          sendImagesToActiveTemplate(topic, urls, 'pexels');
-          this.showSaveIndicator(
-            `Imágenes de "${topic}" (Pexels) enviadas a la plantilla (${urls.length})`
-          );
+          sendImagesToActiveTemplate(topic, images, 'pexels');
+          this.showSaveIndicator(`Enviadas ${images.length} imágenes de Pexels`);
         } catch (err) {
           console.error(err);
-          alert('Error al buscar imágenes en Pexels: ' + (err.message || err));
+          alert('Error al buscar imágenes: ' + err.message);
         }
       }
     };
 
-    // ========== SISTEMA DE NAVEGACIÓN ==========
-    const buttons = document.querySelectorAll('nav .btn');
-    const frame = document.getElementById('plantillaFrame');
+    // Variable global para la plantilla actual
     let currentTemplate = 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html';
 
-    function setTemplate(target) {
-      if (!target) return;
-      currentTemplate = target;
-      // Force reload by appending timestamp to bypass cache
-      frame.src = target + '?v=' + new Date().getTime();
-      buttons.forEach((b) => {
-        const isActive = b.getAttribute('data-target') === target;
-        b.classList.toggle('active', isActive);
+    // Inicializar al cargar
+    window.addEventListener('DOMContentLoaded', () => {
+      ARKAIOS.init();
+
+      // Manejo de navegación
+      document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          // Remover clase active de todos
+          document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+          // Añadir a este
+          btn.classList.add('active');
+
+          // Cambiar iframe
+          const target = btn.dataset.target;
+          if (target) {
+            currentTemplate = target;
+            const frame = document.getElementById('plantillaFrame');
+            frame.src = target;
+          }
+        });
       });
+
+      // Lógica del Chat IA (simulada/conectada a Puter)
+      initAIChat();
+    });
+
+    // ==========================================
+    // LÓGICA DEL CHAT IA (PUTER.JS)
+    // ==========================================
+    function initAIChat() {
+      const aiButton = document.getElementById('aiButton');
+      const aiPanel = document.getElementById('aiPanel');
+      const aiClose = document.getElementById('aiClose');
+      const aiExpand = document.getElementById('aiExpand');
+      const aiInput = document.getElementById('aiInput');
+      const aiSend = document.getElementById('aiSend');
+      const aiMessages = document.getElementById('aiMessages');
+      const aiStatus = document.getElementById('aiStatus');
+
+      // Toggle panel
+      aiButton.addEventListener('click', () => {
+        aiPanel.classList.add('active');
+        aiButton.style.display = 'none';
+        checkPuterConnection();
+      });
+
+      aiClose.addEventListener('click', () => {
+        aiPanel.classList.remove('active');
+        aiButton.style.display = 'flex';
+      });
+
+      // Expandir/Contraer
+      aiExpand.addEventListener('click', () => {
+        aiPanel.classList.toggle('fullscreen');
+        aiExpand.classList.toggle('toggled');
+      });
+
+      // Enviar mensaje
+      window.sendMessage = async () => {
+        const text = aiInput.value.trim();
+        if (!text) return;
+
+        // Mostrar mensaje usuario
+        addMessage(text, 'user');
+        aiInput.value = '';
+
+        // Mostrar typing
+        const typing = document.getElementById('typingIndicator');
+        typing.classList.add('active');
+        aiMessages.scrollTop = aiMessages.scrollHeight;
+
+        try {
+          // Llamada a Puter.ai
+          if (window.puter) {
+            const response = await puter.ai.chat(text);
+            typing.classList.remove('active');
+            addMessage(response, 'assistant');
+          } else {
+            throw new Error('Puter.js no está cargado');
+          }
+        } catch (err) {
+          typing.classList.remove('active');
+          addMessage('Error al conectar con la IA: ' + err.message, 'system');
+          console.error(err);
+        }
+      };
+
+      window.handleKeyPress = (e) => {
+        if (e.key === 'Enter') sendMessage();
+      };
+
+      // Acciones rápidas
+      window.quickAction = (type) => {
+        let text = '';
+        switch (type) {
+          case 'plantilla': text = 'Quiero crear una nueva plantilla escolar. ¿Qué me sugieres?'; break;
+          case 'ayuda': text = '¿Cómo uso este sistema de plantillas?'; break;
+          case 'contenido': text = 'Genera contenido educativo para una infografía sobre el ciclo del agua.'; break;
+          case 'explicar': text = 'Explícame cómo funciona la plantilla actual.'; break;
+        }
+        aiInput.value = text;
+        sendMessage();
+      };
     }
 
-    buttons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const target = btn.getAttribute('data-target');
-        setTemplate(target);
-      });
-    });
+    function addMessage(text, type) {
+      const div = document.createElement('div');
+      div.className = `message ${type}`;
+      div.textContent = text;
+      document.getElementById('aiMessages').appendChild(div);
+      document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
+    }
 
-    frame.addEventListener('load', () => {
-      // Avisar a la plantilla que el marco se cargó y sincronizar el autosave
-      try {
-        frame.contentWindow?.postMessage(
-          { type: 'ARKAIOS_TEMPLATE_READY', template: currentTemplate },
-          '*'
-        );
-      } catch (error) {
-        console.warn('No se pudo notificar a la plantilla cargada:', error);
-      }
-      ARKAIOS.autoSave();
-    });
-
-    // ========== SISTEMA DE IA ARKAIOS (Puter) ==========
-    const aiButton = document.getElementById('aiButton');
-    const aiPanel = document.getElementById('aiPanel');
-    const aiClose = document.getElementById('aiClose');
-    const aiExpand = document.getElementById('aiExpand');
-    const aiMessages = document.getElementById('aiMessages');
-    const aiInput = document.getElementById('aiInput');
-    const aiSend = document.getElementById('aiSend');
-    const typingIndicator = document.getElementById('typingIndicator');
-    const aiStatus = document.getElementById('aiStatus');
-    let puterReady = false;
-    let usingPerplexity = false;
-
-    const aiState = {
-      model: localStorage.getItem('arkaios:model') || 'gpt-4o-mini',
-      history: [
-        {
-          role: 'system',
-          content:
-            'Eres ARKAIOS, un asistente educativo con superpoderes. Hablas en español claro, das pasos accionables, propones mejoras y sabes trabajar con plantillas HTML. Usa tono motivador y breve. Prioriza dar código listo para copiar cuando sea útil. ' +
-            'Si el usuario pide rellenar automáticamente las plantillas con imágenes, NO expliques nada: responde SOLO con un JSON como este: {"type":"pixabay_fill","topic":"sistema solar","count":8}.'
-        },
-        {
-          role: 'system',
-          content:
-            'Contexto: estás dentro del Centro de Plantillas Educativas. Plantillas disponibles: carta MX, generador de fotos infantiles, imágenes v2, cuadros de imágenes y círculos Jack. Si el usuario pide cambiar de plantilla, menciona el nombre del archivo.'
+    async function checkPuterConnection() {
+      const status = document.getElementById('aiStatus');
+      if (window.puter) {
+        try {
+          // Intento simple de verificar auth
+          if (puter.auth.isSignedIn()) {
+            status.textContent = 'Conectado a Puter';
+            status.dataset.status = 'ready';
+          } else {
+            status.textContent = 'Sesión no iniciada';
+            status.dataset.status = 'pending';
+          }
+        } catch (e) {
+          status.textContent = 'Puter listo (Anónimo)';
+          status.dataset.status = 'ready';
         }
-      ]
-    };
-
-    function setAIStatus(status, text) {
-      if (!aiStatus) return;
-      aiStatus.dataset.status = status;
-      aiStatus.textContent = text;
+      } else {
+        status.textContent = 'Error de conexión';
+        status.dataset.status = 'error';
+      }
     }
 
     function openPuterApp() {
-      window.open('https://app.puter.com', '_blank', 'noopener');
+      window.open('https://puter.com', '_blank');
     }
-
-    function getPplxKey() {
-      let key = localStorage.getItem('arkaios:pplxKey');
-      if (!key) {
-        key = prompt('Pega tu API key de Perplexity (se guarda en este navegador)');
-        if (key) localStorage.setItem('arkaios:pplxKey', key.trim());
-      }
-      return key;
-    }
-
-    async function callPerplexity(messages) {
-      const key = getPplxKey();
-      if (!key) {
-        throw new Error('No se proporcionó API key de Perplexity');
-      }
-
-      // Usar el proxy serverless para evitar CORS
-      // Si estamos en local, intentar usar el proxy de producción (requiere CORS en el servidor)
-      const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
-      const endpoint = isLocal
-        ? 'https://eduacion-libre-proyecto-arkaios.vercel.app/api/pplx'
-        : '/api/pplx';
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${key}`
-        },
-        body: JSON.stringify({
-          messages
-        })
-      });
-
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Perplexity error: ${response.status} ${text}`);
-      }
-
-      const data = await response.json();
-      const content = data?.choices?.[0]?.message?.content;
-      if (!content) throw new Error('Perplexity no devolvió contenido.');
-      return typeof content === 'string' ? content : content?.join(' ');
-    }
-
-    function checkEnvironment() {
-      if (location.protocol === 'file:') {
-        setAIStatus('error', 'Abre desde https:// (no file://)');
-        appendMessage(
-          'system',
-          'Para conectar con Puter, abre este proyecto desde una URL con https (ej. GitHub Pages) o un server local. En file:// el SDK de Puter no funciona.'
-        );
-      }
-    }
-
-    // Espera a que Puter cargue y, si es posible, fuerza el inicio de sesión del usuario
-    function waitForPuterSDK(timeout = 8000) {
-      return new Promise((resolve) => {
-        const start = Date.now();
-        const interval = setInterval(() => {
-          const ok = !!window.puter?.ai?.chat?.completions?.create;
-          const elapsed = Date.now() - start;
-          if (ok || elapsed >= timeout) {
-            clearInterval(interval);
-            resolve(ok);
-          }
-        }, 200);
-      });
-    }
-
-    async function ensurePuterAI() {
-      if (puterReady) return;
-
-      setAIStatus('pending', 'Conectando a Puter…');
-      const sdkReady = await waitForPuterSDK();
-      if (!sdkReady) {
-        setAIStatus('error', 'Puter no cargó (usa https y habilita pop-ups)');
-        throw new Error('Puter AI no está disponible en este navegador.');
-      }
-
-      // Si Puter expone autenticación, pide sesión en ventana emergente
-      try {
-        const auth = window.puter?.auth;
-        if (auth?.isSignedIn && typeof auth.isSignedIn === 'function') {
-          const signedIn = auth.isSignedIn();
-          if (!signedIn && auth.signIn) {
-            await auth.signIn({ new_window: true });
-          }
-        }
-      } catch (err) {
-        console.warn('No se pudo iniciar sesión en Puter:', err);
-      }
-
-      puterReady = true;
-      setAIStatus('ready', 'Puter listo');
-    }
-
-    function appendMessage(role, content) {
-      const div = document.createElement('div');
-      div.className = `message ${role}`;
-      div.textContent = content;
-      aiMessages.appendChild(div);
-      aiMessages.scrollTop = aiMessages.scrollHeight;
-    }
-
-    function togglePanel() {
-      aiPanel.classList.toggle('active');
-    }
-
-    aiButton.addEventListener('click', togglePanel);
-    aiClose.addEventListener('click', () => aiPanel.classList.remove('active'));
-    aiExpand.addEventListener('click', () => aiPanel.classList.toggle('fullscreen'));
-
-    async function callArkaios(messages) {
-      usingPerplexity = false;
-      try {
-        await ensurePuterAI();
-        if (!window.puter?.ai?.chat?.completions?.create) {
-          throw new Error('Puter AI no está disponible en este navegador.');
-        }
-
-        const completion = await window.puter.ai.chat.completions.create({
-          model: aiState.model,
-          temperature: 0.35,
-          max_tokens: 800,
-          messages
-        });
-
-        const content = completion?.choices?.[0]?.message?.content;
-        if (!content) throw new Error('No se recibió respuesta del modelo ARKAIOS.');
-        return typeof content === 'string' ? content : content?.join(' ');
-      } catch (err) {
-        console.warn('Fallo Puter, usando Perplexity', err);
-        setAIStatus('pending', 'Usando Perplexity…');
-        usingPerplexity = true;
-        const content = await callPerplexity(messages);
-        setAIStatus('ready', 'Perplexity listo');
-        return content;
-      }
-    }
-
-    async function sendMessage() {
-      const userText = aiInput.value.trim();
-      if (!userText) return;
-
-      appendMessage('user', userText);
-      aiState.history.push({ role: 'user', content: userText });
-      aiInput.value = '';
-      aiSend.disabled = true;
-      typingIndicator.classList.add('active');
-      setAIStatus('pending', 'Conectando a Puter…');
-
-      try {
-        const reply = await callArkaios(aiState.history);
-
-        let handledCommand = false;
-
-        // Intentar interpretar la respuesta como comando JSON para Pixabay
-        try {
-          const cmd = JSON.parse(reply);
-          if (cmd && cmd.type === 'pixabay_fill') {
-            const topic = cmd.topic || 'educación';
-            const count = parseInt(cmd.count || 8, 10) || 8;
-
-            appendMessage(
-              'assistant',
-              `Voy a rellenar la plantilla con ~${count} imágenes de Pixabay sobre "${topic}".`
-            );
-
-            aiState.history.push({
-              role: 'assistant',
-              content: `Comando Pixabay recibido para ${topic} (${count} imágenes).`
-            });
-
-            handledCommand = true;
-            await ARKAIOS.fillImagesFromPixabay(topic, count);
-          }
-        } catch (e) {
-          // No era JSON, continuar flujo normal
-        }
-
-        if (!handledCommand) {
-          aiState.history.push({ role: 'assistant', content: reply });
-          appendMessage('assistant', reply);
-        }
-
-        setAIStatus('ready', usingPerplexity ? 'Perplexity listo' : 'Puter listo');
-      } catch (error) {
-        console.error(error);
-        appendMessage(
-          'assistant',
-          `No pude conectar con ARKAIOS. Error: ${error.message || error}`
-        );
-        setAIStatus('error', 'Error de conexión');
-      } finally {
-        aiSend.disabled = false;
-        typingIndicator.classList.remove('active');
-        aiInput.focus();
-      }
-    }
-
-    function handleKeyPress(event) {
-      if (event.key === 'Enter' && !event.shiftKey) {
-        event.preventDefault();
-        sendMessage();
-      }
-    }
-
-    function quickAction(type) {
-      const hints = {
-        plantilla: 'Crea una plantilla nueva en HTML, lista para usar, con estilos inline minimalistas.',
-        ayuda: 'Explícame cómo usar las plantillas del panel y cómo exportar a PDF.',
-        contenido: 'Genera contenido educativo breve para llenar la plantilla actual.',
-        explicar: 'Explica la estructura de la plantilla actual y cómo adaptarla.'
-      };
-      aiInput.value = hints[type] || '';
-      aiInput.focus();
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      ARKAIOS.init();
-      setAIStatus('pending', 'Conectando a Puter…');
-      checkEnvironment();
-      appendMessage(
-        'system',
-        '¡Hola! Soy ARKAIOS, tu asistente conectado a Puter. Puedo crear plantillas, mejorar contenido y guiarte paso a paso.'
-      );
-    });
   </script>
 </body>
 
