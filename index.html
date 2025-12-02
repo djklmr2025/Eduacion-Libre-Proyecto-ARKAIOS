@@ -110,26 +110,6 @@
       display: flex;
       min-height: 0;
     }
-
-    nav {
-      width: 260px;
-      max-width: 100%;
-      background: #020617;
-      border-right: 1px solid #1f2937;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      overflow-y: auto;
-    }
-
-    nav h2 {
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #9ca3af;
-      margin-bottom: 4px;
-      margin-top: 8px;
     }
 
     .btn {
@@ -602,56 +582,240 @@
 
     @keyframes typing {
 
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ai-control:hover,
+    .ai-close:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: rotate(90deg);
+    }
+
+    .ai-control.toggled {
+      background: rgba(255, 255, 255, 0.28);
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.18);
+    }
+
+    .ai-actions {
+      padding: 12px;
+      background: #0f172a;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #1f2937;
+    }
+
+    .action-btn {
+      padding: 6px 12px;
+      background: #1f2937;
+      border: 1px solid #3b82f6;
+      border-radius: 6px;
+      color: #e5e7eb;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .action-btn:hover {
+      background: #3b82f6;
+      transform: translateY(-1px);
+    }
+
+    .ai-messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ai-messages::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .ai-messages::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+
+    .ai-messages::-webkit-scrollbar-thumb {
+      background: #3b82f6;
+      border-radius: 4px;
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 12px;
+      max-width: 85%;
+      word-wrap: break-word;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message.user {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.assistant {
+      background: #1f2937;
+      color: #e5e7eb;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+      border: 1px solid #374151;
+    }
+
+    .message.system {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      color: white;
+      align-self: center;
+      text-align: center;
+      font-size: 0.85rem;
+      padding: 8px 12px;
+    }
+
+    .ai-input-area {
+      padding: 12px;
+      background: #0f172a;
+      border-radius: 0 0 14px 14px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .ai-input {
+      flex: 1;
+      padding: 10px 14px;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 8px;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .ai-input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .ai-send {
+      padding: 10px 14px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ai-send:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+    }
+
+    .ai-send:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .typing-indicator {
+      display: none;
+      padding: 12px;
+      background: #1f2937;
+      border-radius: 12px;
+      align-self: flex-start;
+      border: 1px solid #374151;
+    }
+
+    .typing-indicator.active {
+      display: block;
+    }
+
+    .typing-indicator span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #3b82f6;
+      margin: 0 2px;
+      animation: typing 1.4s infinite;
+    }
+
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+
       0%,
       60%,
       100% {
         transform: translateY(0);
+
       }
 
-      30% {
-        transform: translateY(-10px);
-      }
-    }
+      @media (max-width: 800px) {
+        .layout {
+          flex-direction: column;
+        }
 
-    @media (max-width: 800px) {
-      .layout {
-        flex-direction: column;
-      }
+        nav {
+          width: 100%;
+          border-right: none;
+          border-bottom: 1px solid #1f2937;
+          flex-direction: row;
+          overflow-x: auto;
+        }
 
-      nav {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #1f2937;
-        flex-direction: row;
-        overflow-x: auto;
-      }
+        .btn {
+          min-width: 200px;
+        }
 
-      .btn {
-        min-width: 200px;
-      }
+        .ai-panel {
+          width: calc(100vw - 32px);
+          right: 16px;
+          bottom: 90px;
+          height: calc(100vh - 160px);
+          min-width: 320px;
+        }
 
-      .ai-panel {
-        width: calc(100vw - 32px);
-        right: 16px;
-        bottom: 90px;
-        height: calc(100vh - 160px);
-        min-width: 320px;
+        .ai-panel.fullscreen {
+          top: 12px;
+          left: 12px;
+          right: 12px;
+          bottom: 12px;
+        }
       }
-
-      .ai-panel.fullscreen {
-        top: 12px;
-        left: 12px;
-        right: 12px;
-        bottom: 12px;
-      }
-
-      .ai-button {
-        width: 56px;
-        height: 56px;
-        bottom: 16px;
-        right: 16px;
-      }
-    }
   </style>
 </head>
 
@@ -709,6 +873,10 @@
         <button class="btn" data-target="plantilla_circulos_jack.html">
           <span>🎃 Círculos Jack Skellington</span>
           <span class="icon">⚙️</span>
+        </button>
+        <button class="btn" data-target="plantilla-cuadros-imagenes-v2.html">
+          <span>🖼️ Cuadros Imágenes v2</span>
+          <span class="icon">🎨</span>
         </button>
       </div>
     </nav>
@@ -801,8 +969,13 @@
         try {
           const res = await fetch(endpoint, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ q: topic, per_page })
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              q: topic,
+              per_page
+            })
           });
 
           if (!res.ok) throw new Error('Error al llamar /api/pixabay');
@@ -818,15 +991,13 @@
       }
 
       // Opción directa (expone la key en el navegador)
-      const url =
-        'https://pixabay.com/api/?' +
-        new URLSearchParams({
-          key: PIXABAY_CONFIG.directKey,
-          q: topic,
-          image_type: 'photo',
-          safesearch: 'true',
-          per_page: String(per_page)
-        }).toString();
+      const url = 'https://pixabay.com/api/?' + new URLSearchParams({
+        key: PIXABAY_CONFIG.directKey,
+        q: topic,
+        image_type: 'photo',
+        safesearch: 'true',
+        per_page: String(per_page)
+      }).toString();
 
       const res = await fetch(url);
       if (!res.ok) throw new Error('Error al llamar Pixabay directo');
@@ -840,9 +1011,12 @@
       if (!frame || !frame.contentWindow) return;
 
       let messageType = 'ARKAIOS_PIXABAY_IMAGES';
+
       if (source === 'freepik') {
         messageType = 'ARKAIOS_FREEPIK_IMAGES';
-      } else if (source === 'pexels') {
+      }
+
+      else if (source === 'pexels') {
         messageType = 'ARKAIOS_PEXELS_IMAGES';
       }
 
@@ -850,39 +1024,55 @@
         type: messageType,
         images: imageUrls,
         topic: topic
-      }, '*');
+      }
+
+        , '*');
     }
 
     // ========== INTEGRACIÓN FREEPIK ==========
     const FREEPIK_CONFIG = {
       endpoint: '/api/freepik',
-    };
+    }
+
+      ;
 
     async function fetchFreepikImages(topic, count = 8) {
       const limit = Math.min(Math.max(count, 3), 50);
 
-      const isLocal =
-        location.hostname === 'localhost' ||
-        location.hostname === '127.0.0.1' ||
-        location.protocol === 'file:';
+      const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
 
       const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
       const endpoint = isLocal ? (localBase + FREEPIK_CONFIG.endpoint) : FREEPIK_CONFIG.endpoint;
 
       try {
         const res = await fetch(endpoint, {
+
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ q: topic, limit })
+          headers: {
+            'Content-Type': 'application/json'
+          }
+
+          ,
+          body: JSON.stringify({
+            q: topic, limit
+          })
         });
 
         if (!res.ok) {
           const errorBody = await res.json();
-          throw new Error(`Error al llamar /api/freepik: ${errorBody.error || res.statusText}`);
+
+          throw new Error(`Error al llamar /api/freepik: $ {
+          errorBody.error || res.statusText
         }
+
+        `);
+        }
+
         const data = await res.json();
         return (data.data || []).map(item => item.urls.regular).filter(Boolean);
-      } catch (err) {
+      }
+
+      catch (err) {
         console.error('Fallo el backend /api/freepik', err);
         throw err;
       }
@@ -891,33 +1081,47 @@
     // ========== INTEGRACIÓN PEXELS ==========
     const PEXELS_CONFIG = {
       endpoint: '/api/pexels',
-    };
+    }
+
+      ;
 
     async function fetchPexelsImages(topic, count = 8) {
       const per_page = Math.min(Math.max(count, 3), 50);
 
-      const isLocal =
-        location.hostname === 'localhost' ||
-        location.hostname === '127.0.0.1' ||
-        location.protocol === 'file:';
+      const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
 
       const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
       const endpoint = isLocal ? (localBase + PEXELS_CONFIG.endpoint) : PEXELS_CONFIG.endpoint;
 
       try {
         const res = await fetch(endpoint, {
+
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ q: topic, per_page })
+          headers: {
+            'Content-Type': 'application/json'
+          }
+
+          ,
+          body: JSON.stringify({
+            q: topic, per_page
+          })
         });
 
         if (!res.ok) {
           const errorBody = await res.json();
-          throw new Error(`Error al llamar /api/pexels: ${errorBody.error || res.statusText}`);
+
+          throw new Error(`Error al llamar /api/pexels: $ {
+          errorBody.error || res.statusText
         }
+
+        `);
+        }
+
         const data = await res.json();
         return (data.photos || []).map(p => p.src.large).filter(Boolean);
-      } catch (err) {
+      }
+
+      catch (err) {
         console.error('Fallo el backend /api/pexels', err);
         throw err;
       }
@@ -940,25 +1144,32 @@
             this.handleDataUpdate(event.data);
           }
         });
-      },
+      }
+
+      ,
 
       // Guardar proyecto
       saveProject() {
         try {
           const frame = document.getElementById('plantillaFrame');
+
           const projectData = {
             version: this.version,
             timestamp: new Date().toISOString(),
             template: currentTemplate,
             templateData: null
-          };
+          }
+
+            ;
 
           // Intentar obtener datos del iframe
           try {
             if (frame.contentWindow && frame.contentWindow.ARKAIOS_getData) {
               projectData.templateData = frame.contentWindow.ARKAIOS_getData();
             }
-          } catch (e) {
+          }
+
+          catch (e) {
             console.warn('No se pudieron obtener datos del iframe:', e);
           }
 
@@ -969,25 +1180,36 @@
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `proyecto-arkaios-${Date.now()}.json`;
+
+          a.download = `proyecto-arkaios-$ {
+          Date.now()
+        }
+
+        .json`;
           a.click();
           URL.revokeObjectURL(url);
 
           this.showSaveIndicator('Proyecto guardado correctamente');
-        } catch (error) {
+        }
+
+        catch (error) {
           console.error('Error al guardar proyecto:', error);
           alert('Error al guardar el proyecto');
         }
-      },
+      }
+
+      ,
 
       // Cargar proyecto
       loadProject() {
         const input = document.getElementById('projectLoader');
+
         input.onchange = (e) => {
           const file = e.target.files[0];
           if (!file) return;
 
           const reader = new FileReader();
+
           reader.onload = (event) => {
             try {
               const projectData = JSON.parse(event.target.result);
@@ -1003,22 +1225,34 @@
                   if (projectData.templateData && frame.contentWindow.ARKAIOS_setData) {
                     frame.contentWindow.ARKAIOS_setData(projectData.templateData);
                   }
+
                   this.showSaveIndicator('Proyecto cargado correctamente');
-                };
+                }
+
+                  ;
               }
-            } catch (error) {
+            }
+
+            catch (error) {
               console.error('Error al cargar proyecto:', error);
               alert('Error al cargar el proyecto. Archivo inválido.');
             }
-          };
+          }
+
+            ;
           reader.readAsText(file);
-        };
+        }
+
+          ;
         input.click();
-      },
+      }
+
+      ,
 
       // Exportar a PDF
       async exportToPDF() {
         const frame = document.getElementById('plantillaFrame');
+
         try {
           this.showSaveIndicator('Generando PDF, por favor espera...');
 
@@ -1030,7 +1264,12 @@
           }
 
           // Método 2: Usar html2canvas + jsPDF
-          const { jsPDF } = window.jspdf;
+          const {
+            jsPDF
+          }
+
+            = window.jspdf;
+
           const canvas = await html2canvas(frame.contentDocument.body, {
             scale: 2,
             useCORS: true,
@@ -1039,6 +1278,7 @@
           });
 
           const imgData = canvas.toDataURL('image/png');
+
           const pdf = new jsPDF({
             orientation: 'portrait',
             unit: 'mm',
@@ -1049,28 +1289,44 @@
           const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
           pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-          pdf.save(`plantilla-arkaios-${Date.now()}.pdf`);
+
+          pdf.save(`plantilla-arkaios-$ {
+        Date.now()
+      }
+
+      .pdf`);
 
           this.showSaveIndicator('PDF generado correctamente');
-        } catch (error) {
+        }
+
+        catch (error) {
           console.error('Error al exportar PDF:', error);
           alert('Error al generar el PDF. Intenta usar el botón de imprimir de la plantilla.');
         }
-      },
+      }
+
+      ,
 
       // Guardado automático
       startAutoSave() {
         this.autoSaveInterval = setInterval(() => {
           this.autoSave();
-        }, 30000); // Cada 30 segundos
-      },
+        }
+
+          , 30000); // Cada 30 segundos
+      }
+
+      ,
 
       autoSave() {
+
         // Implementación simplificada de auto-guardado en localStorage
         try {
           const frame = document.getElementById('plantillaFrame');
+
           if (frame.contentWindow && frame.contentWindow.ARKAIOS_getData) {
             const data = frame.contentWindow.ARKAIOS_getData();
+
             localStorage.setItem('arkaios_autosave', JSON.stringify({
               template: currentTemplate,
               data: data,
@@ -1078,31 +1334,45 @@
             }));
             this.showSaveIndicator('Guardado automático');
           }
-        } catch (e) {
+        }
+
+        catch (e) {
           // Ignorar errores silenciosamente en auto-save
         }
-      },
+      }
+
+      ,
 
       loadAutoSave() {
         const saved = localStorage.getItem('arkaios_autosave');
+
         if (saved) {
           console.log('Auto-save encontrado');
           // Podríamos ofrecer restaurar aquí
         }
-      },
+      }
+
+      ,
 
       showSaveIndicator(msg) {
         const indicator = document.getElementById('autoSaveIndicator');
         indicator.textContent = '✓ ' + msg;
         indicator.classList.add('show');
+
         setTimeout(() => {
           indicator.classList.remove('show');
-        }, 3000);
-      },
+        }
+
+          , 3000);
+      }
+
+      ,
 
       handleDataUpdate(data) {
         console.log('Datos actualizados desde iframe:', data);
-      },
+      }
+
+      ,
 
       // Nuevas funciones para auto-relleno de imágenes
       async autoFillImagesPrompt() {
@@ -1110,58 +1380,94 @@
         if (!topic) return;
 
         this.showSaveIndicator('Buscando imágenes en Pixabay...');
+
         try {
           const images = await fetchPixabayImages(topic);
+
           if (images.length === 0) {
             alert('No se encontraron imágenes para: ' + topic);
             return;
           }
+
           sendImagesToActiveTemplate(topic, images, 'pixabay');
-          this.showSaveIndicator(`Enviadas ${images.length} imágenes de Pixabay`);
-        } catch (err) {
+
+          this.showSaveIndicator(`Enviadas $ {
+            images.length
+          }
+
+          imágenes de Pixabay`);
+        }
+
+        catch (err) {
           console.error(err);
           alert('Error al buscar imágenes: ' + err.message);
         }
-      },
+      }
+
+      ,
 
       async autoFillImagesFreepikPrompt() {
         const topic = prompt('¿Sobre qué tema quieres imágenes de Freepik?');
         if (!topic) return;
 
         this.showSaveIndicator('Buscando imágenes en Freepik...');
+
         try {
           const images = await fetchFreepikImages(topic);
+
           if (images.length === 0) {
             alert('No se encontraron imágenes para: ' + topic);
             return;
           }
+
           sendImagesToActiveTemplate(topic, images, 'freepik');
-          this.showSaveIndicator(`Enviadas ${images.length} imágenes de Freepik`);
-        } catch (err) {
+
+          this.showSaveIndicator(`Enviadas $ {
+            images.length
+          }
+
+          imágenes de Freepik`);
+        }
+
+        catch (err) {
           console.error(err);
           alert('Error al buscar imágenes: ' + err.message);
         }
-      },
+      }
+
+      ,
 
       async autoFillImagesPexelsPrompt() {
         const topic = prompt('¿Sobre qué tema quieres imágenes de Pexels?');
         if (!topic) return;
 
         this.showSaveIndicator('Buscando imágenes en Pexels...');
+
         try {
           const images = await fetchPexelsImages(topic);
+
           if (images.length === 0) {
             alert('No se encontraron imágenes para: ' + topic);
             return;
           }
+
           sendImagesToActiveTemplate(topic, images, 'pexels');
-          this.showSaveIndicator(`Enviadas ${images.length} imágenes de Pexels`);
-        } catch (err) {
+
+          this.showSaveIndicator(`Enviadas $ {
+            images.length
+          }
+
+          imágenes de Pexels`);
+        }
+
+        catch (err) {
           console.error(err);
           alert('Error al buscar imágenes: ' + err.message);
         }
       }
-    };
+    }
+
+      ;
 
     // Variable global para la plantilla actual
     let currentTemplate = 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html';
@@ -1180,6 +1486,7 @@
 
           // Cambiar iframe
           const target = btn.dataset.target;
+
           if (target) {
             currentTemplate = target;
             const frame = document.getElementById('plantillaFrame');
@@ -1238,42 +1545,64 @@
         aiMessages.scrollTop = aiMessages.scrollHeight;
 
         try {
+
           // Llamada a Puter.ai
           if (window.puter) {
             const response = await puter.ai.chat(text);
             typing.classList.remove('active');
             addMessage(response, 'assistant');
-          } else {
+          }
+
+          else {
             throw new Error('Puter.js no está cargado');
           }
-        } catch (err) {
+        }
+
+        catch (err) {
           typing.classList.remove('active');
           addMessage('Error al conectar con la IA: ' + err.message, 'system');
           console.error(err);
         }
-      };
+      }
+
+        ;
 
       window.handleKeyPress = (e) => {
         if (e.key === 'Enter') sendMessage();
-      };
+      }
+
+        ;
 
       // Acciones rápidas
       window.quickAction = (type) => {
         let text = '';
+
         switch (type) {
-          case 'plantilla': text = 'Quiero crear una nueva plantilla escolar. ¿Qué me sugieres?'; break;
-          case 'ayuda': text = '¿Cómo uso este sistema de plantillas?'; break;
-          case 'contenido': text = 'Genera contenido educativo para una infografía sobre el ciclo del agua.'; break;
-          case 'explicar': text = 'Explícame cómo funciona la plantilla actual.'; break;
+          case 'plantilla': text = 'Quiero crear una nueva plantilla escolar. ¿Qué me sugieres?';
+            break;
+          case 'ayuda': text = '¿Cómo uso este sistema de plantillas?';
+            break;
+          case 'contenido': text = 'Genera contenido educativo para una infografía sobre el ciclo del agua.';
+            break;
+          case 'explicar': text = 'Explícame cómo funciona la plantilla actual.';
+            break;
         }
+
         aiInput.value = text;
         sendMessage();
-      };
+      }
+
+        ;
     }
 
     function addMessage(text, type) {
       const div = document.createElement('div');
-      div.className = `message ${type}`;
+
+      div.className = `message $ {
+        type
+      }
+
+      `;
       div.textContent = text;
       document.getElementById('aiMessages').appendChild(div);
       document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
@@ -1281,21 +1610,29 @@
 
     async function checkPuterConnection() {
       const status = document.getElementById('aiStatus');
+
       if (window.puter) {
         try {
+
           // Intento simple de verificar auth
           if (puter.auth.isSignedIn()) {
             status.textContent = 'Conectado a Puter';
             status.dataset.status = 'ready';
-          } else {
+          }
+
+          else {
             status.textContent = 'Sesión no iniciada';
             status.dataset.status = 'pending';
           }
-        } catch (e) {
+        }
+
+        catch (e) {
           status.textContent = 'Puter listo (Anónimo)';
           status.dataset.status = 'ready';
         }
-      } else {
+      }
+
+      else {
         status.textContent = 'Error de conexión';
         status.dataset.status = 'error';
       }
@@ -1304,6 +1641,7 @@
     function openPuterApp() {
       window.open('https://puter.com', '_blank');
     }
+
   </script>
 </body>
 
