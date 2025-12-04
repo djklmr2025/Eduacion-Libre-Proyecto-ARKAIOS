@@ -281,11 +281,15 @@ const ARKAIOS = {
     },
 
     async autoFillImagesPrompt() {
-        const topic = prompt('¿Sobre qué tema quieres imágenes? (Ej: "sistema solar", "animales marinos")');
+        const topic = prompt('¿Sobre qué tema quieres imágenes de Pixabay? (Ej: "sistema solar")');
         if (!topic) return;
+
+        const countStr = prompt('¿Cuántas imágenes quieres? (Máx 50)', '12');
+        const count = parseInt(countStr) || 12;
+
         this.showSaveIndicator('Buscando imágenes en Pixabay...');
         try {
-            const images = await fetchPixabayImages(topic);
+            const images = await fetchPixabayImages(topic, count);
             if (images.length === 0) {
                 alert('No se encontraron imágenes para: ' + topic);
                 return;
@@ -301,9 +305,13 @@ const ARKAIOS = {
     async autoFillImagesFreepikPrompt() {
         const topic = prompt('¿Sobre qué tema quieres imágenes de Freepik?');
         if (!topic) return;
+
+        const countStr = prompt('¿Cuántas imágenes quieres? (Máx 50)', '12');
+        const count = parseInt(countStr) || 12;
+
         this.showSaveIndicator('Buscando imágenes en Freepik...');
         try {
-            const images = await fetchFreepikImages(topic);
+            const images = await fetchFreepikImages(topic, count);
             if (images.length === 0) {
                 alert('No se encontraron imágenes para: ' + topic);
                 return;
@@ -319,9 +327,13 @@ const ARKAIOS = {
     async autoFillImagesPexelsPrompt() {
         const topic = prompt('¿Sobre qué tema quieres imágenes de Pexels?');
         if (!topic) return;
+
+        const countStr = prompt('¿Cuántas imágenes quieres? (Máx 50)', '12');
+        const count = parseInt(countStr) || 12;
+
         this.showSaveIndicator('Buscando imágenes en Pexels...');
         try {
-            const images = await fetchPexelsImages(topic);
+            const images = await fetchPexelsImages(topic, count);
             if (images.length === 0) {
                 alert('No se encontraron imágenes para: ' + topic);
                 return;
