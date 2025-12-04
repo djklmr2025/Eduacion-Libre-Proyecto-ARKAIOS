@@ -366,35 +366,27 @@ const ARKAIOS = {
 };
 
 async function fetchGrokImages(prompt, count, apiKey) {
-    // Intenta usar el endpoint de chat de xAI para solicitar una imagen
-    // Nota: Esto asume que el modelo puede devolver URLs de imágenes o que xAI tiene un endpoint compatible
+    // Usar el backend proxy para evitar CORS
+    const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
+    const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
+    const endpoint = isLocal ? (localBase + '/api/grok') : '/api/grok';
+
     try {
-        const response = await fetch('https://api.x.ai/v1/chat/completions', {
+        const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                messages: [
-                    {
-                        role: 'system',
-                        content: 'You are an advanced AI capable of generating images. When asked to generate an image, provide the direct URL to the generated image in your response. If you cannot generate an image directly, explain why.'
-                    },
-                    {
-                        role: 'user',
-                        content: `Generate ${count} image(s) of: ${prompt}. Return only the image URLs.`
-                    }
-                ],
-                model: 'grok-beta',
-                stream: false,
-                temperature: 0.7
+                apiKey: apiKey,
+                prompt: prompt,
+                count: count
             })
         });
 
         if (!response.ok) {
             const errData = await response.json();
-            throw new Error(errData.error?.message || response.statusText);
+            throw new Error(errData.error || response.statusText);
         }
 
         const data = await response.json();
