@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Centro de Plantillas Educativas - ARKAIOS</title>
-  
+
   <script src="https://js.puter.com/v2/"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -19,7 +20,7 @@
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-    
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -212,7 +213,7 @@
       border-radius: 3px;
     }
 
-    nav > div h2 {
+    nav>div h2 {
       font-size: 0.8rem;
       font-weight: 700;
       color: var(--text-muted);
@@ -399,6 +400,7 @@
         transform: translateX(100px);
         opacity: 0;
       }
+
       to {
         transform: translateX(0);
         opacity: 1;
@@ -432,9 +434,12 @@
     }
 
     @keyframes pulse {
-      0%, 100% {
+
+      0%,
+      100% {
         box-shadow: 0 8px 24px rgba(102, 126, 234, 0.6);
       }
+
       50% {
         box-shadow: 0 8px 32px rgba(139, 92, 246, 0.8);
       }
@@ -486,6 +491,7 @@
         transform: translateY(20px);
         opacity: 0;
       }
+
       to {
         transform: translateY(0);
         opacity: 1;
@@ -585,6 +591,7 @@
         opacity: 0;
         transform: translateY(10px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -683,12 +690,12 @@
       nav {
         width: 60px;
       }
-      
+
       nav h2,
       nav .btn span:first-child {
         display: none;
       }
-      
+
       .toggle-nav {
         display: none;
       }
@@ -707,22 +714,15 @@
       <span class="arkaios-badge">⚡ V2.0</span>
     </div>
     <div class="system-actions">
-      <button class="system-btn warning" onclick="ARKAIOS.autoFillImagesPrompt()">
-        🖼️ Pixabay
-      </button>
-      <button class="system-btn warning" onclick="ARKAIOS.autoFillImagesFreepikPrompt()">
-        🖼️ Freepik
-      </button>
-      <button class="system-btn warning" onclick="ARKAIOS.autoFillImagesPexelsPrompt()">
-        🖼️ Pexels
-      </button>
+
       <button class="system-btn success" onclick="ARKAIOS.saveProject()">
         💾 Guardar
       </button>
       <button class="system-btn success" onclick="ARKAIOS.loadProject()">
         📂 Cargar
       </button>
-      <button class="system-btn" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);" onclick="ARKAIOS.generateImageWithGrok()">
+      <button class="system-btn" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);"
+        onclick="ARKAIOS.generateImageWithGrok()">
         🤖 IA Grok
       </button>
     </div>
@@ -816,7 +816,8 @@
     </div>
 
     <div class="ai-input-area">
-      <input type="text" class="ai-input" id="aiInput" placeholder="Escribe tu mensaje..." onkeypress="handleKeyPress(event)">
+      <input type="text" class="ai-input" id="aiInput" placeholder="Escribe tu mensaje..."
+        onkeypress="handleKeyPress(event)">
       <button class="ai-send" id="aiSend" onclick="sendMessage()">📤</button>
     </div>
   </div>
@@ -934,24 +935,24 @@
           if (!file) return;
 
           const fileName = file.name.toLowerCase();
-          
+
           // Si es un PDF generado por el sistema
           if (fileName.endsWith('.pdf')) {
             this.showSaveIndicator('Abriendo PDF...');
-            
+
             // Crear URL temporal del PDF
             const url = URL.createObjectURL(file);
-            
+
             // Abrir en nueva ventana o iframe
             const openChoice = confirm('PDF detectado.\n\n¿Quieres abrirlo en una nueva pestaña?\n\nOK = Nueva pestaña\nCancelar = Ver aquí');
-            
+
             if (openChoice) {
               window.open(url, '_blank');
             } else {
               // Mostrar en el iframe actual
               document.getElementById('plantillaFrame').src = url;
             }
-            
+
             setTimeout(() => URL.revokeObjectURL(url), 60000); // Limpiar después de 1 minuto
             return;
           }
@@ -997,7 +998,7 @@
         try {
           // Configuración de la API de Grok
           let apiKey = localStorage.getItem('grok_api_key');
-          
+
           if (!apiKey) {
             const newKey = prompt('Necesitas una API Key de Grok.\n\nPega tu API Key aquí (se guardará localmente):\n\nFormato: xai-xxxxxxxxxxxxx');
             if (newKey) {
@@ -1041,13 +1042,13 @@
           }
 
           const data = await response.json();
-          
+
           if (data.choices && data.choices[0] && data.choices[0].message) {
             const aiResponse = data.choices[0].message.content;
-            
+
             // Mostrar respuesta de Grok
             this.showSaveIndicator('¡Respuesta recibida de Grok IA!');
-            
+
             // Mostrar las sugerencias de Grok
             const showResponse = confirm(`Grok sugiere:\n\n${aiResponse.substring(0, 300)}...\n\n¿Quieres ver la respuesta completa?`);
             if (showResponse) {
@@ -1058,7 +1059,7 @@
             // Intentar extraer URLs de la respuesta
             const urlRegex = /(https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp))/gi;
             const urls = aiResponse.match(urlRegex);
-            
+
             if (urls && urls.length > 0) {
               // Enviar URLs a la plantilla activa
               const frame = document.getElementById('plantillaFrame');
@@ -1075,9 +1076,9 @@
 
         } catch (error) {
           console.error('Error con Grok IA:', error);
-          
+
           let errorMsg = 'Error al generar imagen con Grok.\n\n';
-          
+
           if (error.message.includes('401')) {
             errorMsg += '❌ API Key inválida o expirada.\n\nVerifica tu key en: https://console.x.ai/';
             localStorage.removeItem('grok_api_key');
@@ -1088,9 +1089,9 @@
           } else {
             errorMsg += `Error: ${error.message}`;
           }
-          
+
           alert(errorMsg);
-          
+
           // Ofrecer reconfigurar API Key solo si fue error de autenticación
           if (error.message.includes('401')) {
             const retry = confirm('¿Quieres ingresar una nueva API Key?');
@@ -1117,7 +1118,7 @@
           z-index: 10000;
           padding: 20px;
         `;
-        
+
         const content = document.createElement('div');
         content.style.cssText = `
           background: linear-gradient(135deg, #1e293b, #0f172a);
@@ -1130,7 +1131,7 @@
           color: #e5e7eb;
           box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
         `;
-        
+
         content.innerHTML = `
           <h2 style="margin: 0 0 15px 0; color: #667eea; font-size: 1.5rem; display: flex; align-items: center; gap: 10px;">
             🤖 Respuesta de Grok AI
@@ -1157,10 +1158,10 @@
             Cerrar
           </button>
         `;
-        
+
         modal.appendChild(content);
         document.body.appendChild(modal);
-        
+
         // Cerrar al hacer clic fuera
         modal.addEventListener('click', (e) => {
           if (e.target === modal) modal.remove();
@@ -1224,7 +1225,7 @@
     }
 
     // Toggle sidebar
-    document.getElementById('toggleNav').addEventListener('click', function() {
+    document.getElementById('toggleNav').addEventListener('click', function () {
       const nav = document.getElementById('sidebar');
       nav.classList.toggle('collapsed');
       this.classList.toggle('collapsed');
@@ -1294,7 +1295,7 @@
     // Inicializar
     window.addEventListener('DOMContentLoaded', () => {
       ARKAIOS.init();
-      
+
       // Detectar si estamos en un iframe
       if (window.self !== window.top) {
         document.body.classList.add('in-iframe');
@@ -1312,4 +1313,5 @@
     });
   </script>
 </body>
+
 </html>
