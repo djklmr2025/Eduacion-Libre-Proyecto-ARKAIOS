@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biografía Profesional</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap');
-        
+
         * {
             margin: 0;
             padding: 0;
@@ -481,26 +482,32 @@
                 background: white;
                 padding: 0;
             }
+
             .container {
                 box-shadow: none;
                 width: 21.59cm;
                 height: 27.94cm;
                 page-break-after: always;
             }
+
             .container:last-child {
                 page-break-after: auto;
             }
+
             .print-button,
             .controls-panel {
                 display: none;
             }
+
             .pages-container {
                 gap: 0;
             }
+
             .info-section {
                 overflow: visible !important;
                 scrollbar-width: none;
             }
+
             .info-section::-webkit-scrollbar {
                 display: none;
                 width: 0;
@@ -514,11 +521,12 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Panel de controles -->
     <div class="controls-panel">
         <h3>⚙️ Personalizar</h3>
-        
+
         <div class="control-group">
             <div class="page-counter">
                 Total de hojas: <span id="pageCount">1</span>
@@ -554,7 +562,8 @@
 
         <div class="control-group">
             <button class="upload-btn" onclick="document.getElementById('photoInput').click()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="17 8 12 3 7 8"></polyline>
                     <line x1="12" y1="3" x2="12" y2="15"></line>
@@ -562,18 +571,26 @@
                 Subir 1 Imagen
             </button>
             <button class="upload-btn secondary" onclick="document.getElementById('batchPhotoInput').click()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                     <circle cx="8.5" cy="8.5" r="1.5"></circle>
                     <polyline points="21 15 16 10 5 21"></polyline>
                 </svg>
                 Subir Múltiples Imágenes
             </button>
+
+            <!-- Botones Generales -->
+            <button class="upload-btn" onclick="searchPexels()" style="background: #05a081; margin-top: 10px;">📸
+                Pexels</button>
+            <button class="upload-btn" onclick="searchFreepik()" style="background: #336aea;">🎨 Freepik</button>
+            <button class="upload-btn" onclick="openAIModal()" style="background: #8e44ad;">✨ Crear con IA</button>
         </div>
     </div>
 
     <button class="print-button" onclick="window.print()">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6 9 6 2 18 2 18 9"></polyline>
             <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
             <rect x="6" y="14" width="12" height="8"></rect>
@@ -597,8 +614,10 @@
             <div class="photo-section">
                 <div class="photo-container circular">
                     <div class="photo-placeholder">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z">
+                            </path>
                             <circle cx="12" cy="13" r="4"></circle>
                         </svg>
                         <div>Usa los botones para subir imágenes</div>
@@ -609,19 +628,60 @@
             <div class="info-section">
                 <div class="info-block">
                     <div class="info-title">Acerca de mí</div>
-                    <textarea class="info-content" placeholder="Describe brevemente tu experiencia profesional, habilidades principales y lo que te apasiona de tu trabajo..."></textarea>
+                    <textarea class="info-content"
+                        placeholder="Describe brevemente tu experiencia profesional, habilidades principales y lo que te apasiona de tu trabajo..."></textarea>
                 </div>
 
                 <div class="info-block">
                     <div class="info-title">Experiencia destacada</div>
-                    <textarea class="info-content" placeholder="Menciona tus logros más relevantes, proyectos importantes o áreas de especialización..."></textarea>
+                    <textarea class="info-content"
+                        placeholder="Menciona tus logros más relevantes, proyectos importantes o áreas de especialización..."></textarea>
                 </div>
 
                 <div class="info-block">
                     <div class="info-title">Información de contacto</div>
-                    <textarea class="info-content" placeholder="Email, teléfono, LinkedIn, portafolio web u otras formas de contacto..."></textarea>
+                    <textarea class="info-content"
+                        placeholder="Email, teléfono, LinkedIn, portafolio web u otras formas de contacto..."></textarea>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal IA -->
+    <div id="aiModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;">
+        <div
+            style="background: #1f2937; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; border: 1px solid #3b82f6;">
+            <h3 style="color: #3b82f6; margin-bottom: 15px;">✨ Generar Imagen con Grok</h3>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Tu API Key de Grok (xAI):</label>
+                <input type="password" id="grokKey" placeholder="xai-..."
+                    style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
+                <small style="color: #9ca3af;">Se guardará localmente en tu navegador.</small>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Describe tu imagen:</label>
+                <textarea id="aiPrompt" rows="4" placeholder="Un paisaje espacial con planetas coloridos..."
+                    style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;"></textarea>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Número de imágenes:</label>
+                <input type="number" id="imageCount" min="1" max="4" value="1"
+                    style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button onclick="closeAIModal()"
+                    style="background: #4b5563; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Cancelar</button>
+                <button onclick="generateAIImage()"
+                    style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Generar
+                    con Grok</button>
+            </div>
+
+            <div id="aiStatus" style="margin-top: 10px; color: #e5e7eb; font-size: 0.9rem;"></div>
         </div>
     </div>
 
@@ -631,7 +691,7 @@
     <script>
         let currentSize = 'small';
         let currentShape = 'circular';
-        
+
         const sizes = {
             small: { width: 302, height: 302 },
             medium: { width: 453, height: 453 },
@@ -647,7 +707,7 @@
         function applyStyleToContainer(container) {
             const photoContainer = container.querySelector('.photo-container');
             const dimensions = sizes[currentSize];
-            
+
             photoContainer.style.width = dimensions.width + 'px';
             photoContainer.style.height = dimensions.height + 'px';
             photoContainer.className = 'photo-container ' + currentShape;
@@ -656,27 +716,27 @@
         function createNewPage(imageSrc) {
             const template = document.querySelector('.page-template');
             const newPage = template.cloneNode(true);
-            
+
             const photoContainer = newPage.querySelector('.photo-container');
             const img = document.createElement('img');
             img.src = imageSrc;
             photoContainer.innerHTML = '';
             photoContainer.appendChild(img);
-            
+
             applyStyleToContainer(newPage);
-            
+
             document.getElementById('pagesContainer').appendChild(newPage);
             updatePageCount();
         }
 
         // Cambiar tamaño
         document.querySelectorAll('.size-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-                
+
                 currentSize = this.dataset.size;
-                
+
                 document.querySelectorAll('.photo-container').forEach(container => {
                     const dimensions = sizes[currentSize];
                     container.style.width = dimensions.width + 'px';
@@ -687,12 +747,12 @@
 
         // Cambiar forma
         document.querySelectorAll('.shape-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 document.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-                
+
                 currentShape = this.dataset.shape;
-                
+
                 document.querySelectorAll('.photo-container').forEach(container => {
                     container.className = 'photo-container ' + currentShape;
                 });
@@ -700,11 +760,11 @@
         });
 
         // Subir una sola imagen (primera página)
-        document.getElementById('photoInput').addEventListener('change', function(e) {
+        document.getElementById('photoInput').addEventListener('change', function (e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(event) {
+                reader.onload = function (event) {
                     const firstPage = document.querySelector('.page-template');
                     const photoContainer = firstPage.querySelector('.photo-container');
                     const img = document.createElement('img');
@@ -717,12 +777,12 @@
         });
 
         // Subir múltiples imágenes (genera nuevas páginas)
-        document.getElementById('batchPhotoInput').addEventListener('change', function(e) {
+        document.getElementById('batchPhotoInput').addEventListener('change', function (e) {
             const files = Array.from(e.target.files);
-            
+
             files.forEach((file, index) => {
                 const reader = new FileReader();
-                reader.onload = function(event) {
+                reader.onload = function (event) {
                     if (index === 0) {
                         // Primera imagen va a la primera página
                         const firstPage = document.querySelector('.page-template');
@@ -741,7 +801,7 @@
         });
 
         // Auto-resize textareas
-        document.addEventListener('input', function(e) {
+        document.addEventListener('input', function (e) {
             if (e.target.classList.contains('info-content')) {
                 e.target.style.height = 'auto';
                 e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px';
@@ -749,6 +809,151 @@
         });
 
         updatePageCount();
+
+        // ===== API KEYS & INTEGRATION =====
+        const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
+        const FREEPIK_API_KEY = 'FPSX890e70b7164ab7a1b05182a68d64ad06';
+
+        function applyExternalImages(urls, sourceName) {
+            urls.forEach((url, index) => {
+                if (index === 0) {
+                    // First image to first page
+                    const firstPage = document.querySelector('.page-template');
+                    const photoContainer = firstPage.querySelector('.photo-container');
+                    const img = document.createElement('img');
+                    img.src = url;
+                    photoContainer.innerHTML = '';
+                    photoContainer.appendChild(img);
+                } else {
+                    // Create new pages
+                    createNewPage(url);
+                }
+            });
+            mostrarCreditoPixabay(sourceName, urls.length);
+        }
+
+        async function searchPexels() {
+            const query = prompt("¿Qué imágenes buscas en Pexels?");
+            if (!query) return;
+
+            try {
+                const response = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=12`, {
+                    headers: { Authorization: PEXELS_API_KEY }
+                });
+                const data = await response.json();
+                const images = data.photos.map(photo => photo.src.large);
+                applyExternalImages(images, `Pexels: ${query}`);
+            } catch (error) {
+                console.error(error);
+                alert('Error al buscar en Pexels');
+            }
+        }
+
+        async function searchFreepik() {
+            const query = prompt("¿Qué imágenes buscas en Freepik?");
+            if (!query) return;
+
+            try {
+                const response = await fetch(`https://api.freepik.com/v1/resources?locale=es-ES&q=${encodeURIComponent(query)}&limit=12`, {
+                    headers: { 'X-Freepik-API-Key': FREEPIK_API_KEY }
+                });
+                const data = await response.json();
+                const images = data.data.map(item => item.image.source.url);
+                applyExternalImages(images, `Freepik: ${query}`);
+            } catch (error) {
+                console.error(error);
+                alert('Error al buscar en Freepik');
+            }
+        }
+
+        // ===== AI GENERATION =====
+        function openAIModal() {
+            const storedKey = localStorage.getItem('grok_api_key');
+            if (storedKey) document.getElementById('grokKey').value = storedKey;
+            document.getElementById('aiModal').style.display = 'flex';
+        }
+
+        function closeAIModal() {
+            document.getElementById('aiModal').style.display = 'none';
+            document.getElementById('aiStatus').textContent = '';
+        }
+
+        async function generateAIImage() {
+            const apiKey = document.getElementById('grokKey').value.trim();
+            const prompt = document.getElementById('aiPrompt').value.trim();
+            const count = parseInt(document.getElementById('imageCount').value) || 1;
+            const statusDiv = document.getElementById('aiStatus');
+
+            if (!apiKey) {
+                alert('Por favor ingresa tu API Key de Grok (xAI)');
+                return;
+            }
+            if (!prompt) {
+                alert('Por favor describe la imagen');
+                return;
+            }
+
+            localStorage.setItem('grok_api_key', apiKey);
+            statusDiv.textContent = '⏳ Generando imágenes con Grok... (esto puede tomar unos segundos)';
+
+            // Usar el backend proxy para evitar CORS
+            const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
+            const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
+            const endpoint = isLocal ? (localBase + '/api/grok') : '/api/grok';
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        apiKey: apiKey,
+                        prompt: prompt,
+                        count: count
+                    })
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.error || response.statusText);
+                }
+
+                const data = await response.json();
+                const content = data.choices[0]?.message?.content || '';
+
+                // Buscar URLs en la respuesta
+                const urlRegex = /(https?:\/\/[^\s)]+)/g;
+                const matches = content.match(urlRegex);
+
+                if (!matches || matches.length === 0) {
+                    throw new Error('Grok no devolvió URLs de imágenes. Respuesta: ' + content.substring(0, 100) + '...');
+                }
+
+                const imageUrls = matches.slice(0, count);
+                applyExternalImages(imageUrls, `Grok: ${prompt}`);
+                closeAIModal();
+
+            } catch (error) {
+                console.error(error);
+                statusDiv.textContent = '❌ Error: ' + error.message;
+            }
+        }
+
+        function mostrarCreditoPixabay(topic, count) {
+            let credit = document.getElementById('pixabay-credit');
+            if (!credit) {
+                credit = document.createElement('div');
+                credit.id = 'pixabay-credit';
+                credit.style.cssText = 'margin: 10px; padding: 10px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; text-align: center; color: #0369a1; font-size: 0.9rem;';
+                credit.classList.add('no-print');
+                const controls = document.querySelector('.controls-panel');
+                if (controls) controls.appendChild(credit);
+            }
+            const cleanTopic = topic || 'Pixabay';
+            credit.textContent = `Imágenes de Pixabay (${count}) · Tema: ${cleanTopic}`;
+        }
     </script>
 </body>
+
 </html>

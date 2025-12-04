@@ -558,385 +558,149 @@
     </div>
   </div>
 
-  <div class="pages-container" id="pagesContainer">
-    <!-- Las páginas se generarán aquí -->
-  </div>
+  }
 
-  <!-- Inputs ocultos -->
-  <input type="file" id="fileInputHidden" accept="image/*" style="display: none;">
-  <input type="file" id="fileInputBulkLarge" accept="image/*" multiple style="display: none;">
-  <input type="file" id="fileInputBulkSmall" accept="image/*" multiple style="display: none;">
+  function clearAll() {
+  if (!confirm('¿Limpiar todas las hojas e imágenes?')) return;
+  pages = [];
+  addPage();
+  closeEditPanel();
+  }
 
-  <!-- Modal IA -->
-  <div id="aiModal"
-    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;">
-    <div
-      style="background: #1f2937; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; border: 1px solid #3b82f6;">
-      <h3 style="color: #3b82f6; margin-bottom: 15px;">✨ Generar Imagen con IA</h3>
+  // ===== RENDERIZAR =====
+  const CIRCULO_GRANDE = 12 * 37.795; // 12cm en píxeles
+  const CIRCULO_PEQUENO = 5 * 37.795; // 5cm en píxeles
 
-      <div style="margin-bottom: 15px;">
-        <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Tu API Key de OpenAI:</label>
-        <input type="password" id="openaiKey" placeholder="sk-..."
-          style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
-        <small style="color: #9ca3af;">Se guardará localmente en tu navegador.</small>
-      </div>
+  function renderPages() {
+  pagesContainer.innerHTML = '';
+  pages.forEach((page, index) => {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'page-wrapper';
 
-      <div style="margin-bottom: 15px;">
-        <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Describe tu imagen:</label>
-        <textarea id="aiPrompt" rows="4" placeholder="Un paisaje espacial con planetas coloridos..."
-          style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;"></textarea>
-      </div>
+  const header = document.createElement('div');
+  header.className = 'page-header';
 
-      <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button onclick="closeAIModal()"
-          style="background: #4b5563; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Cancelar</button>
-        <button onclick="generateAIImage()"
-          style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Generar</button>
-      </div>
+  const title = document.createElement('h2');
+  title.textContent = `📄 Hoja ${index + 1}`;
 
-      <div id="aiStatus" style="margin-top: 10px; color: #e5e7eb; font-size: 0.9rem;"></div>
-    </div>
-  </div>
+  const btnDelete = document.createElement('button');
+  btnDelete.className = 'btn-danger';
+  btnDelete.textContent = '🗑️ Eliminar Hoja';
+  btnDelete.style.fontSize = '0.85rem';
+  btnDelete.style.padding = '6px 12px';
+  btnDelete.onclick = () => removePage(page.id);
+  if (pages.length <= 1) { btnDelete.disabled=true; btnDelete.style.opacity='0.5' ; btnDelete.style.cursor='not-allowed'
+    ; } header.appendChild(title); header.appendChild(btnDelete); const pageEl=document.createElement('div');
+    pageEl.className='page' ; const inner=document.createElement('div'); inner.className='page-inner' ; // Posiciones
+    fijas para los círculos // Grande: 12cm, Pequeño: 5cm // Hoja carta: 21.59cm x 27.94cm // Márgenes internos: 1.5cm
+    const positions={ grande: [ { left: '1.2cm' , top: '2cm' }, { left: '1.2cm' , bottom: '2cm' } ], pequeno: [ {
+    right: '1.8cm' , top: '2cm' }, { right: '1.8cm' , top: '8cm' }, { right: '1.8cm' , top: '14cm' }, { right: '1.8cm' ,
+    top: '20cm' } ] }; let gIndex=0; let pIndex=0; page.circles.forEach(circle=> {
+    const circleDiv = document.createElement('div');
+    circleDiv.className = 'circle ' + (circle.size === 'grande' ? 'circle-grande' : 'circle-pequeno') + '
+    arkaios-image-slot';
+    if (circle.locked) circleDiv.classList.add('locked');
 
-  <script>
-    // ===== ESTADO =====
-    let pages = [];
-    let editingCircle = null; // { pageId, circleId }
-    let circleToFill = null; // { pageId, circleId }
-    let draggedImage = null; // { img, pageId, circleId, startX, startY }
-    let dragStartX = 0;
-    let dragStartY = 0;
-    let imageStartX = 0;
-    let imageStartY = 0;
+    const pos = circle.size === 'grande'
+    ? positions.grande[gIndex++]
+    : positions.pequeno[pIndex++];
 
-    // Referencias DOM
-    const pagesContainer = document.getElementById('pagesContainer');
-    const btnAddPage = document.getElementById('btnAddPage');
-    const btnClearAll = document.getElementById('btnClearAll');
-    const fileInputHidden = document.getElementById('fileInputHidden');
+    Object.assign(circleDiv.style, pos);
 
-    // Bulk inputs
-    const btnBulkLarge = document.getElementById('btnBulkLarge');
-    const btnBulkSmall = document.getElementById('btnBulkSmall');
-    const fileInputBulkLarge = document.getElementById('fileInputBulkLarge');
-    const fileInputBulkSmall = document.getElementById('fileInputBulkSmall');
+    circleDiv.onclick = () => handleCircleClick(page.id, circle.id);
 
-    // Panel de edición
-    const editPanel = document.getElementById('editPanel');
-    const editClose = document.getElementById('editClose');
-    const scaleSlider = document.getElementById('scaleSlider');
-    const scaleValue = document.getElementById('scaleValue');
-    const btnLock = document.getElementById('btnLock');
-    const btnDeleteImage = document.getElementById('btnDeleteImage');
+    if (circle.imageData) {
+    circleDiv.classList.add('has-image');
 
-    editClose.addEventListener('click', closeEditPanel);
+    const imgWrapper = document.createElement('div');
+    imgWrapper.className = 'circle-image-wrapper';
 
-    // ===== API KEYS & INTEGRATION =====
-    const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
-    const FREEPIK_API_KEY = 'FPSX890e70b7164ab7a1b05182a68d64ad06';
+    const img = document.createElement('img');
+    img.src = circle.imageData;
+    img.alt = 'Imagen círculo';
 
-    function applyExternalImages(urls, sourceName) {
-      if (!urls || urls.length === 0) {
-        alert('No se encontraron imágenes.');
-        return;
-      }
+    // Aplicar transformaciones
+    const scale = circle.scale / 100;
+    // Calcular tamaño visual
+    const size = Math.max(circle.size === 'grande' ? 12 : 5, (circle.size === 'grande' ? 12 : 5) * scale);
 
-      // Llenar círculos vacíos o crear nuevas páginas
-      fillCirclesFromPixabay(urls, sourceName);
+    img.style.width = size + 'cm';
+    img.style.height = size + 'cm';
+    img.style.left = circle.posX + '%';
+    img.style.top = circle.posY + '%';
+    img.style.transform = 'translate(-50%, -50%)';
+
+    // Setup drag si no está bloqueada
+    if (!circle.locked) {
+    setupImageDrag(img, page.id, circle.id);
     }
 
-    async function searchPexels() {
-      const query = prompt("¿Qué imágenes buscas en Pexels?");
-      if (!query) return;
+    imgWrapper.appendChild(img);
+    circleDiv.appendChild(imgWrapper);
 
-      try {
-        const response = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=12`, {
-          headers: { Authorization: PEXELS_API_KEY }
-        });
-        const data = await response.json();
-        const images = data.photos.map(photo => photo.src.large);
-        applyExternalImages(images, `Pexels: ${query}`);
-      } catch (error) {
-        console.error(error);
-        alert('Error al buscar en Pexels');
-      }
+    if (circle.locked) {
+    const badge = document.createElement('div');
+    badge.className = 'locked-badge';
+    badge.textContent = 'FIJADA ✓';
+    circleDiv.appendChild(badge);
     }
 
-    async function searchFreepik() {
-      const query = prompt("¿Qué imágenes buscas en Freepik?");
-      if (!query) return;
+    if (!circle.locked) {
+    const controls = document.createElement('div');
+    controls.className = 'circle-controls';
 
-      try {
-        const response = await fetch(`https://api.freepik.com/v1/resources?locale=es-ES&q=${encodeURIComponent(query)}&limit=12`, {
-          headers: { 'X-Freepik-API-Key': FREEPIK_API_KEY }
-        });
-        const data = await response.json();
-        const images = data.data.map(item => item.image.source.url);
-        applyExternalImages(images, `Freepik: ${query}`);
-      } catch (error) {
-        console.error(error);
-        alert('Error al buscar en Freepik');
-      }
+    const chipEdit = document.createElement('div');
+    chipEdit.className = 'chip';
+    chipEdit.textContent = '✏️ Editar';
+    chipEdit.onclick = (ev) => {
+    ev.stopPropagation();
+    openEditPanel(page.id, circle.id);
+    };
+
+    const chipChange = document.createElement('div');
+    chipChange.className = 'chip';
+    chipChange.textContent = '📷 Cambiar';
+    chipChange.onclick = (ev) => {
+    ev.stopPropagation();
+    changeImage(page.id, circle.id);
+    };
+
+    const chipRemove = document.createElement('div');
+    chipRemove.className = 'chip chip-danger';
+    chipRemove.textContent = '✕';
+    chipRemove.onclick = (ev) => {
+    ev.stopPropagation();
+    removeImage(page.id, circle.id);
+    };
+
+    controls.appendChild(chipEdit);
+    controls.appendChild(chipChange);
+    controls.appendChild(chipRemove);
+    circleDiv.appendChild(controls);
+    }
+    } else {
+    const label = document.createElement('div');
+    label.className = 'circle-label';
+    label.innerHTML = circle.size === 'grande'
+    ? '📷<br>Clic para subir imagen<br><strong>12 cm</strong>'
+    : '📷<br>Clic para subir imagen<br><strong>5 cm</strong>';
+    circleDiv.appendChild(label);
     }
 
-    // ===== AI GENERATION =====
-    function openAIModal() {
-      const storedKey = localStorage.getItem('openai_api_key');
-      if (storedKey) document.getElementById('openaiKey').value = storedKey;
-      document.getElementById('aiModal').style.display = 'flex';
-    }
+    inner.appendChild(circleDiv);
+    });
 
-    function closeAIModal() {
-      document.getElementById('aiModal').style.display = 'none';
-      document.getElementById('aiStatus').textContent = '';
-    }
+    const note = document.createElement('div');
+    note.className = 'page-note';
+    note.textContent = `Página ${index + 1}`;
 
-    async function generateAIImage() {
-      const apiKey = document.getElementById('openaiKey').value.trim();
-      const prompt = document.getElementById('aiPrompt').value.trim();
-      const statusDiv = document.getElementById('aiStatus');
+    inner.appendChild(note);
+    pageEl.appendChild(inner);
 
-      if (!apiKey) {
-        alert('Por favor ingresa tu API Key de OpenAI');
-        return;
-      }
-      if (!prompt) {
-        alert('Por favor describe la imagen');
-        return;
-      }
-
-      localStorage.setItem('openai_api_key', apiKey);
-      statusDiv.textContent = '⏳ Generando imagen... (esto puede tomar unos segundos)';
-
-      try {
-        const response = await fetch('https://api.openai.com/v1/images/generations', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
-          },
-          body: JSON.stringify({
-            model: "dall-e-3",
-            prompt: prompt,
-            n: 1,
-            size: "1024x1024"
-          })
-        });
-
-        const data = await response.json();
-
-        if (data.error) {
-          throw new Error(data.error.message);
-        }
-
-        const imageUrl = data.data[0].url;
-        // Para evitar problemas de CORS con la URL directa de OpenAI, idealmente usaríamos un proxy,
-        // pero para este demo intentaremos usarla directo o convertirla a base64 si fuera posible.
-        // Como es una URL pública temporal, debería funcionar para mostrarla.
-
-        // Sin embargo, para guardarla en el canvas/círculo, necesitamos que sea accesible.
-        // Vamos a intentar usarla directamente.
-
-        applyExternalImages([imageUrl], `IA: ${prompt}`);
-        closeAIModal();
-
-      } catch (error) {
-        console.error(error);
-        statusDiv.textContent = '❌ Error: ' + error.message;
-      }
-    }
-
-    // ===== LOGICA PRINCIPAL =====
-
-    function createInitialPageData(id) {
-      return {
-        id: id,
-        circles: [
-          { id: `p${id}-g1`, size: 'grande', imageData: null, scale: 100, posX: 50, posY: 50, locked: false },
-          { id: `p${id}-g2`, size: 'grande', imageData: null, scale: 100, posX: 50, posY: 50, locked: false },
-          { id: `p${id}-p1`, size: 'pequeno', imageData: null, scale: 100, posX: 50, posY: 50, locked: false },
-          { id: `p${id}-p2`, size: 'pequeno', imageData: null, scale: 100, posX: 50, posY: 50, locked: false },
-          { id: `p${id}-p3`, size: 'pequeno', imageData: null, scale: 100, posX: 50, posY: 50, locked: false },
-          { id: `p${id}-p4`, size: 'pequeno', imageData: null, scale: 100, posX: 50, posY: 50, locked: false }
-        ]
-      };
-    }
-
-    function addPage() {
-      const newId = pages.length + 1;
-      pages.push(createInitialPageData(newId));
-      renderPages();
-    }
-
-    function clearAll() {
-      if (!confirm('¿Limpiar todas las hojas e imágenes?')) return;
-      pages = [];
-      addPage();
-      closeEditPanel();
-    }
-
-    // ===== RENDERIZAR =====
-    const CIRCULO_GRANDE = 12 * 37.795; // 12cm en píxeles
-    const CIRCULO_PEQUENO = 5 * 37.795; // 5cm en píxeles
-
-    function renderPages() {
-      pagesContainer.innerHTML = '';
-      pages.forEach((page, index) => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'page-wrapper';
-
-        const header = document.createElement('div');
-        header.className = 'page-header';
-
-        const title = document.createElement('h2');
-        title.textContent = `📄 Hoja ${index + 1}`;
-
-        const btnDelete = document.createElement('button');
-        btnDelete.className = 'btn-danger';
-        btnDelete.textContent = '🗑️ Eliminar Hoja';
-        btnDelete.style.fontSize = '0.85rem';
-        btnDelete.style.padding = '6px 12px';
-        btnDelete.onclick = () => removePage(page.id);
-        if (pages.length <= 1) {
-          btnDelete.disabled = true;
-          btnDelete.style.opacity = '0.5';
-          btnDelete.style.cursor = 'not-allowed';
-        }
-
-        header.appendChild(title);
-        header.appendChild(btnDelete);
-
-        const pageEl = document.createElement('div');
-        pageEl.className = 'page';
-
-        const inner = document.createElement('div');
-        inner.className = 'page-inner';
-
-        // Posiciones fijas para los círculos
-        // Grande: 12cm, Pequeño: 5cm
-        // Hoja carta: 21.59cm x 27.94cm
-        // Márgenes internos: 1.5cm
-        const positions = {
-          grande: [
-            { left: '1.2cm', top: '2cm' },
-            { left: '1.2cm', bottom: '2cm' }
-          ],
-          pequeno: [
-            { right: '1.8cm', top: '2cm' },
-            { right: '1.8cm', top: '8cm' },
-            { right: '1.8cm', top: '14cm' },
-            { right: '1.8cm', top: '20cm' }
-          ]
-        };
-
-        let gIndex = 0;
-        let pIndex = 0;
-
-        page.circles.forEach(circle => {
-          const circleDiv = document.createElement('div');
-          circleDiv.className = 'circle ' + (circle.size === 'grande' ? 'circle-grande' : 'circle-pequeno') + ' arkaios-image-slot';
-          if (circle.locked) circleDiv.classList.add('locked');
-
-          const pos = circle.size === 'grande'
-            ? positions.grande[gIndex++]
-            : positions.pequeno[pIndex++];
-
-          Object.assign(circleDiv.style, pos);
-
-          circleDiv.onclick = () => handleCircleClick(page.id, circle.id);
-
-          if (circle.imageData) {
-            circleDiv.classList.add('has-image');
-
-            const imgWrapper = document.createElement('div');
-            imgWrapper.className = 'circle-image-wrapper';
-
-            const img = document.createElement('img');
-            img.src = circle.imageData;
-            img.alt = 'Imagen círculo';
-
-            // Aplicar transformaciones
-            const scale = circle.scale / 100;
-            // Calcular tamaño visual
-            const size = Math.max(circle.size === 'grande' ? 12 : 5, (circle.size === 'grande' ? 12 : 5) * scale);
-
-            img.style.width = size + 'cm';
-            img.style.height = size + 'cm';
-            img.style.left = circle.posX + '%';
-            img.style.top = circle.posY + '%';
-            img.style.transform = 'translate(-50%, -50%)';
-
-            // Setup drag si no está bloqueada
-            if (!circle.locked) {
-              setupImageDrag(img, page.id, circle.id);
-            }
-
-            imgWrapper.appendChild(img);
-            circleDiv.appendChild(imgWrapper);
-
-            if (circle.locked) {
-              const badge = document.createElement('div');
-              badge.className = 'locked-badge';
-              badge.textContent = 'FIJADA ✓';
-              circleDiv.appendChild(badge);
-            }
-
-            if (!circle.locked) {
-              const controls = document.createElement('div');
-              controls.className = 'circle-controls';
-
-              const chipEdit = document.createElement('div');
-              chipEdit.className = 'chip';
-              chipEdit.textContent = '✏️ Editar';
-              chipEdit.onclick = (ev) => {
-                ev.stopPropagation();
-                openEditPanel(page.id, circle.id);
-              };
-
-              const chipChange = document.createElement('div');
-              chipChange.className = 'chip';
-              chipChange.textContent = '📷 Cambiar';
-              chipChange.onclick = (ev) => {
-                ev.stopPropagation();
-                changeImage(page.id, circle.id);
-              };
-
-              const chipRemove = document.createElement('div');
-              chipRemove.className = 'chip chip-danger';
-              chipRemove.textContent = '✕';
-              chipRemove.onclick = (ev) => {
-                ev.stopPropagation();
-                removeImage(page.id, circle.id);
-              };
-
-              controls.appendChild(chipEdit);
-              controls.appendChild(chipChange);
-              controls.appendChild(chipRemove);
-              circleDiv.appendChild(controls);
-            }
-          } else {
-            const label = document.createElement('div');
-            label.className = 'circle-label';
-            label.innerHTML = circle.size === 'grande'
-              ? '📷<br>Clic para subir imagen<br><strong>12 cm</strong>'
-              : '📷<br>Clic para subir imagen<br><strong>5 cm</strong>';
-            circleDiv.appendChild(label);
-          }
-
-          inner.appendChild(circleDiv);
-        });
-
-        const note = document.createElement('div');
-        note.className = 'page-note';
-        note.textContent = `Página ${index + 1}`;
-
-        inner.appendChild(note);
-        pageEl.appendChild(inner);
-
-        wrapper.appendChild(header);
-        wrapper.appendChild(pageEl);
-        pagesContainer.appendChild(wrapper);
-      });
+    wrapper.appendChild(header);
+    wrapper.appendChild(pageEl);
+    pagesContainer.appendChild(wrapper);
+    });
     }
 
     btnAddPage.addEventListener('click', addPage);
@@ -947,11 +711,11 @@
 
     // Cerrar panel al hacer clic fuera
     document.addEventListener('click', (e) => {
-      if (editPanel.classList.contains('active') &&
-        !editPanel.contains(e.target) &&
-        !e.target.closest('.circle')) {
-        closeEditPanel();
-      }
+    if (editPanel.classList.contains('active') &&
+    !editPanel.contains(e.target) &&
+    !e.target.closest('.circle')) {
+    closeEditPanel();
+    }
     });
 
     // ===== CARGA EN LOTE =====
@@ -959,117 +723,112 @@
     btnBulkSmall.addEventListener('click', () => fileInputBulkSmall.click());
 
     fileInputBulkLarge.addEventListener('change', (e) => {
-      handleBulkUpload(e.target.files, 'grande');
+    handleBulkUpload(e.target.files, 'grande');
     });
 
     fileInputBulkSmall.addEventListener('change', (e) => {
-      handleBulkUpload(e.target.files, 'pequeno');
+    handleBulkUpload(e.target.files, 'pequeno');
     });
 
     function handleBulkUpload(files, size) {
-      if (!files || files.length === 0) return;
+    if (!files || files.length === 0) return;
 
-      const filesArray = Array.from(files);
-      const circlesPerPage = size === 'grande' ? 2 : 4;
-      const pagesNeeded = Math.ceil(filesArray.length / circlesPerPage);
+    const filesArray = Array.from(files);
+    const circlesPerPage = size === 'grande' ? 2 : 4;
+    const pagesNeeded = Math.ceil(filesArray.length / circlesPerPage);
 
-      // Asegurar que tengamos suficientes páginas
-      while (pages.length < pagesNeeded) {
-        addPage();
+    // Asegurar que tengamos suficientes páginas
+    while (pages.length < pagesNeeded) { addPage(); } // Cargar cada imagen filesArray.forEach((file, index)=> {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+      const dataUrl = ev.target.result;
+      const pageIndex = Math.floor(index / circlesPerPage);
+      const circleIndex = index % circlesPerPage;
+
+      if (pages[pageIndex]) {
+      const circles = pages[pageIndex].circles;
+      const targetCircle = size === 'grande'
+      ? circles.filter(c => c.size === 'grande')[circleIndex]
+      : circles.filter(c => c.size === 'pequeno')[circleIndex];
+
+      if (targetCircle) {
+      targetCircle.imageData = dataUrl;
+      targetCircle.scale = 100;
+      targetCircle.posX = 50;
+      targetCircle.posY = 50;
+      targetCircle.locked = false;
+      }
       }
 
-      // Cargar cada imagen
-      filesArray.forEach((file, index) => {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          const dataUrl = ev.target.result;
-          const pageIndex = Math.floor(index / circlesPerPage);
-          const circleIndex = index % circlesPerPage;
-
-          if (pages[pageIndex]) {
-            const circles = pages[pageIndex].circles;
-            const targetCircle = size === 'grande'
-              ? circles.filter(c => c.size === 'grande')[circleIndex]
-              : circles.filter(c => c.size === 'pequeno')[circleIndex];
-
-            if (targetCircle) {
-              targetCircle.imageData = dataUrl;
-              targetCircle.scale = 100;
-              targetCircle.posX = 50;
-              targetCircle.posY = 50;
-              targetCircle.locked = false;
-            }
-          }
-
-          // Renderizar cuando se complete la última imagen
-          if (index === filesArray.length - 1) {
-            renderPages();
-          }
-        };
-        reader.readAsDataURL(file);
+      // Renderizar cuando se complete la última imagen
+      if (index === filesArray.length - 1) {
+      renderPages();
+      }
+      };
+      reader.readAsDataURL(file);
       });
-    }
+      }
 
-    // ===== CARGA INDIVIDUAL =====
-    function handleCircleClick(pageId, circleId) {
+      // ===== CARGA INDIVIDUAL =====
+      function handleCircleClick(pageId, circleId) {
       const circle = findCircle(pageId, circleId);
       if (circle && circle.imageData && !circle.locked) {
-        openEditPanel(pageId, circleId);
+      openEditPanel(pageId, circleId);
       } else if (!circle.imageData) {
-        circleToFill = { pageId, circleId };
-        fileInputHidden.value = '';
-        fileInputHidden.click();
+      circleToFill = { pageId, circleId };
+      fileInputHidden.value = '';
+      fileInputHidden.click();
       }
-    }
+      }
 
-    fileInputHidden.addEventListener('change', (e) => {
+      fileInputHidden.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file || !circleToFill) return;
 
       const reader = new FileReader();
       reader.onload = (ev) => {
-        const dataUrl = ev.target.result;
-        pages = pages.map(page => {
-          if (page.id === circleToFill.pageId) {
-            return {
-              ...page,
-              circles: page.circles.map(c =>
-                c.id === circleToFill.circleId
-                  ? { ...c, imageData: dataUrl, scale: 100, posX: 50, posY: 50, locked: false }
-                  : c
-              )
-            };
-          }
-          return page;
-        });
-        circleToFill = null;
-        renderPages();
+      const dataUrl = ev.target.result;
+      pages = pages.map(page => {
+      if (page.id === circleToFill.pageId) {
+      return {
+      ...page,
+      circles: page.circles.map(c =>
+      c.id === circleToFill.circleId
+      ? { ...c, imageData: dataUrl, scale: 100, posX: 50, posY: 50, locked: false }
+      : c
+      )
+      };
+      }
+      return page;
+      });
+      circleToFill = null;
+      renderPages();
       };
       reader.readAsDataURL(file);
-    });
+      });
 
-    // ===== FUNCIONES DE EDICIÓN =====
-    function findCircle(pageId, circleId) {
+      // ===== FUNCIONES DE EDICIÓN =====
+      function findCircle(pageId, circleId) {
       const page = pages.find(p => p.id === pageId);
       return page ? page.circles.find(c => c.id === circleId) : null;
-    }
+      }
 
-    function updateCircle(pageId, circleId, updates) {
+      function updateCircle(pageId, circleId, updates) {
       pages = pages.map(page => {
-        if (page.id === pageId) {
-          return {
-            ...page,
-            circles: page.circles.map(c =>
-              c.id === circleId ? { ...c, ...updates } : c
-            )
-          };
-        }
-        return page;
+      if (page.id === pageId) {
+      return {
+      ...page,
+      circles: page.circles.map(c =>
+      c.id === circleId ? { ...c, ...updates } : c
+      )
+      };
+      }
+      return page;
       });
       renderPages();
-    }
+      }
 
-    function openEditPanel(pageId, circleId) {
+      function openEditPanel(pageId, circleId) {
       const circle = findCircle(pageId, circleId);
       if (!circle || !circle.imageData) return;
 
@@ -1083,71 +842,71 @@
       btnLock.className = circle.locked ? 'edit-btn edit-btn-unlock' : 'edit-btn edit-btn-lock';
 
       editPanel.classList.add('active');
-    }
+      }
 
-    function closeEditPanel() {
+      function closeEditPanel() {
       editPanel.classList.remove('active');
       editingCircle = null;
-    }
+      }
 
-    function updateSliderValues() {
+      function updateSliderValues() {
       scaleValue.textContent = scaleSlider.value + '%';
-    }
+      }
 
-    scaleSlider.addEventListener('input', () => {
+      scaleSlider.addEventListener('input', () => {
       if (!editingCircle) return;
       updateSliderValues();
       updateCircle(editingCircle.pageId, editingCircle.circleId, {
-        scale: parseInt(scaleSlider.value)
+      scale: parseInt(scaleSlider.value)
       });
-    });
+      });
 
-    btnLock.addEventListener('click', () => {
+      btnLock.addEventListener('click', () => {
       if (!editingCircle) return;
       const circle = findCircle(editingCircle.pageId, editingCircle.circleId);
       updateCircle(editingCircle.pageId, editingCircle.circleId, {
-        locked: !circle.locked
+      locked: !circle.locked
       });
       if (!circle.locked) {
-        closeEditPanel();
+      closeEditPanel();
       } else {
-        openEditPanel(editingCircle.pageId, editingCircle.circleId);
+      openEditPanel(editingCircle.pageId, editingCircle.circleId);
       }
-    });
+      });
 
-    btnDeleteImage.addEventListener('click', () => {
+      btnDeleteImage.addEventListener('click', () => {
       if (!editingCircle) return;
       if (confirm('¿Eliminar esta imagen?')) {
-        updateCircle(editingCircle.pageId, editingCircle.circleId, {
-          imageData: null,
-          scale: 100,
-          posX: 50,
-          posY: 50,
-          locked: false
-        });
-        closeEditPanel();
-      }
-    });
-
-    // ===== ARRASTRAR IMAGEN =====
-    function setupImageDrag(img, pageId, circleId) {
-      img.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        draggedImage = { img, pageId, circleId };
-        dragStartX = e.clientX;
-        dragStartY = e.clientY;
-
-        img.classList.add('dragging');
-
-        // Obtener posición actual
-        const currentLeft = parseFloat(img.style.left) || 50;
-        const currentTop = parseFloat(img.style.top) || 50;
-        imageStartX = currentLeft;
-        imageStartY = currentTop;
+      updateCircle(editingCircle.pageId, editingCircle.circleId, {
+      imageData: null,
+      scale: 100,
+      posX: 50,
+      posY: 50,
+      locked: false
       });
-    }
+      closeEditPanel();
+      }
+      });
 
-    document.addEventListener('mousemove', (e) => {
+      // ===== ARRASTRAR IMAGEN =====
+      function setupImageDrag(img, pageId, circleId) {
+      img.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      draggedImage = { img, pageId, circleId };
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+
+      img.classList.add('dragging');
+
+      // Obtener posición actual
+      const currentLeft = parseFloat(img.style.left) || 50;
+      const currentTop = parseFloat(img.style.top) || 50;
+      imageStartX = currentLeft;
+      imageStartY = currentTop;
+      });
+      }
+
+      document.addEventListener('mousemove', (e) => {
       if (!draggedImage) return;
       e.preventDefault();
 
@@ -1165,9 +924,9 @@
 
       draggedImage.img.style.left = newX + '%';
       draggedImage.img.style.top = newY + '%';
-    });
+      });
 
-    document.addEventListener('mouseup', () => {
+      document.addEventListener('mouseup', () => {
       if (!draggedImage) return;
 
       const img = draggedImage.img;
@@ -1180,73 +939,62 @@
       const finalY = parseFloat(img.style.top) || 50;
 
       updateCircle(pageId, circleId, {
-        posX: finalX,
-        posY: finalY
+      posX: finalX,
+      posY: finalY
       });
 
       draggedImage = null;
-    });
+      });
 
-    // ===== OTRAS FUNCIONES =====
-    function changeImage(pageId, circleId) {
+      // ===== OTRAS FUNCIONES =====
+      function changeImage(pageId, circleId) {
       circleToFill = { pageId, circleId };
       fileInputHidden.value = '';
       fileInputHidden.click();
-    }
-
-    function removeImage(pageId, circleId) {
-      if (confirm('¿Eliminar esta imagen?')) {
-        updateCircle(pageId, circleId, {
-          imageData: null,
-          scale: 100,
-          posX: 50,
-          posY: 50,
-          locked: false
-        });
       }
-    }
 
-    function removePage(id) {
-      if (pages.length <= 1) return;
-      if (!confirm('¿Eliminar esta hoja completa?')) return;
+      function removeImage(pageId, circleId) {
+      if (confirm('¿Eliminar esta imagen?')) {
+      updateCircle(pageId, circleId, {
+      imageData: null,
+      scale: 100,
+      posX: 50,
+      posY: 50,
+      locked: false
+      });
+      }
+      }
 
-      pages = pages.filter(p => p.id !== id).map((p, idx) => ({
+      function removePage(id) {
+      if (pages.length <= 1) return; if (!confirm('¿Eliminar esta hoja completa?')) return; pages=pages.filter(p=> p.id
+        !== id).map((p, idx) => ({
         ...p,
         id: idx + 1
-      }));
-      renderPages();
-      closeEditPanel();
-    }
+        }));
+        renderPages();
+        closeEditPanel();
+        }
 
-    function showPixabayCredit(topic, count) {
-      let credit = document.getElementById('pixabay-credit');
-      if (!credit) {
+        function showPixabayCredit(topic, count) {
+        let credit = document.getElementById('pixabay-credit');
+        if (!credit) {
         credit = document.createElement('div');
         credit.id = 'pixabay-credit';
         credit.classList.add('no-print');
         const container = document.querySelector('.container');
         container?.insertBefore(credit, container.firstChild);
-      }
-      const cleanTopic = topic || 'Pixabay';
-      credit.textContent = `Imágenes de Pixabay (${count}) · Tema: ${cleanTopic}`;
-    }
+        }
+        const cleanTopic = topic || 'Pixabay';
+        credit.textContent = `Imágenes de Pixabay (${count}) · Tema: ${cleanTopic}`;
+        }
 
-    function ensurePagesForImages(totalImages) {
-      const slotsPerPage = 6;
-      const requiredPages = Math.ceil(totalImages / slotsPerPage) || 1;
-      while (pages.length < requiredPages) {
-        pages.push(createInitialPageData(pages.length + 1));
-      }
-    }
-
-    function fillCirclesFromPixabay(urls = [], topic = 'Pixabay') {
-      if (!Array.isArray(urls) || urls.length === 0) return;
-
-      ensurePagesForImages(urls.length);
-
-      let idx = 0;
-      pages.forEach((page) => {
-        page.circles.forEach((circle) => {
+        function ensurePagesForImages(totalImages) {
+        const slotsPerPage = 6;
+        const requiredPages = Math.ceil(totalImages / slotsPerPage) || 1;
+        while (pages.length < requiredPages) { pages.push(createInitialPageData(pages.length + 1)); } } function
+          fillCirclesFromPixabay(urls=[], topic='Pixabay' ) { if (!Array.isArray(urls) || urls.length===0) return;
+          ensurePagesForImages(urls.length); let idx=0; pages.forEach((page)=> {
+          page.circles.forEach((circle) => {
           const url = urls[idx];
           if (!url) return;
 
@@ -1257,31 +1005,31 @@
           circle.locked = false;
 
           idx++;
-        });
-      });
+          });
+          });
 
-      renderPages();
-      showPixabayCredit(topic, urls.length);
-    }
+          renderPages();
+          showPixabayCredit(topic, urls.length);
+          }
 
-    window.addEventListener('message', (event) => {
-      const data = event.data;
-      if (!data || data.type !== 'ARKAIOS_PIXABAY_IMAGES') return;
-      fillCirclesFromPixabay(data.images || [], data.topic || 'Pixabay');
-    });
+          window.addEventListener('message', (event) => {
+          const data = event.data;
+          if (!data || data.type !== 'ARKAIOS_PIXABAY_IMAGES') return;
+          fillCirclesFromPixabay(data.images || [], data.topic || 'Pixabay');
+          });
 
-    // Nuclear fix for printing
-    window.onbeforeprint = function () {
-      const credit = document.getElementById('pixabay-credit');
-      if (credit) credit.style.setProperty('display', 'none', 'important');
-    };
-    window.onafterprint = function () {
-      const credit = document.getElementById('pixabay-credit');
-      if (credit) credit.style.display = 'block';
-    };
+          // Nuclear fix for printing
+          window.onbeforeprint = function () {
+          const credit = document.getElementById('pixabay-credit');
+          if (credit) credit.style.setProperty('display', 'none', 'important');
+          };
+          window.onafterprint = function () {
+          const credit = document.getElementById('pixabay-credit');
+          if (credit) credit.style.display = 'block';
+          };
 
-    // ===== FIN DEL SCRIPT =====
-  </script>
+          // ===== FIN DEL SCRIPT =====
+          </script>
 </body>
 
 </html>

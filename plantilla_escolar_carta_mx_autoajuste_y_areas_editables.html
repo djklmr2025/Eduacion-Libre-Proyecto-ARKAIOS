@@ -1,18 +1,29 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Plantilla para Tareas Escolares — Carta MX</title>
+  <title>Plantilla para Tareas Escolares â€” Carta MX</title>
   <style>
-    /* Reset básico */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* Reset bÃ¡sico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-    /* Hoja Carta Mexicana explícita (21.59 x 27.94 cm) */
-    @page { size: 21.59cm 27.94cm; margin: 1.9cm; }
+    /* Hoja Carta Mexicana explÃ­cita (21.59 x 27.94 cm) */
+    @page {
+      size: 21.59cm 27.94cm;
+      margin: 1.9cm;
+    }
 
     @media print {
-      @page { size: 21.59cm 27.94cm; margin: 1.9cm; }
+      @page {
+        size: 21.59cm 27.94cm;
+        margin: 1.9cm;
+      }
 
       /* Colores y proporciones tal cual */
       * {
@@ -20,7 +31,8 @@
         print-color-adjust: exact !important;
       }
 
-      html, body {
+      html,
+      body {
         margin: 0 !important;
         padding: 0 !important;
         width: 21.59cm !important;
@@ -28,7 +40,10 @@
         overflow: visible !important;
       }
 
-      header, footer, .toolbar, .instructions {
+      header,
+      footer,
+      .toolbar,
+      .instructions {
         display: none !important;
       }
 
@@ -47,7 +62,7 @@
         page-break-after: auto;
       }
 
-      /* Quitar contornos visuales en impresión */
+      /* Quitar contornos visuales en impresiÃ³n */
       .field-input,
       .references-input,
       .text-block,
@@ -56,7 +71,7 @@
         background: white !important;
       }
 
-      /* Evitar recortes de contenido en impresión */
+      /* Evitar recortes de contenido en impresiÃ³n */
       .references-wrap,
       .text-block {
         height: auto !important;
@@ -110,8 +125,13 @@
       font-weight: 700;
     }
 
-    .toolbar button.success { background: #27ae60; }
-    .toolbar button.danger { background: #e74c3c; }
+    .toolbar button.success {
+      background: #27ae60;
+    }
+
+    .toolbar button.danger {
+      background: #e74c3c;
+    }
 
     .toolbar select {
       padding: 8px 12px;
@@ -125,11 +145,11 @@
       min-height: 27.94cm;
       margin: 0 auto 28px;
       padding: 1.9cm;
-      box-shadow: 0 0 20px rgba(0,0,0,.18);
+      box-shadow: 0 0 20px rgba(0, 0, 0, .18);
       position: relative;
     }
 
-    /* HOJA 1 - ÍNDICE */
+    /* HOJA 1 - ÃNDICE */
     .index-title {
       text-align: center;
       margin-bottom: 0.9cm;
@@ -275,7 +295,8 @@
       border: 2px dashed #95a5a6;
       background: #f9f9f9;
       padding: 16px;
-      min-height: 17cm; /* un solo cuadro grande */
+      min-height: 17cm;
+      /* un solo cuadro grande */
       border-radius: 8px;
       page-break-inside: avoid;
       overflow: hidden;
@@ -302,29 +323,53 @@
       font-size: 1.2em;
     }
 
-    .text-block .content p { margin-bottom: 10px; }
+    .text-block .content p {
+      margin-bottom: 10px;
+    }
 
     .text-block .content sup {
       color: #e74c3c;
       font-weight: 700;
     }
 
-    /* HOJA 3 - IMÁGENES (solo imágenes) */
+    /* HOJA 3 - IMÃGENES (solo imÃ¡genes) */
     .image-page {
       display: grid;
       gap: 0.6cm;
     }
 
-    .image-page.grid-3  { grid-template-columns: 1fr; }
-    .image-page.grid-6  { grid-template-columns: repeat(2, 1fr); }
-    .image-page.grid-9  { grid-template-columns: repeat(3, 1fr); }
-    .image-page.grid-12 { grid-template-columns: repeat(3, 1fr); }
+    .image-page.grid-3 {
+      grid-template-columns: 1fr;
+    }
 
-    /* Alturas según cantidad para que quepan mejor en la hoja */
-    .image-page.grid-3  .image-slot { min-height: 7cm; }
-    .image-page.grid-6  .image-slot { min-height: 6cm; }
-    .image-page.grid-9  .image-slot { min-height: 5cm; }
-    .image-page.grid-12 .image-slot { min-height: 4.2cm; }
+    .image-page.grid-6 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .image-page.grid-9 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .image-page.grid-12 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* Alturas segÃºn cantidad para que quepan mejor en la hoja */
+    .image-page.grid-3 .image-slot {
+      min-height: 7cm;
+    }
+
+    .image-page.grid-6 .image-slot {
+      min-height: 6cm;
+    }
+
+    .image-page.grid-9 .image-slot {
+      min-height: 5cm;
+    }
+
+    .image-page.grid-12 .image-slot {
+      min-height: 4.2cm;
+    }
 
     .image-slot {
       border: 3px dashed #95a5a6;
@@ -366,7 +411,9 @@
       font-weight: 700;
     }
 
-    .image-slot.has-image .add-btn { display: none; }
+    .image-slot.has-image .add-btn {
+      display: none;
+    }
 
     .image-slot .remove-btn {
       position: absolute;
@@ -382,14 +429,16 @@
       display: none;
     }
 
-    .image-slot.has-image .remove-btn { display: block; }
+    .image-slot.has-image .remove-btn {
+      display: block;
+    }
 
     .image-slot .drag-handle {
       position: absolute;
       bottom: 8px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(52,152,219,.9);
+      background: rgba(52, 152, 219, .9);
       color: #fff;
       padding: 4px 12px;
       border-radius: 14px;
@@ -397,7 +446,9 @@
       display: none;
     }
 
-    .image-slot.has-image .drag-handle { display: block; }
+    .image-slot.has-image .drag-handle {
+      display: block;
+    }
 
     .instructions {
       background: #fff9e6;
@@ -407,32 +458,41 @@
       border-radius: 6px;
     }
 
-    /* Modo impresión sin cambiar tamaños de letra */
+    /* Modo impresiÃ³n sin cambiar tamaÃ±os de letra */
     .print-mode .text-block .content,
     .print-mode #referencesInput {
       font-size: inherit !important;
     }
   </style>
 </head>
+
 <body>
   <!-- BARRA DE HERRAMIENTAS -->
   <div class="toolbar">
-    <button class="success" onclick="window.print()">🖨️ Imprimir</button>
-    <span>Imágenes por hoja:</span>
+    <button class="success" onclick="window.print()">ðŸ–¨ï¸ Imprimir</button>
+    <span>ImÃ¡genes por hoja:</span>
     <select id="imageLayout" onchange="changeImageLayout()">
-      <option value="3">3 imágenes</option>
-      <option value="6">6 imágenes</option>
-      <option value="9">9 imágenes</option>
-      <option value="12">12 imágenes</option>
+      <option value="3">3 imÃ¡genes</option>
+      <option value="6">6 imÃ¡genes</option>
+      <option value="9">9 imÃ¡genes</option>
+      <option value="12">12 imÃ¡genes</option>
     </select>
-    <button onclick="document.getElementById('bulkFileInput').click()">📁 Cargar Imágenes</button>
-    <input type="file" id="bulkFileInput" multiple accept="image/*" style="display:none" onchange="loadBulkImages(event)">
-    <button class="danger" onclick="clearAllImages()">🗑️ Limpiar Imágenes</button>
+    <button onclick="document.getElementById('bulkFileInput').click()">ðŸ“ Cargar ImÃ¡genes</button>
+    <input type="file" id="bulkFileInput" multiple accept="image/*" style="display:none"
+      onchange="loadBulkImages(event)">
+    <button class="danger" onclick="clearAllImages()">ðŸ—‘ï¸ Limpiar ImÃ¡genes</button>
+
+    <!-- Botones Generales -->
+    <button onclick="searchPexels()" style="background: #05a081;">ðŸ“¸ Pexels</button>
+    <button onclick="searchFreepik()" style="background: #336aea;">ðŸŽ¨ Freepik</button>
+    <button onclick="openAIModal()" style="background: #8e44ad;">âœ¨ Crear con IA</button>
   </div>
 
-  <!-- HOJA 1: ÍNDICE -->
+  <!-- HOJA 1: ÃNDICE -->
   <div class="page-container" id="page1">
-    <div class="index-title"><h1>ÍNDICE</h1></div>
+    <div class="index-title">
+      <h1>ÃNDICE</h1>
+    </div>
 
     <div class="index-fields">
       <div class="field-row">
@@ -461,9 +521,9 @@
       <h3>Referencias y Fuentes Consultadas</h3>
       <div class="references-wrap" id="refsWrap">
         <div class="references-input" id="referencesInput" contenteditable="true"
-             oninput="detectLinks(); fitToHeight('#referencesInput', {min:9,max:12,step:.5});"
-             onpaste="handleReferencePaste(event)">
-          Pega aquí tus referencias bibliográficas y enlaces web…
+          oninput="detectLinks(); fitToHeight('#referencesInput', {min:9,max:12,step:.5});"
+          onpaste="handleReferencePaste(event)">
+          Pega aquÃ­ tus referencias bibliogrÃ¡ficas y enlaces webâ€¦
         </div>
       </div>
     </div>
@@ -472,39 +532,88 @@
   <!-- HOJA 2: TEXTO -->
   <div class="page-container" id="page2">
     <div class="page-header">
-      <h1 id="mainTitle" contenteditable="true" oninput="updateTopic()">Celebración del Día de Muertos en Pueblos Indígenas de México</h1>
-      <div class="subtitle" contenteditable="true">Purépechas, Mazahuas y Huastecos</div>
+      <h1 id="mainTitle" contenteditable="true" oninput="updateTopic()">CelebraciÃ³n del DÃ­a de Muertos en Pueblos
+        IndÃ­genas de MÃ©xico</h1>
+      <div class="subtitle" contenteditable="true">PurÃ©pechas, Mazahuas y Huastecos</div>
     </div>
 
-    <!-- Nuevo: cajita pequeña de tema/subtema -->
+    <!-- Nuevo: cajita pequeÃ±a de tema/subtema -->
     <div class="topic-box">
       <div class="topic-label">Subtema:</div>
-      <div class="topic-input" id="topicInput" contenteditable="true" oninput="checkTopicFilled()">Los Purépechas</div>
+      <div class="topic-input" id="topicInput" contenteditable="true" oninput="checkTopicFilled()">Los PurÃ©pechas</div>
     </div>
 
     <div class="text-page">
       <div class="text-block has-content" id="textBlockMain">
         <div class="content" contenteditable="true"
-             oninput="markHasContent(this); fitToHeight('#textBlockMain', {min:9,max:16});">
+          oninput="markHasContent(this); fitToHeight('#textBlockMain', {min:9,max:16});">
           <h2>Desarrollo</h2>
-          <p>Para las comunidades purépechas de Michoacán, la celebración del Día de Muertos es conocida como <em>Animeecheri Kúinchekua</em>, que significa "Fiesta de las Ánimas". Esta tradición no es una celebración a la muerte, sino a la vida continuada o "la otra vida"…<sup>1</sup></p>
-          <p>Los purépechas afirman que cuando alguien muere, su cuerpo se sepulta, pero su alma sigue viviendo…<sup>2</sup></p>
-          <p>Uno de los elementos que distingue esta celebración son los grandes altares…<sup>3</sup> …leyenda que cuenta que estas mariposas son las almas que regresan…<sup>4</sup></p>
-          <p>La comunidad mazahua, ubicada principalmente en el Estado de México y Michoacán…<sup>5</sup> …pétalos del cempasúchil…<sup>6</sup> …copal…<sup>7</sup></p>
-          <p>En la región Huasteca se celebra el <em>Xantolo</em>, una festividad que se extiende del 30 de octubre al 2 de noviembre…<sup>10</sup> …con danzas tradicionales conocidas como "vinuetes".<sup>11</sup></p>
+          <p>Para las comunidades purÃ©pechas de MichoacÃ¡n, la celebraciÃ³n del DÃ­a de Muertos es conocida como
+            <em>Animeecheri KÃºinchekua</em>, que significa "Fiesta de las Ãnimas". Esta tradiciÃ³n no es una
+            celebraciÃ³n
+            a la muerte, sino a la vida continuada o "la otra vida"â€¦<sup>1</sup>
+          </p>
+          <p>Los purÃ©pechas afirman que cuando alguien muere, su cuerpo se sepulta, pero su alma sigue
+            viviendoâ€¦<sup>2</sup></p>
+          <p>Uno de los elementos que distingue esta celebraciÃ³n son los grandes altaresâ€¦<sup>3</sup> â€¦leyenda que
+            cuenta que estas mariposas son las almas que regresanâ€¦<sup>4</sup></p>
+          <p>La comunidad mazahua, ubicada principalmente en el Estado de MÃ©xico y MichoacÃ¡nâ€¦<sup>5</sup>
+            â€¦pÃ©talos del
+            cempasÃºchilâ€¦<sup>6</sup> â€¦copalâ€¦<sup>7</sup></p>
+          <p>En la regiÃ³n Huasteca se celebra el <em>Xantolo</em>, una festividad que se extiende del 30 de octubre al
+            2
+            de noviembreâ€¦<sup>10</sup> â€¦con danzas tradicionales conocidas como "vinuetes".<sup>11</sup></p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- HOJA 3: IMÁGENES (sin cuadros de texto, solo imágenes) -->
+  <!-- HOJA 3: IMÃGENES (sin cuadros de texto, solo imÃ¡genes) -->
   <div class="page-container" id="page3">
     <div class="page-header">
-      <h1>Imágenes Representativas</h1>
-      <div class="subtitle">Tradiciones del Día de Muertos</div>
+      <h1>ImÃ¡genes Representativas</h1>
+      <div class="subtitle">Tradiciones del DÃ­a de Muertos</div>
     </div>
 
     <div class="image-page grid-3" id="imagePage"></div>
+  </div>
+
+  <!-- Modal IA -->
+  <div id="aiModal"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;">
+    <div
+      style="background: #1f2937; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; border: 1px solid #3b82f6;">
+      <h3 style="color: #3b82f6; margin-bottom: 15px;">âœ¨ Generar Imagen con Grok</h3>
+
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Tu API Key de Grok (xAI):</label>
+        <input type="password" id="grokKey" placeholder="xai-..."
+          style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
+        <small style="color: #9ca3af;">Se guardarÃ¡ localmente en tu navegador.</small>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Describe tu imagen:</label>
+        <textarea id="aiPrompt" rows="4" placeholder="Un paisaje espacial con planetas coloridos..."
+          style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;"></textarea>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">NÃºmero de imÃ¡genes:</label>
+        <input type="number" id="imageCount" min="1" max="4" value="1"
+          style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button onclick="closeAIModal()"
+          style="background: #4b5563; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Cancelar</button>
+        <button onclick="generateAIImage()"
+          style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Generar
+          con Grok</button>
+      </div>
+
+      <div id="aiStatus" style="margin-top: 10px; color: #e5e7eb; font-size: 0.9rem;"></div>
+    </div>
   </div>
 
   <script>
@@ -569,7 +678,7 @@
       }
     }
 
-    /* ===== Autoajuste de texto con márgenes fijos ===== */
+    /* ===== Autoajuste de texto con mÃ¡rgenes fijos ===== */
     function fitToHeight(selector, opts) {
       const options = Object.assign({ min: 9, max: 16, step: 0.5 }, opts || {});
       const box = document.querySelector(selector);
@@ -593,7 +702,7 @@
       }
     }
 
-    // Calcular altura máxima para referencias en Hoja 1
+    // Calcular altura mÃ¡xima para referencias en Hoja 1
     function sizeReferencesBox() {
       const page = document.getElementById('page1');
       const wrap = document.getElementById('refsWrap');
@@ -605,9 +714,16 @@
       const maxH = pageInnerH - (titleH + fieldsH + secHeadH + 40 + paddingFix);
       wrap.style.maxHeight = Math.max(160, maxH) + 'px';
       fitToHeight('#referencesInput', { min: 9, max: 12, step: .5 });
+
+      changeImageLayout();
+      updateTopic();
+      sizeReferencesBox();
+      fitAll();
+      checkTopicFilled();
+    }););
     }
 
-    /* ===== Imágenes: slots y drag ===== */
+    /* ===== ImÃ¡genes: slots y drag ===== */
     const imageSlots = {};
     let selectedSlot = null;
     let draggedSlot = null;
@@ -616,7 +732,7 @@
       const imagePage = document.getElementById('imagePage');
       imagePage.innerHTML = '';
       const titles = [
-        'Purépechas',
+        'PurÃ©pechas',
         'Mazahuas',
         'Huastecos',
         'Imagen 4',
@@ -641,9 +757,9 @@
           slot.classList.add('has-image');
           slot.draggable = true;
           slot.innerHTML = `
-            <img src="${saved}" alt="${titles[i] || ('Imagen ' + (i+1))}">
-            <button class='remove-btn' onclick='removeImage(${i}, event)'>✕</button>
-            <div class='drag-handle'>↕️ Arrastrar</div>`;
+            <img src="${saved}" alt="${titles[i] || ('Imagen ' + (i + 1))}">
+            <button class='remove-btn' onclick='removeImage(${i}, event)'>âœ•</button>
+            <div class='drag-handle'>â†•ï¸ Arrastrar</div>`;
         } else {
           slot.innerHTML = `
             <button class='add-btn' onclick='addImageToSlot(${i})'>+</button>
@@ -793,13 +909,158 @@
       const dateField = document.getElementById('field3');
       dateField.value = `${d}/${m}/${y}`;
       checkFilled(dateField);
+      const fieldsH = page.querySelector('.index-fields').offsetHeight;
+      const secHeadH = page.querySelector('.references-section h3').offsetHeight;
+      const pageInnerH = page.clientHeight;
+      const paddingFix = 18;
+      const maxH = pageInnerH - (titleH + fieldsH + secHeadH + 40 + paddingFix);
+      wrap.style.maxHeight = Math.max(160, maxH) + 'px';
+      fitToHeight('#referencesInput', { min: 9, max: 12, step: .5 });
+    }
 
+
+
+
+    // ===== API KEYS & INTEGRATION =====
+    const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
+    const FREEPIK_API_KEY = 'FPSX890e70b7164ab7a1b05182a68d64ad06';
+
+    function applyExternalImages(urls, sourceName) {
+      const layout = parseInt(document.getElementById('imageLayout').value, 10);
+      let currentUrlIdx = 0;
+
+      for (let i = 0; i < layout; i++) {
+        if (!imageSlots[i] && currentUrlIdx < urls.length) {
+          imageSlots[i] = urls[currentUrlIdx];
+          currentUrlIdx++;
+        }
+      }
       changeImageLayout();
-      updateTopic();
-      sizeReferencesBox();
-      fitAll();
-      checkTopicFilled();
-    });
+      mostrarCreditoPixabay(sourceName, urls.length);
+    }
+
+    async function searchPexels() {
+      const query = prompt("¿Qué imágenes buscas en Pexels?");
+      if (!query) return;
+
+      try {
+        const response = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=12`, {
+          headers: { Authorization: PEXELS_API_KEY }
+        });
+        const data = await response.json();
+        const images = data.photos.map(photo => photo.src.large);
+        applyExternalImages(images, `Pexels: ${query}`);
+      } catch (error) {
+        console.error(error);
+        alert('Error al buscar en Pexels');
+      }
+    }
+
+    async function searchFreepik() {
+      const query = prompt("¿Qué imágenes buscas en Freepik?");
+      if (!query) return;
+
+      try {
+        const response = await fetch(`https://api.freepik.com/v1/resources?locale=es-ES&q=${encodeURIComponent(query)}&limit=12`, {
+          headers: { 'X-Freepik-API-Key': FREEPIK_API_KEY }
+        });
+        const data = await response.json();
+        const images = data.data.map(item => item.image.source.url);
+        applyExternalImages(images, `Freepik: ${query}`);
+      } catch (error) {
+        console.error(error);
+        alert('Error al buscar en Freepik');
+      }
+    }
+
+    // ===== AI GENERATION =====
+    function openAIModal() {
+      const storedKey = localStorage.getItem('grok_api_key');
+      if (storedKey) document.getElementById('grokKey').value = storedKey;
+      document.getElementById('aiModal').style.display = 'flex';
+    }
+
+    function closeAIModal() {
+      document.getElementById('aiModal').style.display = 'none';
+      document.getElementById('aiStatus').textContent = '';
+    }
+
+    async function generateAIImage() {
+      const apiKey = document.getElementById('grokKey').value.trim();
+      const prompt = document.getElementById('aiPrompt').value.trim();
+      const count = parseInt(document.getElementById('imageCount').value) || 1;
+      const statusDiv = document.getElementById('aiStatus');
+
+      if (!apiKey) {
+        alert('Por favor ingresa tu API Key de Grok (xAI)');
+        return;
+      }
+      if (!prompt) {
+        alert('Por favor describe la imagen');
+        return;
+      }
+
+      localStorage.setItem('grok_api_key', apiKey);
+      statusDiv.textContent = 'â³ Generando imÃ¡genes con Grok... (esto puede tomar unos segundos)';
+
+      // Usar el backend proxy para evitar CORS
+      const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
+      const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
+      const endpoint = isLocal ? (localBase + '/api/grok') : '/api/grok';
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            apiKey: apiKey,
+            prompt: prompt,
+            count: count
+          })
+        });
+
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error || response.statusText);
+        }
+
+        const data = await response.json();
+        const content = data.choices[0]?.message?.content || '';
+
+        // Buscar URLs en la respuesta
+        const urlRegex = /(https?:\/\/[^\s)]+)/g;
+        const matches = content.match(urlRegex);
+
+        if (!matches || matches.length === 0) {
+          throw new Error('Grok no devolviÃ³ URLs de imÃ¡genes. Respuesta: ' + content.substring(0, 100) + '...');
+        }
+
+        const imageUrls = matches.slice(0, count);
+        applyExternalImages(imageUrls, `Grok: ${prompt}`);
+        closeAIModal();
+
+      } catch (error) {
+        console.error(error);
+        statusDiv.textContent = 'âŒ Error: ' + error.message;
+      }
+    }
+
+    function mostrarCreditoPixabay(topic, count) {
+      let credit = document.getElementById('pixabay-credit');
+      if (!credit) {
+        credit = document.createElement('div');
+        credit.id = 'pixabay-credit';
+        credit.style.cssText = 'margin: 10px; padding: 10px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; text-align: center; color: #0369a1; font-size: 0.9rem;';
+        credit.classList.add('no-print');
+        const toolbar = document.querySelector('.toolbar');
+        if (toolbar) toolbar.parentNode.insertBefore(credit, toolbar.nextSibling);
+      }
+      const cleanTopic = topic || 'Pixabay';
+      credit.textContent = `ImÃ¡genes de Pixabay (${count}) Â· Tema: ${cleanTopic}`;
+    }
   </script>
 </body>
+
 </html>
