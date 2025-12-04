@@ -332,8 +332,84 @@ const ARKAIOS = {
             console.error(err);
             alert('Error al buscar imágenes: ' + err.message);
         }
+    },
+
+    async generateImageWithGrok() {
+        const topic = prompt('Describe la imagen que quieres generar con Grok:');
+        if (!topic) return;
+
+        const countStr = prompt('¿Cuántas imágenes quieres generar? (1-4)', '1');
+        const count = parseInt(countStr) || 1;
+
+        let apiKey = localStorage.getItem('grok_api_key');
+        if (!apiKey) {
+            apiKey = prompt('Ingresa tu API Key de Grok (xAI):');
+            if (apiKey) localStorage.setItem('grok_api_key', apiKey);
+        }
+        if (!apiKey) return;
+
+        this.showSaveIndicator('Generando imágenes con Grok...');
+
+        try {
+            const images = await fetchGrokImages(topic, count, apiKey);
+            if (images.length === 0) {
+                alert('No se pudieron generar imágenes. Asegúrate de que tu API Key tenga permisos.');
+                return;
+            }
+            sendImagesToActiveTemplate(topic, images, 'grok');
+            this.showSaveIndicator(`Generadas ${images.length} imágenes con Grok`);
+        } catch (err) {
+            console.error(err);
+            alert('Error al generar imágenes: ' + err.message);
+        }
     }
 };
+
+async function fetchGrokImages(prompt, count, apiKey) {
+    // Intenta usar el endpoint de chat de xAI para solicitar una imagen
+    // Nota: Esto asume que el modelo puede devolver URLs de imágenes o que xAI tiene un endpoint compatible
+    try {
+        const response = await fetch('https://api.x.ai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'You are an advanced AI capable of generating images. When asked to generate an image, provide the direct URL to the generated image in your response. If you cannot generate an image directly, explain why.'
+                    },
+                    {
+                        role: 'user',
+                        content: `Generate ${count} image(s) of: ${prompt}. Return only the image URLs.`
+                    }
+                ],
+                model: 'grok-beta',
+                stream: false,
+                temperature: 0.7
+            })
+        });
+
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error?.message || response.statusText);
+        }
+
+        const data = await response.json();
+        const content = data.choices[0]?.message?.content || '';
+
+        // Buscar URLs en la respuesta (Markdown o texto plano)
+        const urlRegex = /(https?:\/\/[^\s)]+)/g;
+        const matches = content.match(urlRegex);
+
+        return matches ? matches.slice(0, count) : [];
+    } catch (err) {
+        console.error('Error fetching Grok images:', err);
+        throw err;
+    }
+}
 
 // Variable global para la plantilla actual
 let currentTemplate = 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html';
