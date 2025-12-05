@@ -1,0 +1,6 @@
+@echo off
+echo Instalando dependencias necesarias...
+call npm install express dotenv
+echo Iniciando servidor local...
+node local_server.js
+pause

@@ -18,8 +18,9 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const apiKey = process.env.VITE_PROXY_API_KEY || process.env.PROXY_API_KEY;
-    const baseUrl = process.env.VITE_ARKAIOS_BASE_URL || process.env.ARKAIOS_BASE_URL || 'https://arkaios-service-proxy.onrender.com';
+    // Use Arkaios Gateway for Images
+    const apiKey = process.env.VITE_AIDA_INTERNAL_KEY || process.env.VITE_PROXY_API_KEY || process.env.PROXY_API_KEY;
+    const baseUrl = process.env.VITE_AIDA_BASE_URL || process.env.VITE_ARKAIOS_BASE_URL || process.env.ARKAIOS_BASE_URL || 'https://arkaios-service-proxy.onrender.com';
 
     if (!apiKey) {
         return res.status(500).json({ error: 'Server configuration error: Missing API Key' });
