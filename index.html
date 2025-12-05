@@ -2,1252 +2,754 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ARKAIOS Plantillas - Centro Educativo 2025</title>
-
-    <script src="https://js.puter.com/v2/"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-    <!-- CRITICAL: Detectar iframe ANTES de cargar estilos -->
-    <script>
-        if (window.self !== window.top) {
-            document.documentElement.classList.add('is-iframe');
-        }
-    </script>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Poppins:wght@300;400;500;600;700;800&display=swap');
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        :root {
-            /* Colores base modernos */
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-tertiary: #334155;
-
-            /* Gradientes premium */
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-secondary: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-            --gradient-accent: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            --gradient-dark: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-
-            /* Colores de acento */
-            --accent-blue: #667eea;
-            --accent-purple: #764ba2;
-            --accent-orange: #fda085;
-            --accent-yellow: #f6d365;
-
-            /* Texto */
-            --text-primary: #f1f5f9;
-            --text-secondary: #cbd5e1;
-            --text-muted: #94a3b8;
-
-            /* Bordes y sombras */
-            --border-color: #334155;
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
-            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.3);
-            --shadow-glow: 0 0 20px rgba(102, 126, 234, 0.3);
-
-            /* Estados */
-            --success: #22c55e;
-            --error: #ef4444;
-            --warning: #f59e0b;
-        }
-
-        body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Fondo animado con formas decorativas */
-        body::before {
-            content: '';
-            position: fixed;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
-            animation: float 20s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        body::after {
-            content: '';
-            position: fixed;
-            bottom: -50%;
-            left: -50%;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(253, 160, 133, 0.1) 0%, transparent 70%);
-            animation: float 25s ease-in-out infinite reverse;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-
-            33% {
-                transform: translate(30px, -30px) rotate(120deg);
-            }
-
-            66% {
-                transform: translate(-20px, 20px) rotate(240deg);
-            }
-        }
-
-        /* Ocultar elementos en iframe */
-        .is-iframe body,
-        .is-iframe header,
-        .is-iframe nav,
-        .is-iframe .toggle-nav,
-        .is-iframe .ai-button,
-        .is-iframe .ai-panel,
-        .is-iframe .auto-save-indicator,
-        .is-iframe .view-controls,
-        .is-iframe .layout {
-            display: none !important;
-            visibility: hidden !important;
-        }
-
-        .is-iframe main {
-            display: none !important;
-        }
-
-        .is-iframe {
-            background: transparent !important;
-        }
-
-        /* Header premium con glassmorphism */
-        header {
-            padding: 20px 32px;
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 24px;
-            flex-wrap: wrap;
-            box-shadow: var(--shadow-md);
-            position: relative;
-            z-index: 100;
-        }
-
-        header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--gradient-primary);
-            opacity: 0.5;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            font-family: 'Playfair Display', serif;
-        }
-
-        .logo-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--gradient-primary);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            box-shadow: var(--shadow-glow);
-            animation: pulse 3s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                box-shadow: var(--shadow-glow);
-            }
-
-            50% {
-                transform: scale(1.05);
-                box-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
-            }
-        }
-
-        .logo h1 {
-            font-size: 28px;
-            font-weight: 900;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.5px;
-        }
-
-        .logo .version {
-            background: var(--gradient-secondary);
-            color: var(--bg-primary);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        /* Botones premium */
-        .btn-premium {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-premium::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .btn-premium:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .btn-primary {
-            background: var(--gradient-primary);
-            color: white;
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg), var(--shadow-glow);
-        }
-
-        .btn-secondary {
-            background: rgba(51, 65, 85, 0.6);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(51, 65, 85, 0.9);
-            border-color: var(--accent-blue);
-        }
-
-        /* Layout principal */
-        .layout {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Sidebar mejorado */
-        nav {
-            width: 280px;
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(102, 126, 234, 0.2);
-            padding: 24px 0;
-            overflow-y: auto;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-md);
-        }
-
-        nav.collapsed {
-            width: 0;
-            padding: 0;
-            border-right: none;
-        }
-
-        .nav-section {
-            margin-bottom: 32px;
-            padding: 0 16px;
-        }
-
-        .nav-title {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            padding: 0 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px 16px;
-            margin-bottom: 8px;
-            background: transparent;
-            color: var(--text-secondary);
-            border: none;
-            border-radius: 12px;
-            text-align: left;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: var(--gradient-primary);
-            transform: scaleY(0);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn:hover {
-            background: rgba(102, 126, 234, 0.1);
-            color: var(--text-primary);
-            transform: translateX(4px);
-        }
-
-        .btn:hover::before {
-            transform: scaleY(1);
-        }
-
-        .btn.active {
-            background: var(--gradient-primary);
-            color: white;
-            font-weight: 600;
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn.active::before {
-            transform: scaleY(1);
-            background: white;
-        }
-
-        .btn-icon {
-            font-size: 18px;
-            min-width: 20px;
-            text-align: center;
-        }
-
-        /* Toggle button mejorado */
-        .toggle-nav {
-            position: fixed;
-            left: 280px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 32px;
-            height: 64px;
-            background: var(--gradient-primary);
-            border: none;
-            border-radius: 0 12px 12px 0;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 101;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-md);
-        }
-
-        .toggle-nav:hover {
-            width: 40px;
-            box-shadow: var(--shadow-lg);
-        }
-
-        nav.collapsed+.toggle-nav {
-            left: 0;
-        }
-
-        /* Área principal */
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            padding: 24px;
-            gap: 20px;
-        }
-
-        .view-controls {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            padding: 16px 24px;
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 16px;
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            box-shadow: var(--shadow-sm);
-        }
-
-        #frameWrapper {
-            flex: 1;
-            background: rgba(30, 41, 59, 0.4);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            position: relative;
-        }
-
-        #frameWrapper::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-primary);
-            opacity: 0.5;
-        }
-
-        #frameWrapper.fullscreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 1000;
-            border-radius: 0;
-        }
-
-        #plantillaFrame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: white;
-        }
-
-        /* Botón AI flotante premium */
-        .ai-button {
-            position: fixed;
-            bottom: 32px;
-            right: 32px;
-            width: 64px;
-            height: 64px;
-            background: var(--gradient-primary);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            font-size: 28px;
-            cursor: pointer;
-            box-shadow: var(--shadow-lg), var(--shadow-glow);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: pulse 3s ease-in-out infinite;
-        }
-
-        .ai-button:hover {
-            transform: scale(1.1) rotate(10deg);
-            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.5);
-        }
-
-        /* Panel AI mejorado */
-        .ai-panel {
-            position: fixed;
-            right: -450px;
-            top: 0;
-            bottom: 0;
-            width: 450px;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
-            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            border-left: 1px solid rgba(102, 126, 234, 0.3);
-        }
-
-        .ai-panel.active {
-            right: 0;
-        }
-
-        .ai-header {
-            padding: 24px;
-            background: var(--gradient-primary);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow-md);
-        }
-
-        .ai-header h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .ai-header-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .ai-header-btn {
-            width: 36px;
-            height: 36px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-
-        .ai-header-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.05);
-        }
-
-        .ai-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .message {
-            padding: 16px 20px;
-            border-radius: 16px;
-            max-width: 85%;
-            word-wrap: break-word;
-            animation: slideIn 0.3s ease-out;
-            box-shadow: var(--shadow-sm);
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message.user {
-            background: var(--gradient-primary);
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-
-        .message.assistant {
-            background: rgba(51, 65, 85, 0.6);
-            color: var(--text-primary);
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-            border: 1px solid rgba(102, 126, 234, 0.2);
-        }
-
-        .ai-input-area {
-            padding: 20px 24px;
-            background: rgba(30, 41, 59, 0.8);
-            border-top: 1px solid rgba(102, 126, 234, 0.2);
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .ai-input-wrapper {
-            flex: 1;
-            position: relative;
-        }
-
-        #aiInput {
-            width: 100%;
-            padding: 14px 16px;
-            background: rgba(51, 65, 85, 0.6);
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-family: 'Poppins', sans-serif;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        #aiInput:focus {
-            outline: none;
-            border-color: var(--accent-blue);
-            background: rgba(51, 65, 85, 0.8);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .ai-input-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .ai-input-btn {
-            width: 44px;
-            height: 44px;
-            background: rgba(51, 65, 85, 0.6);
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            border-radius: 12px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .ai-input-btn:hover {
-            background: var(--gradient-primary);
-            color: white;
-            border-color: transparent;
-            transform: scale(1.05);
-        }
-
-        .ai-send {
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-        }
-
-        .ai-send:hover {
-            box-shadow: var(--shadow-glow);
-            transform: scale(1.1);
-        }
-
-        /* Scrollbar personalizado */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(51, 65, 85, 0.3);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--gradient-primary);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-purple);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            nav {
-                width: 240px;
-            }
-
-            .toggle-nav {
-                left: 240px;
-            }
-
-            .ai-panel {
-                width: 100%;
-                right: -100%;
-            }
-
-            .logo h1 {
-                font-size: 20px;
-            }
-
-            main {
-                padding: 16px;
-            }
-        }
-
-        /* Loading dots animation */
-        .loading-dots::after {
-            content: '...';
-            animation: dots 1.5s steps(4, end) infinite;
-        }
-
-        @keyframes dots {
-
-            0%,
-            20% {
-                content: '.';
-            }
-
-            40% {
-                content: '..';
-            }
-
-            60%,
-            100% {
-                content: '...';
-            }
-        }
-
-        /* Auto-save indicator */
-        .auto-save-indicator {
-            position: fixed;
-            bottom: 32px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 12px 24px;
-            background: rgba(34, 197, 94, 0.9);
-            backdrop-filter: blur(10px);
-            color: white;
-            border-radius: 24px;
-            font-size: 13px;
-            font-weight: 600;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            z-index: 998;
-            box-shadow: var(--shadow-md);
-        }
-
-        .auto-save-indicator.show {
-            opacity: 1;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ARKAIOS Plantillas 3.0 - Workshop Edition</title>
+
+  <script src="https://js.puter.com/v2/"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <script>
+    if (window.self !== window.top) {
+      document.documentElement.classList.add('is-iframe');
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-secondary: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --border-color: #334155;
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
+      --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .is-iframe * {
+      display: none !important;
+    }
+
+    /* Header compacto */
+    header {
+      padding: 16px 24px;
+      background: rgba(30, 41, 59, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow-md);
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .logo h1 {
+      font-size: 22px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex: 1;
+      justify-content: center;
+    }
+
+    /* Dropdown de plantillas */
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-btn {
+      padding: 10px 20px;
+      background: rgba(51, 65, 85, 0.6);
+      border: 1px solid rgba(102, 126, 234, 0.3);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s;
+    }
+
+    .dropdown-btn:hover {
+      background: rgba(102, 126, 234, 0.2);
+      border-color: #667eea;
+    }
+
+    .dropdown-content {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      min-width: 280px;
+      background: rgba(30, 41, 59, 0.98);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(102, 126, 234, 0.3);
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      display: none;
+      flex-direction: column;
+      max-height: 500px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+
+    .dropdown.active .dropdown-content {
+      display: flex;
+    }
+
+    .dropdown.active .dropdown-arrow {
+      transform: rotate(180deg);
+    }
+
+    .dropdown-arrow {
+      transition: transform 0.3s;
+      font-size: 12px;
+    }
+
+    .dropdown-section {
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .dropdown-section:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown-title {
+      padding: 8px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+    }
+
+    .dropdown-item {
+      padding: 12px 16px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(102, 126, 234, 0.1);
+      color: var(--text-primary);
+      padding-left: 20px;
+    }
+
+    .dropdown-item.active {
+      background: var(--gradient-primary);
+      color: white;
+      font-weight: 600;
+    }
+
+    /* Botones de acción */
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-secondary {
+      background: rgba(51, 65, 85, 0.6);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(51, 65, 85, 0.9);
+      border-color: #667eea;
+    }
+
+    .btn-workshop {
+      background: var(--gradient-secondary);
+      color: #0f172a;
+    }
+
+    .btn-workshop:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Área principal */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 20px;
+      gap: 16px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      padding: 12px 16px;
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(20px);
+      border-radius: 12px;
+      border: 1px solid rgba(102, 126, 234, 0.2);
+    }
+
+    #frameWrapper {
+      flex: 1;
+      background: rgba(30, 41, 59, 0.4);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(102, 126, 234, 0.2);
+      position: relative;
+    }
+
+    #frameWrapper.fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1000;
+      border-radius: 0;
+    }
+
+    #plantillaFrame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: white;
+    }
+
+    /* Botón AI flotante */
+    .ai-button {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      background: var(--gradient-primary);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: var(--shadow-lg);
+      transition: all 0.3s;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ai-button:hover {
+      transform: scale(1.1);
+    }
+
+    /* Panel AI */
+    .ai-panel {
+      position: fixed;
+      right: -400px;
+      top: 0;
+      bottom: 0;
+      width: 400px;
+      background: rgba(15, 23, 42, 0.98);
+      backdrop-filter: blur(30px);
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+      transition: right 0.4s;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid rgba(102, 126, 234, 0.3);
+    }
+
+    .ai-panel.active {
+      right: 0;
+    }
+
+    .ai-header {
+      padding: 20px;
+      background: var(--gradient-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ai-header h2 {
+      font-size: 20px;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ai-close {
+      width: 32px;
+      height: 32px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .ai-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message {
+      padding: 12px 16px;
+      border-radius: 12px;
+      max-width: 85%;
+      word-wrap: break-word;
+    }
+
+    .message.user {
+      background: var(--gradient-primary);
+      color: white;
+      align-self: flex-end;
+    }
+
+    .message.assistant {
+      background: rgba(51, 65, 85, 0.6);
+      color: var(--text-primary);
+      align-self: flex-start;
+      border: 1px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .ai-input-area {
+      padding: 16px 20px;
+      background: rgba(30, 41, 59, 0.8);
+      border-top: 1px solid rgba(102, 126, 234, 0.2);
+      display: flex;
+      gap: 10px;
+    }
+
+    #aiInput {
+      flex: 1;
+      padding: 12px;
+      background: rgba(51, 65, 85, 0.6);
+      border: 1px solid rgba(102, 126, 234, 0.3);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+    }
+
+    #aiInput:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .ai-send {
+      width: 44px;
+      height: 44px;
+      background: var(--gradient-primary);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(51, 65, 85, 0.3);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--gradient-primary);
+      border-radius: 3px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .ai-panel {
+        width: 100%;
+        right: -100%;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <!-- Header Premium -->
-    <header>
-        <div class="logo">
-            <div class="logo-icon">🎓</div>
-            <div>
-                <h1>ARKAIOS Plantillas</h1>
-                <span class="version">v2.5 • 2025</span>
-            </div>
-        </div>
-        <div class="header-actions">
-            <button class="btn-premium btn-secondary" onclick="window.location.reload()">
-                <span>🔄</span>
-                <span>Actualizar</span>
-            </button>
-            <button class="btn-premium btn-primary" id="saveBtn">
-                <span>💾</span>
-                <span>Guardar</span>
-            </button>
-        </div>
-    </header>
-
-    <div class="layout">
-        <!-- Sidebar Premium -->
-        <nav id="sidebar">
-            <div class="nav-section">
-                <div class="nav-title">
-                    <span>📝</span>
-                    <span>Texto y Tareas</span>
-                </div>
-                <button class="btn active" data-target="plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html">
-                    <span class="btn-icon">📄</span>
-                    <span>Carta MX - Índice + Texto</span>
-                </button>
-                <button class="btn" data-target="hoja_milimetrica_interactiva.html">
-                    <span class="btn-icon">📐</span>
-                    <span>Hoja Milimétrica</span>
-                </button>
-                <button class="btn" data-target="biografia_profesional.html">
-                    <span class="btn-icon">👤</span>
-                    <span>Biografía Profesional</span>
-                </button>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-title">
-                    <span>📸</span>
-                    <span>Fotografías</span>
-                </div>
-                <button class="btn" data-target="generador-fotos-infantiles.html">
-                    <span class="btn-icon">👶</span>
-                    <span>Fotos Infantiles 2.5×3 cm</span>
-                </button>
-                <button class="btn" data-target="plantilla_circulos_jack.html">
-                    <span class="btn-icon">⭕</span>
-                    <span>Círculos Jack Skellington</span>
-                </button>
-                <button class="btn" data-target="plantilla-cuadros-imagenes-v2.html">
-                    <span class="btn-icon">🖼️</span>
-                    <span>Cuadros Imágenes v2</span>
-                </button>
-                <button class="btn" data-target="plantilla-imagenes-v2.html">
-                    <span class="btn-icon">🎨</span>
-                    <span>Plantilla Imágenes v2</span>
-                </button>
-            </div>
-        </nav>
-
-        <!-- Toggle Button -->
-        <button class="toggle-nav" id="toggleNav">‹</button>
-
-        <!-- Main Content -->
-        <main>
-            <div class="view-controls">
-                <button class="btn-premium btn-secondary" id="downloadBtn">
-                    <span>📥</span>
-                    <span>Descargar PDF</span>
-                </button>
-                <button class="btn-premium btn-secondary" id="fullscreenBtn" onclick="toggleFullscreen()">
-                    <span>⛶</span>
-                    <span>Pantalla completa</span>
-                </button>
-            </div>
-
-            <div id="frameWrapper">
-                <iframe id="plantillaFrame" src="plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html"></iframe>
-            </div>
-        </main>
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🎓</div>
+      <h1>ARKAIOS 3.0</h1>
     </div>
 
-    <!-- AI Button -->
-    <button class="ai-button" id="aiButton">🤖</button>
+    <div class="header-nav">
+      <!-- Dropdown de Plantillas -->
+      <div class="dropdown" id="templatesDropdown">
+        <button class="dropdown-btn" onclick="toggleDropdown('templatesDropdown')">
+          <span>📁</span>
+          <span>Plantillas</span>
+          <span class="dropdown-arrow">▼</span>
+        </button>
+        <div class="dropdown-content">
+          <div class="dropdown-section">
+            <div class="dropdown-title">📝 Texto y Tareas</div>
+            <div class="dropdown-item active"
+              onclick="loadTemplate('plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html', this)">
+              <span>📄</span>
+              <span>Carta MX - Índice + Texto</span>
+            </div>
+            <div class="dropdown-item" onclick="loadTemplate('hoja_milimetrica_interactiva.html', this)">
+              <span>📐</span>
+              <span>Hoja Milimétrica</span>
+            </div>
+            <div class="dropdown-item" onclick="loadTemplate('biografia_profesional.html', this)">
+              <span>👤</span>
+              <span>Biografía Profesional</span>
+            </div>
+          </div>
 
-    <!-- AI Panel -->
-    <div class="ai-panel" id="aiPanel">
-        <div class="ai-header">
-            <h2>
-                <span>✨</span>
-                <span>Asistente ARKAIOS</span>
-            </h2>
-            <div class="ai-header-buttons">
-                <button class="ai-header-btn" id="aiExpand" title="Expandir">⛶</button>
-                <button class="ai-header-btn" id="aiClose" title="Cerrar">✕</button>
+          <div class="dropdown-section">
+            <div class="dropdown-title">📸 Fotografías</div>
+            <div class="dropdown-item" onclick="loadTemplate('generador-fotos-infantiles.html', this)">
+              <span>👶</span>
+              <span>Fotos Infantiles 2.5×3 cm</span>
             </div>
+            <div class="dropdown-item" onclick="loadTemplate('plantilla_circulos_jack.html', this)">
+              <span>⭕</span>
+              <span>Círculos Jack Skellington</span>
+            </div>
+            <div class="dropdown-item" onclick="loadTemplate('plantilla-cuadros-imagenes-v2.html', this)">
+              <span>🖼️</span>
+              <span>Cuadros Imágenes v2</span>
+            </div>
+            <div class="dropdown-item" onclick="loadTemplate('plantilla-imagenes-v2.html', this)">
+              <span>🎨</span>
+              <span>Plantilla Imágenes v2</span>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div class="ai-messages" id="aiMessages">
-            <div class="message assistant">
-                ¡Hola! Soy ARKAIOS, tu asistente para crear plantillas educativas. ¿En qué puedo ayudarte? 😊
+      <!-- Dropdown de Proyectos -->
+      <div class="dropdown" id="projectsDropdown">
+        <button class="dropdown-btn" onclick="toggleDropdown('projectsDropdown')">
+          <span>💾</span>
+          <span>Proyectos</span>
+          <span class="dropdown-arrow">▼</span>
+        </button>
+        <div class="dropdown-content">
+          <div class="dropdown-section">
+            <div class="dropdown-title">Proyectos Guardados</div>
+            <div class="dropdown-item" onclick="alert('Función en desarrollo')">
+              <span>📝</span>
+              <span>Sin proyectos guardados</span>
             </div>
+          </div>
         </div>
+      </div>
 
-        <div class="ai-input-area">
-            <div class="ai-input-wrapper">
-                <input type="text" id="aiInput" placeholder="Escribe tu mensaje..." onkeypress="handleKeyPress(event)">
-            </div>
-            <div class="ai-input-buttons">
-                <button class="ai-input-btn" id="aiMicBtn" title="Voz">🎤</button>
-                <button class="ai-input-btn" id="aiImageBtn" onclick="toggleImageMode()"
-                    title="Generar Imagen">🎨</button>
-                <button class="ai-input-btn ai-send" onclick="handleSend()" title="Enviar">➤</button>
-            </div>
-        </div>
+      <!-- Botón Workshop -->
+      <button class="btn btn-workshop" onclick="openWorkshop()">
+        <span>🔬</span>
+        <span>Workshop</span>
+      </button>
     </div>
 
-    <!-- Auto-save Indicator -->
-    <div class="auto-save-indicator" id="autoSaveIndicator">
-        ✓ Guardado automáticamente
+    <div class="action-buttons">
+      <button class="btn btn-secondary" onclick="saveProject()">
+        <span>💾</span>
+        <span>Guardar</span>
+      </button>
+      <button class="btn btn-primary" onclick="downloadPDF()">
+        <span>📥</span>
+        <span>PDF</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <button class="btn btn-secondary" onclick="toggleFullscreen()">
+        <span>⛶</span>
+        <span id="fullscreenText">Pantalla completa</span>
+      </button>
+      <button class="btn btn-secondary" onclick="window.location.reload()">
+        <span>🔄</span>
+        <span>Actualizar</span>
+      </button>
     </div>
 
-    <script>
-        // Variables globales
-        let currentTemplate = 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html';
-        let conversationHistory = [];
-        let isImageMode = false;
+    <div id="frameWrapper">
+      <iframe id="plantillaFrame" src="plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html"></iframe>
+    </div>
+  </main>
 
-        // Descargar PDF
-        document.getElementById('downloadBtn').addEventListener('click', async () => {
-            const iframe = document.getElementById('plantillaFrame');
-            try {
-                const canvas = await html2canvas(iframe.contentDocument.body, {
-                    scale: 2,
-                    useCORS: true,
-                    logging: false
-                });
+  <!-- Botón AI -->
+  <button class="ai-button" id="aiButton" onclick="toggleAI()">🤖</button>
 
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jspdf.jsPDF({
-                    orientation: 'portrait',
-                    unit: 'mm',
-                    format: 'letter'
-                });
+  <!-- Panel AI -->
+  <div class="ai-panel" id="aiPanel">
+    <div class="ai-header">
+      <h2>
+        <span>✨</span>
+        <span>ARKAIOS AI</span>
+      </h2>
+      <button class="ai-close" onclick="toggleAI()">✕</button>
+    </div>
 
-                const imgWidth = 210;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-                pdf.save(`plantilla_${Date.now()}.pdf`);
-            } catch (error) {
-                console.error('Error al generar PDF:', error);
-                alert('Error al generar el PDF. Por favor, intenta de nuevo.');
-            }
+    <div class="ai-messages" id="aiMessages">
+      <div class="message assistant">
+        ¡Hola! Soy ARKAIOS 3.0. Puedo ayudarte a crear plantillas, generar imágenes y gestionar tus proyectos. ¿Qué
+        necesitas? 😊
+      </div>
+    </div>
+
+    <div class="ai-input-area">
+      <input type="text" id="aiInput" placeholder="Escribe tu mensaje..."
+        onkeypress="if(event.key==='Enter') sendMessage()">
+      <button class="ai-send" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+
+  <script>
+    let currentTemplate = 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html';
+    let conversationHistory = [];
+
+    // Toggle dropdown
+    function toggleDropdown(id) {
+      const dropdown = document.getElementById(id);
+      const allDropdowns = document.querySelectorAll('.dropdown');
+
+      allDropdowns.forEach(d => {
+        if (d.id !== id) d.classList.remove('active');
+      });
+
+      dropdown.classList.toggle('active');
+    }
+
+    // Cerrar dropdowns al hacer clic fuera
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+      }
+    });
+
+    // Cargar plantilla
+    function loadTemplate(template, element) {
+      currentTemplate = template;
+      document.getElementById('plantillaFrame').src = template;
+
+      // Actualizar estado activo
+      document.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('active'));
+      if (element) element.classList.add('active');
+
+      // Cerrar dropdown
+      document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+    }
+
+    // Pantalla completa
+    function toggleFullscreen() {
+      const wrapper = document.getElementById('frameWrapper');
+      wrapper.classList.toggle('fullscreen');
+      const text = document.getElementById('fullscreenText');
+      text.textContent = wrapper.classList.contains('fullscreen') ? 'Salir' : 'Pantalla completa';
+    }
+
+    // Descargar PDF
+    async function downloadPDF() {
+      const iframe = document.getElementById('plantillaFrame');
+      try {
+        const canvas = await html2canvas(iframe.contentDocument.body, {
+          scale: 2,
+          useCORS: true
         });
 
-        // Guardar
-        document.getElementById('saveBtn').addEventListener('click', () => {
-            const indicator = document.getElementById('autoSaveIndicator');
-            indicator.classList.add('show');
-            setTimeout(() => indicator.classList.remove('show'), 2000);
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jspdf.jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'letter'
         });
 
-        // Pantalla completa
-        function toggleFullscreen() {
-            const wrapper = document.getElementById('frameWrapper');
-            wrapper.classList.toggle('fullscreen');
-            const btn = document.getElementById('fullscreenBtn');
-            if (wrapper.classList.contains('fullscreen')) {
-                btn.textContent = '⛶ Salir pantalla completa';
-            } else {
-                btn.textContent = '⛶ Pantalla completa';
-            }
-        }
+        const imgWidth = 210;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.save(`arkaios_${Date.now()}.pdf`);
+      } catch (error) {
+        console.error('Error al generar PDF:', error);
+        alert('Error al generar el PDF');
+      }
+    }
 
-        // Toggle sidebar
-        document.getElementById('toggleNav').addEventListener('click', function () {
-            const nav = document.getElementById('sidebar');
-            nav.classList.toggle('collapsed');
-            this.classList.toggle('collapsed');
-            this.textContent = nav.classList.contains('collapsed') ? '›' : '‹';
+    // Guardar proyecto
+    function saveProject() {
+      const projectName = prompt('Nombre del proyecto:');
+      if (!projectName) return;
+
+      const project = {
+        id: Date.now(),
+        nombre: projectName,
+        plantilla: currentTemplate,
+        fecha: new Date().toISOString()
+      };
+
+      // Guardar en localStorage
+      const projects = JSON.parse(localStorage.getItem('arkaios_projects') || '[]');
+      projects.push(project);
+      localStorage.setItem('arkaios_projects', JSON.stringify(projects));
+
+      alert('✓ Proyecto guardado exitosamente');
+    }
+
+    // Workshop
+    function openWorkshop() {
+      alert('🔬 Workshop: Función en desarrollo\n\nAquí podrás:\n• Crear nuevas plantillas\n• Experimentar con diseños\n• Probar implementaciones\n• Aprobar o descartar cambios');
+    }
+
+    // Toggle AI
+    function toggleAI() {
+      const panel = document.getElementById('aiPanel');
+      const button = document.getElementById('aiButton');
+      panel.classList.toggle('active');
+      button.style.display = panel.classList.contains('active') ? 'none' : 'flex';
+    }
+
+    // Enviar mensaje
+    async function sendMessage() {
+      const input = document.getElementById('aiInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      addMessage(text, 'user');
+      input.value = '';
+
+      conversationHistory.push({ role: 'user', content: text });
+
+      const loadingId = 'loading-' + Date.now();
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'message assistant';
+      loadingDiv.id = loadingId;
+      loadingDiv.textContent = 'Pensando...';
+      document.getElementById('aiMessages').appendChild(loadingDiv);
+
+      try {
+        const response = await fetch('/api/arkaios', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'grok-beta',
+            messages: conversationHistory,
+            stream: false,
+            temperature: 0.7
+          })
         });
 
-        // Navegación entre plantillas
-        document.querySelectorAll('.btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+        const data = await response.json();
+        const aiText = data.choices[0].message.content;
 
-                const target = btn.dataset.target;
-                if (target) {
-                    currentTemplate = target;
-                    document.getElementById('plantillaFrame').src = target;
-                }
-            });
-        });
+        document.getElementById(loadingId).remove();
+        addMessage(aiText, 'assistant');
+        conversationHistory.push({ role: 'assistant', content: aiText });
 
-        // Chat IA
-        const aiButton = document.getElementById('aiButton');
-        const aiPanel = document.getElementById('aiPanel');
-        const aiClose = document.getElementById('aiClose');
-        const aiExpand = document.getElementById('aiExpand');
+      } catch (error) {
+        document.getElementById(loadingId).textContent = 'Error al conectar con ARKAIOS';
+      }
+    }
 
-        aiButton.addEventListener('click', () => {
-            aiPanel.classList.add('active');
-            aiButton.style.display = 'none';
-        });
-
-        aiClose.addEventListener('click', () => {
-            aiPanel.classList.remove('active');
-            aiButton.style.display = 'flex';
-        });
-
-        aiExpand.addEventListener('click', () => {
-            aiPanel.style.width = aiPanel.style.width === '100%' ? '450px' : '100%';
-        });
-
-        // Reconocimiento de voz
-        const aiMicBtn = document.getElementById('aiMicBtn');
-        let recognition = null;
-
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.lang = 'es-MX';
-            recognition.continuous = false;
-
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                document.getElementById('aiInput').value = transcript;
-                aiMicBtn.style.background = '';
-            };
-
-            recognition.onend = () => {
-                aiMicBtn.style.background = '';
-            };
-
-            aiMicBtn.addEventListener('click', () => {
-                if (recognition) {
-                    aiMicBtn.style.background = 'var(--gradient-secondary)';
-                    recognition.start();
-                }
-            });
-        } else {
-            aiMicBtn.style.display = 'none';
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('aiInput');
-            const text = input.value.trim();
-            if (!text) return;
-
-            // 1. Mostrar mensaje usuario
-            addMessage(text, 'user');
-            input.value = '';
-
-            // 2. Añadir al historial
-            conversationHistory.push({ role: 'user', content: text });
-
-            // 3. Mostrar indicador de "Escribiendo..."
-            const loadingId = 'loading-' + Date.now();
-            const loadingDiv = document.createElement('div');
-            loadingDiv.className = 'message assistant';
-            loadingDiv.id = loadingId;
-            loadingDiv.textContent = 'Pensando';
-            loadingDiv.innerHTML += '<span class="loading-dots"></span>';
-            document.getElementById('aiMessages').appendChild(loadingDiv);
-            document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
-
-            try {
-                // 4. Llamar a la API
-                const response = await fetch('/api/arkaios', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        model: 'grok-beta',
-                        messages: conversationHistory,
-                        stream: false,
-                        temperature: 0.7
-                    })
-                });
-
-                if (!response.ok) throw new Error('Error en la respuesta de la IA');
-
-                const data = await response.json();
-                const aiText = data.choices[0].message.content;
-
-                // 5. Actualizar UI
-                const loadingMsg = document.getElementById(loadingId);
-                if (loadingMsg) loadingMsg.remove();
-
-                addMessage(aiText, 'assistant');
-                conversationHistory.push({ role: 'assistant', content: aiText });
-
-                // 6. Hablar
-                speak(aiText);
-
-            } catch (error) {
-                console.error(error);
-                const loadingMsg = document.getElementById(loadingId);
-                if (loadingMsg) loadingMsg.textContent = 'Error al conectar con Arkaios. Por favor verifica tu conexión o configuración.';
-            }
-        }
-
-        // Síntesis de voz
-        function speak(text) {
-            if (!window.speechSynthesis) return;
-
-            // Cancelar cualquier habla anterior
-            window.speechSynthesis.cancel();
-
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'es-MX';
-            utterance.rate = 1.0;
-            utterance.pitch = 1.0;
-
-            // Intentar buscar una voz en español
-            const voices = window.speechSynthesis.getVoices();
-            const spanishVoice = voices.find(v => v.lang.includes('es-MX')) || voices.find(v => v.lang.includes('es'));
-            if (spanishVoice) utterance.voice = spanishVoice;
-
-            window.speechSynthesis.speak(utterance);
-        }
-
-        // Cargar voces al inicio
-        if (window.speechSynthesis) {
-            window.speechSynthesis.onvoiceschanged = () => {
-                window.speechSynthesis.getVoices();
-            };
-        }
-
-        function addMessage(text, type) {
-            const div = document.createElement('div');
-            div.className = `message ${type}`;
-            div.textContent = text;
-            document.getElementById('aiMessages').appendChild(div);
-            document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
-        }
-
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') handleSend();
-        }
-
-        function toggleImageMode() {
-            isImageMode = !isImageMode;
-            const btn = document.getElementById('aiImageBtn');
-            const input = document.getElementById('aiInput');
-
-            if (isImageMode) {
-                btn.style.background = 'var(--gradient-primary)';
-                btn.style.color = 'white';
-                input.placeholder = "Describe la imagen que quieres crear...";
-            } else {
-                btn.style.background = '';
-                btn.style.color = '';
-                input.placeholder = "Escribe tu mensaje...";
-            }
-        }
-
-        function handleSend() {
-            if (isImageMode) {
-                generateImage();
-            } else {
-                sendMessage();
-            }
-        }
-
-        async function generateImage(promptText = null) {
-            const input = document.getElementById('aiInput');
-            const text = promptText || input.value.trim();
-            if (!text) return;
-
-            if (!promptText) {
-                addMessage(`🎨 Generando imagen: "${text}"`, 'user');
-                input.value = '';
-            }
-
-            const loadingId = 'loading-img-' + Date.now();
-            const loadingDiv = document.createElement('div');
-            loadingDiv.className = 'message assistant';
-            loadingDiv.id = loadingId;
-            loadingDiv.innerHTML = '🎨 Creando tu obra de arte<span class="loading-dots"></span>';
-            document.getElementById('aiMessages').appendChild(loadingDiv);
-            document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
-
-            try {
-                const response = await fetch('/api/arkaios-image', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        prompt: text,
-                        model: 'flux-pro-1.1',
-                        n: 1,
-                        size: '1024x1024'
-                    })
-                });
-
-                if (!response.ok) throw new Error('Error generando imagen');
-
-                const data = await response.json();
-                const imageUrl = data.data?.[0]?.url;
-
-                const loadingMsg = document.getElementById(loadingId);
-                if (loadingMsg) loadingMsg.remove();
-
-                if (imageUrl) {
-                    const imgDiv = document.createElement('div');
-                    imgDiv.className = 'message assistant';
-                    imgDiv.innerHTML = `
-            <img src="${imageUrl}" style="max-width: 100%; border-radius: 12px; margin-bottom: 12px;">
-            <div style="display: flex; gap: 8px;">
-              <button onclick="window.open('${imageUrl}')" class="btn-premium btn-secondary" style="flex: 1;">
-                📥 Descargar
-              </button>
-              <button onclick="sendImageToTemplate('${imageUrl}')" class="btn-premium btn-primary" style="flex: 1;">
-                ✨ Usar en Plantilla
-              </button>
-            </div>
-          `;
-                    document.getElementById('aiMessages').appendChild(imgDiv);
-                    document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
-
-                    speak('Imagen generada con éxito. Puedes descargarla o usarla en tu plantilla.');
-                }
-            } catch (error) {
-                console.error(error);
-                const loadingMsg = document.getElementById(loadingId);
-                if (loadingMsg) loadingMsg.textContent = '❌ Error al generar la imagen. Intenta de nuevo.';
-            }
-        }
-
-        function sendImageToTemplate(url) {
-            const iframe = document.getElementById('plantillaFrame');
-            iframe.contentWindow.postMessage({
-                type: 'ARKAIOS_IMAGE_RESULT',
-                image: url
-            }, '*');
-            addMessage('✓ Imagen enviada a la plantilla', 'assistant');
-        }
-
-        // Escuchar solicitudes de generación desde plantillas
-        window.addEventListener('message', (event) => {
-            const data = event.data;
-            if (data.type === 'ARKAIOS_GENERATE_IMAGE') {
-                aiPanel.classList.add('active');
-                aiButton.style.display = 'none';
-                isImageMode = true;
-                toggleImageMode();
-                if (data.prompt) {
-                    generateImage(data.prompt);
-                }
-            }
-        });
-    </script>
+    function addMessage(text, type) {
+      const div = document.createElement('div');
+      div.className = `message ${type}`;
+      div.textContent = text;
+      document.getElementById('aiMessages').appendChild(div);
+      document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
+    }
+  </script>
 </body>
 
 </html>
