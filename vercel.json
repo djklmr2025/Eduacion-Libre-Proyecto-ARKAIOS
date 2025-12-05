@@ -8,6 +8,9 @@
     },
     "api/pixabay.js": {
       "maxDuration": 15
+    },
+    "api/arkaios-image.js": {
+      "maxDuration": 60
     }
   }
 }

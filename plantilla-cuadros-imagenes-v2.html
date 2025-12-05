@@ -1026,6 +1026,201 @@
     function mostrarCreditoPixabay(topic, count) {
       let credit = document.getElementById('pixabay-credit');
       if (!credit) {
+        const inicio = h * cuadrosPorHoja;
+        const fin = Math.min(inicio + cuadrosPorHoja, imagenes.length);
+
+        for (let i = 0; i < cuadrosPorHoja; i++) {
+          const idx = inicio + i;
+          const celda = crearCelda(idx, tamano);
+          cuadricula.appendChild(celda);
+        }
+
+        pageContainer.appendChild(cuadricula);
+        pageWrapper.appendChild(pageContainer);
+        hojasContainer.appendChild(pageWrapper);
+      }
+    }
+
+    function crearCelda(idx, tamano) {
+      const celda = document.createElement('div');
+      celda.className = 'celda-imagen arkaios-image-slot';
+      celda.style.width = `${tamano}cm`;
+      celda.style.height = `${tamano}cm`;
+      celda.draggable = imagenes[idx] ? true : false;
+      celda.dataset.idx = idx;
+
+      const numCelda = document.createElement('span');
+      numCelda.className = 'num-celda';
+      numCelda.textContent = idx + 1;
+      celda.appendChild(numCelda);
+
+      if (imagenes[idx]) {
+        const imgContainer = document.createElement('div');
+        imgContainer.className = 'img-container';
+
+        const img = document.createElement('img');
+        img.src = imagenes[idx];
+        img.className = 'img-preview';
+
+        const estado = estadosImagen[idx] || { zoom: 100, x: 0, y: 0, fijada: false };
+        img.style.transform = `scale(${estado.zoom / 100})`;
+
+        imgContainer.appendChild(img);
+        celda.appendChild(imgContainer);
+
+        const botones = document.createElement('div');
+        botones.className = 'botones-celda';
+
+        const btnEditar = document.createElement('button');
+        btnEditar.className = 'btn-celda btn-editar';
+        btnEditar.textContent = '✏️';
+        btnEditar.onclick = (e) => {
+          e.stopPropagation();
+          abrirEditor(idx);
+        };
+
+        const btnFijar = document.createElement('button');
+        btnFijar.className = 'btn-celda btn-fijar';
+        btnFijar.textContent = estado.fijada ? '🔓' : '📌';
+        btnFijar.onclick = (e) => {
+          e.stopPropagation();
+          toggleFijar(idx);
+        };
+
+        const btnEliminar = document.createElement('button');
+        btnEliminar.className = 'btn-celda btn-eliminar';
+        btnEliminar.textContent = '🗑️';
+        btnEliminar.onclick = (e) => {
+          e.stopPropagation();
+          eliminarImagen(idx);
+        };
+
+        botones.appendChild(btnEditar);
+        botones.appendChild(btnFijar);
+        botones.appendChild(btnEliminar);
+        celda.appendChild(botones);
+
+        celda.addEventListener('dragstart', handleDragStart);
+        celda.addEventListener('dragover', handleDragOver);
+        celda.addEventListener('drop', handleDrop);
+        celda.addEventListener('dragend', handleDragEnd);
+      } else {
+        const icono = document.createElement('span');
+        icono.className = 'celda-vacia';
+        icono.textContent = '+';
+        celda.appendChild(icono);
+        celda.onclick = function () {
+          indiceEditando = idx;
+          inputIndividual.click();
+        };
+      }
+
+      return celda;
+    }
+
+    function handleDragStart(e) {
+      const idx = parseInt(e.currentTarget.dataset.idx);
+      if (estadosImagen[idx]?.fijada) {
+        e.preventDefault();
+        return;
+      }
+      indiceDragInicio = idx;
+      e.currentTarget.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('drag-over');
+      e.dataTransfer.dropEffect = 'move';
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+      const idxDestino = parseInt(e.currentTarget.dataset.idx);
+
+      if (indiceDragInicio !== -1 && indiceDragInicio !== idxDestino) {
+        const temp = imagenes[indiceDragInicio];
+        const tempEstado = estadosImagen[indiceDragInicio];
+        imagenes[indiceDragInicio] = imagenes[idxDestino];
+        estadosImagen[indiceDragInicio] = estadosImagen[idxDestino];
+        imagenes[idxDestino] = temp;
+        estadosImagen[idxDestino] = tempEstado;
+        generarPlantilla();
+      }
+    }
+
+    function handleDragEnd(e) {
+      e.currentTarget.classList.remove('dragging');
+      document.querySelectorAll('.drag-over').forEach(el => {
+        el.classList.remove('drag-over');
+      });
+      indiceDragInicio = -1;
+    }
+
+    function abrirEditor(idx) {
+      indiceEditando = idx;
+      editorImg.src = imagenes[idx];
+      const estado = estadosImagen[idx] || { zoom: 100 };
+      zoomSlider.value = estado.zoom;
+      zoomValor.textContent = estado.zoom + '%';
+      editorImg.style.transform = `scale(${estado.zoom / 100})`;
+      modalEditor.classList.add('activo');
+    }
+
+    function cerrarEditor() {
+      modalEditor.classList.remove('activo');
+      indiceEditando = -1;
+    }
+
+    zoomSlider.addEventListener('input', function () {
+      const zoom = parseInt(this.value);
+      zoomValor.textContent = zoom + '%';
+      editorImg.style.transform = `scale(${zoom / 100})`;
+    });
+
+    function aplicarEdicion() {
+      if (indiceEditando >= 0) {
+        estadosImagen[indiceEditando].zoom = parseInt(zoomSlider.value);
+        generarPlantilla();
+        cerrarEditor();
+      }
+    }
+
+    function toggleFijar(idx) {
+      if (!estadosImagen[idx]) {
+        estadosImagen[idx] = { zoom: 100, x: 0, y: 0, fijada: false };
+      }
+      estadosImagen[idx].fijada = !estadosImagen[idx].fijada;
+      generarPlantilla();
+    }
+
+    function eliminarImagen(idx) {
+      if (confirm('¿Eliminar esta imagen?')) {
+        imagenes.splice(idx, 1);
+        estadosImagen.splice(idx, 1);
+        generarPlantilla();
+      }
+    }
+
+    function limpiarTodo() {
+      if (confirm('¿Eliminar todas las imágenes?')) {
+        imagenes = [];
+        estadosImagen = [];
+        generarPlantilla();
+      }
+    }
+
+    function actualizarEstadisticas(numImagenes, numHojas, cuadrosPorHoja) {
+      document.getElementById('stat-imagenes').textContent = numImagenes;
+      document.getElementById('stat-hojas').textContent = numHojas;
+      document.getElementById('stat-cuadros').textContent = cuadrosPorHoja;
+    }
+
+    function mostrarCreditoPixabay(topic, count) {
+      let credit = document.getElementById('pixabay-credit');
+      if (!credit) {
         credit = document.createElement('div');
         credit.id = 'pixabay-credit';
         credit.classList.add('no-print');
@@ -1036,20 +1231,6 @@
       credit.textContent = `Imágenes de Pixabay (${count}) · Tema: ${cleanTopic}`;
     }
 
-    function rellenarConPixabay(urls = [], topic = 'Pixabay') {
-      if (!Array.isArray(urls) || urls.length === 0) return;
-      imagenes = urls.slice();
-      estadosImagen = imagenes.map(() => ({ zoom: 100, x: 0, y: 0, fijada: false }));
-      generarPlantilla();
-      mostrarCreditoPixabay(topic, urls.length);
-    }
-
-    window.addEventListener('message', (event) => {
-      const data = event.data;
-      if (!data || data.type !== 'ARKAIOS_PIXABAY_IMAGES') return;
-      rellenarConPixabay(data.images || [], data.topic || 'Pixabay');
-    });
-
     // Nuclear fix for printing
     window.onbeforeprint = function () {
       const credit = document.getElementById('pixabay-credit');
@@ -1059,6 +1240,27 @@
       const credit = document.getElementById('pixabay-credit');
       if (credit) credit.style.display = 'block';
     };
+
+    // ===== ARKAIOS AI INTEGRATION =====
+    function openArkaiosAI() {
+      const prompt = prompt("¿Qué imagen quieres crear con Arkaios AI?");
+      if (prompt) {
+        window.parent.postMessage({
+          type: 'ARKAIOS_GENERATE_IMAGE',
+          prompt: prompt
+        }, '*');
+      }
+    }
+
+    window.addEventListener('message', (event) => {
+      const data = event.data;
+      if (data.type === 'ARKAIOS_IMAGE_RESULT') {
+        const imageUrl = data.image;
+        if (imageUrl) {
+          rellenarConPixabay([imageUrl], `Arkaios AI`);
+        }
+      }
+    });
 
     // Iniciar
     generarPlantilla();

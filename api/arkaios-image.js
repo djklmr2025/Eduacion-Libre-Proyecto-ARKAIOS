@@ -1,3 +1,4 @@
+
 export default async function handler(req, res) {
     // CORS headers
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -18,7 +19,6 @@ export default async function handler(req, res) {
     }
 
     const apiKey = process.env.VITE_PROXY_API_KEY || process.env.PROXY_API_KEY;
-    // Fallback URL if env var is missing (though it should be set in Vercel)
     const baseUrl = process.env.VITE_ARKAIOS_BASE_URL || process.env.ARKAIOS_BASE_URL || 'https://arkaios-service-proxy.onrender.com';
 
     if (!apiKey) {
@@ -26,7 +26,8 @@ export default async function handler(req, res) {
     }
 
     try {
-        const response = await fetch(`${baseUrl}/v1/chat/completions`, {
+        console.log('Generating image with Arkaios Proxy...');
+        const response = await fetch(`${baseUrl}/v1/images/generations`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${apiKey}`,
@@ -43,7 +44,7 @@ export default async function handler(req, res) {
 
         res.status(200).json(data);
     } catch (error) {
-        console.error('Arkaios Proxy error:', error);
+        console.error('Arkaios Image Proxy error:', error);
         res.status(500).json({ error: 'Failed to fetch from Arkaios', details: error.message });
     }
 }

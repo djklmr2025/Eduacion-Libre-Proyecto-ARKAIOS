@@ -523,374 +523,448 @@
 
         <div class="workspace">
             <div class="sidebar">
+                <div class="sidebar-title">
+                    <span>🎯</span>
+                    <span>9 Renglones Posicionales</span>
+                </div>
 
-                @page {
-                size: letter;
-                margin: 0;
-                }
+                <div class="info-banner">
+                    <strong>💡 Control Posicional:</strong><br>
+                    • Cada renglón llena SU fila específica<br>
+                    • Renglón 1 = Espacios 1-8<br>
+                    • Renglón 9 = Espacios 65-72<br>
+                    • Arrastra fotos para reorganizar
+                </div>
 
-                @media print {
-                body {
-                margin: 0 !important;
-                padding: 0 !important;
-                background: white !important;
-                }
+                <div id="rowSelectors"></div>
 
-                .header,
-                .workspace,
-                .sidebar,
-                .templates-header,
-                .template-label {
-                display: none !important;
-                }
+                <div class="action-buttons">
+                    <button class="btn-main btn-print" onclick="printTemplates()">🖨️ Imprimir Plantillas</button>
+                    <button class="btn-main btn-clear-all" onclick="clearAll()">🗑️ Limpiar Todo</button>
+                    <button class="btn-main" onclick="openArkaiosAI()" style="background: #8e44ad; color: white;">✨
+                        Crear con IA (Arkaios)</button>
+                </div>
+            </div>
 
-                .main-container {
-                max-width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                }
-
-                .templates-area {
-                padding: 0 !important;
-                margin: 0 !important;
-                box-shadow: none !important;
-                border-radius: 0 !important;
-                background: white !important;
-                }
-
-                .templates-container {
-                display: block !important;
-                gap: 0 !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                }
-
-                .template-wrapper {
-                page-break-after: always;
-                page-break-inside: avoid;
-                margin: 0 !important;
-                padding: 0 !important;
-                }
-
-                .template-wrapper:last-child {
-                page-break-after: auto;
-                }
-
-                .page-container {
-                width: 21.59cm !important;
-                height: 27.94cm !important;
-                box-shadow: none !important;
-                border-radius: 0 !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                overflow: visible !important;
-                background: white !important;
-                display: block !important;
-                }
-
-                .grid-container {
-                width: 100% !important;
-                height: 100% !important;
-                display: grid !important;
-                grid-template-columns: repeat(8, 2.5cm) !important;
-                grid-template-rows: repeat(9, 3cm) !important;
-                gap: 0 !important;
-                justify-content: center !important;
-                align-content: start !important;
-                padding: 0.5cm !important;
-                }
-
-                .photo-cell {
-                width: 2.5cm !important;
-                height: 3cm !important;
-                border: 1px solid #ddd !important;
-                background: white !important;
-                overflow: hidden !important;
-                position: relative !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                }
-
-                .photo-cell img {
-                width: 100% !important;
-                height: 100% !important;
-                object-fit: cover !important;
-                display: block !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                }
-
-                .photo-cell-number,
-                .cell-empty,
-                .cell-delete {
-                display: none !important;
-                }
-                }
-                </style>
-                </head>
-
-                <body>
-                    <div class="main-container">
-                        <div class="header">
-                            <h1>📸 Generador de Fotos Infantiles - Control por Renglón</h1>
-                            <p class="subtitle">Tamaño: 2.5cm × 3cm | 8 columnas × 9 renglones = 72 fotos por hoja |
-                                Cada renglón en su posición exacta</p>
+            <div class="templates-area">
+                <div class="templates-header">
+                    <div class="templates-title">📄 Plantilla de Impresión</div>
+                    <div class="stats-inline">
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalPhotos">0</span>
+                            <span>fotos</span>
                         </div>
-
-                        <div class="workspace">
-                            <div class="sidebar">
-                                <div class="sidebar-title">
-                                    <span>🎯</span>
-                                    <span>9 Renglones Posicionales</span>
-                                </div>
-
-                                <div class="info-banner">
-                                    <strong>💡 Control Posicional:</strong><br>
-                                    • Cada renglón llena SU fila específica<br>
-                                    • Renglón 1 = Espacios 1-8<br>
-                                    • Renglón 9 = Espacios 65-72<br>
-                                    • Arrastra fotos para reorganizar
-                                </div>
-
-                                <div id="rowSelectors"></div>
-
-                                <div class="action-buttons">
-                                    <button class="btn-main btn-print" onclick="printTemplates()">🖨️ Imprimir
-                                        Plantillas</button>
-                                    <button class="btn-main btn-clear-all" onclick="clearAll()">🗑️ Limpiar
-                                        Todo</button>
-
-                                    <!-- Nuevos Botones Generales -->
-                                    <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
-                                        <button class="btn-main" onclick="searchPexels()"
-                                            style="background: #05a081; color: white;">📸 Pexels</button>
-                                        <button class="btn-main" onclick="searchFreepik()"
-                                            style="background: #336aea; color: white;">🎨 Freepik</button>
-                                        <button class="btn-main" onclick="openAIModal()"
-                                            style="background: #8e44ad; color: white;">✨ Crear con IA</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="templates-area">
-                                <div class="templates-header">
-                                    <div class="templates-title">📄 Plantilla de Impresión</div>
-                                    <div class="stats-inline">
-                                        <div class="stat-item">
-                                            <span class="stat-number" id="totalPhotos">0</span>
-                                            <span>fotos</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="stat-number" id="totalSheets">1</span>
-                                            <span>hojas</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="templates-container" id="templatesContainer"></div>
-                            </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="totalSheets">1</span>
+                            <span>hojas</span>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Modal IA -->
-                    <div id="aiModal"
-                        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;">
-                        <div
-                            style="background: #1f2937; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; border: 1px solid #3b82f6;">
-                            <h3 style="color: #3b82f6; margin-bottom: 15px;">✨ Generar Imagen con Grok</h3>
-
-                            <div style="margin-bottom: 15px;">
-                                <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Tu API Key de
-                                    Grok (xAI):</label>
-                                <input type="password" id="grokKey" placeholder="xai-..."
-                                    style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
-                                <small style="color: #9ca3af;">Se guardará localmente en tu navegador.</small>
-                            </div>
-
-                            <div style="margin-bottom: 15px;">
-                                <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Describe tu
-                                    imagen:</label>
-                                <textarea id="aiPrompt" rows="4"
-                                    placeholder="Un paisaje espacial con planetas coloridos..."
-                                    style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;"></textarea>
-                            </div>
-
-                            <div style="margin-bottom: 15px;">
-                                <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Número de
-                                    imágenes:</label>
-                                <input type="number" id="imageCount" min="1" max="4" value="1"
-                                    style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
-                            </div>
-
-                            <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                                <button onclick="closeAIModal()"
-                                    style="background: #4b5563; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Cancelar</button>
-                                <button onclick="generateAIImage()"
-                                    style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Generar
-                                    con Grok</button>
-                            </div>
-
-                            <div id="aiStatus" style="margin-top: 10px; color: #e5e7eb; font-size: 0.9rem;"></div>
-                        </div>
-                        return;
-                        }
-
-                        // Generar HTML de impresión
-                        let printHTML = `
-                        <!DOCTYPE html>
-                        <html>
-
-                        <head>
-                            <meta charset="UTF-8">
-                            <title>Impresión - Fotos Infantiles</title>
-                            <style>
-                                @page {
-                                    size: letter;
-                                    margin: 0;
-                                }
-
-                                * {
-                                    margin: 0;
-                                    padding: 0;
-                                    box-sizing: border-box;
-                                }
-
-                                body {
-                                    margin: 0;
-                                    padding: 0;
-                                    background: white;
-                                }
-
-                                .page-container {
-                                    width: 21.59cm;
-                                    height: 27.94cm;
-                                    background: white;
-                                    page-break-after: always;
-                                    page-break-inside: avoid;
-                                    position: relative;
-                                }
-
-                                .page-container:last-child {
-                                    page-break-after: auto;
-                                }
-
-                                .grid-container {
-                                    width: 100%;
-                                    height: 100%;
-                                    display: grid;
-                                    grid-template-columns: repeat(8, 2.5cm);
-                                    grid-template-rows: repeat(9, 3cm);
-                                    gap: 0;
-                                    justify-content: center;
-                                    align-content: start;
-                                    padding: 0.5cm;
-                                }
-
-                                .photo-cell {
-                                    width: 2.5cm;
-                                    height: 3cm;
-                                    border: 1px solid #ddd;
-                                    background: white;
-                                    overflow: hidden;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                }
-
-                                .photo-cell img {
-                                    width: 100%;
-                                    height: 100%;
-                                    object-fit: cover;
-                                    -webkit-print-color-adjust: exact;
-                                    print-color-adjust: exact;
-                                }
-
-                                @media print {
-                                    body {
-                                        margin: 0;
-                                        padding: 0;
-                                    }
-
-                                    .page-container {
-                                        margin: 0;
-                                        padding: 0;
-                                    }
-                                }
-                            </style>
-                        </head>
-
-                        <body>
-                            `;
-
-                            // Generar las páginas
-                            const totalSheets = Math.max(1, Math.ceil(filledCount / PHOTOS_PER_SHEET));
-
-                            for (let s = 0; s < totalSheets; s++) { printHTML
-                                +='<div class="page-container"><div class="grid-container">' ; for (let i=0; i <
-                                PHOTOS_PER_SHEET; i++) { printHTML +='<div class="photo-cell">' ; if (allCells[i]) {
-                                printHTML +=`<img src="${allCells[i]}" alt="Foto ${i+1}">`;
-                                }
-                                printHTML += '
-                    </div>';
-                    }
-
-                    printHTML += '
+                <div class="templates-container" id="templatesContainer"></div>
             </div>
-        </div>';
+        </div>
+    </div>
+
+    <input type="file" id="fileInputHidden" accept="image/*" style="display:none">
+
+    <script>
+        const PHOTOS_PER_SHEET = 72;
+        const PHOTOS_PER_ROW = 8;
+        const TOTAL_ROWS = 9;
+
+        // ===== API KEYS =====
+        const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
+        const FREEPIK_API_KEY = 'FPSX890e70b7164ab7a1b05182a68d64ad06';
+        const PIXABAY_API_KEY = '53456758-e7788c27d5c820739d362581f';
+
+        // ===== FUNCIONES DE BÚSQUEDA =====
+        // ===== FUNCIONES DE BÚSQUEDA =====
+        async function searchPixabay() {
+            const query = prompt("¿Qué imágenes buscas en Pixabay?");
+            if (!query) return;
+            const countStr = prompt("¿Cuántas imágenes quieres?", "1");
+            const count = parseInt(countStr) || 1;
+
+            try {
+                const response = await fetch(`https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=${count}`);
+                const data = await response.json();
+                if (data.hits && data.hits.length > 0) {
+                    const urls = data.hits.map(hit => hit.largeImageURL);
+                    assignImagesToRows(urls);
+                } else {
+                    alert('No se encontraron imágenes');
+                }
+            } catch (e) { console.error(e); alert('Error en Pixabay'); }
         }
 
-        printHTML += `
-</body>
+        async function searchPexels() {
+            const query = prompt("¿Qué imágenes buscas en Pexels?");
+            if (!query) return;
+            const countStr = prompt("¿Cuántas imágenes quieres?", "1");
+            const count = parseInt(countStr) || 1;
 
-</html>
-`;
+            try {
+                const response = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=${count}`, {
+                    headers: { Authorization: PEXELS_API_KEY }
+                });
+                const data = await response.json();
+                if (data.photos && data.photos.length > 0) {
+                    const urls = data.photos.map(photo => photo.src.large);
+                    assignImagesToRows(urls);
+                } else {
+                    alert('No se encontraron imágenes');
+                }
+            } catch (e) { console.error(e); alert('Error en Pexels'); }
+        }
 
-printWindow.document.write(printHTML);
-printWindow.document.close();
+        async function searchFreepik() {
+            const query = prompt("¿Qué imágenes buscas en Freepik?");
+            if (!query) return;
+            const countStr = prompt("¿Cuántas imágenes quieres?", "1");
+            const count = parseInt(countStr) || 1;
 
-// Esperar a que cargue y luego imprimir
-printWindow.onload = function() {
-setTimeout(() => {
-printWindow.print();
+            try {
+                const response = await fetch(`https://api.freepik.com/v1/resources?locale=es-ES&q=${encodeURIComponent(query)}&limit=${count}`, {
+                    headers: { 'X-Freepik-API-Key': FREEPIK_API_KEY }
+                });
+                const data = await response.json();
+                if (data.data && data.data.length > 0) {
+                    const urls = data.data.map(item => item.image.source.url);
+                    assignImagesToRows(urls);
+                } else {
+                    alert('No se encontraron imágenes');
+                }
+            } catch (e) { console.error(e); alert('Error en Freepik'); }
+        }
 
-// Cerrar la ventana automáticamente después de imprimir o cancelar
-printWindow.onafterprint = function() {
-printWindow.close();
-};
+        function assignImagesToRows(urls) {
+            let currentUrlIndex = 0;
+            for (let i = 1; i <= TOTAL_ROWS; i++) {
+                if (!rowImages[i].image && currentUrlIndex < urls.length) {
+                    setRowImage(i, urls[currentUrlIndex]);
+                    currentUrlIndex++;
+                }
+            }
+            if (currentUrlIndex < urls.length) {
+                alert(`Se asignaron ${currentUrlIndex} imágenes. No hay más filas disponibles.`);
+            }
+        }
 
-// Backup: cerrar después de un tiempo si no se detecta el evento
-const checkInterval = setInterval(() => {
-// Verificar si el diálogo de impresión ya no está activo
-try {
-if (printWindow && !printWindow.closed) {
-// Esperar 1 segundo y cerrar
-clearInterval(checkInterval);
-setTimeout(() => {
-if (printWindow && !printWindow.closed) {
-printWindow.close();
-}
-}, 1000);
-} else {
-clearInterval(checkInterval);
-}
-} catch (e) {
-clearInterval(checkInterval);
-}
-}, 500);
+        function assignImageToNextRow(imageUrl) {
+            assignImagesToRows([imageUrl]);
+        }
 
-// Forzar cierre después de 10 segundos como máximo
-setTimeout(() => {
-if (printWindow && !printWindow.closed) {
-printWindow.close();
-}
-}, 10000);
-}, 500);
-};
-}
+        function setRowImage(row, url) {
+            rowImages[row].image = url;
+            createRowSelectors();
+            renderTemplate();
+            updateStats();
+        }
 
-initApp();
-</script>
+        let rowImages = {};
+        for (let i = 1; i <= TOTAL_ROWS; i++) {
+            rowImages[i] = { image: null, quantity: 1 };
+        }
+
+        let draggedCell = null;
+
+        function initApp() {
+            createRowSelectors();
+            renderTemplate();
+            updateStats();
+        }
+
+        function createRowSelectors() {
+            const container = document.getElementById('rowSelectors');
+            container.innerHTML = '';
+
+            for (let row = 1; row <= TOTAL_ROWS; row++) {
+                const startPos = (row - 1) * PHOTOS_PER_ROW + 1;
+                const endPos = row * PHOTOS_PER_ROW;
+
+                const selector = document.createElement('div');
+                selector.className = 'row-selector';
+                selector.id = `row-selector-${row}`;
+
+                const header = document.createElement('div');
+                header.className = 'row-header';
+
+                const label = document.createElement('div');
+                label.className = 'row-label';
+                label.innerHTML = `Renglón ${row} <span class="row-range">(${startPos}-${endPos})</span>`;
+
+                const clearBtn = document.createElement('button');
+                clearBtn.className = 'row-clear';
+                clearBtn.textContent = '×';
+                clearBtn.onclick = () => clearRow(row);
+
+                header.appendChild(label);
+                header.appendChild(clearBtn);
+
+                const preview = document.createElement('div');
+                preview.className = 'row-preview';
+                preview.onclick = () => selectImageForRow(row);
+
+                if (rowImages[row].image) {
+                    const img = document.createElement('img');
+                    img.src = rowImages[row].image;
+                    preview.appendChild(img);
+                    selector.classList.add('active');
+                } else {
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'row-preview-placeholder';
+                    placeholder.textContent = '📷';
+                    preview.appendChild(placeholder);
+                }
+
+                const controls = document.createElement('div');
+                controls.className = 'row-controls';
+
+                const qtyInput = document.createElement('input');
+                qtyInput.type = 'number';
+                qtyInput.min = 1;
+                qtyInput.max = PHOTOS_PER_ROW;
+                qtyInput.value = rowImages[row].quantity;
+                qtyInput.className = 'row-qty-input';
+                qtyInput.onchange = (e) => {
+                    let val = parseInt(e.target.value);
+                    if (val < 1) val = 1;
+                    if (val > PHOTOS_PER_ROW) val = PHOTOS_PER_ROW;
+                    rowImages[row].quantity = val;
+                    e.target.value = val;
+                    renderTemplate();
+                    updateStats();
+                };
+
+                const fillBtn = document.createElement('button');
+                fillBtn.className = 'row-btn btn-fill';
+                fillBtn.textContent = '✓ Llenar';
+                fillBtn.onclick = () => fillRow(row);
+
+                controls.appendChild(qtyInput);
+                controls.appendChild(fillBtn);
+
+                selector.appendChild(header);
+                selector.appendChild(preview);
+                selector.appendChild(controls);
+
+                container.appendChild(selector);
+            }
+        }
+
+        function selectImageForRow(row) {
+            const input = document.getElementById('fileInputHidden');
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    rowImages[row].image = ev.target.result;
+                    createRowSelectors();
+                    renderTemplate();
+                    updateStats();
+                };
+                reader.readAsDataURL(file);
+            };
+            input.click();
+        }
+
+        function fillRow(row) {
+            if (!rowImages[row].image) {
+                alert(`Primero selecciona una imagen para el Renglón ${row}`);
+                return;
+            }
+            rowImages[row].quantity = PHOTOS_PER_ROW;
+            createRowSelectors();
+            renderTemplate();
+            updateStats();
+        }
+
+        function clearRow(row) {
+            rowImages[row] = { image: null, quantity: 1 };
+            createRowSelectors();
+            renderTemplate();
+            updateStats();
+        }
+
+        function clearAll() {
+            if (!confirm('¿Limpiar todas las imágenes?')) return;
+            for (let i = 1; i <= TOTAL_ROWS; i++) {
+                rowImages[i] = { image: null, quantity: 1 };
+            }
+            createRowSelectors();
+            renderTemplate();
+            updateStats();
+        }
+
+        function renderTemplate() {
+            const container = document.getElementById('templatesContainer');
+            container.innerHTML = '';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'template-wrapper';
+
+            const label = document.createElement('div');
+            label.className = 'template-label';
+            label.textContent = 'Hoja 1';
+
+            const page = document.createElement('div');
+            page.className = 'page-container';
+
+            const grid = document.createElement('div');
+            grid.className = 'grid-container';
+
+            for (let cellIndex = 0; cellIndex < PHOTOS_PER_SHEET; cellIndex++) {
+                const row = Math.floor(cellIndex / PHOTOS_PER_ROW) + 1;
+                const posInRow = cellIndex % PHOTOS_PER_ROW;
+
+                const cell = document.createElement('div');
+                cell.className = 'photo-cell';
+                cell.dataset.index = cellIndex;
+                cell.draggable = false;
+
+                const rowData = rowImages[row];
+                if (rowData.image && posInRow < rowData.quantity) {
+                    cell.classList.add('filled');
+                    cell.draggable = true;
+
+                    const img = document.createElement('img');
+                    img.src = rowData.image;
+                    cell.appendChild(img);
+
+                    const number = document.createElement('div');
+                    number.className = 'photo-cell-number';
+                    number.textContent = cellIndex + 1;
+                    cell.appendChild(number);
+
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'cell-delete';
+                    deleteBtn.textContent = '×';
+                    deleteBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        removeCellImage(row);
+                    };
+                    cell.appendChild(deleteBtn);
+                } else {
+                    const empty = document.createElement('div');
+                    empty.className = 'cell-empty';
+                    empty.textContent = '📷';
+                    cell.appendChild(empty);
+                }
+
+                cell.addEventListener('dragstart', handleDragStart);
+                cell.addEventListener('dragover', handleDragOver);
+                cell.addEventListener('drop', handleDrop);
+                cell.addEventListener('dragend', handleDragEnd);
+
+                grid.appendChild(cell);
+            }
+
+            page.appendChild(grid);
+            wrapper.appendChild(label);
+            wrapper.appendChild(page);
+            container.appendChild(wrapper);
+        }
+
+        function removeCellImage(row) {
+            rowImages[row].image = null;
+            rowImages[row].quantity = 1;
+            createRowSelectors();
+            renderTemplate();
+            updateStats();
+        }
+
+        function handleDragStart(e) {
+            if (!this.classList.contains('filled')) return;
+            draggedCell = parseInt(this.dataset.index);
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            if (draggedCell !== null) {
+                this.classList.add('drag-over');
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+
+            if (draggedCell === null) return;
+
+            const targetIndex = parseInt(this.dataset.index);
+            if (draggedCell === targetIndex) return;
+
+            const draggedRow = Math.floor(draggedCell / PHOTOS_PER_ROW) + 1;
+            const targetRow = Math.floor(targetIndex / PHOTOS_PER_ROW) + 1;
+
+            const tempImage = rowImages[draggedRow].image;
+            rowImages[draggedRow].image = rowImages[targetRow].image;
+            rowImages[targetRow].image = tempImage;
+
+            createRowSelectors();
+            renderTemplate();
+            updateStats();
+        }
+
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+            draggedCell = null;
+        }
+
+        function updateStats() {
+            let total = 0;
+            for (let i = 1; i <= TOTAL_ROWS; i++) {
+                if (rowImages[i].image) {
+                    total += rowImages[i].quantity;
+                }
+            }
+            document.getElementById('totalPhotos').textContent = total;
+            document.getElementById('totalSheets').textContent = 1;
+        }
+
+        function printTemplates() {
+            window.print();
+        }
+
+        // ===== ARKAIOS AI INTEGRATION =====
+        function openArkaiosAI() {
+            const prompt = prompt("¿Qué imagen quieres crear con Arkaios AI?");
+            if (prompt) {
+                window.parent.postMessage({
+                    type: 'ARKAIOS_GENERATE_IMAGE',
+                    prompt: prompt
+                }, '*');
+            }
+        }
+
+        window.addEventListener('message', (event) => {
+            const data = event.data;
+            if (data.type === 'ARKAIOS_IMAGE_RESULT') {
+                const imageUrl = data.image;
+                if (imageUrl) {
+                    // Asignar al primer renglón vacío o al primero si todos llenos
+                    let targetRow = 1;
+                    for (let i = 1; i <= TOTAL_ROWS; i++) {
+                        if (!rowImages[i].image) {
+                            targetRow = i;
+                            break;
+                        }
+                    }
+                    setRowImage(targetRow, imageUrl);
+                }
+            }
+        });
+
+        initApp();
+
+
+    </script>
 </body>
 
 </html>

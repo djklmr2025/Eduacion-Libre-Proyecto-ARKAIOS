@@ -651,9 +651,47 @@
     }
 
     .ai-send:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
     }
+
+    .ai-mic {
+      padding: 10px 14px;
+      background: var(--bg-light);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1.2rem;
+    }
+
+    .ai-mic:hover {
+      background: var(--bg-medium);
+      color: var(--accent-blue);
+    }
+
+    .ai-mic.listening {
+      background: var(--error);
+      color: white;
+      border-color: var(--error);
+      animation: pulse-red 1.5s infinite;
+    }
+
+    @keyframes pulse-red {
+      0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+      }
+    }
+
 
     /* Toggle sidebar button */
     .toggle-nav {
@@ -813,9 +851,11 @@
     </div>
 
     <div class="ai-input-area">
+      <button class="ai-mic" id="aiMic" onclick="toggleVoice()" title="Hablar">🎤</button>
+      <button class="ai-mic" id="aiImageBtn" onclick="toggleImageMode()" title="Generar Imagen">🎨</button>
       <input type="text" class="ai-input" id="aiInput" placeholder="Escribe tu mensaje..."
         onkeypress="handleKeyPress(event)">
-      <button class="ai-send" id="aiSend" onclick="sendMessage()">📤</button>
+      <button class="ai-send" id="aiSend" onclick="handleSend()">📤</button>
     </div>
   </div>
 
@@ -1263,30 +1303,259 @@
       aiPanel.classList.toggle('fullscreen');
     });
 
-    function sendMessage() {
+    // Historial de conversación
+    let conversationHistory = [
+      { role: 'system', content: 'Eres Arkaios, un asistente educativo inteligente y amable. Ayudas a los usuarios a crear materiales educativos, generar imágenes y organizar sus clases. Tus respuestas son concisas y útiles.' }
+    ];
+
+    async function sendMessage() {
       const input = document.getElementById('aiInput');
       const text = input.value.trim();
       if (!text) return;
 
+      // 1. Mostrar mensaje usuario
       addMessage(text, 'user');
       input.value = '';
 
-      // Simulación de respuesta IA
-      setTimeout(() => {
-        addMessage('Función de IA en desarrollo. Conecta Puter.js para funcionalidad completa.', 'assistant');
-      }, 1000);
+      // 2. Añadir al historial
+      conversationHistory.push({ role: 'user', content: text });
+
+      // 3. Mostrar indicador de "Escribiendo..."
+      const loadingId = 'loading-' + Date.now();
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'message assistant';
+      loadingDiv.id = loadingId;
+      loadingDiv.textContent = 'Pensando...';
+      document.getElementById('aiMessages').appendChild(loadingDiv);
+      document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
+
+      try {
+        // 4. Llamar a la API
+        const response = await fetch('/api/arkaios', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: conversationHistory })
+        });
+
+        if (!response.ok) throw new Error('Error en la respuesta de la IA');
+
+        const data = await response.json();
+        const aiText = data.choices[0].message.content;
+
+        // 5. Actualizar UI
+        const loadingMsg = document.getElementById(loadingId);
+        if (loadingMsg) loadingMsg.remove();
+
+        addMessage(aiText, 'assistant');
+        conversationHistory.push({ role: 'assistant', content: aiText });
+
+        // 6. Hablar
+        speak(aiText);
+
+      } catch (error) {
+        console.error(error);
+        const loadingMsg = document.getElementById(loadingId);
+        if (loadingMsg) loadingMsg.textContent = 'Error al conectar con Arkaios. Por favor verifica tu conexión o configuración.';
+      }
+    }
+
+    // Síntesis de voz
+    function speak(text) {
+      if (!window.speechSynthesis) return;
+
+      // Cancelar cualquier habla anterior
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'es-MX'; // Preferir español de México
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+
+      // Intentar buscar una voz en español
+      const voices = window.speechSynthesis.getVoices();
+      const spanishVoice = voices.find(v => v.lang.includes('es-MX')) || voices.find(v => v.lang.includes('es'));
+      if (spanishVoice) utterance.voice = spanishVoice;
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Cargar voces al inicio (necesario en algunos navegadores)
+    if (window.speechSynthesis) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
     }
 
     function addMessage(text, type) {
       const div = document.createElement('div');
       div.className = `message ${type}`;
+      // Convertir markdown básico a HTML si es necesario, por ahora texto plano
       div.textContent = text;
       document.getElementById('aiMessages').appendChild(div);
       document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
     }
 
     function handleKeyPress(e) {
-      if (e.key === 'Enter') sendMessage();
+      if (e.key === 'Enter') handleSend();
+    }
+
+    // Estado de modo imagen
+    let isImageMode = false;
+
+    function toggleImageMode() {
+      isImageMode = !isImageMode;
+      const btn = document.getElementById('aiImageBtn');
+      const input = document.getElementById('aiInput');
+
+      if (isImageMode) {
+        btn.style.background = 'var(--accent-purple)';
+        btn.style.color = 'white';
+        input.placeholder = "Describe la imagen que quieres crear...";
+      } else {
+        btn.style.background = '';
+        btn.style.color = '';
+        input.placeholder = "Escribe tu mensaje...";
+      }
+    }
+
+    function handleSend() {
+      if (isImageMode) {
+        generateImage();
+      } else {
+        sendMessage();
+      }
+    }
+
+    async function generateImage(promptText = null) {
+      const input = document.getElementById('aiInput');
+      const text = promptText || input.value.trim();
+      if (!text) return;
+
+      if (!promptText) {
+        addMessage(`🎨 Generando imagen: "${text}"`, 'user');
+        input.value = '';
+      }
+
+      const loadingId = 'loading-img-' + Date.now();
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'message assistant';
+      loadingDiv.id = loadingId;
+      loadingDiv.innerHTML = '🎨 Creando tu obra de arte... <span class="loading-dots"></span>';
+      document.getElementById('aiMessages').appendChild(loadingDiv);
+      document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
+
+      try {
+        const response = await fetch('/api/arkaios-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: text,
+            model: 'flux-pro-1.1',
+            n: 1,
+            size: '1024x1024'
+          })
+        });
+
+        if (!response.ok) throw new Error('Error generando imagen');
+
+        const data = await response.json();
+        const imageUrl = data.data?.[0]?.url;
+
+        const loadingMsg = document.getElementById(loadingId);
+        if (loadingMsg) loadingMsg.remove();
+
+        if (imageUrl) {
+          const imgDiv = document.createElement('div');
+          imgDiv.className = 'message assistant';
+          imgDiv.style.maxWidth = '100%';
+          imgDiv.innerHTML = `
+            <p>¡Aquí tienes!</p>
+            <img src="${imageUrl}" style="max-width: 100%; border-radius: 8px; margin-top: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);" alt="${text}">
+            <div style="margin-top: 8px; display: flex; gap: 8px;">
+              <a href="${imageUrl}" download="arkaios-art.png" target="_blank" style="padding: 6px 12px; background: var(--accent-blue); color: white; border-radius: 6px; text-decoration: none; font-size: 0.8rem;">Descargar</a>
+              <button onclick="sendImageToTemplate('${imageUrl}')" style="padding: 6px 12px; background: var(--accent-purple); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">Usar en Plantilla</button>
+            </div>
+          `;
+          document.getElementById('aiMessages').appendChild(imgDiv);
+          speak('Aquí tienes la imagen que pediste.');
+        } else {
+          throw new Error('No se recibió URL de imagen');
+        }
+
+      } catch (error) {
+        console.error(error);
+        const loadingMsg = document.getElementById(loadingId);
+        if (loadingMsg) loadingMsg.textContent = '❌ Error al crear la imagen. Intenta de nuevo.';
+        speak('Lo siento, hubo un error al crear la imagen.');
+      }
+    }
+
+    function sendImageToTemplate(url) {
+      const frame = document.getElementById('plantillaFrame');
+      if (frame && frame.contentWindow) {
+        frame.contentWindow.postMessage({
+          type: 'ARKAIOS_IMAGE_RESULT',
+          image: url,
+          source: 'arkaios-ai'
+        }, '*');
+        alert('Imagen enviada a la plantilla activa');
+      }
+    }
+
+    // Escuchar peticiones de las plantillas
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'ARKAIOS_GENERATE_IMAGE') {
+        const prompt = event.data.prompt;
+        // Abrir panel si está cerrado
+        const aiPanel = document.getElementById('aiPanel');
+        const aiButton = document.getElementById('aiButton');
+        if (!aiPanel.classList.contains('active')) {
+          aiPanel.classList.add('active');
+          aiButton.style.display = 'none';
+        }
+        // Generar
+        generateImage(prompt);
+      }
+    });
+
+    // Reconocimiento de voz
+    let recognition = null;
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.lang = 'es-MX';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('aiInput').value = transcript;
+        sendMessage();
+      };
+
+      recognition.onend = () => {
+        document.getElementById('aiMic').classList.remove('listening');
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Error de reconocimiento de voz:', event.error);
+        document.getElementById('aiMic').classList.remove('listening');
+      };
+    }
+
+    function toggleVoice() {
+      if (!recognition) {
+        alert('Tu navegador no soporta reconocimiento de voz.');
+        return;
+      }
+
+      const btn = document.getElementById('aiMic');
+      if (btn.classList.contains('listening')) {
+        recognition.stop();
+      } else {
+        recognition.start();
+        btn.classList.add('listening');
+      }
     }
 
     // Inicializar
