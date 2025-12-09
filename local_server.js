@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import arkaiosHandler from './api/arkaios.js';
 import arkaiosImageHandler from './api/arkaios-image.js';
+import batchImagesHandler from './api/batch-images.js';
 
 dotenv.config();
 
@@ -26,6 +27,10 @@ app.all('/api/arkaios', (req, res) => {
 
 app.all('/api/arkaios-image', (req, res) => {
     arkaiosImageHandler(req, res);
+});
+
+app.all('/api/batch-images', (req, res) => {
+    batchImagesHandler(req, res);
 });
 
 app.listen(port, () => {

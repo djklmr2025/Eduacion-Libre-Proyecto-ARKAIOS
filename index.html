@@ -784,6 +784,212 @@
         .auto-save-indicator.show {
             opacity: 1;
         }
+
+        /* Batch Image Button & Modal */
+        .batch-img-btn {
+            position: fixed;
+            bottom: 110px;
+            right: 32px;
+            width: 64px;
+            height: 64px;
+            background: var(--gradient-secondary);
+            border: none;
+            border-radius: 50%;
+            color: var(--bg-primary);
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.4s;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .batch-img-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            padding: 32px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .close-modal {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(51, 65, 85, 0.4);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+        /* Batch Image Button & Modal */
+        .batch-img-btn {
+            position: fixed;
+            bottom: 110px;
+            right: 32px;
+            width: 64px;
+            height: 64px;
+            background: var(--gradient-secondary);
+            border: none;
+            border-radius: 50%;
+            color: var(--bg-primary);
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.4s;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .batch-img-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            padding: 32px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .close-modal {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(51, 65, 85, 0.4);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            height: 150px;
+            resize: vertical;
+        }
     </style>
 </head>
 
@@ -1247,6 +1453,74 @@
                 }
             }
         });
+    </script>
+    <button class="batch-img-btn" onclick="openBatchModal()" title="Generar Imágenes por Lote">
+        🖼️
+    </button>
+
+    <div class="modal-overlay" id="batchModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Generador de Imágenes por Lote</h3>
+                <button class="close-modal" onclick="closeBatchModal()">×</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nombre del Tema (Carpeta)</label>
+                <input type="text" class="form-input" id="batchCategory" placeholder="Ej: Instrumentos Musicales">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Lista de Items (Uno por línea)</label>
+                <textarea class="form-textarea" id="batchItems" placeholder="Guitarra&#10;Piano&#10;Violín"></textarea>
+            </div>
+            <button class="btn-premium btn-primary" style="width: 100%" onclick="startBatchGeneration()">
+                🚀 Iniciar Generación
+            </button>
+            <div id="batchStatus" style="margin-top: 16px; font-size: 13px; color: var(--text-muted);"></div>
+        </div>
+    </div>
+
+    <script>
+        function openBatchModal() {
+            document.getElementById('batchModal').classList.add('active');
+        }
+        function closeBatchModal() {
+            document.getElementById('batchModal').classList.remove('active');
+        }
+        async function startBatchGeneration() {
+            const category = document.getElementById('batchCategory').value.trim();
+            const itemsText = document.getElementById('batchItems').value.trim();
+            const statusDiv = document.getElementById('batchStatus');
+
+            if (!category || !itemsText) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+
+            const items = itemsText.split('\n').map(line => line.trim()).filter(line => line);
+
+            statusDiv.innerHTML = '⏳ Procesando... Esto puede tomar unos momentos.';
+            statusDiv.style.color = 'var(--warning)';
+
+            try {
+                const response = await fetch('/api/batch-images', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category, items })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    statusDiv.innerHTML = `✅ Completado! ${data.results.length} items procesados. Revisa la carpeta ARKAIOS_Batch_Images.`;
+                    statusDiv.style.color = 'var(--success)';
+                } else {
+                    throw new Error(data.error || 'Error desconocido');
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `❌ Error: ${error.message}`;
+                statusDiv.style.color = 'var(--error)';
+            }
+        }
     </script>
 </body>
 
