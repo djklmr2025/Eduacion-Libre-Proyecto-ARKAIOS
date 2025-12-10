@@ -228,6 +228,10 @@
             font-size: 12px;
             text-align: center;
             pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
         }
 
         .delete-button {
@@ -258,6 +262,17 @@
 
         .grid-cell.has-image .empty-cell-text {
             display: none;
+        }
+
+        .btn-gen-cell {
+            background: #8e44ad;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            pointer-events: auto;
         }
 
         input[type="file"] {
@@ -296,7 +311,8 @@
             .controls,
             .drop-zone,
             .stats,
-            .template-label {
+            .template-label,
+            .btn-gen-cell {
                 display: none !important;
             }
 
@@ -373,6 +389,10 @@
             <button onclick="window.print()">🖨️ Imprimir</button>
 
             <!-- Botones Generales -->
+            <button onclick="openGoogleModal()"
+                style="background: linear-gradient(135deg, #EA4335, #FBBC05, #34A853, #4285F4); background-size: 400% 400%; animation: gradientShift 3s ease infinite;">
+                🔍 Buscar en Google
+            </button>
             <button onclick="searchPexels()" style="background: #05a081;">📸 Pexels</button>
             <button onclick="searchFreepik()" style="background: #336aea;">🎨 Freepik</button>
             <button onclick="openAIModal()" style="background: #8e44ad;">✨ Crear con IA</button>
@@ -407,11 +427,11 @@
         style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;">
         <div
             style="background: #1f2937; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; border: 1px solid #3b82f6;">
-            <h3 style="color: #3b82f6; margin-bottom: 15px;">✨ Generar Imagen con Grok</h3>
+            <h3 style="color: #3b82f6; margin-bottom: 15px;">✨ Generar Imagen con Arkaios AI</h3>
 
             <div style="margin-bottom: 15px;">
-                <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Tu API Key de Grok (xAI):</label>
-                <input type="password" id="grokKey" placeholder="xai-..."
+                <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">API Key (Opcional):</label>
+                <input type="password" id="grokKey" placeholder="sk-..."
                     style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
                 <small style="color: #9ca3af;">Se guardará localmente en tu navegador.</small>
             </div>
@@ -432,8 +452,7 @@
                 <button onclick="closeAIModal()"
                     style="background: #4b5563; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Cancelar</button>
                 <button onclick="generateAIImage()"
-                    style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Generar
-                    con Grok</button>
+                    style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Generar</button>
             </div>
 
             <div id="aiStatus" style="margin-top: 10px; color: #e5e7eb; font-size: 0.9rem;"></div>
@@ -445,6 +464,25 @@
         let gridConfig = { rows: 4, cols: 4 };
         let draggedElement = null;
         let draggedIndex = null;
+
+        // Helper para convertir imagen a Base64 (evita problemas de CORS al imprimir/guardar)
+        function toDataURL(url, callback) {
+            var xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                var reader = new FileReader();
+                reader.onloadend = function () {
+                    callback(reader.result);
+                }
+                reader.readAsDataURL(xhr.response);
+            };
+            xhr.onerror = function () {
+                // Fallback si falla CORS
+                callback(url);
+            };
+            xhr.open('GET', url);
+            xhr.responseType = 'blob';
+            xhr.send();
+        }
 
         function initializeApp() {
             const dropZone = document.getElementById('dropZone');
@@ -607,11 +645,16 @@
         function createCell(localIndex, image, globalIndex) {
             const cell = document.createElement('div');
             cell.className = 'grid-cell';
-            cell.draggable = image ? true : false;
+            // Only draggable if image exists AND is not fixed
+            cell.draggable = image && !image.isFixed ? true : false;
             cell.dataset.index = globalIndex;
 
             if (image) {
                 cell.classList.add('has-image');
+                if (image.isFixed) {
+                    cell.style.cursor = 'not-allowed';
+                    cell.style.border = '2px solid #4CAF50';
+                }
             }
 
             const cellNumber = document.createElement('div');
@@ -629,6 +672,16 @@
             emptyText.className = 'empty-cell-text';
             emptyText.textContent = '🖼️';
 
+            const btnGen = document.createElement('button');
+            btnGen.textContent = '✨ Generar';
+            btnGen.className = 'btn-gen-cell';
+            btnGen.onclick = (e) => {
+                e.stopPropagation();
+                openAIModal();
+            };
+
+            emptyText.appendChild(btnGen);
+
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-button';
             deleteBtn.textContent = '×';
@@ -638,10 +691,12 @@
             };
 
             cell.addEventListener('dragstart', (e) => {
-                if (image) {
+                if (image && !image.isFixed) {
                     draggedElement = cell;
                     draggedIndex = globalIndex;
                     cell.classList.add('dragging');
+                } else {
+                    e.preventDefault();
                 }
             });
 
@@ -675,11 +730,47 @@
             cell.appendChild(emptyText);
             cell.appendChild(deleteBtn);
 
+            // Pin/Fix Button
+            if (image) {
+                const fixBtn = document.createElement('button');
+                fixBtn.className = 'fix-button';
+                fixBtn.innerHTML = image.isFixed ? '📍' : '📌';
+                fixBtn.title = image.isFixed ? 'Imagen fijada - Clic para liberar' : 'Fijar imagen en esta posición';
+                fixBtn.style.cssText = `
+                    position: absolute;
+                    top: 30px;
+                    right: 3px;
+                    background: ${image.isFixed ? '#4CAF50' : '#FF9800'};
+                    color: white;
+                    border: none;
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    font-size: 12px;
+                    z-index: 10;
+                    transition: all 0.3s;
+                `;
+
+                fixBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleFixImage(globalIndex);
+                };
+
+                cell.appendChild(fixBtn);
+            }
+
             return cell;
         }
 
         function swapImages(index1, index2) {
             if (index1 === index2) return;
+
+            // No permitir mover imágenes fijadas
+            if (allImages[index1]?.isFixed || allImages[index2]?.isFixed) {
+                showToast('⚠️ No puedes mover imágenes fijadas');
+                return;
+            }
 
             const temp = allImages[index1];
             allImages[index1] = allImages[index2];
@@ -785,34 +876,38 @@
             const count = parseInt(document.getElementById('imageCount').value) || 1;
             const statusDiv = document.getElementById('aiStatus');
 
-            if (!apiKey) {
-                alert('Por favor ingresa tu API Key de Grok (xAI)');
-                return;
-            }
             if (!prompt) {
                 alert('Por favor describe la imagen');
                 return;
             }
 
-            localStorage.setItem('grok_api_key', apiKey);
-            statusDiv.textContent = '⏳ Generando imágenes con Grok... (esto puede tomar unos segundos)';
+            if (apiKey) localStorage.setItem('grok_api_key', apiKey);
 
-            // Usar el backend proxy para evitar CORS
-            const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
-            const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
-            const endpoint = isLocal ? (localBase + '/api/grok') : '/api/grok';
+            statusDiv.textContent = '⏳ Generando imágenes con Arkaios AI...';
+            statusDiv.style.background = '#3b82f6';
 
             try {
+                // Detectar si estamos en entorno local o producción
+                const isLocal = location.hostname === 'localhost' ||
+                    location.hostname === '127.0.0.1' ||
+                    location.protocol === 'file:';
+
+                const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
+                const endpoint = isLocal ? (localBase + '/api/arkaios-image') : '/api/arkaios-image';
+
+                const payload = {
+                    model: "dall-e-3",
+                    prompt: prompt,
+                    n: 1,
+                    size: "1024x1024"
+                };
+
                 const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        apiKey: apiKey,
-                        prompt: prompt,
-                        count: count
-                    })
+                    body: JSON.stringify(payload)
                 });
 
                 if (!response.ok) {
@@ -821,23 +916,25 @@
                 }
 
                 const data = await response.json();
-                const content = data.choices[0]?.message?.content || '';
 
-                // Buscar URLs en la respuesta
-                const urlRegex = /(https?:\/\/[^\s)]+)/g;
-                const matches = content.match(urlRegex);
+                if (data.data && data.data.length > 0) {
+                    const imageUrl = data.data[0].url;
 
-                if (!matches || matches.length === 0) {
-                    throw new Error('Grok no devolvió URLs de imágenes. Respuesta: ' + content.substring(0, 100) + '...');
+                    // Convertir a Data URL para evitar CORS
+                    toDataURL(imageUrl, function (dataUrl) {
+                        applyExternalImages([dataUrl || imageUrl], `Arkaios AI: ${prompt}`);
+                        statusDiv.textContent = '✅ ¡Imágenes generadas!';
+                        statusDiv.style.background = '#27ae60';
+                        setTimeout(closeAIModal, 1000);
+                    });
+                } else {
+                    throw new Error("No se recibió imagen de la API.");
                 }
-
-                const imageUrls = matches.slice(0, count);
-                applyExternalImages(imageUrls, `Grok: ${prompt}`);
-                closeAIModal();
 
             } catch (error) {
                 console.error(error);
                 statusDiv.textContent = '❌ Error: ' + error.message;
+                statusDiv.style.background = '#e74c3c';
             }
         }
 
@@ -856,6 +953,535 @@
         }
 
         initializeApp();
+    </script>
+
+    <!-- ============================================ -->
+    <!-- MODAL DE BÚSQUEDA DE IMÁGENES DE GOOGLE -->
+    <!-- ============================================ -->
+
+    <style>
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        /* Estilos del Modal de Google Images */
+        .google-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .google-modal.active {
+            display: flex;
+        }
+
+        .google-modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 2px solid #4CAF50;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .google-modal-header {
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .google-modal-header h2 {
+            color: white;
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .google-close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .google-close-btn:hover {
+            background: rgba(255, 0, 0, 0.7);
+            transform: rotate(90deg);
+        }
+
+        .google-search-box {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .google-search-input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        .google-search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #4CAF50;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .google-search-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #2196F3;
+            box-shadow: 0 0 20px rgba(33, 150, 243, 0.3);
+        }
+
+        .google-search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .google-search-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .google-search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .google-search-btn:active {
+            transform: translateY(0);
+        }
+
+        .google-images-grid {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 500px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .google-image-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .google-image-item:hover {
+            transform: scale(1.05);
+            border-color: #4CAF50;
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .google-image-item.selected {
+            border-color: #2196F3;
+            transform: scale(0.95);
+        }
+
+        .google-image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s;
+        }
+
+        .google-image-item:hover img {
+            opacity: 0.8;
+        }
+
+        .google-select-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(33, 150, 243, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+
+        .google-image-item.selected .google-select-overlay {
+            display: flex;
+        }
+
+        .google-loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 18px;
+        }
+
+        .google-error {
+            text-align: center;
+            padding: 40px;
+            color: #ff6b6b;
+            font-size: 16px;
+        }
+
+        .google-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 18px;
+        }
+
+        .google-modal-footer {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .google-selected-count {
+            color: white;
+            font-weight: bold;
+            background: rgba(33, 150, 243, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        .google-apply-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .google-apply-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(33, 150, 243, 0.4);
+        }
+
+        .google-apply-btn:disabled {
+            background: gray;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .google-images-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 10px;
+            }
+
+            .google-modal-content {
+                width: 95%;
+                max-height: 95vh;
+            }
+        }
+    </style>
+
+    <!-- Modal HTML -->
+    <div id="googleModal" class="google-modal">
+        <div class="google-modal-content">
+            <div class="google-modal-header">
+                <h2>
+                    <span>🔍</span>
+                    Buscar Imágenes en Google
+                </h2>
+                <button class="google-close-btn" onclick="closeGoogleModal()">×</button>
+            </div>
+
+            <div class="google-search-box">
+                <div class="google-search-input-wrapper">
+                    <input type="text" id="googleSearchInput" class="google-search-input"
+                        placeholder="Escribe lo que quieres buscar... (ej: paisajes naturales)"
+                        onkeypress="if(event.key==='Enter') searchGoogleImages()" />
+                    <button class="google-search-btn" onclick="searchGoogleImages()">
+                        🔍 Buscar
+                    </button>
+                </div>
+            </div>
+
+            <div id="googleImagesGrid" class="google-images-grid">
+                <div class="google-empty">
+                    <p>🖼️</p>
+                    <p>Escribe un término de búsqueda arriba y presiona Enter</p>
+                </div>
+            </div>
+
+            <div class="google-modal-footer">
+                <div class="google-selected-count">
+                    Seleccionadas: <span id="googleSelectedCount">0</span>
+                </div>
+                <button class="google-apply-btn" onclick="applyGoogleImages()" id="googleApplyBtn" disabled>
+                    ✅ Fijar Imágenes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // SISTEMA DE BÚSQUEDA DE GOOGLE IMAGES
+        // ============================================
+
+        let googleSelectedImages = [];
+        let googleCurrentCell = null;
+
+        function openGoogleModal(cellIndex = null) {
+            googleCurrentCell = cellIndex;
+            googleSelectedImages = [];
+            updateGoogleSelectedCount();
+            document.getElementById('googleModal').classList.add('active');
+            document.getElementById('googleSearchInput').focus();
+        }
+
+        function closeGoogleModal() {
+            document.getElementById('googleModal').classList.remove('active');
+            googleSelectedImages = [];
+            googleCurrentCell = null;
+            document.getElementById('googleImagesGrid').innerHTML = `
+            <div class="google-empty">
+                <p>🖼️</p>
+                <p>Escribe un término de búsqueda arriba y presiona Enter</p>
+            </div>
+        `;
+        }
+
+        async function searchGoogleImages() {
+            const query = document.getElementById('googleSearchInput').value.trim();
+            if (!query) {
+                alert('Por favor escribe algo para buscar');
+                return;
+            }
+
+            const grid = document.getElementById('googleImagesGrid');
+            grid.innerHTML = '<div class="google-loading">⏳ Buscando imágenes...</div>';
+
+            try {
+                // Detectar si estamos en local o producción
+                const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
+                const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
+                const endpoint = isLocal ? (localBase + '/api/google-images') : '/api/google-images';
+
+                const response = await fetch(`${endpoint}?query=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.error || data.message || 'Error desconocido');
+                }
+
+                if (!data.images || data.images.length === 0) {
+                    grid.innerHTML = `
+                    <div class="google-empty">
+                        <p>😕</p>
+                        <p>No se encontraron imágenes para "${query}"</p>
+                        <p style="font-size: 14px; margin-top: 10px;">Intenta con otras palabras clave</p>
+                    </div>
+                `;
+                    return;
+                }
+
+                displayGoogleImages(data.images);
+
+            } catch (error) {
+                console.error('Error en búsqueda:', error);
+                grid.innerHTML = `
+                <div class="google-error">
+                    <p>❌ Error al buscar imágenes</p>
+                    <p style="font-size: 14px; margin-top: 10px;">${error.message}</p>
+                    <p style="font-size: 12px; margin-top: 10px; color: rgba(255,255,255,0.5);">
+                        Asegúrate de haber configurado GOOGLE_SEARCH_API_KEY y GOOGLE_SEARCH_CX en Vercel
+                    </p>
+                </div>
+            `;
+            }
+        }
+
+        function displayGoogleImages(images) {
+            const grid = document.getElementById('googleImagesGrid');
+            grid.innerHTML = '';
+
+            images.forEach((img, index) => {
+                const item = document.createElement('div');
+                item.className = 'google-image-item';
+                item.dataset.url = img.url;
+                item.dataset.index = index;
+
+                item.innerHTML = `
+                <img src="${img.thumbnail}" alt="${img.title}" loading="lazy" />
+                <div class="google-select-overlay">✓</div>
+            `;
+
+                item.onclick = () => toggleGoogleImageSelection(img.url, item);
+                grid.appendChild(item);
+            });
+        }
+
+        function toggleGoogleImageSelection(url, element) {
+            const index = googleSelectedImages.indexOf(url);
+
+            if (index > -1) {
+                // Deseleccionar
+                googleSelectedImages.splice(index, 1);
+                element.classList.remove('selected');
+            } else {
+                // Seleccionar
+                googleSelectedImages.push(url);
+                element.classList.add('selected');
+            }
+
+            updateGoogleSelectedCount();
+        }
+
+        function updateGoogleSelectedCount() {
+            const count = googleSelectedImages.length;
+            document.getElementById('googleSelectedCount').textContent = count;
+            document.getElementById('googleApplyBtn').disabled = count === 0;
+        }
+
+        function applyGoogleImages() {
+            if (googleSelectedImages.length === 0) return;
+
+            // Agregar imágenes al sistema
+            googleSelectedImages.forEach(url => {
+                // Convertir a Data URL para evitar CORS
+                toDataURL(url, function (dataUrl) {
+                    allImages.push({
+                        data: dataUrl || url,
+                        name: 'Imagen de Google',
+                        isFixed: false // Las imágenes NO están fijadas por defecto
+                    });
+                    // Renderizar después de cada adición para ver progreso
+                    renderTemplates();
+                    updateStats();
+                });
+            });
+
+            closeGoogleModal();
+
+            // Mensaje de confirmación
+            const count = googleSelectedImages.length;
+            showToast(`✅ ${count} imagen${count > 1 ? 'es agregadas' : ' agregada'}. Usa 📌 para fijarlas.`);
+        }
+
+        // ============================================
+        // SISTEMA DE FIJADO DE IMÁGENES
+        // ============================================
+
+        function toggleFixImage(index) {
+            if (allImages[index]) {
+                allImages[index].isFixed = !allImages[index].isFixed;
+                renderTemplates();
+
+                const status = allImages[index].isFixed ? 'fijada' : 'liberada';
+                showToast(`Imagen ${status} en posición ${index + 1}`);
+            }
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.textContent = message;
+            toast.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 10000;
+            font-weight: bold;
+            animation: slideIn 0.3s ease;
+        `;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+
+        // CSS para animaciones de toast
+        const toastStyles = document.createElement('style');
+        toastStyles.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(400px); opacity: 0; }
+        }
+    `;
+        document.head.appendChild(toastStyles);
     </script>
 </body>
 

@@ -1,0 +1,156 @@
+{
+    "items": [
+        {
+            "filename": "electrofonos_sintetizador.png",
+            "prompt": "Ilustración digital en 3/4 de un sintetizador analógico clásico, estilo realista, iluminación suave frontal, fondo neutro gris claro, acabado en metal y plástico, etiqueta inferior con \"Sintetizador\", resolución 3000x2000."
+        },
+        {
+            "filename": "electrofonos_guitarra_electrica.png",
+            "prompt": "Ilustración digital en 3/4 de una guitarra eléctrica (modelo Stratocaster) apoyada en un soporte, estilo realista, iluminación suave lateral, fondo neutro gris, detalle en madera y hardware, etiqueta inferior \"Guitarra eléctrica\", 3000x2000."
+        },
+        {
+            "filename": "electrofonos_bajo_electrico.png",
+            "prompt": "Ilustración digital en 3/4 de un bajo eléctrico de cuerpo sólido, estilo realista, iluminación suave lateral, fondo gris neutro, acabado madera/metálico, etiqueta inferior \"Bajo eléctrico\", 3000x2000."
+        },
+        {
+            "filename": "electrofonos_caja_de_ritmos.png",
+            "prompt": "Ilustración digital en 3/4 de una caja de ritmos vintage/electrónica, estilo realista, iluminación suave, fondo neutro gris claro, etiqueta inferior \"Caja de ritmos\", 3000x2000."
+        },
+        {
+            "filename": "electrofonos_clavinet.png",
+            "prompt": "Ilustración digital en 3/4 de un clavinet, estilo realista, iluminación suave, fondo gris claro, etiqueta inferior \"Clavinet\", 3000x2000."
+        },
+        {
+            "filename": "electrofonos_fender_rhodes.png",
+            "prompt": "Ilustración digital en 3/4 de un Fender Rhodes, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Fender Rhodes\", 3000x2000."
+        },
+        {
+            "filename": "electrofonos_mellotron.png",
+            "prompt": "Ilustración digital en 3/4 de un Mellotron, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Mellotron\", 3000x2000."
+        },
+        {
+            "filename": "electrofonos_ondas_martenot.png",
+            "prompt": "Ilustración digital en 3/4 de unas Ondas Martenot (teclado con control de vibrato), estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Ondes Martenot\", 3000x2000."
+        },
+        {
+            "filename": "electrofonos_trautonio.png",
+            "prompt": "Ilustración digital en 3/4 de un Trautonio, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Trautonio\", 3000x2000."
+        },
+        {
+            "filename": "electrofonos_vocoder.png",
+            "prompt": "Ilustración digital en 3/4 de un vocoder hardware clásico, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Vocoder\", 3000x2000."
+        },
+        {
+            "filename": "electrofonos_omnichord.png",
+            "prompt": "Ilustración digital en 3/4 de un Omnichord, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Omnichord\", 3000x2000."
+        },
+        {
+            "filename": "membranofonos_tambor.png",
+            "prompt": "Ilustración digital en 3/4 de un tambor, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Tambor\", 3000x2000."
+        },
+        {
+            "filename": "membranofonos_pandereta.png",
+            "prompt": "Ilustración digital en 3/4 de una pandereta, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Pandereta\", 3000x2000."
+        },
+        {
+            "filename": "membranofonos_zarb_persa.png",
+            "prompt": "Ilustración digital en 3/4 de un zarb persa, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Zarb persa\", 3000x2000."
+        },
+        {
+            "filename": "membranofonos_pandero_marco.png",
+            "prompt": "Ilustración digital en 3/4 de un pandero marco, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Pandero marco\", 3000x2000."
+        },
+        {
+            "filename": "membranofonos_caja_redoblante.png",
+            "prompt": "Ilustración digital en 3/4 de una caja redoblante, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Caja redoblante\", 3000x2000."
+        },
+        {
+            "filename": "membranofonos_timbaleta.png",
+            "prompt": "Ilustración digital en 3/4 de una timbaleta, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Timbaleta\", 3000x2000."
+        },
+        {
+            "filename": "membranofonos_tamborín.png",
+            "prompt": "Ilustración digital en 3/4 de un tamborín, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Tamborín\", 3000x2000."
+        },
+        {
+            "filename": "idiofonos_xilofono.png",
+            "prompt": "Ilustración digital en 3/4 de un xilófono, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Xilófono\", 3000x2000."
+        },
+        {
+            "filename": "idiofonos_vibrfono.png",
+            "prompt": "Ilustración digital en 3/4 de un vibráfono, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Vibráfono\", 3000x2000."
+        },
+        {
+            "filename": "idiofonos_carillon.png",
+            "prompt": "Ilustración digital en 3/4 de un carillón, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Carillón\", 3000x2000."
+        },
+        {
+            "filename": "idiofonos_triangulo.png",
+            "prompt": "Ilustración digital en 3/4 de un triángulo, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Triángulo\", 3000x2000."
+        },
+        {
+            "filename": "idiofonos_campanas_tabulares.png",
+            "prompt": "Ilustración digital en 3/4 de campanas tabulares, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Campanas tabulares\", 3000x2000."
+        },
+        {
+            "filename": "idiofonos_castanuelas.png",
+            "prompt": "Ilustración digital en 3/4 de castañuelas, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Castañuelas\", 3000x2000."
+        },
+        {
+            "filename": "idiofonos_botella_golpeada.png",
+            "prompt": "Ilustración digital en 3/4 de una botella golpeada, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Botella golpeada\", 3000x2000."
+        },
+        {
+            "filename": "idiofonos_platos_suspendidos.png",
+            "prompt": "Ilustración digital en 3/4 de platos suspendidos, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Platos suspendidos\", 3000x2000."
+        },
+        {
+            "filename": "cordofonos_mandolina.png",
+            "prompt": "Ilustración digital en 3/4 de una mandolina, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Mandolina\", 3000x2000."
+        },
+        {
+            "filename": "cordofonos_guitarra_clasica.png",
+            "prompt": "Ilustración digital en 3/4 de una guitarra clásica, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Guitarra clásica\", 3000x2000."
+        },
+        {
+            "filename": "cordofonos_lira.png",
+            "prompt": "Ilustración digital en 3/4 de una lira, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Lira\", 3000x2000."
+        },
+        {
+            "filename": "aerofonos_flauta_traversa.png",
+            "prompt": "Ilustración digital en 3/4 de una flauta traversa, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Flauta traversa\", 3000x2000."
+        },
+        {
+            "filename": "aerofonos_flauta_dulce.png",
+            "prompt": "Ilustración digital en 3/4 de una flauta dulce, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Flauta dulce\", 3000x2000."
+        },
+        {
+            "filename": "aerofonos_trompeta.png",
+            "prompt": "Ilustración digital en 3/4 de una trompeta, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Trompeta\", 3000x2000."
+        },
+        {
+            "filename": "aerofonos_fagot.png",
+            "prompt": "Ilustración digital en 3/4 de un fagot, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Fagot\", 3000x2000."
+        },
+        {
+            "filename": "aerofonos_corneta.png",
+            "prompt": "Ilustración digital en 3/4 de una corneta, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Corneta\", 3000x2000."
+        },
+        {
+            "filename": "aerofonos_quena.png",
+            "prompt": "Ilustración digital en 3/4 de una quena, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Quena\", 3000x2000."
+        },
+        {
+            "filename": "aerofonos_zampoña.png",
+            "prompt": "Ilustración digital en 3/4 de una zampoña, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Zampoña\", 3000x2000."
+        },
+        {
+            "filename": "aerofonos_tuba.png",
+            "prompt": "Ilustración digital en 3/4 de una tuba, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Tuba\", 3000x2000."
+        },
+        {
+            "filename": "aerofonos_flauta_pan.png",
+            "prompt": "Ilustración digital en 3/4 de una flauta de pan, estilo realista, iluminación suave, fondo neutro, etiqueta inferior \"Flauta de pan\", 3000x2000."
+        }
+    ]
+}

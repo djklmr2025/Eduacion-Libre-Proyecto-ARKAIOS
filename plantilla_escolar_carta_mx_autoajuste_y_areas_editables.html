@@ -43,7 +43,8 @@
       header,
       footer,
       .toolbar,
-      .instructions {
+      .instructions,
+      .btn-gen-slot {
         display: none !important;
       }
 
@@ -371,6 +372,10 @@
     .image-slot .placeholder {
       color: #7f8c8d;
       font-size: 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
     }
 
     .image-slot .add-btn {
@@ -414,6 +419,17 @@
 
     .image-slot.has-image:hover .remove-btn {
       opacity: 1;
+    }
+
+    .btn-gen-slot {
+      background: #8e44ad;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      margin-top: 5px;
     }
 
     /* MODAL DE IA */
@@ -644,11 +660,11 @@
   <!-- MODAL DE IA -->
   <div id="aiModal" class="ai-modal">
     <div class="ai-modal-content">
-      <h3>✨ Generar Imagen con Grok</h3>
+      <h3>✨ Generar Imagen con Arkaios AI</h3>
 
       <div>
-        <label>API Key de Grok (xAI):</label>
-        <input type="text" id="grokKey" placeholder="xai-...">
+        <label>API Key (Opcional):</label>
+        <input type="text" id="grokKey" placeholder="sk-...">
       </div>
 
       <div>
@@ -672,13 +688,32 @@
 
   <script>
     // ===== CONFIGURACIÓN DE API KEYS =====
-    // ===== CONFIGURACIÓN DE API KEYS =====
     const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
     const FREEPIK_API_KEY = 'FPSX890e70b7164ab7a1b05182a68d64ad06';
     const PIXABAY_API_KEY = '53456758-e7788c27d5c820739d362581f';
 
     // ===== VARIABLES GLOBALES =====
     let imageSlots = [];
+    let slotToGenerate = -1;
+
+    // Helper para convertir imagen a Base64 (evita problemas de CORS al imprimir/guardar)
+    function toDataURL(url, callback) {
+      var xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        var reader = new FileReader();
+        reader.onloadend = function () {
+          callback(reader.result);
+        }
+        reader.readAsDataURL(xhr.response);
+      };
+      xhr.onerror = function () {
+        // Fallback si falla CORS
+        callback(url);
+      };
+      xhr.open('GET', url);
+      xhr.responseType = 'blob';
+      xhr.send();
+    }
 
     // ===== UTILIDADES =====
     function checkFilled(input) {
@@ -717,7 +752,7 @@
     function detectLinks() {
       const ref = document.getElementById('referencesInput');
       const html = ref.innerHTML;
-      const url = /(https?:\/\/[^\s<]+)/g;
+      const url = / (https?:\/\/[^\s<]+)/g;
       const updated = html.replace(url, (u) =>
         html.includes(`<a href="${u}"`) ? u : `<a href="${u}" target="_blank">${u}</a>`
       );
@@ -770,6 +805,16 @@
           const placeholder = document.createElement('div');
           placeholder.className = 'placeholder';
           placeholder.textContent = '🖼️';
+
+          const btnGen = document.createElement('button');
+          btnGen.textContent = '✨ Generar';
+          btnGen.className = 'btn-gen-slot';
+          btnGen.onclick = (e) => {
+            e.stopPropagation();
+            openGeneratorInSlot(i);
+          };
+
+          placeholder.appendChild(btnGen);
           slot.appendChild(placeholder);
 
           const addBtn = document.createElement('button');
@@ -961,7 +1006,7 @@
       }
     }
 
-    // ===== GENERACIÓN CON IA (GROK) =====
+    // ===== GENERACIÓN CON IA (GROK/ARKAIOS) =====
     function openAIModal() {
       const storedKey = localStorage.getItem('grok_api_key');
       if (storedKey) {
@@ -973,6 +1018,17 @@
     function closeAIModal() {
       document.getElementById('aiModal').style.display = 'none';
       document.getElementById('aiStatus').textContent = '';
+      slotToGenerate = -1;
+      document.getElementById('imageCount').disabled = false;
+    }
+
+    function openGeneratorInSlot(index) {
+      slotToGenerate = index;
+      document.getElementById('aiPrompt').value = '';
+      document.getElementById('imageCount').value = 1;
+      document.getElementById('imageCount').disabled = true;
+      document.getElementById('aiModal').style.display = 'flex';
+      document.getElementById('aiPrompt').focus();
     }
 
     async function generateAIImage() {
@@ -981,17 +1037,14 @@
       const count = parseInt(document.getElementById('imageCount').value) || 1;
       const statusDiv = document.getElementById('aiStatus');
 
-      if (!apiKey) {
-        alert('Por favor ingresa tu API Key de Grok (xAI)');
-        return;
-      }
       if (!prompt) {
         alert('Por favor describe la imagen que quieres generar');
         return;
       }
 
-      localStorage.setItem('grok_api_key', apiKey);
-      statusDiv.textContent = '⏳ Generando imágenes con Grok... (esto puede tomar unos segundos)';
+      if (apiKey) localStorage.setItem('grok_api_key', apiKey);
+
+      statusDiv.textContent = '⏳ Generando imágenes con Arkaios AI...';
       statusDiv.style.background = '#3b82f6';
 
       try {
@@ -1001,18 +1054,21 @@
           location.protocol === 'file:';
 
         const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
-        const endpoint = isLocal ? (localBase + '/api/grok') : '/api/grok';
+        const endpoint = isLocal ? (localBase + '/api/arkaios-image') : '/api/arkaios-image';
+
+        const payload = {
+          model: "dall-e-3",
+          prompt: prompt,
+          n: 1,
+          size: "1024x1024"
+        };
 
         const response = await fetch(endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            apiKey: apiKey,
-            prompt: prompt,
-            count: count
-          })
+          body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
@@ -1021,25 +1077,29 @@
         }
 
         const data = await response.json();
-        const content = data.choices[0]?.message?.content || '';
 
-        // Buscar URLs de imágenes en la respuesta
-        const urlRegex = /(https?:\/\/[^\s)]+)/g;
-        const matches = content.match(urlRegex);
+        if (data.data && data.data.length > 0) {
+          const imageUrl = data.data[0].url;
 
-        if (!matches || matches.length === 0) {
-          throw new Error('Grok no devolvió URLs de imágenes. Respuesta: ' + content.substring(0, 100) + '...');
+          if (slotToGenerate !== -1) {
+            // Generar en slot específico
+            toDataURL(imageUrl, function (dataUrl) {
+              imageSlots[slotToGenerate] = dataUrl || imageUrl;
+              changeImageLayout();
+              statusDiv.textContent = '✅ ¡Imagen generada!';
+              statusDiv.style.background = '#27ae60';
+              setTimeout(closeAIModal, 1000);
+            });
+          } else {
+            // Generar en lote
+            applyExternalImages([imageUrl], `Arkaios AI: ${prompt}`);
+            statusDiv.textContent = '✅ ¡Imágenes generadas!';
+            statusDiv.style.background = '#27ae60';
+            setTimeout(closeAIModal, 1000);
+          }
+        } else {
+          throw new Error("No se recibió imagen de la API.");
         }
-
-        const imageUrls = matches.slice(0, count);
-        applyExternalImages(imageUrls, `Grok AI: ${prompt}`);
-
-        statusDiv.textContent = '✅ ¡Imágenes generadas correctamente!';
-        statusDiv.style.background = '#27ae60';
-
-        setTimeout(() => {
-          closeAIModal();
-        }, 2000);
 
       } catch (error) {
         console.error(error);

@@ -175,13 +175,29 @@
             font-size: 14px;
             text-align: center;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
 
         .photo-placeholder svg {
             width: 60px;
             height: 60px;
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             opacity: 0.4;
+        }
+
+        .btn-gen-placeholder {
+            background: #8e44ad;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 5px;
+            z-index: 10;
         }
 
         /* Información personal */
@@ -495,7 +511,8 @@
             }
 
             .print-button,
-            .controls-panel {
+            .controls-panel,
+            .btn-gen-placeholder {
                 display: none;
             }
 
@@ -621,6 +638,8 @@
                             <circle cx="12" cy="13" r="4"></circle>
                         </svg>
                         <div>Usa los botones para subir imágenes</div>
+                        <button class="btn-gen-placeholder" onclick="event.stopPropagation(); openAIModal();">✨
+                            Generar</button>
                     </div>
                 </div>
             </div>
@@ -652,11 +671,11 @@
         style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;">
         <div
             style="background: #1f2937; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; border: 1px solid #3b82f6;">
-            <h3 style="color: #3b82f6; margin-bottom: 15px;">✨ Generar Imagen con Grok</h3>
+            <h3 style="color: #3b82f6; margin-bottom: 15px;">✨ Generar Imagen con Arkaios AI</h3>
 
             <div style="margin-bottom: 15px;">
-                <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Tu API Key de Grok (xAI):</label>
-                <input type="password" id="grokKey" placeholder="xai-..."
+                <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">API Key (Opcional):</label>
+                <input type="password" id="grokKey" placeholder="sk-..."
                     style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
                 <small style="color: #9ca3af;">Se guardará localmente en tu navegador.</small>
             </div>
@@ -677,8 +696,7 @@
                 <button onclick="closeAIModal()"
                     style="background: #4b5563; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Cancelar</button>
                 <button onclick="generateAIImage()"
-                    style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Generar
-                    con Grok</button>
+                    style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Generar</button>
             </div>
 
             <div id="aiStatus" style="margin-top: 10px; color: #e5e7eb; font-size: 0.9rem;"></div>
@@ -691,6 +709,25 @@
     <script>
         let currentSize = 'small';
         let currentShape = 'circular';
+
+        // Helper para convertir imagen a Base64 (evita problemas de CORS al imprimir/guardar)
+        function toDataURL(url, callback) {
+            var xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                var reader = new FileReader();
+                reader.onloadend = function () {
+                    callback(reader.result);
+                }
+                reader.readAsDataURL(xhr.response);
+            };
+            xhr.onerror = function () {
+                // Fallback si falla CORS
+                callback(url);
+            };
+            xhr.open('GET', url);
+            xhr.responseType = 'blob';
+            xhr.send();
+        }
 
         const sizes = {
             small: { width: 302, height: 302 },
@@ -884,34 +921,38 @@
             const count = parseInt(document.getElementById('imageCount').value) || 1;
             const statusDiv = document.getElementById('aiStatus');
 
-            if (!apiKey) {
-                alert('Por favor ingresa tu API Key de Grok (xAI)');
-                return;
-            }
             if (!prompt) {
                 alert('Por favor describe la imagen');
                 return;
             }
 
-            localStorage.setItem('grok_api_key', apiKey);
-            statusDiv.textContent = '⏳ Generando imágenes con Grok... (esto puede tomar unos segundos)';
+            if (apiKey) localStorage.setItem('grok_api_key', apiKey);
 
-            // Usar el backend proxy para evitar CORS
-            const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
-            const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
-            const endpoint = isLocal ? (localBase + '/api/grok') : '/api/grok';
+            statusDiv.textContent = '⏳ Generando imágenes con Arkaios AI...';
+            statusDiv.style.background = '#3b82f6';
 
             try {
+                // Detectar si estamos en entorno local o producción
+                const isLocal = location.hostname === 'localhost' ||
+                    location.hostname === '127.0.0.1' ||
+                    location.protocol === 'file:';
+
+                const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
+                const endpoint = isLocal ? (localBase + '/api/arkaios-image') : '/api/arkaios-image';
+
+                const payload = {
+                    model: "dall-e-3",
+                    prompt: prompt,
+                    n: 1,
+                    size: "1024x1024"
+                };
+
                 const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        apiKey: apiKey,
-                        prompt: prompt,
-                        count: count
-                    })
+                    body: JSON.stringify(payload)
                 });
 
                 if (!response.ok) {
@@ -920,23 +961,25 @@
                 }
 
                 const data = await response.json();
-                const content = data.choices[0]?.message?.content || '';
 
-                // Buscar URLs en la respuesta
-                const urlRegex = /(https?:\/\/[^\s)]+)/g;
-                const matches = content.match(urlRegex);
+                if (data.data && data.data.length > 0) {
+                    const imageUrl = data.data[0].url;
 
-                if (!matches || matches.length === 0) {
-                    throw new Error('Grok no devolvió URLs de imágenes. Respuesta: ' + content.substring(0, 100) + '...');
+                    // Convertir a Data URL para evitar CORS
+                    toDataURL(imageUrl, function (dataUrl) {
+                        applyExternalImages([dataUrl || imageUrl], `Arkaios AI: ${prompt}`);
+                        statusDiv.textContent = '✅ ¡Imágenes generadas!';
+                        statusDiv.style.background = '#27ae60';
+                        setTimeout(closeAIModal, 1000);
+                    });
+                } else {
+                    throw new Error("No se recibió imagen de la API.");
                 }
-
-                const imageUrls = matches.slice(0, count);
-                applyExternalImages(imageUrls, `Grok: ${prompt}`);
-                closeAIModal();
 
             } catch (error) {
                 console.error(error);
                 statusDiv.textContent = '❌ Error: ' + error.message;
+                statusDiv.style.background = '#e74c3c';
             }
         }
 

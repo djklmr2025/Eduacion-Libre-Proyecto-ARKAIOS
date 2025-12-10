@@ -600,13 +600,13 @@
     style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;">
     <div
       style="background: #1f2937; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; border: 1px solid #3b82f6;">
-      <h3 style="color: #3b82f6; margin-bottom: 15px;">✨ Generar Imagen con Grok</h3>
+      <h3 style="color: #3b82f6; margin-bottom: 15px;">✨ Generar Imagen con Arkaios AI</h3>
 
       <div style="margin-bottom: 15px;">
-        <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Tu API Key de Grok (xAI):</label>
-        <input type="password" id="grokKey" placeholder="xai-..."
+        <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Tu API Key (Opcional):</label>
+        <input type="password" id="grokKey" placeholder="sk-..."
           style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
-        <small style="color: #9ca3af;">Se guardará localmente en tu navegador.</small>
+        <small style="color: #9ca3af;">Si no la pones, se usará la del servidor.</small>
       </div>
 
       <div style="margin-bottom: 15px;">
@@ -625,8 +625,7 @@
         <button onclick="closeAIModal()"
           style="background: #4b5563; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Cancelar</button>
         <button onclick="generateAIImage()"
-          style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Generar
-          con Grok</button>
+          style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Generar</button>
       </div>
 
       <div id="aiStatus" style="margin-top: 10px; color: #e5e7eb; font-size: 0.9rem;"></div>
@@ -649,6 +648,26 @@
     let estadosImagen = []; // { zoom: 100, x: 0, y: 0, fijada: false }
     let indiceEditando = -1;
     let indiceDragInicio = -1;
+    let indiceGenerando = -1;
+
+    // Helper para convertir imagen a Base64 (evita problemas de CORS al imprimir/guardar)
+    function toDataURL(url, callback) {
+      var xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        var reader = new FileReader();
+        reader.onloadend = function () {
+          callback(reader.result);
+        }
+        reader.readAsDataURL(xhr.response);
+      };
+      xhr.onerror = function () {
+        // Fallback si falla CORS
+        callback(url);
+      };
+      xhr.open('GET', url);
+      xhr.responseType = 'blob';
+      xhr.send();
+    }
 
     // ===== API KEYS & INTEGRATION =====
     const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
@@ -702,6 +721,8 @@
     function closeAIModal() {
       document.getElementById('aiModal').style.display = 'none';
       document.getElementById('aiStatus').textContent = '';
+      indiceGenerando = -1;
+      document.getElementById('imageCount').disabled = false;
     }
 
     async function generateAIImage() {
@@ -710,34 +731,31 @@
       const count = parseInt(document.getElementById('imageCount').value) || 1;
       const statusDiv = document.getElementById('aiStatus');
 
-      if (!apiKey) {
-        alert('Por favor ingresa tu API Key de Grok (xAI)');
-        return;
-      }
       if (!prompt) {
         alert('Por favor describe la imagen');
         return;
       }
 
-      localStorage.setItem('grok_api_key', apiKey);
-      statusDiv.textContent = '⏳ Generando imágenes con Grok... (esto puede tomar unos segundos)';
+      if (apiKey) localStorage.setItem('grok_api_key', apiKey);
 
-      // Usar el backend proxy para evitar CORS
+      statusDiv.textContent = '⏳ Generando con Arkaios AI...';
+
       const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
       const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
-      const endpoint = isLocal ? (localBase + '/api/grok') : '/api/grok';
+      const endpoint = isLocal ? (localBase + '/api/arkaios-image') : '/api/arkaios-image';
 
       try {
+        const payload = {
+          model: "dall-e-3",
+          prompt: prompt,
+          n: 1,
+          size: "1024x1024"
+        };
+
         const response = await fetch(endpoint, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            apiKey: apiKey,
-            prompt: prompt,
-            count: count
-          })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
@@ -746,24 +764,38 @@
         }
 
         const data = await response.json();
-        const content = data.choices[0]?.message?.content || '';
 
-        // Buscar URLs en la respuesta
-        const urlRegex = /(https?:\/\/[^\s)]+)/g;
-        const matches = content.match(urlRegex);
+        if (data.data && data.data.length > 0) {
+          const imageUrl = data.data[0].url;
 
-        if (!matches || matches.length === 0) {
-          throw new Error('Grok no devolvió URLs de imágenes. Respuesta: ' + content.substring(0, 100) + '...');
+          if (indiceGenerando !== -1) {
+            toDataURL(imageUrl, function (dataUrl) {
+              imagenes[indiceGenerando] = dataUrl || imageUrl;
+              estadosImagen[indiceGenerando] = { zoom: 100, x: 0, y: 0, fijada: false };
+              generarPlantilla();
+              closeAIModal();
+            });
+          } else {
+            applyExternalImages([imageUrl], `Arkaios: ${prompt}`);
+            closeAIModal();
+          }
+        } else {
+          throw new Error("No se recibió imagen de la API.");
         }
-
-        const imageUrls = matches.slice(0, count);
-        applyExternalImages(imageUrls, `Grok: ${prompt}`);
-        closeAIModal();
 
       } catch (error) {
         console.error(error);
         statusDiv.textContent = '❌ Error: ' + error.message;
       }
+    }
+
+    function abrirGeneradorEnCelda(idx) {
+      indiceGenerando = idx;
+      document.getElementById('aiPrompt').value = '';
+      document.getElementById('imageCount').value = 1;
+      document.getElementById('imageCount').disabled = true;
+      document.getElementById('aiModal').style.display = 'flex';
+      document.getElementById('aiPrompt').focus();
     }
 
     // Event Listeners
@@ -910,209 +942,37 @@
         celda.addEventListener('drop', handleDrop);
         celda.addEventListener('dragend', handleDragEnd);
       } else {
+        const container = document.createElement('div');
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+        container.style.alignItems = 'center';
+        container.style.justifyContent = 'center';
+        container.style.height = '100%';
+        container.style.gap = '8px';
+
         const icono = document.createElement('span');
         icono.className = 'celda-vacia';
         icono.textContent = '+';
-        celda.appendChild(icono);
-        celda.onclick = function () {
+        icono.style.cursor = 'pointer';
+        icono.onclick = function () {
           indiceEditando = idx;
           inputIndividual.click();
         };
-      }
 
-      return celda;
-    }
-
-    function handleDragStart(e) {
-      const idx = parseInt(e.currentTarget.dataset.idx);
-      if (estadosImagen[idx]?.fijada) {
-        e.preventDefault();
-        return;
-      }
-      indiceDragInicio = idx;
-      e.currentTarget.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-    }
-
-    function handleDragOver(e) {
-      e.preventDefault();
-      e.currentTarget.classList.add('drag-over');
-      e.dataTransfer.dropEffect = 'move';
-    }
-
-    function handleDrop(e) {
-      e.preventDefault();
-      e.currentTarget.classList.remove('drag-over');
-      const idxDestino = parseInt(e.currentTarget.dataset.idx);
-
-      if (indiceDragInicio !== -1 && indiceDragInicio !== idxDestino) {
-        const temp = imagenes[indiceDragInicio];
-        const tempEstado = estadosImagen[indiceDragInicio];
-        imagenes[indiceDragInicio] = imagenes[idxDestino];
-        estadosImagen[indiceDragInicio] = estadosImagen[idxDestino];
-        imagenes[idxDestino] = temp;
-        estadosImagen[idxDestino] = tempEstado;
-        generarPlantilla();
-      }
-    }
-
-    function handleDragEnd(e) {
-      e.currentTarget.classList.remove('dragging');
-      document.querySelectorAll('.drag-over').forEach(el => {
-        el.classList.remove('drag-over');
-      });
-      indiceDragInicio = -1;
-    }
-
-    function abrirEditor(idx) {
-      indiceEditando = idx;
-      editorImg.src = imagenes[idx];
-      const estado = estadosImagen[idx] || { zoom: 100 };
-      zoomSlider.value = estado.zoom;
-      zoomValor.textContent = estado.zoom + '%';
-      editorImg.style.transform = `scale(${estado.zoom / 100})`;
-      modalEditor.classList.add('activo');
-    }
-
-    function cerrarEditor() {
-      modalEditor.classList.remove('activo');
-      indiceEditando = -1;
-    }
-
-    zoomSlider.addEventListener('input', function () {
-      const zoom = parseInt(this.value);
-      zoomValor.textContent = zoom + '%';
-      editorImg.style.transform = `scale(${zoom / 100})`;
-    });
-
-    function aplicarEdicion() {
-      if (indiceEditando >= 0) {
-        estadosImagen[indiceEditando].zoom = parseInt(zoomSlider.value);
-        generarPlantilla();
-        cerrarEditor();
-      }
-    }
-
-    function toggleFijar(idx) {
-      if (!estadosImagen[idx]) {
-        estadosImagen[idx] = { zoom: 100, x: 0, y: 0, fijada: false };
-      }
-      estadosImagen[idx].fijada = !estadosImagen[idx].fijada;
-      generarPlantilla();
-    }
-
-    function eliminarImagen(idx) {
-      if (confirm('¿Eliminar esta imagen?')) {
-        imagenes.splice(idx, 1);
-        estadosImagen.splice(idx, 1);
-        generarPlantilla();
-      }
-    }
-
-    function limpiarTodo() {
-      if (confirm('¿Eliminar todas las imágenes?')) {
-        imagenes = [];
-        estadosImagen = [];
-        generarPlantilla();
-      }
-    }
-
-    function actualizarEstadisticas(numImagenes, numHojas, cuadrosPorHoja) {
-      document.getElementById('stat-imagenes').textContent = numImagenes;
-      document.getElementById('stat-hojas').textContent = numHojas;
-      document.getElementById('stat-cuadros').textContent = cuadrosPorHoja;
-    }
-
-    function mostrarCreditoPixabay(topic, count) {
-      let credit = document.getElementById('pixabay-credit');
-      if (!credit) {
-        const inicio = h * cuadrosPorHoja;
-        const fin = Math.min(inicio + cuadrosPorHoja, imagenes.length);
-
-        for (let i = 0; i < cuadrosPorHoja; i++) {
-          const idx = inicio + i;
-          const celda = crearCelda(idx, tamano);
-          cuadricula.appendChild(celda);
-        }
-
-        pageContainer.appendChild(cuadricula);
-        pageWrapper.appendChild(pageContainer);
-        hojasContainer.appendChild(pageWrapper);
-      }
-    }
-
-    function crearCelda(idx, tamano) {
-      const celda = document.createElement('div');
-      celda.className = 'celda-imagen arkaios-image-slot';
-      celda.style.width = `${tamano}cm`;
-      celda.style.height = `${tamano}cm`;
-      celda.draggable = imagenes[idx] ? true : false;
-      celda.dataset.idx = idx;
-
-      const numCelda = document.createElement('span');
-      numCelda.className = 'num-celda';
-      numCelda.textContent = idx + 1;
-      celda.appendChild(numCelda);
-
-      if (imagenes[idx]) {
-        const imgContainer = document.createElement('div');
-        imgContainer.className = 'img-container';
-
-        const img = document.createElement('img');
-        img.src = imagenes[idx];
-        img.className = 'img-preview';
-
-        const estado = estadosImagen[idx] || { zoom: 100, x: 0, y: 0, fijada: false };
-        img.style.transform = `scale(${estado.zoom / 100})`;
-
-        imgContainer.appendChild(img);
-        celda.appendChild(imgContainer);
-
-        const botones = document.createElement('div');
-        botones.className = 'botones-celda';
-
-        const btnEditar = document.createElement('button');
-        btnEditar.className = 'btn-celda btn-editar';
-        btnEditar.textContent = '✏️';
-        btnEditar.onclick = (e) => {
+        const btnGen = document.createElement('button');
+        btnGen.textContent = '✨ Generar';
+        btnGen.className = 'btn-celda';
+        btnGen.style.background = '#8e44ad';
+        btnGen.style.fontSize = '10px';
+        btnGen.style.opacity = '1';
+        btnGen.onclick = function (e) {
           e.stopPropagation();
-          abrirEditor(idx);
+          abrirGeneradorEnCelda(idx);
         };
 
-        const btnFijar = document.createElement('button');
-        btnFijar.className = 'btn-celda btn-fijar';
-        btnFijar.textContent = estado.fijada ? '🔓' : '📌';
-        btnFijar.onclick = (e) => {
-          e.stopPropagation();
-          toggleFijar(idx);
-        };
-
-        const btnEliminar = document.createElement('button');
-        btnEliminar.className = 'btn-celda btn-eliminar';
-        btnEliminar.textContent = '🗑️';
-        btnEliminar.onclick = (e) => {
-          e.stopPropagation();
-          eliminarImagen(idx);
-        };
-
-        botones.appendChild(btnEditar);
-        botones.appendChild(btnFijar);
-        botones.appendChild(btnEliminar);
-        celda.appendChild(botones);
-
-        celda.addEventListener('dragstart', handleDragStart);
-        celda.addEventListener('dragover', handleDragOver);
-        celda.addEventListener('drop', handleDrop);
-        celda.addEventListener('dragend', handleDragEnd);
-      } else {
-        const icono = document.createElement('span');
-        icono.className = 'celda-vacia';
-        icono.textContent = '+';
-        celda.appendChild(icono);
-        celda.onclick = function () {
-          indiceEditando = idx;
-          inputIndividual.click();
-        };
+        container.appendChild(icono);
+        container.appendChild(btnGen);
+        celda.appendChild(container);
       }
 
       return celda;
@@ -1229,6 +1089,16 @@
       }
       const cleanTopic = topic || 'Pixabay';
       credit.textContent = `Imágenes de Pixabay (${count}) · Tema: ${cleanTopic}`;
+    }
+
+    function rellenarConPixabay(urls, sourceName) {
+      // Implementación básica de rellenar si no existe
+      // Asumiendo que esta función existía o se usa para añadir imágenes
+      urls.forEach(url => {
+        imagenes.push(url);
+        estadosImagen.push({ zoom: 100, x: 0, y: 0, fijada: false });
+      });
+      generarPlantilla();
     }
 
     // Nuclear fix for printing

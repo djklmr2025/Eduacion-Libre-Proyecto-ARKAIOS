@@ -146,6 +146,7 @@
             margin-bottom: 8px;
             overflow: hidden;
             transition: all 0.3s;
+            position: relative;
         }
 
         .row-preview:hover {
@@ -162,6 +163,21 @@
         .row-preview-placeholder {
             color: #ccc;
             font-size: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-gen-row {
+            background: #8e44ad;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            z-index: 10;
         }
 
         .row-controls {
@@ -423,7 +439,8 @@
             .workspace,
             .sidebar,
             .templates-header,
-            .template-label {
+            .template-label,
+            .btn-gen-row {
                 display: none !important;
             }
 
@@ -566,19 +583,74 @@
         </div>
     </div>
 
+    <!-- Modal IA -->
+    <div id="aiModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;">
+        <div
+            style="background: #1f2937; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; border: 1px solid #3b82f6;">
+            <h3 style="color: #3b82f6; margin-bottom: 15px;">✨ Generar Imagen con Arkaios AI</h3>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">API Key (Opcional):</label>
+                <input type="password" id="grokKey" placeholder="sk-..."
+                    style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
+                <small style="color: #9ca3af;">Se guardará localmente en tu navegador.</small>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Describe tu imagen:</label>
+                <textarea id="aiPrompt" rows="4" placeholder="Un paisaje espacial con planetas coloridos..."
+                    style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;"></textarea>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Número de imágenes:</label>
+                <input type="number" id="imageCount" min="1" max="4" value="1"
+                    style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button onclick="closeAIModal()"
+                    style="background: #4b5563; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Cancelar</button>
+                <button onclick="generateAIImage()"
+                    style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Generar</button>
+            </div>
+
+            <div id="aiStatus" style="margin-top: 10px; color: #e5e7eb; font-size: 0.9rem;"></div>
+        </div>
+    </div>
+
     <input type="file" id="fileInputHidden" accept="image/*" style="display:none">
 
     <script>
         const PHOTOS_PER_SHEET = 72;
         const PHOTOS_PER_ROW = 8;
         const TOTAL_ROWS = 9;
+        let rowToGenerate = -1;
+
+        // Helper para convertir imagen a Base64
+        function toDataURL(url, callback) {
+            var xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                var reader = new FileReader();
+                reader.onloadend = function () {
+                    callback(reader.result);
+                }
+                reader.readAsDataURL(xhr.response);
+            };
+            xhr.onerror = function () {
+                callback(url);
+            };
+            xhr.open('GET', url);
+            xhr.responseType = 'blob';
+            xhr.send();
+        }
 
         // ===== API KEYS =====
         const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
         const FREEPIK_API_KEY = 'FPSX890e70b7164ab7a1b05182a68d64ad06';
         const PIXABAY_API_KEY = '53456758-e7788c27d5c820739d362581f';
 
-        // ===== FUNCIONES DE BÚSQUEDA =====
         // ===== FUNCIONES DE BÚSQUEDA =====
         async function searchPixabay() {
             const query = prompt("¿Qué imágenes buscas en Pixabay?");
@@ -715,6 +787,16 @@
                     const placeholder = document.createElement('div');
                     placeholder.className = 'row-preview-placeholder';
                     placeholder.textContent = '📷';
+
+                    const btnGen = document.createElement('button');
+                    btnGen.textContent = '✨ Generar';
+                    btnGen.className = 'btn-gen-row';
+                    btnGen.onclick = (e) => {
+                        e.stopPropagation();
+                        openGeneratorForRow(row);
+                    };
+
+                    placeholder.appendChild(btnGen);
                     preview.appendChild(placeholder);
                 }
 
@@ -934,36 +1016,110 @@
 
         // ===== ARKAIOS AI INTEGRATION =====
         function openArkaiosAI() {
-            const prompt = prompt("¿Qué imagen quieres crear con Arkaios AI?");
-            if (prompt) {
-                window.parent.postMessage({
-                    type: 'ARKAIOS_GENERATE_IMAGE',
-                    prompt: prompt
-                }, '*');
+            const storedKey = localStorage.getItem('grok_api_key');
+            if (storedKey) document.getElementById('grokKey').value = storedKey;
+            document.getElementById('aiModal').style.display = 'flex';
+        }
+
+        function openGeneratorForRow(row) {
+            rowToGenerate = row;
+            document.getElementById('aiPrompt').value = '';
+            document.getElementById('imageCount').value = 1;
+            document.getElementById('imageCount').disabled = true;
+            openArkaiosAI();
+        }
+
+        function closeAIModal() {
+            document.getElementById('aiModal').style.display = 'none';
+            document.getElementById('aiStatus').textContent = '';
+            rowToGenerate = -1;
+            document.getElementById('imageCount').disabled = false;
+        }
+
+        async function generateAIImage() {
+            const apiKey = document.getElementById('grokKey').value.trim();
+            const prompt = document.getElementById('aiPrompt').value.trim();
+            const count = parseInt(document.getElementById('imageCount').value) || 1;
+            const statusDiv = document.getElementById('aiStatus');
+
+            if (!prompt) {
+                alert('Por favor describe la imagen');
+                return;
+            }
+
+            if (apiKey) localStorage.setItem('grok_api_key', apiKey);
+
+            statusDiv.textContent = '⏳ Generando imágenes con Arkaios AI...';
+            statusDiv.style.background = '#3b82f6';
+
+            try {
+                // Detectar si estamos en entorno local o producción
+                const isLocal = location.hostname === 'localhost' ||
+                    location.hostname === '127.0.0.1' ||
+                    location.protocol === 'file:';
+
+                const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
+                const endpoint = isLocal ? (localBase + '/api/arkaios-image') : '/api/arkaios-image';
+
+                const payload = {
+                    model: "dall-e-3",
+                    prompt: prompt,
+                    n: 1,
+                    size: "1024x1024"
+                };
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.error || response.statusText);
+                }
+
+                const data = await response.json();
+
+                if (data.data && data.data.length > 0) {
+                    const imageUrl = data.data[0].url;
+
+                    // Convertir a Data URL para evitar CORS
+                    toDataURL(imageUrl, function (dataUrl) {
+                        const finalUrl = dataUrl || imageUrl;
+
+                        if (rowToGenerate !== -1) {
+                            setRowImage(rowToGenerate, finalUrl);
+                        } else {
+                            // Asignar al primer renglón vacío
+                            let targetRow = 1;
+                            for (let i = 1; i <= TOTAL_ROWS; i++) {
+                                if (!rowImages[i].image) {
+                                    targetRow = i;
+                                    break;
+                                }
+                            }
+                            setRowImage(targetRow, finalUrl);
+                        }
+
+                        statusDiv.textContent = '✅ ¡Imágenes generadas!';
+                        statusDiv.style.background = '#27ae60';
+                        setTimeout(closeAIModal, 1000);
+                    });
+                } else {
+                    throw new Error("No se recibió imagen de la API.");
+                }
+
+            } catch (error) {
+                console.error(error);
+                statusDiv.textContent = '❌ Error: ' + error.message;
+                statusDiv.style.background = '#e74c3c';
             }
         }
 
-        window.addEventListener('message', (event) => {
-            const data = event.data;
-            if (data.type === 'ARKAIOS_IMAGE_RESULT') {
-                const imageUrl = data.image;
-                if (imageUrl) {
-                    // Asignar al primer renglón vacío o al primero si todos llenos
-                    let targetRow = 1;
-                    for (let i = 1; i <= TOTAL_ROWS; i++) {
-                        if (!rowImages[i].image) {
-                            targetRow = i;
-                            break;
-                        }
-                    }
-                    setRowImage(targetRow, imageUrl);
-                }
-            }
-        });
-
         initApp();
-
-
     </script>
 </body>
 
