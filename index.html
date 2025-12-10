@@ -990,6 +990,90 @@
             height: 150px;
             resize: vertical;
         }
+
+        /* Zoom & Compact Mode Overrides */
+        #frameWrapper {
+            overflow: auto !important;
+        }
+
+        #plantillaFrame {
+            transform-origin: top center;
+            transition: transform 0.2s ease;
+        }
+
+        /* Zoom Controls */
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            margin-left: 10px;
+        }
+
+        .zoom-slider {
+            -webkit-appearance: none;
+            width: 100px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .zoom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .zoom-slider::-webkit-slider-thumb:hover {
+            background: white;
+        }
+
+        .zoom-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-width: 40px;
+        }
+
+        /* Compact Mode (Zen) */
+        body.compact-mode header {
+            display: none !important;
+        }
+
+        body.compact-mode nav {
+            display: none !important;
+        }
+
+        body.compact-mode .toggle-nav {
+            display: none !important;
+        }
+
+        body.compact-mode main {
+            padding: 0 !important;
+        }
+
+        body.compact-mode #frameWrapper {
+            border-radius: 0 !important;
+            border: none !important;
+        }
+
+        body.compact-mode .view-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: rgba(30, 41, 59, 0.9);
+            box-shadow: var(--shadow-lg);
+            border-radius: 50px;
+            padding: 10px 30px;
+        }
     </style>
 </head>
 
@@ -1067,6 +1151,17 @@
         <!-- Main Content -->
         <main>
             <div class="view-controls">
+                <button class="btn-premium btn-secondary" id="compactBtn" onclick="toggleCompactMode()"
+                    title="Modo Zen (Ocultar menú superior)">
+                    <span>🧘</span>
+                    <span>Modo Zen</span>
+                </button>
+                <div class="zoom-controls">
+                    <span style="font-size: 12px;">🔍</span>
+                    <input type="range" min="50" max="150" value="100" class="zoom-slider" id="zoomSlider"
+                        oninput="updateZoom(this.value)">
+                    <span class="zoom-value" id="zoomValue">100%</span>
+                </div>
                 <button class="btn-premium btn-secondary" id="downloadBtn">
                     <span>📥</span>
                     <span>Descargar PDF</span>
@@ -1453,6 +1548,51 @@
                 }
             }
         });
+        // Modo Compacto (Zen)
+        function toggleCompactMode() {
+            document.body.classList.toggle('compact-mode');
+            const btn = document.getElementById('compactBtn');
+            if (document.body.classList.contains('compact-mode')) {
+                btn.innerHTML = '<span>🔙</span><span>Salir Modo Zen</span>';
+                btn.classList.add('btn-primary');
+                btn.classList.remove('btn-secondary');
+            } else {
+                btn.innerHTML = '<span>🧘</span><span>Modo Zen</span>';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-secondary');
+            }
+        }
+
+        // Zoom
+        function updateZoom(value) {
+            const iframe = document.getElementById('plantillaFrame');
+            const display = document.getElementById('zoomValue');
+            const scale = value / 100;
+
+            iframe.style.transform = `scale(${scale})`;
+
+            if (scale < 1) {
+                iframe.style.width = `${100 / scale}%`;
+                iframe.style.height = `${100 / scale}%`;
+            } else {
+                iframe.style.width = '100%';
+                iframe.style.height = '100%';
+            }
+
+            display.textContent = `${value}%`;
+        }
+
+        // Override toggleFullscreen to update button text correctly
+        function toggleFullscreen() {
+            const wrapper = document.getElementById('frameWrapper');
+            wrapper.classList.toggle('fullscreen');
+            const btn = document.getElementById('fullscreenBtn');
+            if (wrapper.classList.contains('fullscreen')) {
+                btn.innerHTML = '<span>⛶</span><span>Salir pantalla completa</span>';
+            } else {
+                btn.innerHTML = '<span>⛶</span><span>Pantalla completa</span>';
+            }
+        }
     </script>
     <button class="batch-img-btn" onclick="openBatchModal()" title="Generar Imágenes por Lote">
         🖼️
