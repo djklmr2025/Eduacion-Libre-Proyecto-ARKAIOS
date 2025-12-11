@@ -422,94 +422,34 @@
             left: 0;
         }
 
-        /* Área principal */
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            padding: 24px;
-            gap: 20px;
-        }
-
+        /* View Controls (Floating Bar) */
         .view-controls {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
             display: flex;
             gap: 12px;
             align-items: center;
-            padding: 16px 24px;
-            background: rgba(30, 41, 59, 0.6);
+            padding: 12px 24px;
+            background: rgba(30, 41, 59, 0.9);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-radius: 16px;
+            border-radius: 50px;
             border: 1px solid rgba(102, 126, 234, 0.2);
-            box-shadow: var(--shadow-sm);
-        }
-
-        #frameWrapper {
-            flex: 1;
-            background: rgba(30, 41, 59, 0.4);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 20px;
-            overflow: hidden;
             box-shadow: var(--shadow-lg);
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            position: relative;
+            transition: all 0.3s ease;
         }
 
-        #frameWrapper::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-primary);
-            opacity: 0.5;
+        .view-controls:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: translateX(-50%) translateY(-2px);
         }
 
-        #frameWrapper.fullscreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 1000;
-            border-radius: 0;
-        }
-
-        #plantillaFrame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: white;
-        }
-
-        /* Botón AI flotante premium */
+        /* Hide old AI FAB */
         .ai-button {
-            position: fixed;
-            bottom: 32px;
-            right: 32px;
-            width: 64px;
-            height: 64px;
-            background: var(--gradient-primary);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            font-size: 28px;
-            cursor: pointer;
-            box-shadow: var(--shadow-lg), var(--shadow-glow);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: pulse 3s ease-in-out infinite;
-        }
-
-        .ai-button:hover {
-            transform: scale(1.1) rotate(10deg);
-            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.5);
+            display: none;
         }
 
         /* Panel AI mejorado */
@@ -524,7 +464,7 @@
             -webkit-backdrop-filter: blur(30px);
             box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
             transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1000;
+            z-index: 1001;
             display: flex;
             flex-direction: column;
             border-left: 1px solid rgba(102, 126, 234, 0.3);
@@ -534,10 +474,11 @@
             right: 0;
         }
 
-        .ai-header {
-            padding: 24px;
-            background: var(--gradient-primary);
+        /* Área principal */
+        main {
+            flex: 1;
             display: flex;
+            flex-direction: column;
             justify-content: space-between;
             align-items: center;
             box-shadow: var(--shadow-md);
@@ -1006,23 +947,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 0 10px;
-            border-left: 1px solid rgba(255, 255, 255, 0.1);
-            margin-left: 10px;
-        }
-
-        .zoom-slider {
-            -webkit-appearance: none;
-            width: 100px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
-            outline: none;
-        }
-
-        .zoom-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
             height: 16px;
             background: var(--accent-blue);
             border-radius: 50%;
@@ -1141,369 +1065,141 @@
                 <button class="btn" data-target="plantilla-imagenes-v2.html">
                     <span class="btn-icon">🎨</span>
                     <span>Plantilla Imágenes v2</span>
-                </button>
-            </div>
-        </nav>
-
-        <!-- Toggle Button -->
-        <button class="toggle-nav" id="toggleNav">‹</button>
-
-        <!-- Main Content -->
-        <main>
-            <div class="view-controls">
-                <button class="btn-premium btn-secondary" id="compactBtn" onclick="toggleCompactMode()"
-                    title="Modo Zen (Ocultar menú superior)">
-                    <span>🧘</span>
-                    <span>Modo Zen</span>
-                </button>
-                <div class="zoom-controls">
-                    <span style="font-size: 12px;">🔍</span>
-                    <input type="range" min="50" max="150" value="100" class="zoom-slider" id="zoomSlider"
-                        oninput="updateZoom(this.value)">
-                    <span class="zoom-value" id="zoomValue">100%</span>
-                </div>
-                <button class="btn-premium btn-secondary" id="downloadBtn">
-                    <span>📥</span>
-                    <span>Descargar PDF</span>
-                </button>
-                <button class="btn-premium btn-secondary" id="fullscreenBtn" onclick="toggleFullscreen()">
-                    <span>⛶</span>
-                    <span>Pantalla completa</span>
-                </button>
+                    ✓ Guardado automáticamente
             </div>
 
-            <div id="frameWrapper">
-                <iframe id="plantillaFrame" src="plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html"></iframe>
-            </div>
-        </main>
-    </div>
+            <script>
+                // Variables globales
+                let currentTemplate = 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html';
+                let conversationHistory = [];
+                let isImageMode = false;
 
-    <!-- AI Button -->
-    <button class="ai-button" id="aiButton">🤖</button>
+                // Descargar PDF
+                document.getElementById('downloadBtn').addEventListener('click', async () => {
+                    const iframe = document.getElementById('plantillaFrame');
+                    try {
+                        const canvas = await html2canvas(iframe.contentDocument.body, {
+                            scale: 2,
+                            useCORS: true,
+                            logging: false
+                        });
 
-    <!-- AI Panel -->
-    <div class="ai-panel" id="aiPanel">
-        <div class="ai-header">
-            <h2>
-                <span>✨</span>
-                <span>Asistente ARKAIOS</span>
-            </h2>
-            <div class="ai-header-buttons">
-                <button class="ai-header-btn" id="aiExpand" title="Expandir">⛶</button>
-                <button class="ai-header-btn" id="aiClose" title="Cerrar">✕</button>
-            </div>
-        </div>
+                        const imgData = canvas.toDataURL('image/png');
+                        const pdf = new jspdf.jsPDF({
+                            orientation: 'portrait',
+                            unit: 'mm',
+                            format: 'letter'
+                        });
 
-        <div class="ai-messages" id="aiMessages">
-            <div class="message assistant">
-                ¡Hola! Soy ARKAIOS, tu asistente para crear plantillas educativas. ¿En qué puedo ayudarte? 😊
-            </div>
-        </div>
-
-        <div class="ai-input-area">
-            <div class="ai-input-wrapper">
-                <input type="text" id="aiInput" placeholder="Escribe tu mensaje..." onkeypress="handleKeyPress(event)">
-            </div>
-            <div class="ai-input-buttons">
-                <button class="ai-input-btn" id="aiMicBtn" title="Voz">🎤</button>
-                <button class="ai-input-btn" id="aiImageBtn" onclick="toggleImageMode()"
-                    title="Generar Imagen">🎨</button>
-                <button class="ai-input-btn ai-send" onclick="handleSend()" title="Enviar">➤</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Auto-save Indicator -->
-    <div class="auto-save-indicator" id="autoSaveIndicator">
-        ✓ Guardado automáticamente
-    </div>
-
-    <script>
-        // Variables globales
-        let currentTemplate = 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html';
-        let conversationHistory = [];
-        let isImageMode = false;
-
-        // Descargar PDF
-        document.getElementById('downloadBtn').addEventListener('click', async () => {
-            const iframe = document.getElementById('plantillaFrame');
-            try {
-                const canvas = await html2canvas(iframe.contentDocument.body, {
-                    scale: 2,
-                    useCORS: true,
-                    logging: false
+                        const imgWidth = 210;
+                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                        pdf.save(`plantilla_${Date.now()}.pdf`);
+                    } catch (error) {
+                        console.error('Error al generar PDF:', error);
+                        alert('Error al generar el PDF. Por favor, intenta de nuevo.');
+                    }
                 });
 
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jspdf.jsPDF({
-                    orientation: 'portrait',
-                    unit: 'mm',
-                    format: 'letter'
+                // Guardar
+                document.getElementById('saveBtn').addEventListener('click', () => {
+                    const indicator = document.getElementById('autoSaveIndicator');
+                    indicator.classList.add('show');
+                    setTimeout(() => indicator.classList.remove('show'), 2000);
                 });
 
-                const imgWidth = 210;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-                pdf.save(`plantilla_${Date.now()}.pdf`);
-            } catch (error) {
-                console.error('Error al generar PDF:', error);
-                alert('Error al generar el PDF. Por favor, intenta de nuevo.');
-            }
-        });
+                // Toggle sidebar
+                document.getElementById('toggleNav').addEventListener('click', function () {
+                    const nav = document.getElementById('sidebar');
+                    nav.classList.toggle('collapsed');
+                    this.classList.toggle('collapsed');
+                    this.textContent = nav.classList.contains('collapsed') ? '›' : '‹';
+                });
 
-        // Guardar
-        document.getElementById('saveBtn').addEventListener('click', () => {
-            const indicator = document.getElementById('autoSaveIndicator');
-            indicator.classList.add('show');
-            setTimeout(() => indicator.classList.remove('show'), 2000);
-        });
+                // Navegación entre plantillas
+                document.querySelectorAll('.btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
 
-        // Pantalla completa
-        function toggleFullscreen() {
-            const wrapper = document.getElementById('frameWrapper');
-            wrapper.classList.toggle('fullscreen');
-            const btn = document.getElementById('fullscreenBtn');
-            if (wrapper.classList.contains('fullscreen')) {
-                btn.textContent = '⛶ Salir pantalla completa';
-            } else {
-                btn.textContent = '⛶ Pantalla completa';
-            }
-        }
+                        const target = btn.dataset.target;
+                        if (target) {
+                            currentTemplate = target;
+                            document.getElementById('plantillaFrame').src = target;
+                        }
+                    });
+                });
 
-        // Toggle sidebar
-        document.getElementById('toggleNav').addEventListener('click', function () {
-            const nav = document.getElementById('sidebar');
-            nav.classList.toggle('collapsed');
-            this.classList.toggle('collapsed');
-            this.textContent = nav.classList.contains('collapsed') ? '›' : '‹';
-        });
+                // Chat IA
+                const aiButton = document.getElementById('aiButton');
+                const aiTriggerBtn = document.getElementById('aiTriggerBtn');
+                const aiPanel = document.getElementById('aiPanel');
+                const aiClose = document.getElementById('aiClose');
+                const aiExpand = document.getElementById('aiExpand');
 
-        // Navegación entre plantillas
-        document.querySelectorAll('.btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                const target = btn.dataset.target;
-                if (target) {
-                    currentTemplate = target;
-                    document.getElementById('plantillaFrame').src = target;
+                function openAiPanel() {
+                    aiPanel.classList.add('active');
+                    if (aiButton) aiButton.style.display = 'none';
                 }
-            });
-        });
 
-        // Chat IA
-        const aiButton = document.getElementById('aiButton');
-        const aiPanel = document.getElementById('aiPanel');
-        const aiClose = document.getElementById('aiClose');
-        const aiExpand = document.getElementById('aiExpand');
-
-        aiButton.addEventListener('click', () => {
-            aiPanel.classList.add('active');
-            aiButton.style.display = 'none';
-        });
-
-        aiClose.addEventListener('click', () => {
-            aiPanel.classList.remove('active');
-            aiButton.style.display = 'flex';
-        });
-
-        aiExpand.addEventListener('click', () => {
-            aiPanel.style.width = aiPanel.style.width === '100%' ? '450px' : '100%';
-        });
-
-        // Reconocimiento de voz
-        const aiMicBtn = document.getElementById('aiMicBtn');
-        let recognition = null;
-
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.lang = 'es-MX';
-            recognition.continuous = false;
-
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                document.getElementById('aiInput').value = transcript;
-                aiMicBtn.style.background = '';
-            };
-
-            recognition.onend = () => {
-                aiMicBtn.style.background = '';
-            };
-
-            aiMicBtn.addEventListener('click', () => {
-                if (recognition) {
-                    aiMicBtn.style.background = 'var(--gradient-secondary)';
-                    recognition.start();
+                function closeAiPanel() {
+                    aiPanel.classList.remove('active');
+                    if (aiButton) aiButton.style.display = 'flex';
                 }
-            });
-        } else {
-            aiMicBtn.style.display = 'none';
-        }
 
-        async function sendMessage() {
-            const input = document.getElementById('aiInput');
-            const text = input.value.trim();
-            if (!text) return;
-
-            // 1. Mostrar mensaje usuario
-            addMessage(text, 'user');
-            input.value = '';
-
-            // 2. Añadir al historial
-            conversationHistory.push({ role: 'user', content: text });
-
-            // 3. Mostrar indicador de "Escribiendo..."
-            const loadingId = 'loading-' + Date.now();
-            const loadingDiv = document.createElement('div');
-            loadingDiv.className = 'message assistant';
-            loadingDiv.id = loadingId;
-            loadingDiv.textContent = 'Pensando';
-            loadingDiv.innerHTML += '<span class="loading-dots"></span>';
-            document.getElementById('aiMessages').appendChild(loadingDiv);
-            document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
-
-            try {
-                // 4. Llamar a la API
-                const response = await fetch('/api/arkaios', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        model: 'grok-beta',
-                        messages: conversationHistory,
-                        stream: false,
-                        temperature: 0.7
-                    })
+                if (aiButton) aiButton.addEventListener('click', openAiPanel);
+                if (aiTriggerBtn) aiTriggerBtn.addEventListener('click', openAiPanel);
+                if (aiClose) aiClose.addEventListener('click', closeAiPanel);
+                if (aiExpand) aiExpand.addEventListener('click', () => {
+                    aiPanel.style.width = aiPanel.style.width === '100%' ? '450px' : '100%';
                 });
 
-                if (!response.ok) throw new Error('Error en la respuesta de la IA');
+                // Reconocimiento de voz
+                const aiMicBtn = document.getElementById('aiMicBtn');
+                let recognition = null;
 
-                const data = await response.json();
-                const aiText = data.choices[0].message.content;
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    recognition = new SpeechRecognition();
+                    recognition.lang = 'es-MX';
+                    recognition.continuous = false;
 
-                // 5. Actualizar UI
-                const loadingMsg = document.getElementById(loadingId);
-                if (loadingMsg) loadingMsg.remove();
+                    recognition.onresult = (event) => {
+                        const transcript = event.results[0][0].transcript;
+                        document.getElementById('aiInput').value = transcript;
+                        aiMicBtn.style.background = '';
+                    };
+                    const loadingDiv = document.createElement('div');
+                    loadingDiv.className = 'message assistant';
+                    loadingDiv.id = loadingId;
+                    loadingDiv.innerHTML = '🎨 Creando tu obra de arte<span class="loading-dots"></span>';
+                    document.getElementById('aiMessages').appendChild(loadingDiv);
+                    document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
 
-                addMessage(aiText, 'assistant');
-                conversationHistory.push({ role: 'assistant', content: aiText });
+                    try {
+                        const response = await fetch('/api/arkaios-image', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                prompt: text,
+                                model: 'flux-pro-1.1',
+                                n: 1,
+                                size: '1024x1024'
+                            })
+                        });
 
-                // 6. Hablar
-                speak(aiText);
+                        if (!response.ok) throw new Error('Error generando imagen');
 
-            } catch (error) {
-                console.error(error);
-                const loadingMsg = document.getElementById(loadingId);
-                if (loadingMsg) loadingMsg.textContent = 'Error al conectar con Arkaios. Por favor verifica tu conexión o configuración.';
-            }
-        }
+                        const data = await response.json();
+                        const imageUrl = data.data?.[0]?.url;
 
-        // Síntesis de voz
-        function speak(text) {
-            if (!window.speechSynthesis) return;
+                        const loadingMsg = document.getElementById(loadingId);
+                        if (loadingMsg) loadingMsg.remove();
 
-            // Cancelar cualquier habla anterior
-            window.speechSynthesis.cancel();
-
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'es-MX';
-            utterance.rate = 1.0;
-            utterance.pitch = 1.0;
-
-            // Intentar buscar una voz en español
-            const voices = window.speechSynthesis.getVoices();
-            const spanishVoice = voices.find(v => v.lang.includes('es-MX')) || voices.find(v => v.lang.includes('es'));
-            if (spanishVoice) utterance.voice = spanishVoice;
-
-            window.speechSynthesis.speak(utterance);
-        }
-
-        // Cargar voces al inicio
-        if (window.speechSynthesis) {
-            window.speechSynthesis.onvoiceschanged = () => {
-                window.speechSynthesis.getVoices();
-            };
-        }
-
-        function addMessage(text, type) {
-            const div = document.createElement('div');
-            div.className = `message ${type}`;
-            div.textContent = text;
-            document.getElementById('aiMessages').appendChild(div);
-            document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
-        }
-
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') handleSend();
-        }
-
-        function toggleImageMode() {
-            isImageMode = !isImageMode;
-            const btn = document.getElementById('aiImageBtn');
-            const input = document.getElementById('aiInput');
-
-            if (isImageMode) {
-                btn.style.background = 'var(--gradient-primary)';
-                btn.style.color = 'white';
-                input.placeholder = "Describe la imagen que quieres crear...";
-            } else {
-                btn.style.background = '';
-                btn.style.color = '';
-                input.placeholder = "Escribe tu mensaje...";
-            }
-        }
-
-        function handleSend() {
-            if (isImageMode) {
-                generateImage();
-            } else {
-                sendMessage();
-            }
-        }
-
-        async function generateImage(promptText = null) {
-            const input = document.getElementById('aiInput');
-            const text = promptText || input.value.trim();
-            if (!text) return;
-
-            if (!promptText) {
-                addMessage(`🎨 Generando imagen: "${text}"`, 'user');
-                input.value = '';
-            }
-
-            const loadingId = 'loading-img-' + Date.now();
-            const loadingDiv = document.createElement('div');
-            loadingDiv.className = 'message assistant';
-            loadingDiv.id = loadingId;
-            loadingDiv.innerHTML = '🎨 Creando tu obra de arte<span class="loading-dots"></span>';
-            document.getElementById('aiMessages').appendChild(loadingDiv);
-            document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
-
-            try {
-                const response = await fetch('/api/arkaios-image', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        prompt: text,
-                        model: 'flux-pro-1.1',
-                        n: 1,
-                        size: '1024x1024'
-                    })
-                });
-
-                if (!response.ok) throw new Error('Error generando imagen');
-
-                const data = await response.json();
-                const imageUrl = data.data?.[0]?.url;
-
-                const loadingMsg = document.getElementById(loadingId);
-                if (loadingMsg) loadingMsg.remove();
-
-                if (imageUrl) {
-                    const imgDiv = document.createElement('div');
-                    imgDiv.className = 'message assistant';
-                    imgDiv.innerHTML = `
+                        if (imageUrl) {
+                            const imgDiv = document.createElement('div');
+                            imgDiv.className = 'message assistant';
+                            imgDiv.innerHTML = `
             <img src="${imageUrl}" style="max-width: 100%; border-radius: 12px; margin-bottom: 12px;">
             <div style="display: flex; gap: 8px;">
               <button onclick="window.open('${imageUrl}')" class="btn-premium btn-secondary" style="flex: 1;">
@@ -1514,154 +1210,467 @@
               </button>
             </div>
           `;
-                    document.getElementById('aiMessages').appendChild(imgDiv);
-                    document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
+                            document.getElementById('aiMessages').appendChild(imgDiv);
+                            document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
 
-                    speak('Imagen generada con éxito. Puedes descargarla o usarla en tu plantilla.');
+                            speak('Imagen generada con éxito. Puedes descargarla o usarla en tu plantilla.');
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        const loadingMsg = document.getElementById(loadingId);
+                        if (loadingMsg) loadingMsg.textContent = '❌ Error al generar la imagen. Intenta de nuevo.';
+                    }
                 }
-            } catch (error) {
-                console.error(error);
-                const loadingMsg = document.getElementById(loadingId);
-                if (loadingMsg) loadingMsg.textContent = '❌ Error al generar la imagen. Intenta de nuevo.';
-            }
-        }
 
-        function sendImageToTemplate(url) {
-            const iframe = document.getElementById('plantillaFrame');
-            iframe.contentWindow.postMessage({
-                type: 'ARKAIOS_IMAGE_RESULT',
-                image: url
-            }, '*');
-            addMessage('✓ Imagen enviada a la plantilla', 'assistant');
-        }
-
-        // Escuchar solicitudes de generación desde plantillas
-        window.addEventListener('message', (event) => {
-            const data = event.data;
-            if (data.type === 'ARKAIOS_GENERATE_IMAGE') {
-                aiPanel.classList.add('active');
-                aiButton.style.display = 'none';
-                isImageMode = true;
-                toggleImageMode();
-                if (data.prompt) {
-                    generateImage(data.prompt);
+                function sendImageToTemplate(url) {
+                    const iframe = document.getElementById('plantillaFrame');
+                    iframe.contentWindow.postMessage({
+                        type: 'ARKAIOS_IMAGE_RESULT',
+                        image: url
+                    }, '*');
+                    addMessage('✓ Imagen enviada a la plantilla', 'assistant');
                 }
-            }
-        });
-        // Modo Compacto (Zen)
-        function toggleCompactMode() {
-            document.body.classList.toggle('compact-mode');
-            const btn = document.getElementById('compactBtn');
-            if (document.body.classList.contains('compact-mode')) {
-                btn.innerHTML = '<span>🔙</span><span>Salir Modo Zen</span>';
-                btn.classList.add('btn-primary');
-                btn.classList.remove('btn-secondary');
-            } else {
-                btn.innerHTML = '<span>🧘</span><span>Modo Zen</span>';
-                btn.classList.remove('btn-primary');
-                btn.classList.add('btn-secondary');
-            }
-        }
 
-        // Zoom
-        function updateZoom(value) {
-            const iframe = document.getElementById('plantillaFrame');
-            const display = document.getElementById('zoomValue');
-            const scale = value / 100;
-
-            iframe.style.transform = `scale(${scale})`;
-
-            if (scale < 1) {
-                iframe.style.width = `${100 / scale}%`;
-                iframe.style.height = `${100 / scale}%`;
-            } else {
-                iframe.style.width = '100%';
-                iframe.style.height = '100%';
-            }
-
-            display.textContent = `${value}%`;
-        }
-
-        // Override toggleFullscreen to update button text correctly
-        function toggleFullscreen() {
-            const wrapper = document.getElementById('frameWrapper');
-            wrapper.classList.toggle('fullscreen');
-            const btn = document.getElementById('fullscreenBtn');
-            if (wrapper.classList.contains('fullscreen')) {
-                btn.innerHTML = '<span>⛶</span><span>Salir pantalla completa</span>';
-            } else {
-                btn.innerHTML = '<span>⛶</span><span>Pantalla completa</span>';
-            }
-        }
-    </script>
-    <button class="batch-img-btn" onclick="openBatchModal()" title="Generar Imágenes por Lote">
-        🖼️
-    </button>
-
-    <div class="modal-overlay" id="batchModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Generador de Imágenes por Lote</h3>
-                <button class="close-modal" onclick="closeBatchModal()">×</button>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Nombre del Tema (Carpeta)</label>
-                <input type="text" class="form-input" id="batchCategory" placeholder="Ej: Instrumentos Musicales">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Lista de Items (Uno por línea)</label>
-                <textarea class="form-textarea" id="batchItems" placeholder="Guitarra&#10;Piano&#10;Violín"></textarea>
-            </div>
-            <button class="btn-premium btn-primary" style="width: 100%" onclick="startBatchGeneration()">
-                🚀 Iniciar Generación
-            </button>
-            <div id="batchStatus" style="margin-top: 16px; font-size: 13px; color: var(--text-muted);"></div>
-        </div>
-    </div>
-
-    <script>
-        function openBatchModal() {
-            document.getElementById('batchModal').classList.add('active');
-        }
-        function closeBatchModal() {
-            document.getElementById('batchModal').classList.remove('active');
-        }
-        async function startBatchGeneration() {
-            const category = document.getElementById('batchCategory').value.trim();
-            const itemsText = document.getElementById('batchItems').value.trim();
-            const statusDiv = document.getElementById('batchStatus');
-
-            if (!category || !itemsText) {
-                alert('Por favor completa todos los campos');
-                return;
-            }
-
-            const items = itemsText.split('\n').map(line => line.trim()).filter(line => line);
-
-            statusDiv.innerHTML = '⏳ Procesando... Esto puede tomar unos momentos.';
-            statusDiv.style.color = 'var(--warning)';
-
-            try {
-                const response = await fetch('/api/batch-images', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ category, items })
+                // Escuchar solicitudes de generación desde plantillas
+                window.addEventListener('message', (event) => {
+                    const data = event.data;
+                    if (data.type === 'ARKAIOS_GENERATE_IMAGE') {
+                        aiPanel.classList.add('active');
+                        aiButton.style.display = 'none';
+                        isImageMode = true;
+                        toggleImageMode();
+                        if (data.prompt) {
+                            generateImage(data.prompt);
+                        }
+                    }
                 });
 
-                const data = await response.json();
-
-                if (response.ok) {
-                    statusDiv.innerHTML = `✅ Completado! ${data.results.length} items procesados. Revisa la carpeta ARKAIOS_Batch_Images.`;
-                    statusDiv.style.color = 'var(--success)';
-                } else {
-                    throw new Error(data.error || 'Error desconocido');
+                // Modo Compacto (Zen)
+                function toggleCompactMode() {
+                    document.body.classList.toggle('compact-mode');
+                    const btn = document.getElementById('compactBtn');
+                    if (document.body.classList.contains('compact-mode')) {
+                        btn.innerHTML = '<span>🔙</span><span>Salir Modo Zen</span>';
+                        btn.classList.add('btn-primary');
+                        btn.classList.remove('btn-secondary');
+                    } else {
+                        btn.innerHTML = '<span>🧘</span><span>Modo Zen</span>';
+                        btn.classList.remove('btn-primary');
+                        btn.classList.add('btn-secondary');
+                    }
                 }
-            } catch (error) {
-                statusDiv.innerHTML = `❌ Error: ${error.message}`;
-                statusDiv.style.color = 'var(--error)';
+
+                // Zoom
+                function updateZoom(value) {
+                    const iframe = document.getElementById('plantillaFrame');
+                    const display = document.getElementById('zoomValue');
+                    const scale = value / 100;
+
+                    iframe.style.transform = `scale(${scale})`;
+
+                    if (scale < 1) {
+                        iframe.style.width = `${100 / scale}%`;
+                        iframe.style.height = `${100 / scale}%`;
+                    } else {
+                        iframe.style.width = '100%';
+                        iframe.style.height = '100%';
+                    }
+
+                    display.textContent = `${value}%`;
+                }
+
+                // Override toggleFullscreen to update button text correctly
+                function toggleFullscreen() {
+                    const wrapper = document.getElementById('frameWrapper');
+                    wrapper.classList.toggle('fullscreen');
+                    const btn = document.getElementById('fullscreenBtn');
+                    if (wrapper.classList.contains('fullscreen')) {
+                        btn.innerHTML = '<span>⛶</span><span>Salir pantalla completa</span>';
+                    } else {
+                        btn.innerHTML = '<span>⛶</span><span>Pantalla completa</span>';
+                    }
+                }
+            </script>
+            <button class="batch-img-btn" onclick="openBatchModal()" title="Generar Imágenes por Lote">
+                🖼️
+            </button>
+
+            <div class="modal-overlay" id="batchModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Generador de Imágenes por Lote</h3>
+                        <button class="close-modal" onclick="closeBatchModal()">×</button>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nombre del Tema (Carpeta)</label>
+                        <input type="text" class="form-input" id="batchCategory"
+                            placeholder="Ej: Instrumentos Musicales">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Lista de Items (Uno por línea)</label>
+                        <textarea class="form-textarea" id="batchItems"
+                            placeholder="Guitarra&#10;Piano&#10;Violín"></textarea>
+                    </div>
+                    <button class="btn-premium btn-primary" style="width: 100%" onclick="startBatchGeneration()">
+                        🚀 Iniciar Generación
+                    </button>
+                    <div id="batchStatus" style="margin-top: 16px; font-size: 13px; color: var(--text-muted);">
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function openBatchModal() {
+                    ```
+                    document.getElementById('aiMessages').appendChild(div);
+                    document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
+                }
+
+                function handleKeyPress(e) {
+                    if (e.key === 'Enter') handleSend();
+                }
+
+                function toggleImageMode() {
+                    isImageMode = !isImageMode;
+                    const btn = document.getElementById('aiImageBtn');
+                    const input = document.getElementById('aiInput');
+
+                    if (isImageMode) {
+                        btn.style.background = 'var(--gradient-primary)';
+                        btn.style.color = 'white';
+                        input.placeholder = "Describe la imagen que quieres crear...";
+                    } else {
+                        btn.style.background = '';
+                        btn.style.color = '';
+                        input.placeholder = "Escribe tu mensaje...";
+                    }
+                }
+
+                function handleSend() {
+                    if (isImageMode) {
+                        generateImage();
+                    } else {
+                        sendMessage();
+                    }
+                }
+
+                async function generateImage(promptText = null) {
+                    const input = document.getElementById('aiInput');
+                    const text = promptText || input.value.trim();
+                    if (!text) return;
+
+                    if (!promptText) {
+                        addMessage(`🎨 Generando imagen: "${text}"`, 'user');
+                        input.value = '';
+                    }
+
+                    const loadingId = 'loading-img-' + Date.now();
+                    const loadingDiv = document.createElement('div');
+                    loadingDiv.className = 'message assistant';
+                    loadingDiv.id = loadingId;
+                    loadingDiv.innerHTML = '🎨 Creando tu obra de arte<span class="loading-dots"></span>';
+                    document.getElementById('aiMessages').appendChild(loadingDiv);
+                    document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
+
+                    try {
+                        const response = await fetch('/api/arkaios-image', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                prompt: text,
+                                model: 'flux-pro-1.1',
+                                n: 1,
+                                size: '1024x1024'
+                            })
+                        });
+
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.error || 'Error generando imagen');
+                        }
+
+                        const data = await response.json();
+                        const imageUrl = data.data?.[0]?.url;
+
+                        const loadingMsg = document.getElementById(loadingId);
+                        if (loadingMsg) loadingMsg.remove();
+
+                        if (imageUrl) {
+                            const imgDiv = document.createElement('div');
+                            imgDiv.className = 'message assistant';
+                            imgDiv.innerHTML = `
+                        < img src = "${imageUrl}" style = "max-width: 100%; border-radius: 12px; margin-bottom: 12px;" >
+                            <div style="display: flex; gap: 8px;">
+                                <button onclick="window.open('${imageUrl}')" class="btn-premium btn-secondary" style="flex: 1;">
+                                    📥 Descargar
+                                </button>
+                                <button onclick="sendImageToTemplate('${imageUrl}')" class="btn-premium btn-primary" style="flex: 1;">
+                                    ✨ Usar en Plantilla
+                                </button>
+                            </div>
+                    `;
+                            document.getElementById('aiMessages').appendChild(imgDiv);
+                            document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
+
+                            speak('Imagen generada con éxito. Puedes descargarla o usarla en tu plantilla.');
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        const loadingMsg = document.getElementById(loadingId);
+                        if (loadingMsg) loadingMsg.textContent = `❌ Error al generar la imagen: ${ error.message }. Intenta de nuevo.`;
+                    }
+                }
+
+                function sendImageToTemplate(url) {
+                    const iframe = document.getElementById('plantillaFrame');
+                    iframe.contentWindow.postMessage({
+                        type: 'ARKAIOS_IMAGE_RESULT',
+                        image: url
+                    }, '*');
+                    addMessage('✓ Imagen enviada a la plantilla', 'assistant');
+                }
+
+                // Escuchar solicitudes de generación desde plantillas
+                window.addEventListener('message', (event) => {
+                    const data = event.data;
+                    if (data.type === 'ARKAIOS_GENERATE_IMAGE') {
+                        aiPanel.classList.add('active');
+                        aiButton.style.display = 'none';
+                        isImageMode = true;
+                        toggleImageMode();
+                        if (data.prompt) {
+                            generateImage(data.prompt);
+                        }
+                    }
+                });
+
+                // Modo Compacto (Zen)
+                function toggleCompactMode() {
+                    document.body.classList.toggle('compact-mode');
+                    const btn = document.getElementById('compactBtn');
+                    if (document.body.classList.contains('compact-mode')) {
+                        btn.innerHTML = '<span>🔙</span><span>Salir Modo Zen</span>';
+                        btn.classList.add('btn-primary');
+                        btn.classList.remove('btn-secondary');
+                    } else {
+                        btn.innerHTML = '<span>🧘</span><span>Modo Zen</span>';
+                        btn.classList.remove('btn-primary');
+                        btn.classList.add('btn-secondary');
+                    }
+                }
+
+                // Zoom
+                function updateZoom(value) {
+                    const iframe = document.getElementById('plantillaFrame');
+                    const display = document.getElementById('zoomValue');
+                    const scale = value / 100;
+
+                    iframe.style.transform = `scale(${ scale })`;
+
+                    if (scale < 1) {
+                        iframe.style.width = `${ 100 / scale }% `;
+                        iframe.style.height = `${ 100 / scale }% `;
+                    } else {
+                        iframe.style.width = '100%';
+                        iframe.style.height = '100%';
+                    }
+
+                    display.textContent = `${ value }% `;
+                }
+
+                // Override toggleFullscreen to update button text correctly
+                function toggleFullscreen() {
+                    const wrapper = document.getElementById('frameWrapper');
+                    wrapper.classList.toggle('fullscreen');
+                    const btn = document.getElementById('fullscreenBtn');
+                    if (wrapper.classList.contains('fullscreen')) {
+                        btn.innerHTML = '<span>⛶</span><span>Salir pantalla completa</span>';
+                    } else {
+                        btn.innerHTML = '<span>⛶</span><span>Pantalla completa</span>';
+                    }
+                }
+                function openBatchModal() {
+                    document.getElementById('batchModal').classList.add('active');
+                }
+
+                function closeBatchModal() {
+                    document.getElementById('batchModal').classList.remove('active');
+                }
+
+                async function startBatchGeneration() {
+                    const category = document.getElementById('batchCategory').value.trim();
+                    const itemsText = document.getElementById('batchItems').value.trim();
+                    const statusDiv = document.getElementById('batchStatus');
+
+                    if (!category || !itemsText) {
+                        alert('Por favor completa todos los campos');
+                        return;
+                    }
+
+                    const items = itemsText.split('\n').map(i => i.trim()).filter(i => i);
+                    if (items.length === 0) return;
+
+                    statusDiv.innerHTML = '⏳ Iniciando generación...';
+
+                    try {
+                        const response = await fetch('/api/batch-images', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ category, items })
+                        });
+
+                        const data = await response.json();
+                        
+                        let html = '<div style="margin-top:10px; max-height: 300px; overflow-y: auto;">';
+                        data.results.forEach(res => {
+                            if (res.status === 'found') {
+                                html += `
+                        < div style = "display: flex; align-items: center; gap: 10px; margin-bottom: 8px; padding: 5px; background: rgba(255,255,255,0.05); border-radius: 6px;" >
+                            <img src="${res.url}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                                <div style="flex: 1; font-size: 12px;">
+                                    <strong>${res.item}</strong>
+                                </div>
+                                <a href="${res.url}" download target="_blank" class="btn-premium btn-secondary" style="padding: 2px 8px; font-size: 11px;">⬇</a>
+                            </div>
+                    `;
+                            } else {
+                                html += `< div style = "color: #ef4444; font-size: 12px; margin-bottom: 4px;" >❌ ${ res.item } - No encontrado</div >`;
+                            }
+                        });
+                        html += '</div>';
+                        
+                        statusDiv.innerHTML = '✅ Proceso completado.<br>' + html;
+
+                    } catch (error) {
+                        console.error(error);
+                        statusDiv.textContent = '❌ Error en la comunicación con el servidor.';
+                    }
+                }
+            </script>
+            <button class="batch-img-btn" onclick="openBatchModal()" title="Generar Imágenes por Lote">
+                🖼️
+            </button>
+
+            <div class="modal-overlay" id="batchModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Generador de Imágenes por Lote</h3>
+                        <button class="close-modal" onclick="closeBatchModal()">×</button>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nombre del Tema (Carpeta)</label>
+                        <input type="text" class="form-input" id="batchCategory"
+                            placeholder="Ej: Instrumentos Musicales">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Lista de Items (Uno por línea)</label>
+                        <textarea class="form-textarea" id="batchItems"
+                            placeholder="Guitarra&#10;Piano&#10;Violín"></textarea>
+                    </div>
+                    <button class="btn-premium btn-primary" style="width: 100%" onclick="startBatchGeneration()">
+                        🚀 Iniciar Generación
+                    </button>
+                    <div id="batchStatus" style="margin-top: 16px; font-size: 13px; color: var(--text-muted);">
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function openBatchModal() {
+                    document.getElementById('batchModal').classList.add('active');
+                }
+                function closeBatchModal() {
+                    document.getElementById('batchModal').classList.remove('active');
+                }
+                async function startBatchGeneration() {
+                const category = document.getElementById('batchCategory').value.trim();
+                const itemsText = document.getElementById('batchItems').value.trim();
+                const statusDiv = document.getElementById('batchStatus');
+
+                if (!category || !itemsText) {
+                    alert('Por favor completa todos los campos');
+                    return;
+                }
+
+                const items = itemsText.split('\n').map(line => line.trim()).filter(line => line);
+
+                statusDiv.innerHTML = '⏳ Procesando... Esto puede tomar unos momentos.';
+                statusDiv.style.color = 'var(--warning)';
+
+                try {
+                    const response = await fetch('/api/batch-images', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ category, items })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        statusDiv.innerHTML = `✅ Completado! ${ data.results.length } items procesados.`;
+                        statusDiv.style.color = 'var(--success)';
+                        
+                        // Display results
+                        const resultsContainer = document.createElement('div');
+                        resultsContainer.style.marginTop = '20px';
+                        resultsContainer.style.display = 'grid';
+                        resultsContainer.style.gridTemplateColumns = 'repeat(auto-fill, minmax(100px, 1fr))';
+                        resultsContainer.style.gap = '10px';
+                        resultsContainer.style.maxHeight = '300px';
+                        resultsContainer.style.overflowY = 'auto';
+
+                        data.results.forEach(res => {
+                            if (res.status === 'found' && res.url) {
+                                const div = document.createElement('div');
+                                div.style.position = 'relative';
+                                
+                                const img = document.createElement('img');
+                                img.src = res.url;
+                                img.style.width = '100%';
+                                img.style.borderRadius = '8px';
+                                img.title = res.item;
+                                
+                                const link = document.createElement('a');
+                                link.href = res.url;
+                                link.download = `${ category }_${ res.item }.jpg`;
+                                link.target = '_blank';
+                                link.innerHTML = '⬇️';
+                                link.style.position = 'absolute';
+                                link.style.bottom = '5px';
+                                link.style.right = '5px';
+                                link.style.background = 'rgba(0,0,0,0.7)';
+                                link.style.color = 'white';
+                                link.style.borderRadius = '50%';
+                                link.style.width = '24px';
+                                link.style.height = '24px';
+                                link.style.display = 'flex';
+                                link.style.alignItems = 'center';
+                                link.style.justifyContent = 'center';
+                                link.style.textDecoration = 'none';
+                                link.style.fontSize = '12px';
+
+                                div.appendChild(img);
+                                div.appendChild(link);
+                                resultsContainer.appendChild(div);
+                            }
+                        });
+
+                        const existingResults = document.getElementById('batchResults');
+                        if (existingResults) existingResults.remove();
+                        
+                        resultsContainer.id = 'batchResults';
+                        document.querySelector('.modal-content').appendChild(resultsContainer);
+
+                    } else {
+                        throw new Error(data.error || 'Error desconocido');
+                    }
+                } catch (error) {
+                    statusDiv.innerHTML = `❌ Error: ${ error.message }`;
+                    statusDiv.style.color = 'var(--error)';
+                }
             }
-        }
-    </script>
+            </script>
 </body>
 
 </html>
+```

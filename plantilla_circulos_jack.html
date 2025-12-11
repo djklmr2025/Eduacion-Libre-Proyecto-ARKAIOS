@@ -983,6 +983,18 @@
       });
     }
 
+    function removeImage(pageId, circleId) {
+      if (confirm('¿Eliminar esta imagen?')) {
+        updateCircle(pageId, circleId, {
+          imageData: null,
+          scale: 100,
+          posX: 50,
+          posY: 50,
+          locked: false
+        });
+      }
+    }
+
     // ===== CARGA DE IMÁGENES =====
     function handleCircleClick(pageId, circleId) {
       const circle = findCircle(pageId, circleId);

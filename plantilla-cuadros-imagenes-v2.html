@@ -808,8 +808,19 @@
       archivos.forEach(archivo => {
         const reader = new FileReader();
         reader.onload = function (ev) {
-          imagenes.push(ev.target.result);
-          estadosImagen.push({ zoom: 100, x: 0, y: 0, fijada: false });
+          const imageData = ev.target.result;
+          const defaultState = { zoom: 100, x: 0, y: 0, fijada: false };
+
+          // Try to find the first empty slot (null) to fill
+          const emptyIndex = imagenes.findIndex(img => img === null);
+          if (emptyIndex !== -1) {
+            imagenes[emptyIndex] = imageData;
+            estadosImagen[emptyIndex] = defaultState;
+          } else {
+            imagenes.push(imageData);
+            estadosImagen.push(defaultState);
+          }
+
           cargados++;
           if (cargados === archivos.length) {
             generarPlantilla();
@@ -843,8 +854,9 @@
       const cols = Math.floor(21.59 / tamano);
       const cuadrosPorHoja = filas * cols;
       const hojasNecesarias = Math.max(1, Math.ceil(imagenes.length / cuadrosPorHoja));
+      const validImagesCount = imagenes.filter(img => img !== null).length;
 
-      actualizarEstadisticas(imagenes.length, hojasNecesarias, cuadrosPorHoja);
+      actualizarEstadisticas(validImagesCount, hojasNecesarias, cuadrosPorHoja);
 
       for (let h = 0; h < hojasNecesarias; h++) {
         const pageWrapper = document.createElement('div');
@@ -961,7 +973,8 @@
 
         const btnGen = document.createElement('button');
         btnGen.textContent = '✨ Generar';
-        btnGen.className = 'btn-celda';
+        btnGen.className = 'btn-celda no-print';
+        btnGen.setAttribute('data-html2canvas-ignore', 'true');
         btnGen.style.background = '#8e44ad';
         btnGen.style.fontSize = '10px';
         btnGen.style.opacity = '1';
@@ -1058,8 +1071,15 @@
 
     function eliminarImagen(idx) {
       if (confirm('¿Eliminar esta imagen?')) {
-        imagenes.splice(idx, 1);
-        estadosImagen.splice(idx, 1);
+        imagenes[idx] = null;
+        estadosImagen[idx] = null;
+
+        // Trim trailing nulls to avoid infinite growth
+        while (imagenes.length > 0 && imagenes[imagenes.length - 1] === null) {
+          imagenes.pop();
+          estadosImagen.pop();
+        }
+
         generarPlantilla();
       }
     }
@@ -1092,11 +1112,16 @@
     }
 
     function rellenarConPixabay(urls, sourceName) {
-      // Implementación básica de rellenar si no existe
-      // Asumiendo que esta función existía o se usa para añadir imágenes
       urls.forEach(url => {
-        imagenes.push(url);
-        estadosImagen.push({ zoom: 100, x: 0, y: 0, fijada: false });
+        const defaultState = { zoom: 100, x: 0, y: 0, fijada: false };
+        const emptyIndex = imagenes.findIndex(img => img === null);
+        if (emptyIndex !== -1) {
+          imagenes[emptyIndex] = url;
+          estadosImagen[emptyIndex] = defaultState;
+        } else {
+          imagenes.push(url);
+          estadosImagen.push(defaultState);
+        }
       });
       generarPlantilla();
     }

@@ -1,14 +1,7 @@
-import fs from 'fs';
-import path from 'path';
 import { fileURLToPath } from 'url';
 
 const PEXELS_API_KEY = "4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz";
 const PIXABAY_API_KEY = "53456758-e7788c27d5c820739d362581f";
-const BASE_DIR = "ARKAIOS_Batch_Images";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const PROJECT_ROOT = path.join(__dirname, '..');
 
 async function searchPexels(query) {
     try {
@@ -38,19 +31,6 @@ async function searchPixabay(query) {
     return null;
 }
 
-async function downloadImage(url, filepath) {
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`Failed to fetch ${url}`);
-        const buffer = await response.arrayBuffer();
-        fs.writeFileSync(filepath, Buffer.from(buffer));
-        return true;
-    } catch (e) {
-        console.error(`Failed to download ${url}:`, e);
-        return false;
-    }
-}
-
 export default async function handler(req, res) {
     // CORS headers
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -73,35 +53,17 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Invalid request body. Expected { category: string, items: string[] }' });
     }
 
-    const outputDir = path.join(PROJECT_ROOT, BASE_DIR, category);
-
     try {
-        if (!fs.existsSync(outputDir)) {
-            fs.mkdirSync(outputDir, { recursive: true });
-        }
-
-        // Save the list as txt
-        fs.writeFileSync(path.join(PROJECT_ROOT, BASE_DIR, `${category}.txt`), items.join('\n'), 'utf-8');
-
         const results = [];
 
         for (const item of items) {
-            const safeName = item.replace(/ /g, "_").replace(/\//g, "-");
-            const imgPath = path.join(outputDir, `${safeName}.jpg`);
-
-            if (fs.existsSync(imgPath)) {
-                results.push({ item, status: 'skipped', path: imgPath });
-                continue;
-            }
-
             let imgUrl = await searchPexels(item);
             if (!imgUrl) {
                 imgUrl = await searchPixabay(item);
             }
 
             if (imgUrl) {
-                const success = await downloadImage(imgUrl, imgPath);
-                results.push({ item, status: success ? 'downloaded' : 'failed', url: imgUrl });
+                results.push({ item, status: 'found', url: imgUrl });
             } else {
                 results.push({ item, status: 'not_found' });
             }

@@ -540,13 +540,23 @@
             newImages.forEach(file => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    allImages.push({
+                    const imageData = {
                         data: e.target.result,
                         name: file.name
-                    });
+                    };
+
+                    // Try to find the first empty slot (null) to fill
+                    const emptyIndex = allImages.findIndex(img => img === null);
+                    if (emptyIndex !== -1) {
+                        allImages[emptyIndex] = imageData;
+                    } else {
+                        allImages.push(imageData);
+                    }
+
                     filesProcessed++;
                     if (filesProcessed === newImages.length) {
-                        sortImages();
+                        // Only sort if explicitly requested, otherwise keep order
+                        // sortImages(); 
                         renderTemplates();
                         updateStats();
                     }
@@ -557,15 +567,26 @@
 
         function sortImages() {
             const sortOrder = document.getElementById('sortOrder').value;
+            if (sortOrder === 'none') return;
+
+            // Separate images and nulls
+            const validImages = allImages.filter(img => img !== null);
+            const nulls = allImages.filter(img => img === null);
+
             if (sortOrder === 'alphabetic') {
-                allImages.sort((a, b) => a.name.localeCompare(b.name));
+                validImages.sort((a, b) => a.name.localeCompare(b.name));
             } else if (sortOrder === 'numeric') {
-                allImages.sort((a, b) => {
+                validImages.sort((a, b) => {
                     const numA = parseInt(a.name.match(/\d+/)?.[0] || '0');
                     const numB = parseInt(b.name.match(/\d+/)?.[0] || '0');
                     return numA - numB;
                 });
             }
+
+            // Reconstruct array: sorted images first, then empty slots? 
+            // Or just sort the valid ones and keep nulls at end?
+            // Usually sorting implies compacting. Let's compact.
+            allImages = [...validImages, ...nulls];
         }
 
         function createEmptyTemplate() {
@@ -674,7 +695,8 @@
 
             const btnGen = document.createElement('button');
             btnGen.textContent = '✨ Generar';
-            btnGen.className = 'btn-gen-cell';
+            btnGen.className = 'btn-gen-cell no-print';
+            btnGen.setAttribute('data-html2canvas-ignore', 'true');
             btnGen.onclick = (e) => {
                 e.stopPropagation();
                 openAIModal();
@@ -780,7 +802,14 @@
         }
 
         function deleteImage(index) {
-            allImages.splice(index, 1);
+            // Instead of splicing (removing), we set to null to keep the slot empty
+            allImages[index] = null;
+
+            // Trim trailing nulls to avoid infinite growth if deleting from end
+            while (allImages.length > 0 && allImages[allImages.length - 1] === null) {
+                allImages.pop();
+            }
+
             renderTemplates();
             updateStats();
         }
@@ -800,9 +829,10 @@
         function updateStats() {
             const stats = document.getElementById('stats');
             const imagesPerTemplate = gridConfig.rows * gridConfig.cols;
+            const validImagesCount = allImages.filter(img => img !== null).length;
             const numTemplates = Math.ceil(allImages.length / imagesPerTemplate) || 1;
 
-            document.getElementById('totalImages').textContent = allImages.length;
+            document.getElementById('totalImages').textContent = validImagesCount;
             document.getElementById('totalTemplates').textContent = numTemplates;
 
             stats.style.display = allImages.length > 0 ? 'block' : 'none';
