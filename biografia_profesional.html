@@ -96,12 +96,12 @@
             position: relative;
         }
 
-        /* Contenedor de foto con marco azul */
+        /* Contenedor de foto con marco de color */
         .photo-frame {
             background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
-            padding: 6px;
+            padding: 10px;
             border-radius: 4px;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.4);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -111,9 +111,35 @@
             transition: all 0.3s ease;
         }
 
+        .photo-frame.color-sky {
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.4);
+        }
+
+        .photo-frame.color-navy {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            box-shadow: 0 3px 10px rgba(30, 58, 138, 0.4);
+        }
+
+        .photo-frame.color-black {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+        }
+
         .photo-frame:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .photo-frame.color-sky:hover {
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.5);
+        }
+
+        .photo-frame.color-navy:hover {
+            box-shadow: 0 5px 15px rgba(30, 58, 138, 0.5);
+        }
+
+        .photo-frame.color-black:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         }
 
         /* Contenedor de foto - Ocupa la mayor parte del espacio */
@@ -166,30 +192,31 @@
             opacity: 0.4;
         }
 
-        /* Campo de nombre dentro del marco azul */
+        /* Campo de nombre dentro del marco - Todo el fondo del color del marco */
         .name-field {
             width: 100%;
-            background: rgba(255, 255, 255, 0.95);
+            background: transparent;
             border: none;
-            padding: 4px 6px;
+            padding: 6px 8px;
             text-align: center;
             font-family: 'Poppins', sans-serif;
-            font-size: 8px;
-            font-weight: 600;
-            color: #1e40af;
+            font-size: 9px;
+            font-weight: 700;
+            color: white;
             border-radius: 2px;
             outline: none;
             transition: all 0.3s ease;
             flex-shrink: 0;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .name-field:focus {
-            background: white;
-            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .name-field::placeholder {
-            color: #93c5fd;
+            color: rgba(255, 255, 255, 0.7);
+            text-shadow: none;
         }
 
         /* Panel de controles */
@@ -269,13 +296,13 @@
 
         .shape-buttons {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             justify-content: center;
         }
 
         .shape-btn {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             border: 2px solid #e0e0e0;
             background: white;
             cursor: pointer;
@@ -287,10 +314,6 @@
         }
 
         .shape-btn.circular {
-            border-radius: 50%;
-        }
-
-        .shape-btn.elliptic {
             border-radius: 50%;
         }
 
@@ -311,8 +334,60 @@
         .shape-btn.active::after {
             content: '✓';
             color: white;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        /* Botones de color */
+        .color-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .color-btn {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .color-btn.color-sky {
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+        }
+
+        .color-btn.color-navy {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+        }
+
+        .color-btn.color-black {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+            border-color: #667eea;
+        }
+
+        .color-btn.active {
+            border-color: #667eea;
+            border-width: 4px;
+        }
+
+        .color-btn.active::after {
+            content: '✓';
+            color: white;
             font-size: 24px;
             font-weight: bold;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .upload-btn {
@@ -445,8 +520,16 @@
             <label class="control-label">Forma de la Foto</label>
             <div class="shape-buttons">
                 <button class="shape-btn circular active" data-shape="circular" title="Circular"></button>
-                <button class="shape-btn elliptic" data-shape="elliptic" title="Elíptico"></button>
                 <button class="shape-btn rectangular" data-shape="rectangular" title="Rectangular"></button>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Color del Marco</label>
+            <div class="color-buttons">
+                <button class="color-btn color-sky active" data-color="sky" title="Azul Cielo"></button>
+                <button class="color-btn color-navy" data-color="navy" title="Azul Marino"></button>
+                <button class="color-btn color-black" data-color="black" title="Negro"></button>
             </div>
         </div>
 
@@ -465,7 +548,7 @@
         <div class="container page-template">
             <div class="bio-grid count-1">
                 <div class="bio-card">
-                    <div class="photo-frame">
+                    <div class="photo-frame color-sky">
                         <div class="photo-container circular">
                             <div class="photo-placeholder">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -487,6 +570,7 @@
     <script>
         let currentBioCount = 1;
         let currentShape = 'circular';
+        let currentColor = 'sky';
 
         function updatePageCount() {
             const count = document.querySelectorAll('.container').length;
@@ -497,7 +581,7 @@
             const card = document.createElement('div');
             card.className = 'bio-card';
             card.innerHTML = `
-                <div class="photo-frame">
+                <div class="photo-frame color-${currentColor}">
                     <div class="photo-container ${currentShape}">
                         <div class="photo-placeholder">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -576,6 +660,19 @@
 
                 document.querySelectorAll('.photo-container').forEach(container => {
                     container.className = 'photo-container ' + currentShape;
+                });
+            });
+        });
+
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                currentColor = this.dataset.color;
+
+                document.querySelectorAll('.photo-frame').forEach(frame => {
+                    frame.className = 'photo-frame color-' + currentColor;
                 });
             });
         });
