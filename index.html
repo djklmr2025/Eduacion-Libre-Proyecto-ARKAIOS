@@ -941,17 +941,129 @@
             border-radius: 50px;
             padding: 10px 30px;
         }
+
+        /* Dashboard Visual Styles */
+        .dashboard-container {
+            width: 100%;
+            height: 100%;
+            padding: 40px;
+            overflow-y: auto;
+            display: none;
+            /* Se activa dinámicamente */
+            flex-direction: column;
+            gap: 32px;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%);
+            backdrop-filter: blur(20px);
+        }
+
+        .dashboard-container.active {
+            display: flex;
+        }
+
+        .dashboard-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .dashboard-section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.3);
+            padding-bottom: 8px;
+        }
+
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .file-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-card:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: var(--accent-blue);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .file-card .icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+            display: block;
+            text-align: center;
+        }
+
+        .file-card .name {
+            font-weight: 600;
+            color: white;
+            font-size: 14px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-card .info {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .file-card .actions {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .file-card:hover .actions {
+            opacity: 1;
+        }
+
+        .card-btn {
+            background: rgba(102, 126, 234, 0.2);
+            border: none;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .card-btn:hover {
+            background: var(--accent-blue);
+        }
     </style>
 </head>
 
 <body>
     <!-- Header Premium -->
     <header>
-        <div class="logo">
+        <div class="logo" onclick="toggleDashboard()" style="cursor:pointer">
             <div class="logo-icon">🎓</div>
             <div>
-                <h1>ARKAIOS Plantillas</h1>
-                <span class="version">v2.5 • 2025</span>
+                <h1>ARKAIOS</h1>
+                <span class="version">Escritorio Central</span>
             </div>
         </div>
         <div class="header-actions">
@@ -1014,14 +1126,14 @@
             <div class="nav-section">
                 <div class="nav-title">
                     <span>🏗️</span>
-                    <span>Workspace</span>
+                    <span>Proyectos Recientes</span>
                 </div>
-                <div id="workspace-list">
-                    <!-- Dynamic workspace items -->
+                <div id="injected-workspace-items">
+                    <!-- Automáticamente inyectados -->
                 </div>
                 <button class="btn" onclick="addNewWorkspaceItem()">
                     <span class="btn-icon">➕</span>
-                    <span>Guardar Actual</span>
+                    <span>Guardar Versión</span>
                 </button>
             </div>
 
@@ -1067,9 +1179,29 @@
             </div>
 
             <div id="frameWrapper"
-                style="flex: 1; width: 100%; display: flex; justify-content: center; overflow: auto; background: rgba(0,0,0,0.2); border-radius: 24px; border: 1px solid rgba(102, 126, 234, 0.1);">
-                <iframe id="plantillaFrame" src="plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html"
-                    style="width: 100%; height: 100%; border: none;"></iframe>
+                style="flex: 1; width: 100%; display: flex; flex-direction: column; justify-content: center; overflow: hidden; background: rgba(0,0,0,0.2); border-radius: 24px; border: 1px solid rgba(102, 126, 234, 0.1); position: relative;">
+
+                <!-- Dashboard Visual -->
+                <div id="dashboardContainer" class="dashboard-container active">
+                    <div class="dashboard-section">
+                        <div class="dashboard-section-title"><span>🌟</span> Mis Proyectos</div>
+                        <div id="dash-workspace-grid" class="file-grid"></div>
+                    </div>
+
+                    <div class="dashboard-section">
+                        <div class="dashboard-section-title"><span>📄</span> Plantillas Maestras</div>
+                        <div id="dash-templates-grid" class="file-grid"></div>
+                    </div>
+
+                    <div class="dashboard-section">
+                        <div class="dashboard-section-title"><span>📂</span> Trabajos Finalizados</div>
+                        <div id="dash-works-grid" class="file-grid"></div>
+                    </div>
+                </div>
+
+                <!-- Iframe de Plantillas -->
+                <iframe id="plantillaFrame" src="about:blank"
+                    style="width: 100%; height: 100%; border: none; display: none;"></iframe>
             </div>
         </main>
     </div>
@@ -1089,6 +1221,120 @@
         function initLists() {
             renderWorkspace();
             renderWorksBase();
+            renderDashboard();
+            autoInjectWorkspace();
+        }
+
+        function toggleDashboard() {
+            const dash = document.getElementById('dashboardContainer');
+            const frame = document.getElementById('plantillaFrame');
+            const zoomValue = document.getElementById('zoomSlider').value;
+
+            if (dash.classList.contains('active')) {
+                // Si el dashboard está activo, no hacemos nada a menos que haya una plantilla
+                if (currentTemplate) hideDashboard();
+            } else {
+                showDashboard();
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('dashboardContainer').classList.add('active');
+            document.getElementById('plantillaFrame').style.display = 'none';
+            renderDashboard(); // Actualizar datos
+        }
+
+        function hideDashboard() {
+            document.getElementById('dashboardContainer').classList.remove('active');
+            document.getElementById('plantillaFrame').style.display = 'block';
+        }
+
+        function autoInjectWorkspace() {
+            const container = document.getElementById('injected-workspace-items');
+            if (!container) return;
+            container.innerHTML = '';
+
+            workspaceItems.forEach((item, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.dataset.target = item.template;
+                btn.innerHTML = `<span class="btn-icon">📁</span><span>${item.name}</span>`;
+                btn.onclick = () => loadWorkspaceItem(index);
+                container.appendChild(btn);
+            });
+        }
+
+        function renderDashboard() {
+            // 1. Mis Proyectos (Workspace)
+            const wsGrid = document.getElementById('dash-workspace-grid');
+            wsGrid.innerHTML = '';
+            if (workspaceItems.length === 0) wsGrid.innerHTML = '<div class="info">No tienes proyectos guardados aún.</div>';
+            workspaceItems.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'file-card';
+                card.onclick = () => loadWorkspaceItem(index);
+                card.innerHTML = `
+                    <span class="icon">🏗️</span>
+                    <span class="name">${item.name}</span>
+                    <span class="info">${item.template}</span>
+                    <div class="actions">
+                        <button class="card-btn" onclick="event.stopPropagation(); removeWorkspaceItem(${index})">Eliminar</button>
+                    </div>
+                `;
+                wsGrid.appendChild(card);
+            });
+
+            // 2. Plantillas Maestras
+            const tGrid = document.getElementById('dash-templates-grid');
+            tGrid.innerHTML = '';
+            const masterTemplates = [
+                { name: 'Carta MX - Escolar', target: 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html', icon: '📄' },
+                { name: 'Hoja Milimétrica', target: 'hoja_milimetrica_interactiva.html', icon: '📐' },
+                { name: 'Biografía Pro', target: 'biografia_profesional.html', icon: '👤' },
+                { name: 'Fotos Infantiles', target: 'generador-fotos-infantiles.html', icon: '👶' }
+            ];
+            masterTemplates.forEach(t => {
+                const card = document.createElement('div');
+                card.className = 'file-card';
+                card.onclick = () => loadTemplate(t.target);
+                card.innerHTML = `
+                    <span class="icon">${t.icon}</span>
+                    <span class="name">${t.name}</span>
+                    <span class="info">Plantilla Maestra</span>
+                `;
+                tGrid.appendChild(card);
+            });
+
+            // 3. Trabajos Finalizados
+            const bfGrid = document.getElementById('dash-works-grid');
+            bfGrid.innerHTML = '';
+            if (completedWorks.length === 0) bfGrid.innerHTML = '<div class="info">No hay PDFs guardados.</div>';
+            completedWorks.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'file-card';
+                card.onclick = () => downloadWork(index);
+                card.innerHTML = `
+                    <span class="icon">📕</span>
+                    <span class="name">${item.name}</span>
+                    <span class="info">PDF Finalizado</span>
+                    <div class="actions">
+                        <button class="card-btn" onclick="event.stopPropagation(); removeWork(${index})">Eliminar</button>
+                    </div>
+                `;
+                bfGrid.appendChild(card);
+            });
+        }
+
+        function loadTemplate(target) {
+            currentTemplate = target;
+            const frame = document.getElementById('plantillaFrame');
+            frame.src = target;
+            hideDashboard();
+
+            // Marcar botón activo en sidebar
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.target === target);
+            });
         }
 
         function renderWorkspace() {
@@ -1283,14 +1529,7 @@
         document.querySelectorAll('.btn').forEach(btn => {
             if (btn.dataset.target) {
                 btn.addEventListener('click', () => {
-                    document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-
-                    const target = btn.dataset.target;
-                    if (target) {
-                        currentTemplate = target;
-                        document.getElementById('plantillaFrame').src = target;
-                    }
+                    loadTemplate(btn.dataset.target);
                 });
             }
         });
