@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,43 +51,35 @@
         }
 
         /* Máximo 9 biografías por página en formato 5.5x7.8cm (tamaño carta) */
-        .bio-grid.count-1 {
+        .bio-grid.count-1 { 
             grid-template-columns: 1fr;
             justify-items: center;
         }
-
-        .bio-grid.count-2 {
+        .bio-grid.count-2 { 
             grid-template-columns: repeat(2, 5.5cm);
         }
-
-        .bio-grid.count-3 {
+        .bio-grid.count-3 { 
             grid-template-columns: repeat(3, 5.5cm);
         }
-
-        .bio-grid.count-4 {
+        .bio-grid.count-4 { 
             grid-template-columns: repeat(2, 5.5cm);
             grid-template-rows: repeat(2, 7.8cm);
         }
-
-        .bio-grid.count-5 {
+        .bio-grid.count-5 { 
             grid-template-columns: repeat(3, 5.5cm);
         }
-
-        .bio-grid.count-6 {
+        .bio-grid.count-6 { 
             grid-template-columns: repeat(3, 5.5cm);
             grid-template-rows: repeat(2, 7.8cm);
         }
-
-        .bio-grid.count-7 {
+        .bio-grid.count-7 { 
             grid-template-columns: repeat(3, 5.5cm);
         }
-
-        .bio-grid.count-8 {
+        .bio-grid.count-8 { 
             grid-template-columns: repeat(4, 5.5cm);
             grid-template-rows: repeat(2, 7.8cm);
         }
-
-        .bio-grid.count-9 {
+        .bio-grid.count-9 { 
             grid-template-columns: repeat(3, 5.5cm);
             grid-template-rows: repeat(3, 7.8cm);
         }
@@ -406,9 +397,8 @@
             }
 
             .print-button,
-            .controls-panel,
-            .btn-gen-small {
-                display: none !important;
+            .controls-panel {
+                display: none;
             }
 
             .pages-container {
@@ -422,7 +412,6 @@
         }
     </style>
 </head>
-
 <body>
     <div class="controls-panel">
         <h3>⚙️ Personalizar</h3>
@@ -465,9 +454,6 @@
             <button class="upload-btn" onclick="document.getElementById('batchPhotoInput').click()">
                 📸 Subir Múltiples Imágenes
             </button>
-            <button class="upload-btn" onclick="searchPexels()" style="background: #05a081;">📸 Pexels</button>
-            <button class="upload-btn" onclick="searchFreepik()" style="background: #336aea;">🎨 Freepik</button>
-            <button class="upload-btn" onclick="openGoogleModal()" style="background: #4285F4;">🔍 Google</button>
         </div>
     </div>
 
@@ -482,11 +468,8 @@
                     <div class="photo-frame">
                         <div class="photo-container circular">
                             <div class="photo-placeholder">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2">
-                                    <path
-                                        d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z">
-                                    </path>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
                                     <circle cx="12" cy="13" r="4"></circle>
                                 </svg>
                                 <div>Clic para imagen</div>
@@ -502,11 +485,6 @@
     <input type="file" id="batchPhotoInput" accept="image/*" multiple>
 
     <script>
-        // ===== CONFIGURACIÓN DE API KEYS =====
-        const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
-        const FREEPIK_API_KEY = 'FPSX890e70b7164ab7a1b05182a68d64ad06';
-        const PIXABAY_API_KEY = '53456758-e7788c27d5c820739d362581f';
-
         let currentBioCount = 1;
         let currentShape = 'circular';
 
@@ -527,42 +505,52 @@
                                 <circle cx="12" cy="13" r="4"></circle>
                             </svg>
                             <div>Clic para imagen</div>
-                            <button class="btn-gen-small" style="font-size: 7px; margin-top: 3px; cursor: pointer; background: #8e44ad; color: white; border: none; padding: 2px 4px; border-radius: 3px;" onclick="event.stopPropagation(); openArkaiosAIOnCard(this)">✨ Gen</button>
                         </div>
                     </div>
                     <input type="text" class="name-field" placeholder="NOMBRE COMPLETO">
                 </div>
             `;
-
-            card.querySelector('.photo-container').addEventListener('click', function () {
+            
+            card.querySelector('.photo-container').addEventListener('click', function() {
                 const input = document.createElement('input');
                 input.type = 'file';
                 input.accept = 'image/*';
-                input.onchange = function (e) {
+                input.onchange = function(e) {
                     const file = e.target.files[0];
                     if (file) {
+                        // Extraer nombre del archivo sin extensión
+                        const fileName = file.name.replace(/\.[^/.]+$/, '');
+                        // Limpiar y formatear el nombre (reemplazar guiones/guiones bajos con espacios)
+                        const cleanName = fileName.replace(/[-_]/g, ' ').toUpperCase();
+                        
                         const reader = new FileReader();
-                        reader.onload = function (event) {
+                        reader.onload = function(event) {
                             const img = document.createElement('img');
                             img.src = event.target.result;
                             card.querySelector('.photo-container').innerHTML = '';
                             card.querySelector('.photo-container').appendChild(img);
+                            
+                            // Colocar el nombre automáticamente
+                            const nameField = card.querySelector('.name-field');
+                            if (nameField && !nameField.value) {
+                                nameField.value = cleanName;
+                            }
                         }
                         reader.readAsDataURL(file);
                     }
                 };
                 input.click();
             });
-
+            
             return card;
         }
 
         function updateBioLayout() {
             const container = document.querySelector('.page-template');
             const bioGrid = container.querySelector('.bio-grid');
-
+            
             bioGrid.className = `bio-grid count-${currentBioCount}`;
-
+            
             bioGrid.innerHTML = '';
             for (let i = 0; i < currentBioCount; i++) {
                 bioGrid.appendChild(createBioCard());
@@ -570,17 +558,17 @@
         }
 
         document.querySelectorAll('[data-count]').forEach(btn => {
-            btn.addEventListener('click', function () {
+            btn.addEventListener('click', function() {
                 document.querySelectorAll('[data-count]').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-
+                
                 currentBioCount = parseInt(this.dataset.count);
                 updateBioLayout();
             });
         });
 
         document.querySelectorAll('.shape-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
+            btn.addEventListener('click', function() {
                 document.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
 
@@ -592,115 +580,37 @@
             });
         });
 
-        document.getElementById('batchPhotoInput').addEventListener('change', function (e) {
+        document.getElementById('batchPhotoInput').addEventListener('change', function(e) {
             const files = Array.from(e.target.files);
-            const containers = document.querySelectorAll('.photo-container');
-
+            const bioCards = document.querySelectorAll('.bio-card');
+            
             files.forEach((file, index) => {
-                if (index < containers.length) {
+                if (index < bioCards.length) {
+                    // Extraer nombre del archivo sin extensión
+                    const fileName = file.name.replace(/\.[^/.]+$/, '');
+                    // Limpiar y formatear el nombre
+                    const cleanName = fileName.replace(/[-_]/g, ' ').toUpperCase();
+                    
                     const reader = new FileReader();
-                    reader.onload = function (event) {
+                    reader.onload = function(event) {
                         const img = document.createElement('img');
                         img.src = event.target.result;
-                        const container = containers[index];
+                        const container = bioCards[index].querySelector('.photo-container');
                         container.innerHTML = '';
                         container.appendChild(img);
+                        
+                        // Colocar el nombre automáticamente
+                        const nameField = bioCards[index].querySelector('.name-field');
+                        if (nameField && !nameField.value) {
+                            nameField.value = cleanName;
+                        }
                     }
                     reader.readAsDataURL(file);
                 }
             });
         });
 
-        // ===== FUNCIONES DE APIs EXTERNAS =====
-        function applyExternalImages(urls) {
-            const containers = document.querySelectorAll('.photo-container');
-            let imgIdx = 0;
-
-            containers.forEach(container => {
-                if (!container.querySelector('img') && imgIdx < urls.length) {
-                    const img = document.createElement('img');
-                    img.src = urls[imgIdx];
-                    container.innerHTML = '';
-                    container.appendChild(img);
-                    imgIdx++;
-                }
-            });
-        }
-
-        async function searchPexels() {
-            const query = prompt("¿Qué imágenes buscas en Pexels?");
-            if (!query) return;
-            const count = parseInt(prompt("¿Cuántas imágenes quieres?", "1")) || 1;
-            try {
-                const response = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=${count}`, {
-                    headers: { Authorization: PEXELS_API_KEY }
-                });
-                const data = await response.json();
-                applyExternalImages(data.photos.map(p => p.src.large));
-            } catch (error) { alert('Error al buscar en Pexels'); }
-        }
-
-        async function searchFreepik() {
-            const query = prompt("¿Qué imágenes buscas en Freepik?");
-            if (!query) return;
-            const count = parseInt(prompt("¿Cuántas imágenes quieres?", "1")) || 1;
-            try {
-                const response = await fetch(`https://api.freepik.com/v1/resources?locale=es-ES&q=${encodeURIComponent(query)}&limit=${count}`, {
-                    headers: { 'X-Freepik-API-Key': FREEPIK_API_KEY }
-                });
-                const data = await response.json();
-                applyExternalImages(data.data.map(i => i.image.source.url));
-            } catch (error) { alert('Error al buscar en Freepik'); }
-        }
-
-        function openGoogleModal() {
-            const q = prompt("¿Qué imágenes quieres buscar en Google?");
-            if (q) {
-                window.parent.postMessage({ type: 'ARKAIOS_GOOGLE_SEARCH', query: q }, '*');
-                alert("Buscando en Google... (Los resultados se añadirán automáticamente)");
-            }
-        }
-
-        let aiGeneratingInCard = null;
-        function openArkaiosAIOnCard(btn) {
-            const p = prompt("¿Qué imagen quieres crear con Arkaios AI?");
-            if (p) {
-                const container = btn.closest('.photo-container');
-                const cards = Array.from(document.querySelectorAll('.photo-container'));
-                const cardIdx = cards.indexOf(container);
-                aiGeneratingInCard = cardIdx;
-                window.parent.postMessage({ type: 'ARKAIOS_GENERATE_IMAGE', prompt: p, cellIndex: cardIdx }, '*');
-            }
-        }
-
-        window.addEventListener('message', (event) => {
-            const data = event.data;
-            if (data.type === 'ARKAIOS_GOOGLE_RESULT') {
-                const res = data.data;
-                if (res.success && res.images) {
-                    applyExternalImages(res.images.map(img => img.url));
-                } else {
-                    alert("Error en búsqueda de Google: " + (res.error || "Desconocido"));
-                }
-            }
-            if (data.type === 'ARKAIOS_IMAGE_RESULT') {
-                if (data.image) {
-                    const containers = document.querySelectorAll('.photo-container');
-                    const target = (data.cellIndex !== null && data.cellIndex !== undefined) ? containers[data.cellIndex] : null;
-                    if (target) {
-                        const img = document.createElement('img');
-                        img.src = data.image;
-                        target.innerHTML = '';
-                        target.appendChild(img);
-                    } else {
-                        applyExternalImages([data.image]);
-                    }
-                }
-            }
-        });
-
         updatePageCount();
     </script>
 </body>
-
 </html>
