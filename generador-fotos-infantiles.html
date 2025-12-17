@@ -436,7 +436,6 @@
             }
 
             .header,
-            .workspace,
             .sidebar,
             .templates-header,
             .template-label,
@@ -559,15 +558,9 @@
                     <button class="btn-main btn-print" onclick="printTemplates()">🖨️ Imprimir Plantillas</button>
                     <button class="btn-main btn-clear-all" onclick="clearAll()">🗑️ Limpiar Todo</button>
                     <!-- Botonera de APIs -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 10px;">
                         <button class="btn-main" onclick="searchPexels()"
-                            style="background: #05a081; padding: 10px; font-size: 0.85rem;">📸 Pexels</button>
-                        <button class="btn-main" onclick="searchFreepik()"
-                            style="background: #336aea; padding: 10px; font-size: 0.85rem;">🎨 Freepik</button>
-                        <button class="btn-main" onclick="searchPixabay()"
-                            style="background: #ff9800; padding: 10px; font-size: 0.85rem;">🦊 Pixabay</button>
-                        <button class="btn-main" onclick="openGoogleModal()"
-                            style="background: #4285F4; padding: 10px; font-size: 0.85rem;">🔍 Google</button>
+                            style="background: #05a081; padding: 10px; font-size: 0.85rem;">📸 Buscar en Pexels</button>
                     </div>
                 </div>
             </div>
@@ -988,44 +981,6 @@
             window.print();
         }
 
-        // Bridge para Google Search y ARKAIOS AI
-        function openGoogleModal() {
-            const q = prompt("¿Qué imágenes quieres buscar en Google?");
-            if (q) {
-                window.parent.postMessage({ type: 'ARKAIOS_GOOGLE_SEARCH', query: q }, '*');
-                alert("Buscando en Google... (Los resultados se añadirán automáticamente)");
-            }
-        }
-
-        function openArkaiosAIOnRow(row) {
-            const p = prompt("¿Qué imagen quieres crear con Arkaios AI para este renglón?");
-            if (p) {
-                rowToGenerate = row;
-                window.parent.postMessage({ type: 'ARKAIOS_GENERATE_IMAGE', prompt: p, cellIndex: row }, '*');
-            }
-        }
-
-        window.addEventListener('message', (event) => {
-            const data = event.data;
-            if (data.type === 'ARKAIOS_GOOGLE_RESULT') {
-                const res = data.data;
-                if (res.success && res.images) {
-                    assignImagesToRows(res.images.map(img => img.url));
-                } else {
-                    alert("Error en búsqueda de Google: " + (res.error || "Desconocido"));
-                }
-            }
-            if (data.type === 'ARKAIOS_IMAGE_RESULT') {
-                if (data.image) {
-                    const rowIdx = (data.cellIndex !== null && data.cellIndex !== undefined) ? data.cellIndex : -1;
-                    if (rowIdx !== -1) {
-                        setRowImage(rowIdx, data.image);
-                    } else {
-                        assignImageToNextRow(data.image);
-                    }
-                }
-            }
-        });
 
         // Las funciones de generación con IA local han sido removidas.
         // Ahora el sistema se comunica globalmente a través de ARKAIOS Principal.

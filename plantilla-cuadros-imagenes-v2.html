@@ -544,10 +544,8 @@
       </div>
 
       <div class="botones-accion">
-        <button class="btn btn-primary" onclick="searchPexels()" style="background: #05a081;">📸 Pexels</button>
-        <button class="btn btn-primary" onclick="searchFreepik()" style="background: #336aea;">🎨 Freepik</button>
-        <button class="btn btn-primary" onclick="openGoogleModal()" style="background: #4285F4;">🔍 Google</button>
-        <!-- Botón IA Removido -->
+        <button class="btn btn-primary" onclick="searchPexels()" style="background: #05a081;">📸 Buscar en
+          Pexels</button>
         <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir hojas</button>
         <button class="btn btn-danger" onclick="limpiarTodo()">🗑️ Limpiar todo</button>
       </div>
@@ -664,72 +662,7 @@
       }
     }
 
-    async function searchFreepik() {
-      const query = prompt("¿Qué imágenes buscas en Freepik?");
-      if (!query) return;
 
-      const countStr = prompt("¿Cuántas imágenes quieres?", "1");
-      const count = parseInt(countStr) || 1;
-
-      try {
-        const response = await fetch(`https://api.freepik.com/v1/resources?locale=es-ES&q=${encodeURIComponent(query)}&limit=${count}`, {
-          headers: { 'X-Freepik-API-Key': FREEPIK_API_KEY }
-        });
-        const data = await response.json();
-        const images = data.data.map(item => item.image.source.url);
-        applyExternalImages(images, `Freepik: ${query}`);
-      } catch (error) {
-        console.error(error);
-        alert('Error al buscar en Freepik');
-      }
-    }
-
-    // Bridge para Google Search y ARKAIOS AI
-    function openGoogleModal() {
-      const q = prompt("¿Qué imágenes quieres buscar en Google?");
-      if (q) {
-        window.parent.postMessage({ type: 'ARKAIOS_GOOGLE_SEARCH', query: q }, '*');
-        alert("Buscando en Google... (Los resultados se añadirán automáticamente)");
-      }
-    }
-
-    function openArkaiosAI(cellIndex) {
-      const p = prompt("¿Qué imagen quieres crear con Arkaios AI?");
-      if (p) {
-        window.parent.postMessage({
-          type: 'ARKAIOS_GENERATE_IMAGE',
-          prompt: p,
-          cellIndex: cellIndex
-        }, '*');
-      }
-    }
-
-    window.addEventListener('message', (event) => {
-      const data = event.data;
-      if (data.type === 'ARKAIOS_IMAGE_RESULT') {
-        const imageUrl = data.image;
-        if (imageUrl) {
-          if (data.cellIndex !== null && data.cellIndex !== undefined) {
-            const idx = data.cellIndex;
-            imagenes[idx] = imageUrl;
-            estadosImagen[idx] = { zoom: 100, x: 0, y: 0, fijada: false };
-            generarPlantilla();
-          } else {
-            applyExternalImages([imageUrl], `Arkaios AI`);
-          }
-        }
-      }
-
-      if (data.type === 'ARKAIOS_GOOGLE_RESULT') {
-        const res = data.data;
-        if (res.success && res.images) {
-          const urls = res.images.map(img => img.url);
-          applyExternalImages(urls, "Google Search");
-        } else {
-          alert("Error en búsqueda de Google: " + (res.error || "Desconocido"));
-        }
-      }
-    });
 
     // Las funciones de generación con IA local han sido removidas.
     // Ahora el sistema se comunica globalmente a través de ARKAIOS Principal.
@@ -1058,26 +991,6 @@
       if (credit) credit.style.display = 'block';
     };
 
-    // ===== ARKAIOS AI INTEGRATION =====
-    function openArkaiosAI() {
-      const prompt = prompt("¿Qué imagen quieres crear con Arkaios AI?");
-      if (prompt) {
-        window.parent.postMessage({
-          type: 'ARKAIOS_GENERATE_IMAGE',
-          prompt: prompt
-        }, '*');
-      }
-    }
-
-    window.addEventListener('message', (event) => {
-      const data = event.data;
-      if (data.type === 'ARKAIOS_IMAGE_RESULT') {
-        const imageUrl = data.image;
-        if (imageUrl) {
-          rellenarConPixabay([imageUrl], `Arkaios AI`);
-        }
-      }
-    });
 
     // Iniciar
     generarPlantilla();
