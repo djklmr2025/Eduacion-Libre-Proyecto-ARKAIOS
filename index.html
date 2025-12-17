@@ -1572,8 +1572,49 @@
             addMessage(text, 'user');
             input.value = '';
 
+            // Detectar si el usuario quiere buscar imágenes (AI Google Search Alternative)
+            const searchKeywords = ['busca imágenes de', 'busca fotos de', 'encuentra imágenes de', 'muéstrame imágenes de', 'google images', 'search images', '/google'];
+            const lowerText = text.toLowerCase();
+            let isSearchRequest = false;
+            let searchQuery = '';
+
+            for (const kw of searchKeywords) {
+                if (lowerText.includes(kw)) {
+                    isSearchRequest = true;
+                    searchQuery = text.replace(new RegExp(kw, 'gi'), '').trim();
+                    if (searchQuery.startsWith(':')) searchQuery = searchQuery.substring(1).trim();
+                    break;
+                }
+            }
+
+            if (isSearchRequest && searchQuery) {
+                addMessage(`🔍 Buscando imágenes de "${searchQuery}" en Google...`, 'assistant');
+                try {
+                    const endpoint = `https://gemini-lab-ten.vercel.app/api/google-images?query=${encodeURIComponent(searchQuery)}`;
+                    const response = await fetch(endpoint);
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        if (errorText.includes('<!DOCTYPE html>')) {
+                            throw new Error('El servidor de búsqueda está respondiendo con un error HTML. Es posible que el endpoint /api/google-images no esté disponible o configurado.');
+                        }
+                        throw new Error(`Error del servidor: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    if (data.success && data.images && data.images.length > 0) {
+                        displayChatImages(data.images, searchQuery);
+                    } else {
+                        addMessage(`No encontré imágenes para "${searchQuery}". Revisa el término de búsqueda.`, 'assistant');
+                    }
+                } catch (e) {
+                    console.error('Error in AI Chat Search:', e);
+                    addMessage(`❌ Error en búsqueda: ${e.message}. Intenta con Pexels o Freepik mientras arreglamos Google.`, 'assistant');
+                }
+                return;
+            }
+
             try {
-                // Comunicación con el demon (Gemini-lab)
                 const endpoint = 'https://gemini-lab-ten.vercel.app/api/arkaios';
                 const response = await fetch(endpoint, {
                     method: 'POST',
@@ -1588,14 +1629,53 @@
             }
         }
 
-        function addMessage(text, type) {
+        function addMessage(text, type, isHTML = false) {
             const msgArea = document.getElementById('aiMessages');
             if (!msgArea) return;
             const div = document.createElement('div');
             div.className = `message ${type}`;
-            div.textContent = text;
+            if (isHTML) {
+                div.innerHTML = text;
+            } else {
+                div.textContent = text;
+            }
             msgArea.appendChild(div);
             msgArea.scrollTop = msgArea.scrollHeight;
+        }
+
+        function displayChatImages(images, query) {
+            const html = `
+                <div style="font-weight: bold; margin-bottom: 8px;">Resultados para "${query}":</div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+                    ${images.slice(0, 4).map((img, i) => `
+                        <div style="position: relative; border-radius: 8px; overflow: hidden; height: 100px; border: 1px solid rgba(255,255,255,0.1);">
+                            <img src="${img.url}" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" onclick="sendImageToTemplate('${img.url}')" title="Clic para enviar a la plantilla">
+                            <button onclick="sendImageToTemplate('${img.url}')" style="position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.7); color: white; border: none; font-size: 10px; padding: 4px; cursor: pointer;">📌 Usar</button>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="margin-top: 8px; font-size: 11px; font-style: italic;">Haz clic en 📌 para enviar la imagen a tu proyecto activo.</div>
+            `;
+            addMessage(html, 'assistant', true);
+        }
+
+        function sendImageToTemplate(url) {
+            const iframe = document.getElementById('plantillaFrame');
+            if (!iframe) return;
+
+            // Enviar como resultado de búsqueda externa
+            iframe.contentWindow.postMessage({
+                type: 'ARKAIOS_GOOGLE_RESULT',
+                data: { success: true, images: [{ url: url }] }
+            }, '*');
+
+            // También intentar enviar como resultado de imagen directa si aplica
+            iframe.contentWindow.postMessage({
+                type: 'ARKAIOS_IMAGE_RESULT',
+                image: url
+            }, '*');
+
+            alert("Imagen enviada a la plantilla correctamente.");
         }
 
         function handleKeyPress(e) {
@@ -1718,7 +1798,21 @@
                 try {
                     const endpoint = `https://gemini-lab-ten.vercel.app/api/google-images?query=${encodeURIComponent(query)}`;
                     const response = await fetch(endpoint);
-                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(`Error HTTP: ${response.status}`);
+                    }
+
+                    const text = await response.text();
+                    let data;
+                    try {
+                        data = JSON.parse(text);
+                    } catch (e) {
+                        if (text.includes('<!DOCTYPE html>')) {
+                            throw new Error('El servidor de búsqueda está respondiendo con una página HTML en lugar de datos. Esto indica un error de configuración en el servidor de Gemini-lab.');
+                        }
+                        throw new Error('La respuesta del servidor no tiene un formato válido (JSON).');
+                    }
 
                     iframe.contentWindow.postMessage({
                         type: 'ARKAIOS_GOOGLE_RESULT',
