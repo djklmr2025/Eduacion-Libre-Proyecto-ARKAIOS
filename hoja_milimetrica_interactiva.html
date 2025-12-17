@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,13 +10,13 @@
       size: letter;
       margin: 0;
     }
-    
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-    
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -24,11 +25,11 @@
       height: 100vh;
       overflow: hidden;
     }
-    
+
     .toolbar {
       background: rgba(255, 255, 255, 0.98);
       padding: 12px 20px;
-      box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -36,20 +37,20 @@
       gap: 10px;
       z-index: 100;
     }
-    
+
     .toolbar h1 {
       font-size: 1.3em;
       color: #333;
       margin: 0;
     }
-    
+
     .tools {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
       align-items: center;
     }
-    
+
     .tool-group {
       display: flex;
       gap: 5px;
@@ -58,7 +59,7 @@
       border-radius: 8px;
       border: 1px solid #ddd;
     }
-    
+
     button {
       padding: 8px 12px;
       border: none;
@@ -68,20 +69,20 @@
       transition: all 0.2s;
       background: white;
       color: #333;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       font-weight: 500;
     }
-    
+
     button:hover {
       transform: translateY(-1px);
-      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
     }
-    
+
     button.active {
       background: #667eea;
       color: white;
     }
-    
+
     input[type="color"] {
       width: 45px;
       height: 32px;
@@ -89,11 +90,11 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    
+
     input[type="range"] {
       width: 90px;
     }
-    
+
     input[type="text"] {
       padding: 6px 10px;
       border: 1px solid #ddd;
@@ -101,7 +102,7 @@
       font-size: 13px;
       width: 150px;
     }
-    
+
     select {
       padding: 6px 10px;
       border-radius: 5px;
@@ -109,13 +110,13 @@
       font-size: 13px;
       background: white;
     }
-    
+
     label {
       font-size: 12px;
       color: #555;
       font-weight: 500;
     }
-    
+
     .canvas-wrapper {
       flex: 1;
       display: flex;
@@ -123,20 +124,21 @@
       align-items: flex-start;
       padding: 20px;
       overflow: auto;
-      background: rgba(0,0,0,0.1);
+      background: rgba(0, 0, 0, 0.1);
     }
-    
+
     .page-container {
       position: relative;
       width: 100%;
-      max-width: 816px;  /* 21.59cm a 96dpi */
+      max-width: 816px;
+      /* 21.59cm a 96dpi */
       height: auto;
       aspect-ratio: 21.59 / 27.94;
       background: white;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
       margin: 0 auto;
     }
-    
+
     /* Canvas de dibujo sobre la plantilla */
     #drawingCanvas {
       position: absolute;
@@ -147,7 +149,7 @@
       cursor: crosshair;
       z-index: 10;
     }
-    
+
     /* Plantilla base (fondo) */
     .template-base {
       position: absolute;
@@ -158,7 +160,7 @@
       pointer-events: none;
       z-index: 1;
     }
-    
+
     .header-box {
       position: absolute;
       top: 20px;
@@ -171,29 +173,31 @@
       border-bottom: 2px solid #ff5500;
       padding-bottom: 8px;
     }
-    
+
     .header-box h2 {
       font-size: 16px;
       color: #333;
       font-weight: bold;
     }
-    
+
     .header-box .logo {
       font-size: 14px;
       color: #ff5500;
       font-style: italic;
       font-weight: bold;
     }
-    
+
     .work-area-bg {
       position: absolute;
       top: 75px;
       left: 57px;
-      width: 702px;  /* 185.9mm */
-      height: 903px; /* 239.4mm */
+      width: 702px;
+      /* 185.9mm */
+      height: 903px;
+      /* 239.4mm */
       background: #fff8f0;
     }
-    
+
     .watermark {
       position: absolute;
       bottom: 20px;
@@ -202,7 +206,7 @@
       color: #999;
       font-style: italic;
     }
-    
+
     .status-bar {
       background: rgba(255, 255, 255, 0.95);
       padding: 8px 20px;
@@ -212,26 +216,27 @@
       color: #666;
       border-top: 1px solid #ddd;
     }
-    
+
     .coords {
       font-family: 'Courier New', monospace;
       font-weight: bold;
     }
-    
+
     @media print {
       body {
         background: white;
       }
-      
-      .toolbar, .status-bar {
+
+      .toolbar,
+      .status-bar {
         display: none !important;
       }
-      
+
       .canvas-wrapper {
         padding: 0;
         background: white;
       }
-      
+
       .page-container {
         box-shadow: none;
         margin: 0;
@@ -239,6 +244,7 @@
     }
   </style>
 </head>
+
 <body>
   <!-- Barra de herramientas -->
   <div class="toolbar">
@@ -252,7 +258,7 @@
         <button id="text" title="Texto (T)">🔤 Texto</button>
         <button id="eraser" title="Borrador (E)">🧹 Borrador</button>
       </div>
-      
+
       <div class="tool-group">
         <label>Color:</label>
         <input type="color" id="color" value="#2c1810">
@@ -260,7 +266,7 @@
         <input type="range" id="thickness" min="1" max="10" value="2">
         <span id="thicknessVal">2px</span>
       </div>
-      
+
       <div class="tool-group">
         <label>Proyecto:</label>
         <select id="projectMode">
@@ -271,7 +277,7 @@
           <option value="sewing">Costura</option>
         </select>
       </div>
-      
+
       <div class="tool-group">
         <button id="undo" title="Deshacer (Ctrl+Z)">↶ Deshacer</button>
         <button id="clear" title="Limpiar todo">🗑️ Limpiar</button>
@@ -280,13 +286,13 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Área de trabajo -->
   <div class="canvas-wrapper">
     <div class="page-container">
       <!-- Canvas de dibujo (transparente, encima) -->
       <canvas id="drawingCanvas" width="816" height="1056"></canvas>
-      
+
       <!-- Plantilla base (debajo) -->
       <div class="template-base">
         <!-- Encabezado -->
@@ -294,43 +300,44 @@
           <h2>HOJA MILIMÉTRICA</h2>
           <div class="logo">Republica</div>
         </div>
-        
+
         <!-- Área de trabajo con cuadrícula -->
         <div class="work-area-bg">
-          <svg width="702" height="903" viewBox="0 0 702 903" xmlns="http://www.w3.org/2000/svg" style="display: block;">
+          <svg width="702" height="903" viewBox="0 0 702 903" xmlns="http://www.w3.org/2000/svg"
+            style="display: block;">
             <defs>
               <!-- 1mm - líneas más finas -->
               <pattern id="mm1" width="3.78" height="3.78" patternUnits="userSpaceOnUse">
-                <path d="M 3.78 0 L 0 0 0 3.78" fill="none" stroke="#ffc299" stroke-width="0.3"/>
+                <path d="M 3.78 0 L 0 0 0 3.78" fill="none" stroke="#ffc299" stroke-width="0.3" />
               </pattern>
-              
+
               <!-- 5mm (0.5cm) -->
               <pattern id="mm5" width="18.9" height="18.9" patternUnits="userSpaceOnUse">
-                <rect width="18.9" height="18.9" fill="url(#mm1)"/>
-                <path d="M 18.9 0 L 0 0 0 18.9" fill="none" stroke="#ff9966" stroke-width="0.6"/>
+                <rect width="18.9" height="18.9" fill="url(#mm1)" />
+                <path d="M 18.9 0 L 0 0 0 18.9" fill="none" stroke="#ff9966" stroke-width="0.6" />
               </pattern>
-              
+
               <!-- 1cm -->
               <pattern id="cm1" width="37.8" height="37.8" patternUnits="userSpaceOnUse">
-                <rect width="37.8" height="37.8" fill="url(#mm5)"/>
-                <path d="M 37.8 0 L 0 0 0 37.8" fill="none" stroke="#ff7744" stroke-width="1"/>
+                <rect width="37.8" height="37.8" fill="url(#mm5)" />
+                <path d="M 37.8 0 L 0 0 0 37.8" fill="none" stroke="#ff7744" stroke-width="1" />
               </pattern>
-              
+
               <!-- 5cm (cuadros grandes) -->
               <pattern id="cm5" width="189" height="189" patternUnits="userSpaceOnUse">
-                <rect width="189" height="189" fill="url(#cm1)"/>
-                <path d="M 189 0 L 0 0 0 189" fill="none" stroke="#ff5500" stroke-width="2"/>
+                <rect width="189" height="189" fill="url(#cm1)" />
+                <path d="M 189 0 L 0 0 0 189" fill="none" stroke="#ff5500" stroke-width="2" />
               </pattern>
             </defs>
-            
+
             <!-- Aplicar cuadrícula -->
-            <rect width="702" height="903" fill="url(#cm5)"/>
-            <rect x="0.5" y="0.5" width="701" height="902" fill="none" stroke="#ff5500" stroke-width="2.5"/>
+            <rect width="702" height="903" fill="url(#cm5)" />
+            <rect x="0.5" y="0.5" width="701" height="902" fill="none" stroke="#ff5500" stroke-width="2.5" />
           </svg>
         </div>
-        
 
-        
+
+
         <!-- Marca de agua -->
         <div class="watermark">
           Hoja Milimétrica Oficial Mexicana - 21.59 × 27.94 cm
@@ -338,7 +345,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Barra de estado -->
   <div class="status-bar">
     <div class="coords">Posición: <span id="coords">X: 0, Y: 0</span></div>
@@ -350,7 +357,7 @@
     // ==================== CONFIGURACIÓN ====================
     const canvas = document.getElementById('drawingCanvas');
     const ctx = canvas.getContext('2d');
-    
+
     let state = {
       tool: 'pencil',
       color: '#2c1810',
@@ -362,13 +369,13 @@
       historyStep: -1,
       projectMode: 'free'
     };
-    
+
     // Canvas temporal para preview
     let tempCanvas = document.createElement('canvas');
     tempCanvas.width = canvas.width;
     tempCanvas.height = canvas.height;
     let tempCtx = tempCanvas.getContext('2d');
-    
+
     // ==================== GUARDAR ESTADO ====================
     function saveState() {
       state.historyStep++;
@@ -377,7 +384,7 @@
       }
       state.history.push(canvas.toDataURL());
     }
-    
+
     function undo() {
       if (state.historyStep > 0) {
         state.historyStep--;
@@ -389,7 +396,7 @@
         };
       }
     }
-    
+
     // ==================== OBTENER POSICIÓN ====================
     function getMousePos(e) {
       const rect = canvas.getBoundingClientRect();
@@ -400,7 +407,7 @@
         y: (e.clientY - rect.top) * scaleY
       };
     }
-    
+
     // ==================== HERRAMIENTAS DE DIBUJO ====================
     function drawLine(x1, y1, x2, y2, color, thickness) {
       ctx.beginPath();
@@ -411,13 +418,13 @@
       ctx.lineCap = 'round';
       ctx.stroke();
     }
-    
+
     function drawRect(x1, y1, x2, y2, color, thickness) {
       ctx.strokeStyle = color;
       ctx.lineWidth = thickness;
       ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
     }
-    
+
     function drawCircle(x1, y1, x2, y2, color, thickness) {
       const radius = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
       ctx.beginPath();
@@ -426,21 +433,21 @@
       ctx.lineWidth = thickness;
       ctx.stroke();
     }
-    
+
     function erase(x, y, size) {
-      ctx.clearRect(x - size/2, y - size/2, size, size);
+      ctx.clearRect(x - size / 2, y - size / 2, size, size);
     }
-    
+
     // ==================== EVENTOS DEL MOUSE ====================
     canvas.addEventListener('mousedown', (e) => {
       state.isDrawing = true;
       const pos = getMousePos(e);
       state.startX = pos.x;
       state.startY = pos.y;
-      
+
       tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
       tempCtx.drawImage(canvas, 0, 0);
-      
+
       if (state.tool === 'pencil') {
         ctx.beginPath();
         ctx.moveTo(pos.x, pos.y);
@@ -457,16 +464,16 @@
         state.isDrawing = false;
       }
     });
-    
+
     canvas.addEventListener('mousemove', (e) => {
       const pos = getMousePos(e);
       const rect = canvas.getBoundingClientRect();
       const displayX = e.clientX - rect.left;
       const displayY = e.clientY - rect.top;
       document.getElementById('coords').textContent = `X: ${Math.round(displayX)}px, Y: ${Math.round(displayY)}px`;
-      
+
       if (!state.isDrawing) return;
-      
+
       if (state.tool === 'pencil') {
         ctx.lineTo(pos.x, pos.y);
         ctx.strokeStyle = state.color;
@@ -480,7 +487,7 @@
         // Preview
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(tempCanvas, 0, 0);
-        
+
         if (state.tool === 'line') {
           drawLine(state.startX, state.startY, pos.x, pos.y, state.color, state.thickness);
         } else if (state.tool === 'rect') {
@@ -490,12 +497,12 @@
         }
       }
     });
-    
+
     canvas.addEventListener('mouseup', (e) => {
       if (!state.isDrawing) return;
-      
+
       const pos = getMousePos(e);
-      
+
       if (state.tool === 'line') {
         drawLine(state.startX, state.startY, pos.x, pos.y, state.color, state.thickness);
       } else if (state.tool === 'rect') {
@@ -503,15 +510,15 @@
       } else if (state.tool === 'circle') {
         drawCircle(state.startX, state.startY, pos.x, pos.y, state.color, state.thickness);
       }
-      
+
       state.isDrawing = false;
       saveState();
     });
-    
+
     canvas.addEventListener('mouseleave', () => {
       state.isDrawing = false;
     });
-    
+
     // ==================== BOTONES ====================
     function setTool(tool, name) {
       state.tool = tool;
@@ -519,79 +526,79 @@
       document.getElementById(tool).classList.add('active');
       document.getElementById('currentTool').textContent = name;
     }
-    
+
     document.getElementById('pencil').onclick = () => setTool('pencil', 'Lápiz');
     document.getElementById('line').onclick = () => setTool('line', 'Línea');
     document.getElementById('rect').onclick = () => setTool('rect', 'Rectángulo');
     document.getElementById('circle').onclick = () => setTool('circle', 'Círculo');
     document.getElementById('text').onclick = () => setTool('text', 'Texto');
     document.getElementById('eraser').onclick = () => setTool('eraser', 'Borrador');
-    
+
     document.getElementById('color').oninput = (e) => state.color = e.target.value;
     document.getElementById('thickness').oninput = (e) => {
       state.thickness = e.target.value;
       document.getElementById('thicknessVal').textContent = e.target.value + 'px';
     };
-    
+
     document.getElementById('projectMode').onchange = (e) => {
       state.projectMode = e.target.value;
       document.getElementById('currentMode').textContent = e.target.options[e.target.selectedIndex].text;
     };
-    
+
     document.getElementById('undo').onclick = undo;
-    
+
     document.getElementById('clear').onclick = () => {
       if (confirm('¿Limpiar todo el dibujo?')) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         saveState();
       }
     };
-    
+
     document.getElementById('save').onclick = () => {
       // Crear canvas combinado
       const finalCanvas = document.createElement('canvas');
       finalCanvas.width = 816;
       finalCanvas.height = 1056;
       const finalCtx = finalCanvas.getContext('2d');
-      
+
       // Capturar la plantilla base
       const container = document.querySelector('.page-container');
-      
+
       // Dibujar fondo blanco
       finalCtx.fillStyle = 'white';
       finalCtx.fillRect(0, 0, 816, 1056);
-      
+
       // Renderizar SVG y elementos HTML como imagen
       const svg = container.querySelector('svg');
       const svgData = new XMLSerializer().serializeToString(svg);
       const img = new Image();
-      const blob = new Blob([svgData], {type: 'image/svg+xml'});
+      const blob = new Blob([svgData], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(blob);
-      
+
       img.onload = () => {
         // Dibujar área de trabajo
         finalCtx.fillStyle = '#fff8f0';
         finalCtx.fillRect(57, 75, 702, 903);
-        
+
         // Dibujar cuadrícula
         finalCtx.drawImage(img, 57, 75, 702, 903);
-        
+
         // Dibujar el canvas de dibujo
         finalCtx.drawImage(canvas, 0, 0);
-        
+
         // Descargar
         const link = document.createElement('a');
         link.download = `hoja_milimetrica_${Date.now()}.png`;
         link.href = finalCanvas.toDataURL();
         link.click();
-        
+
         URL.revokeObjectURL(url);
       };
       img.src = url;
     };
-    
+
     document.getElementById('print').onclick = () => window.print();
-    
+
     // ==================== ATAJOS DE TECLADO ====================
     document.addEventListener('keydown', (e) => {
       if (e.key === 'p') setTool('pencil', 'Lápiz');
@@ -603,10 +610,53 @@
       if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
       if (e.ctrlKey && e.key === 's') { e.preventDefault(); document.getElementById('save').click(); }
     });
-    
+
     // Auto-completar fecha
     // Inicializar
     saveState();
+
+    // ===== ARKAIOS WORKSPACE INTEGRATION =====
+    window.ARKAIOS_getData = function () {
+      return {
+        canvasData: canvas.toDataURL(),
+        state: {
+          tool: state.tool,
+          color: state.color,
+          thickness: state.thickness,
+          projectMode: state.projectMode
+        }
+      };
+    };
+
+    window.ARKAIOS_setData = function (data) {
+      if (!data) return;
+      if (data.canvasData) {
+        const img = new Image();
+        img.src = data.canvasData;
+        img.onload = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+          saveState();
+        };
+      }
+      if (data.state) {
+        state.tool = data.state.tool || 'pencil';
+        state.color = data.state.color || '#2c1810';
+        state.thickness = data.state.thickness || 2;
+        state.projectMode = data.state.projectMode || 'free';
+
+        // Actualizar UI
+        setTool(state.tool, state.tool === 'pencil' ? 'Lápiz' : state.tool);
+        document.getElementById('color').value = state.color;
+        document.getElementById('thickness').value = state.thickness;
+        document.getElementById('thicknessVal').textContent = state.thickness + 'px';
+        document.getElementById('projectMode').value = state.projectMode;
+        document.getElementById('currentMode').textContent = document.getElementById('projectMode').options[document.getElementById('projectMode').selectedIndex].text;
+      }
+    };
+
+    window.printTemplate = () => window.print();
   </script>
 </body>
+
 </html>

@@ -655,6 +655,52 @@
             background: var(--accent-purple);
         }
 
+        /* Workspace & Works Base Styles */
+        #workspace-list,
+        #works-base-list {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .workspace-item,
+        .work-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .workspace-item:hover,
+        .work-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             nav {
@@ -724,109 +770,6 @@
 
         .auto-save-indicator.show {
             opacity: 1;
-        }
-
-        /* Batch Image Button & Modal */
-        .batch-img-btn {
-            position: fixed;
-            bottom: 110px;
-            right: 32px;
-            width: 64px;
-            height: 64px;
-            background: var(--gradient-secondary);
-            border: none;
-            border-radius: 50%;
-            color: var(--bg-primary);
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: var(--shadow-lg);
-            transition: all 0.4s;
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .batch-img-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            z-index: 2000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--bg-secondary);
-            padding: 32px;
-            border-radius: 24px;
-            width: 90%;
-            max-width: 500px;
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            box-shadow: var(--shadow-lg);
-            position: relative;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .close-modal {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        .form-input,
-        .form-textarea {
-            width: 100%;
-            padding: 12px;
-            background: rgba(51, 65, 85, 0.4);
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-family: inherit;
-        }
-
-        .form-textarea {
-            height: 150px;
-            resize: vertical;
         }
 
         /* Batch Image Button & Modal */
@@ -1065,612 +1008,441 @@
                 <button class="btn" data-target="plantilla-imagenes-v2.html">
                     <span class="btn-icon">🎨</span>
                     <span>Plantilla Imágenes v2</span>
-                    ✓ Guardado automáticamente
+                </button>
             </div>
 
-            <script>
-                // Variables globales
-                let currentTemplate = 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html';
-                let conversationHistory = [];
-                let isImageMode = false;
-
-                // Descargar PDF
-                document.getElementById('downloadBtn').addEventListener('click', async () => {
-                    const iframe = document.getElementById('plantillaFrame');
-                    try {
-                        const canvas = await html2canvas(iframe.contentDocument.body, {
-                            scale: 2,
-                            useCORS: true,
-                            logging: false
-                        });
-
-                        const imgData = canvas.toDataURL('image/png');
-                        const pdf = new jspdf.jsPDF({
-                            orientation: 'portrait',
-                            unit: 'mm',
-                            format: 'letter'
-                        });
-
-                        const imgWidth = 210;
-                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-                        pdf.save(`plantilla_${Date.now()}.pdf`);
-                    } catch (error) {
-                        console.error('Error al generar PDF:', error);
-                        alert('Error al generar el PDF. Por favor, intenta de nuevo.');
-                    }
-                });
-
-                // Guardar
-                document.getElementById('saveBtn').addEventListener('click', () => {
-                    const indicator = document.getElementById('autoSaveIndicator');
-                    indicator.classList.add('show');
-                    setTimeout(() => indicator.classList.remove('show'), 2000);
-                });
-
-                // Toggle sidebar
-                document.getElementById('toggleNav').addEventListener('click', function () {
-                    const nav = document.getElementById('sidebar');
-                    nav.classList.toggle('collapsed');
-                    this.classList.toggle('collapsed');
-                    this.textContent = nav.classList.contains('collapsed') ? '›' : '‹';
-                });
-
-                // Navegación entre plantillas
-                document.querySelectorAll('.btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-
-                        const target = btn.dataset.target;
-                        if (target) {
-                            currentTemplate = target;
-                            document.getElementById('plantillaFrame').src = target;
-                        }
-                    });
-                });
-
-                // Chat IA
-                const aiButton = document.getElementById('aiButton');
-                const aiTriggerBtn = document.getElementById('aiTriggerBtn');
-                const aiPanel = document.getElementById('aiPanel');
-                const aiClose = document.getElementById('aiClose');
-                const aiExpand = document.getElementById('aiExpand');
-
-                function openAiPanel() {
-                    aiPanel.classList.add('active');
-                    if (aiButton) aiButton.style.display = 'none';
-                }
-
-                function closeAiPanel() {
-                    aiPanel.classList.remove('active');
-                    if (aiButton) aiButton.style.display = 'flex';
-                }
-
-                if (aiButton) aiButton.addEventListener('click', openAiPanel);
-                if (aiTriggerBtn) aiTriggerBtn.addEventListener('click', openAiPanel);
-                if (aiClose) aiClose.addEventListener('click', closeAiPanel);
-                if (aiExpand) aiExpand.addEventListener('click', () => {
-                    aiPanel.style.width = aiPanel.style.width === '100%' ? '450px' : '100%';
-                });
-
-                // Reconocimiento de voz
-                const aiMicBtn = document.getElementById('aiMicBtn');
-                let recognition = null;
-
-                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                    recognition = new SpeechRecognition();
-                    recognition.lang = 'es-MX';
-                    recognition.continuous = false;
-
-                    recognition.onresult = (event) => {
-                        const transcript = event.results[0][0].transcript;
-                        document.getElementById('aiInput').value = transcript;
-                        aiMicBtn.style.background = '';
-                    };
-                    const loadingDiv = document.createElement('div');
-                    loadingDiv.className = 'message assistant';
-                    loadingDiv.id = loadingId;
-                    loadingDiv.innerHTML = '🎨 Creando tu obra de arte<span class="loading-dots"></span>';
-                    document.getElementById('aiMessages').appendChild(loadingDiv);
-                    document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
-
-                    try {
-                        const response = await fetch('/api/arkaios-image', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                prompt: text,
-                                model: 'flux-pro-1.1',
-                                n: 1,
-                                size: '1024x1024'
-                            })
-                        });
-
-                        if (!response.ok) throw new Error('Error generando imagen');
-
-                        const data = await response.json();
-                        const imageUrl = data.data?.[0]?.url;
-
-                        const loadingMsg = document.getElementById(loadingId);
-                        if (loadingMsg) loadingMsg.remove();
-
-                        if (imageUrl) {
-                            const imgDiv = document.createElement('div');
-                            imgDiv.className = 'message assistant';
-                            imgDiv.innerHTML = `
-            <img src="${imageUrl}" style="max-width: 100%; border-radius: 12px; margin-bottom: 12px;">
-            <div style="display: flex; gap: 8px;">
-              <button onclick="window.open('${imageUrl}')" class="btn-premium btn-secondary" style="flex: 1;">
-                📥 Descargar
-              </button>
-              <button onclick="sendImageToTemplate('${imageUrl}')" class="btn-premium btn-primary" style="flex: 1;">
-                ✨ Usar en Plantilla
-              </button>
-            </div>
-          `;
-                            document.getElementById('aiMessages').appendChild(imgDiv);
-                            document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
-
-                            speak('Imagen generada con éxito. Puedes descargarla o usarla en tu plantilla.');
-                        }
-                    } catch (error) {
-                        console.error(error);
-                        const loadingMsg = document.getElementById(loadingId);
-                        if (loadingMsg) loadingMsg.textContent = '❌ Error al generar la imagen. Intenta de nuevo.';
-                    }
-                }
-
-                function sendImageToTemplate(url) {
-                    const iframe = document.getElementById('plantillaFrame');
-                    iframe.contentWindow.postMessage({
-                        type: 'ARKAIOS_IMAGE_RESULT',
-                        image: url
-                    }, '*');
-                    addMessage('✓ Imagen enviada a la plantilla', 'assistant');
-                }
-
-                // Escuchar solicitudes de generación desde plantillas
-                window.addEventListener('message', (event) => {
-                    const data = event.data;
-                    if (data.type === 'ARKAIOS_GENERATE_IMAGE') {
-                        aiPanel.classList.add('active');
-                        aiButton.style.display = 'none';
-                        isImageMode = true;
-                        toggleImageMode();
-                        if (data.prompt) {
-                            generateImage(data.prompt);
-                        }
-                    }
-                });
-
-                // Modo Compacto (Zen)
-                function toggleCompactMode() {
-                    document.body.classList.toggle('compact-mode');
-                    const btn = document.getElementById('compactBtn');
-                    if (document.body.classList.contains('compact-mode')) {
-                        btn.innerHTML = '<span>🔙</span><span>Salir Modo Zen</span>';
-                        btn.classList.add('btn-primary');
-                        btn.classList.remove('btn-secondary');
-                    } else {
-                        btn.innerHTML = '<span>🧘</span><span>Modo Zen</span>';
-                        btn.classList.remove('btn-primary');
-                        btn.classList.add('btn-secondary');
-                    }
-                }
-
-                // Zoom
-                function updateZoom(value) {
-                    const iframe = document.getElementById('plantillaFrame');
-                    const display = document.getElementById('zoomValue');
-                    const scale = value / 100;
-
-                    iframe.style.transform = `scale(${scale})`;
-
-                    if (scale < 1) {
-                        iframe.style.width = `${100 / scale}%`;
-                        iframe.style.height = `${100 / scale}%`;
-                    } else {
-                        iframe.style.width = '100%';
-                        iframe.style.height = '100%';
-                    }
-
-                    display.textContent = `${value}%`;
-                }
-
-                // Override toggleFullscreen to update button text correctly
-                function toggleFullscreen() {
-                    const wrapper = document.getElementById('frameWrapper');
-                    wrapper.classList.toggle('fullscreen');
-                    const btn = document.getElementById('fullscreenBtn');
-                    if (wrapper.classList.contains('fullscreen')) {
-                        btn.innerHTML = '<span>⛶</span><span>Salir pantalla completa</span>';
-                    } else {
-                        btn.innerHTML = '<span>⛶</span><span>Pantalla completa</span>';
-                    }
-                }
-            </script>
-            <button class="batch-img-btn" onclick="openBatchModal()" title="Generar Imágenes por Lote">
-                🖼️
-            </button>
-
-            <div class="modal-overlay" id="batchModal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 class="modal-title">Generador de Imágenes por Lote</h3>
-                        <button class="close-modal" onclick="closeBatchModal()">×</button>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Nombre del Tema (Carpeta)</label>
-                        <input type="text" class="form-input" id="batchCategory"
-                            placeholder="Ej: Instrumentos Musicales">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Lista de Items (Uno por línea)</label>
-                        <textarea class="form-textarea" id="batchItems"
-                            placeholder="Guitarra&#10;Piano&#10;Violín"></textarea>
-                    </div>
-                    <button class="btn-premium btn-primary" style="width: 100%" onclick="startBatchGeneration()">
-                        🚀 Iniciar Generación
-                    </button>
-                    <div id="batchStatus" style="margin-top: 16px; font-size: 13px; color: var(--text-muted);">
-                    </div>
+            <div class="nav-section">
+                <div class="nav-title">
+                    <span>🏗️</span>
+                    <span>Workspace</span>
                 </div>
-            </div>
-
-            <script>
-                function openBatchModal() {
-                    ```
-                    document.getElementById('aiMessages').appendChild(div);
-                    document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
-                }
-
-                function handleKeyPress(e) {
-                    if (e.key === 'Enter') handleSend();
-                }
-
-                function toggleImageMode() {
-                    isImageMode = !isImageMode;
-                    const btn = document.getElementById('aiImageBtn');
-                    const input = document.getElementById('aiInput');
-
-                    if (isImageMode) {
-                        btn.style.background = 'var(--gradient-primary)';
-                        btn.style.color = 'white';
-                        input.placeholder = "Describe la imagen que quieres crear...";
-                    } else {
-                        btn.style.background = '';
-                        btn.style.color = '';
-                        input.placeholder = "Escribe tu mensaje...";
-                    }
-                }
-
-                function handleSend() {
-                    if (isImageMode) {
-                        generateImage();
-                    } else {
-                        sendMessage();
-                    }
-                }
-
-                async function generateImage(promptText = null) {
-                    const input = document.getElementById('aiInput');
-                    const text = promptText || input.value.trim();
-                    if (!text) return;
-
-                    if (!promptText) {
-                        addMessage(`🎨 Generando imagen: "${text}"`, 'user');
-                        input.value = '';
-                    }
-
-                    const loadingId = 'loading-img-' + Date.now();
-                    const loadingDiv = document.createElement('div');
-                    loadingDiv.className = 'message assistant';
-                    loadingDiv.id = loadingId;
-                    loadingDiv.innerHTML = '🎨 Creando tu obra de arte<span class="loading-dots"></span>';
-                    document.getElementById('aiMessages').appendChild(loadingDiv);
-                    document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
-
-                    try {
-                        const response = await fetch('/api/arkaios-image', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                prompt: text,
-                                model: 'flux-pro-1.1',
-                                n: 1,
-                                size: '1024x1024'
-                            })
-                        });
-
-                        if (!response.ok) {
-                            const errorData = await response.json();
-                            throw new Error(errorData.error || 'Error generando imagen');
-                        }
-
-                        const data = await response.json();
-                        const imageUrl = data.data?.[0]?.url;
-
-                        const loadingMsg = document.getElementById(loadingId);
-                        if (loadingMsg) loadingMsg.remove();
-
-                        if (imageUrl) {
-                            const imgDiv = document.createElement('div');
-                            imgDiv.className = 'message assistant';
-                            imgDiv.innerHTML = `
-                        < img src = "${imageUrl}" style = "max-width: 100%; border-radius: 12px; margin-bottom: 12px;" >
-                            <div style="display: flex; gap: 8px;">
-                                <button onclick="window.open('${imageUrl}')" class="btn-premium btn-secondary" style="flex: 1;">
-                                    📥 Descargar
-                                </button>
-                                <button onclick="sendImageToTemplate('${imageUrl}')" class="btn-premium btn-primary" style="flex: 1;">
-                                    ✨ Usar en Plantilla
-                                </button>
-                            </div>
-                    `;
-                            document.getElementById('aiMessages').appendChild(imgDiv);
-                            document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
-
-                            speak('Imagen generada con éxito. Puedes descargarla o usarla en tu plantilla.');
-                        }
-                    } catch (error) {
-                        console.error(error);
-                        const loadingMsg = document.getElementById(loadingId);
-                        if (loadingMsg) loadingMsg.textContent = `❌ Error al generar la imagen: ${ error.message }. Intenta de nuevo.`;
-                    }
-                }
-
-                function sendImageToTemplate(url) {
-                    const iframe = document.getElementById('plantillaFrame');
-                    iframe.contentWindow.postMessage({
-                        type: 'ARKAIOS_IMAGE_RESULT',
-                        image: url
-                    }, '*');
-                    addMessage('✓ Imagen enviada a la plantilla', 'assistant');
-                }
-
-                // Escuchar solicitudes de generación desde plantillas
-                window.addEventListener('message', (event) => {
-                    const data = event.data;
-                    if (data.type === 'ARKAIOS_GENERATE_IMAGE') {
-                        aiPanel.classList.add('active');
-                        aiButton.style.display = 'none';
-                        isImageMode = true;
-                        toggleImageMode();
-                        if (data.prompt) {
-                            generateImage(data.prompt);
-                        }
-                    }
-                });
-
-                // Modo Compacto (Zen)
-                function toggleCompactMode() {
-                    document.body.classList.toggle('compact-mode');
-                    const btn = document.getElementById('compactBtn');
-                    if (document.body.classList.contains('compact-mode')) {
-                        btn.innerHTML = '<span>🔙</span><span>Salir Modo Zen</span>';
-                        btn.classList.add('btn-primary');
-                        btn.classList.remove('btn-secondary');
-                    } else {
-                        btn.innerHTML = '<span>🧘</span><span>Modo Zen</span>';
-                        btn.classList.remove('btn-primary');
-                        btn.classList.add('btn-secondary');
-                    }
-                }
-
-                // Zoom
-                function updateZoom(value) {
-                    const iframe = document.getElementById('plantillaFrame');
-                    const display = document.getElementById('zoomValue');
-                    const scale = value / 100;
-
-                    iframe.style.transform = `scale(${ scale })`;
-
-                    if (scale < 1) {
-                        iframe.style.width = `${ 100 / scale }% `;
-                        iframe.style.height = `${ 100 / scale }% `;
-                    } else {
-                        iframe.style.width = '100%';
-                        iframe.style.height = '100%';
-                    }
-
-                    display.textContent = `${ value }% `;
-                }
-
-                // Override toggleFullscreen to update button text correctly
-                function toggleFullscreen() {
-                    const wrapper = document.getElementById('frameWrapper');
-                    wrapper.classList.toggle('fullscreen');
-                    const btn = document.getElementById('fullscreenBtn');
-                    if (wrapper.classList.contains('fullscreen')) {
-                        btn.innerHTML = '<span>⛶</span><span>Salir pantalla completa</span>';
-                    } else {
-                        btn.innerHTML = '<span>⛶</span><span>Pantalla completa</span>';
-                    }
-                }
-                function openBatchModal() {
-                    document.getElementById('batchModal').classList.add('active');
-                }
-
-                function closeBatchModal() {
-                    document.getElementById('batchModal').classList.remove('active');
-                }
-
-                async function startBatchGeneration() {
-                    const category = document.getElementById('batchCategory').value.trim();
-                    const itemsText = document.getElementById('batchItems').value.trim();
-                    const statusDiv = document.getElementById('batchStatus');
-
-                    if (!category || !itemsText) {
-                        alert('Por favor completa todos los campos');
-                        return;
-                    }
-
-                    const items = itemsText.split('\n').map(i => i.trim()).filter(i => i);
-                    if (items.length === 0) return;
-
-                    statusDiv.innerHTML = '⏳ Iniciando generación...';
-
-                    try {
-                        const response = await fetch('/api/batch-images', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ category, items })
-                        });
-
-                        const data = await response.json();
-                        
-                        let html = '<div style="margin-top:10px; max-height: 300px; overflow-y: auto;">';
-                        data.results.forEach(res => {
-                            if (res.status === 'found') {
-                                html += `
-                        < div style = "display: flex; align-items: center; gap: 10px; margin-bottom: 8px; padding: 5px; background: rgba(255,255,255,0.05); border-radius: 6px;" >
-                            <img src="${res.url}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
-                                <div style="flex: 1; font-size: 12px;">
-                                    <strong>${res.item}</strong>
-                                </div>
-                                <a href="${res.url}" download target="_blank" class="btn-premium btn-secondary" style="padding: 2px 8px; font-size: 11px;">⬇</a>
-                            </div>
-                    `;
-                            } else {
-                                html += `< div style = "color: #ef4444; font-size: 12px; margin-bottom: 4px;" >❌ ${ res.item } - No encontrado</div >`;
-                            }
-                        });
-                        html += '</div>';
-                        
-                        statusDiv.innerHTML = '✅ Proceso completado.<br>' + html;
-
-                    } catch (error) {
-                        console.error(error);
-                        statusDiv.textContent = '❌ Error en la comunicación con el servidor.';
-                    }
-                }
-            </script>
-            <button class="batch-img-btn" onclick="openBatchModal()" title="Generar Imágenes por Lote">
-                🖼️
-            </button>
-
-            <div class="modal-overlay" id="batchModal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 class="modal-title">Generador de Imágenes por Lote</h3>
-                        <button class="close-modal" onclick="closeBatchModal()">×</button>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Nombre del Tema (Carpeta)</label>
-                        <input type="text" class="form-input" id="batchCategory"
-                            placeholder="Ej: Instrumentos Musicales">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Lista de Items (Uno por línea)</label>
-                        <textarea class="form-textarea" id="batchItems"
-                            placeholder="Guitarra&#10;Piano&#10;Violín"></textarea>
-                    </div>
-                    <button class="btn-premium btn-primary" style="width: 100%" onclick="startBatchGeneration()">
-                        🚀 Iniciar Generación
-                    </button>
-                    <div id="batchStatus" style="margin-top: 16px; font-size: 13px; color: var(--text-muted);">
-                    </div>
+                <div id="workspace-list">
+                    <!-- Dynamic workspace items -->
                 </div>
+                <button class="btn" onclick="addNewWorkspaceItem()">
+                    <span class="btn-icon">➕</span>
+                    <span>Guardar Actual</span>
+                </button>
             </div>
 
-            <script>
-                function openBatchModal() {
-                    document.getElementById('batchModal').classList.add('active');
-                }
-                function closeBatchModal() {
-                    document.getElementById('batchModal').classList.remove('active');
-                }
-                async function startBatchGeneration() {
-                const category = document.getElementById('batchCategory').value.trim();
-                const itemsText = document.getElementById('batchItems').value.trim();
-                const statusDiv = document.getElementById('batchStatus');
+            <div class="nav-section">
+                <div class="nav-title">
+                    <span>📁</span>
+                    <span>Base de Trabajos</span>
+                </div>
+                <div id="works-base-list" style="max-height: 200px; overflow-y: auto;">
+                    <!-- Dynamic completed works -->
+                </div>
+                <button class="btn" onclick="document.getElementById('workUpload').click()">
+                    <span class="btn-icon">📤</span>
+                    <span>Subir Trabajo (.pdf)</span>
+                </button>
+                <input type="file" id="workUpload" accept=".pdf" style="display:none"
+                    onchange="handleWorkUpload(event)">
+            </div>
+        </nav>
 
-                if (!category || !itemsText) {
-                    alert('Por favor completa todos los campos');
+        <button class="toggle-nav" id="toggleNav" title="Ocultar/Mostrar menú">‹</button>
+
+        <main>
+            <div class="view-controls">
+                <div class="zoom-controls">
+                    <span class="btn-icon">🔍</span>
+                    <input type="range" min="50" max="150" value="100" class="zoom-slider" id="zoomSlider"
+                        oninput="updateZoom(this.value)">
+                    <span class="zoom-value" id="zoomValue">100%</span>
+                </div>
+                <button class="btn-premium btn-secondary" onclick="toggleCompactMode()" id="compactBtn">
+                    <span>🧘</span>
+                    <span>Modo Zen</span>
+                </button>
+                <button class="btn-premium btn-secondary" onclick="toggleFullscreen()" id="fullscreenBtn">
+                    <span>⛶</span>
+                    <span>Pantalla completa</span>
+                </button>
+                <button class="btn-premium btn-primary" id="downloadBtn">
+                    <span>📥</span>
+                    <span>Exportar PDF</span>
+                </button>
+            </div>
+
+            <div id="frameWrapper"
+                style="flex: 1; width: 100%; display: flex; justify-content: center; overflow: auto; background: rgba(0,0,0,0.2); border-radius: 24px; border: 1px solid rgba(102, 126, 234, 0.1);">
+                <iframe id="plantillaFrame" src="plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html"
+                    style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </main>
+    </div>
+
+    <!-- Auto-save indicator -->
+    <div class="auto-save-indicator" id="autoSaveIndicator">
+        ✓ Guardado correctamente
+    </div>
+
+    <script>
+        // Variables globales
+        let currentTemplate = 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html';
+        let workspaceItems = JSON.parse(localStorage.getItem('arkaios_workspace') || '[]');
+        let completedWorks = JSON.parse(localStorage.getItem('arkaios_works') || '[]');
+
+        // Inicializar Workspace y Base de Trabajos
+        function initLists() {
+            renderWorkspace();
+            renderWorksBase();
+        }
+
+        function renderWorkspace() {
+            const list = document.getElementById('workspace-list');
+            if (!list) return;
+            list.innerHTML = '';
+            workspaceItems.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'workspace-item';
+                div.innerHTML = `
+                    <span title="${item.template}">${item.name}</span>
+                    <div class="item-actions">
+                        <button class="action-btn" onclick="loadWorkspaceItem(${index})" title="Cargar">📂</button>
+                        <button class="action-btn" onclick="injectWorkspaceItem(${index})" title="Inyectar al Menú">💉</button>
+                        <button class="action-btn" onclick="removeWorkspaceItem(${index})" title="Eliminar">🗑️</button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function renderWorksBase() {
+            const list = document.getElementById('works-base-list');
+            if (!list) return;
+            list.innerHTML = '';
+            completedWorks.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'work-item';
+                div.innerHTML = `
+                    <span>${item.name}</span>
+                    <div class="item-actions">
+                        <button class="action-btn" onclick="downloadWork(${index})" title="Descargar">⬇️</button>
+                        <button class="action-btn" onclick="removeWork(${index})" title="Eliminar">🗑️</button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function addNewWorkspaceItem() {
+            const name = prompt('Nombre para esta nueva plantilla:', `Nueva Plantilla ${workspaceItems.length + 1}`);
+            if (!name) return;
+
+            const frame = document.getElementById('plantillaFrame');
+            let data = null;
+            try {
+                if (frame.contentWindow.ARKAIOS_getData) {
+                    data = frame.contentWindow.ARKAIOS_getData();
+                }
+            } catch (e) { console.warn('No se pudieron obtener datos del iframe'); }
+
+            workspaceItems.push({
+                name: name,
+                template: currentTemplate,
+                data: data,
+                timestamp: Date.now()
+            });
+            localStorage.setItem('arkaios_workspace', JSON.stringify(workspaceItems));
+            renderWorkspace();
+            showIndicator('Guardado en Workspace');
+        }
+
+        function loadWorkspaceItem(index) {
+            const item = workspaceItems[index];
+            currentTemplate = item.template;
+            const frame = document.getElementById('plantillaFrame');
+            frame.src = item.template;
+            frame.onload = () => {
+                if (item.data && frame.contentWindow.ARKAIOS_setData) {
+                    frame.contentWindow.ARKAIOS_setData(item.data);
+                }
+            };
+            showIndicator('Cargado desde Workspace');
+        }
+
+        function injectWorkspaceItem(index) {
+            const item = workspaceItems[index];
+            const existingBtn = Array.from(document.querySelectorAll('.btn')).find(b => b.textContent.includes(item.name));
+            if (existingBtn) {
+                alert('Esta plantilla ya está en el menú');
+                return;
+            }
+
+            const navSections = document.querySelectorAll('.nav-section');
+            const navSection = navSections[0]; // Añadir a la primera sección (Texto y Tareas)
+            const btn = document.createElement('button');
+            btn.className = 'btn';
+            btn.dataset.target = item.template;
+            btn.innerHTML = `<span class="btn-icon">✨</span><span>${item.name}</span>`;
+            btn.onclick = () => loadWorkspaceItem(index);
+
+            navSection.appendChild(btn);
+            showIndicator('Inyectado en el menú');
+        }
+
+        function removeWorkspaceItem(index) {
+            if (confirm('¿Eliminar esta plantilla del workspace?')) {
+                workspaceItems.splice(index, 1);
+                localStorage.setItem('arkaios_workspace', JSON.stringify(workspaceItems));
+                renderWorkspace();
+            }
+        }
+
+        function handleWorkUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                completedWorks.push({
+                    name: file.name,
+                    data: e.target.result, // Base64 del PDF
+                    timestamp: Date.now()
+                });
+                localStorage.setItem('arkaios_works', JSON.stringify(completedWorks));
+                renderWorksBase();
+                showIndicator('Trabajo guardado');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function downloadWork(index) {
+            const item = completedWorks[index];
+            const link = document.createElement('a');
+            link.href = item.data;
+            link.download = item.name;
+            link.click();
+        }
+
+        function removeWork(index) {
+            if (confirm('¿Eliminar este trabajo?')) {
+                completedWorks.splice(index, 1);
+                localStorage.setItem('arkaios_works', JSON.stringify(completedWorks));
+                renderWorksBase();
+            }
+        }
+
+        function showIndicator(msg) {
+            const indicator = document.getElementById('autoSaveIndicator');
+            if (!indicator) return;
+            indicator.textContent = '✓ ' + msg;
+            indicator.classList.add('show');
+            setTimeout(() => indicator.classList.remove('show'), 3000);
+        }
+
+        // Descargar PDF actual
+        document.getElementById('downloadBtn').addEventListener('click', async () => {
+            const iframe = document.getElementById('plantillaFrame');
+            try {
+                // Si la plantilla tiene su propia función de impresión, usarla
+                if (iframe.contentWindow.printTemplate) {
+                    iframe.contentWindow.printTemplate();
                     return;
                 }
 
-                const items = itemsText.split('\n').map(line => line.trim()).filter(line => line);
+                const canvas = await html2canvas(iframe.contentDocument.body, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                });
 
-                statusDiv.innerHTML = '⏳ Procesando... Esto puede tomar unos momentos.';
-                statusDiv.style.color = 'var(--warning)';
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'letter'
+                });
 
-                try {
-                    const response = await fetch('/api/batch-images', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ category, items })
+                const imgWidth = 210;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                pdf.save(`plantilla_${Date.now()}.pdf`);
+            } catch (error) {
+                console.error('Error al generar PDF:', error);
+                alert('Error al generar el PDF. Por favor, intenta de nuevo o usa Ctrl+P.');
+            }
+        });
+
+        // Toggle sidebar
+        const toggleNav = document.getElementById('toggleNav');
+        if (toggleNav) {
+            toggleNav.addEventListener('click', function () {
+                const nav = document.getElementById('sidebar');
+                nav.classList.toggle('collapsed');
+                this.classList.toggle('collapsed');
+                this.textContent = nav.classList.contains('collapsed') ? '›' : '‹';
+            });
+        }
+
+        // Navegación entre plantillas
+        document.querySelectorAll('.btn').forEach(btn => {
+            if (btn.dataset.target) {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    const target = btn.dataset.target;
+                    if (target) {
+                        currentTemplate = target;
+                        document.getElementById('plantillaFrame').src = target;
+                    }
+                });
+            }
+        });
+
+        // Zoom logic
+        function updateZoom(value) {
+            const iframe = document.getElementById('plantillaFrame');
+            const display = document.getElementById('zoomValue');
+            const scale = value / 100;
+            if (iframe) {
+                iframe.style.transform = `scale(${scale})`;
+                iframe.style.transformOrigin = 'top center';
+            }
+            if (display) display.textContent = `${value}%`;
+        }
+
+        function toggleCompactMode() {
+            document.body.classList.toggle('compact-mode');
+        }
+
+        function toggleFullscreen() {
+            const wrapper = document.getElementById('frameWrapper');
+            if (wrapper) wrapper.classList.toggle('fullscreen');
+        }
+
+        // AI Chat (Simplified)
+        const aiButton = document.getElementById('aiButton');
+        const aiPanel = document.getElementById('aiPanel');
+        const aiClose = document.getElementById('aiClose');
+
+        if (aiButton) aiButton.onclick = () => aiPanel.classList.add('active');
+        if (aiClose) aiClose.onclick = () => aiPanel.classList.remove('active');
+
+        async function handleSend() {
+            const input = document.getElementById('aiInput');
+            if (!input) return;
+            const text = input.value.trim();
+            if (!text) return;
+
+            addMessage(text, 'user');
+            input.value = '';
+
+            try {
+                const response = await fetch('/api/arkaios', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: text })
+                });
+                const data = await response.json();
+                addMessage(data.response || 'Respuesta de ARKAIOS', 'assistant');
+            } catch (e) {
+                addMessage('Error de conexión con la IA', 'assistant');
+            }
+        }
+
+        function addMessage(text, type) {
+            const msgArea = document.getElementById('aiMessages');
+            if (!msgArea) return;
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            div.textContent = text;
+            msgArea.appendChild(div);
+            msgArea.scrollTop = msgArea.scrollHeight;
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') handleSend();
+        }
+
+        // Batch Modal functions (preserved)
+        function openBatchModal() {
+            const modal = document.getElementById('batchModal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function closeBatchModal() {
+            const modal = document.getElementById('batchModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        async function startBatchGeneration() {
+            const category = document.getElementById('batchCategory').value.trim();
+            const itemsText = document.getElementById('batchItems').value.trim();
+            const statusDiv = document.getElementById('batchStatus');
+
+            if (!category || !itemsText) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+
+            const items = itemsText.split('\n').map(line => line.trim()).filter(line => line);
+            statusDiv.innerHTML = '⏳ Procesando... Esto puede tomar unos momentos.';
+            statusDiv.style.color = 'var(--warning)';
+
+            try {
+                const response = await fetch('/api/batch-images', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category, items })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    statusDiv.innerHTML = `✅ Completado! ${data.results.length} items procesados.`;
+                    statusDiv.style.color = 'var(--success)';
+
+                    const resultsContainer = document.createElement('div');
+                    resultsContainer.id = 'batchResults';
+                    resultsContainer.style.marginTop = '20px';
+                    resultsContainer.style.display = 'grid';
+                    resultsContainer.style.gridTemplateColumns = 'repeat(auto-fill, minmax(100px, 1fr))';
+                    resultsContainer.style.gap = '10px';
+                    resultsContainer.style.maxHeight = '300px';
+                    resultsContainer.style.overflowY = 'auto';
+
+                    data.results.forEach(res => {
+                        if (res.status === 'found' && res.url) {
+                            const div = document.createElement('div');
+                            div.style.position = 'relative';
+                            const img = document.createElement('img');
+                            img.src = res.url;
+                            img.style.width = '100%';
+                            img.style.borderRadius = '8px';
+                            img.title = res.item;
+                            const link = document.createElement('a');
+                            link.href = res.url;
+                            link.download = `${category}_${res.item}.jpg`;
+                            link.target = '_blank';
+                            link.innerHTML = '⬇️';
+                            link.style.cssText = 'position: absolute; bottom: 5px; right: 5px; background: rgba(0,0,0,0.7); color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 12px;';
+                            div.appendChild(img);
+                            div.appendChild(link);
+                            resultsContainer.appendChild(div);
+                        }
                     });
 
-                    const data = await response.json();
-
-                    if (response.ok) {
-                        statusDiv.innerHTML = `✅ Completado! ${ data.results.length } items procesados.`;
-                        statusDiv.style.color = 'var(--success)';
-                        
-                        // Display results
-                        const resultsContainer = document.createElement('div');
-                        resultsContainer.style.marginTop = '20px';
-                        resultsContainer.style.display = 'grid';
-                        resultsContainer.style.gridTemplateColumns = 'repeat(auto-fill, minmax(100px, 1fr))';
-                        resultsContainer.style.gap = '10px';
-                        resultsContainer.style.maxHeight = '300px';
-                        resultsContainer.style.overflowY = 'auto';
-
-                        data.results.forEach(res => {
-                            if (res.status === 'found' && res.url) {
-                                const div = document.createElement('div');
-                                div.style.position = 'relative';
-                                
-                                const img = document.createElement('img');
-                                img.src = res.url;
-                                img.style.width = '100%';
-                                img.style.borderRadius = '8px';
-                                img.title = res.item;
-                                
-                                const link = document.createElement('a');
-                                link.href = res.url;
-                                link.download = `${ category }_${ res.item }.jpg`;
-                                link.target = '_blank';
-                                link.innerHTML = '⬇️';
-                                link.style.position = 'absolute';
-                                link.style.bottom = '5px';
-                                link.style.right = '5px';
-                                link.style.background = 'rgba(0,0,0,0.7)';
-                                link.style.color = 'white';
-                                link.style.borderRadius = '50%';
-                                link.style.width = '24px';
-                                link.style.height = '24px';
-                                link.style.display = 'flex';
-                                link.style.alignItems = 'center';
-                                link.style.justifyContent = 'center';
-                                link.style.textDecoration = 'none';
-                                link.style.fontSize = '12px';
-
-                                div.appendChild(img);
-                                div.appendChild(link);
-                                resultsContainer.appendChild(div);
-                            }
-                        });
-
-                        const existingResults = document.getElementById('batchResults');
-                        if (existingResults) existingResults.remove();
-                        
-                        resultsContainer.id = 'batchResults';
-                        document.querySelector('.modal-content').appendChild(resultsContainer);
-
-                    } else {
-                        throw new Error(data.error || 'Error desconocido');
-                    }
-                } catch (error) {
-                    statusDiv.innerHTML = `❌ Error: ${ error.message }`;
-                    statusDiv.style.color = 'var(--error)';
+                    const existingResults = document.getElementById('batchResults');
+                    if (existingResults) existingResults.remove();
+                    document.querySelector('.modal-content').appendChild(resultsContainer);
+                } else {
+                    throw new Error(data.error || 'Error desconocido');
                 }
+            } catch (error) {
+                statusDiv.innerHTML = `❌ Error: ${error.message}`;
+                statusDiv.style.color = 'var(--error)';
             }
-            </script>
+        }
+
+        // Inicializar
+        window.onload = initLists;
+    </script>
 </body>
 
 </html>
-```

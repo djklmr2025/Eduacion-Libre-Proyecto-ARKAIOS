@@ -1136,6 +1136,63 @@
       changeImageLayout();
       updateTopic();
     };
+
+    // ===== ARKAIOS WORKSPACE INTEGRATION =====
+    window.ARKAIOS_getData = function () {
+      return {
+        fields: {
+          field0: document.getElementById('field0').value,
+          field1: document.getElementById('field1').value,
+          field2: document.getElementById('field2').value,
+          field3: document.getElementById('field3').value,
+          fieldTopic: document.getElementById('fieldTopic').value,
+        },
+        titles: {
+          mainTitle: document.getElementById('mainTitle').innerText,
+          subtitle: document.querySelector('.subtitle').innerText,
+        },
+        blocks: Array.from(document.querySelectorAll('.text-block .content')).map(el => el.innerHTML),
+        references: document.getElementById('referencesInput').innerHTML,
+        layout: document.getElementById('imageLayout').value,
+        images: imageSlots
+      };
+    };
+
+    window.ARKAIOS_setData = function (data) {
+      if (!data) return;
+      if (data.fields) {
+        for (let id in data.fields) {
+          const el = document.getElementById(id);
+          if (el) {
+            el.value = data.fields[id];
+            checkFilled(el);
+          }
+        }
+      }
+      if (data.titles) {
+        if (data.titles.mainTitle) document.getElementById('mainTitle').innerText = data.titles.mainTitle;
+        if (data.titles.subtitle) document.querySelector('.subtitle').innerText = data.titles.subtitle;
+      }
+      if (data.blocks) {
+        const blocks = document.querySelectorAll('.text-block .content');
+        data.blocks.forEach((content, i) => {
+          if (blocks[i]) {
+            blocks[i].innerHTML = content;
+            markHasContent(blocks[i]);
+          }
+        });
+      }
+      if (data.references) {
+        document.getElementById('referencesInput').innerHTML = data.references;
+      }
+      if (data.layout) {
+        document.getElementById('imageLayout').value = data.layout;
+        imageSlots = data.images || [];
+        changeImageLayout();
+      }
+    };
+    // Proporcionar función de impresión para el padre
+    window.printTemplate = () => window.print();
   </script>
 </body>
 
