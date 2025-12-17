@@ -462,6 +462,7 @@
             body {
                 background: white;
                 padding: 0;
+                margin: 0;
             }
 
             .container {
@@ -469,15 +470,38 @@
                 width: 21.59cm;
                 height: 27.94cm;
                 page-break-after: always;
+                margin: 0;
+                padding: 30px;
+            }
+
+            .container:last-child {
+                page-break-after: auto;
             }
 
             .print-button,
             .controls-panel {
-                display: none;
+                display: none !important;
             }
 
             .pages-container {
                 gap: 0;
+            }
+
+            .bio-grid {
+                padding: 10px;
+            }
+
+            .photo-frame,
+            .photo-container,
+            .name-field {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                color-adjust: exact;
+            }
+
+            .name-field {
+                background: transparent !important;
+                color: white !important;
             }
         }
 
@@ -540,8 +564,8 @@
         </div>
     </div>
 
-    <button class="print-button" onclick="window.print()">
-        🖨️ Imprimir Todo
+    <button class="print-button" onclick="prepareAndPrint()">
+        🖨️ Imprimir Biografías
     </button>
 
     <div class="pages-container" id="pagesContainer">
@@ -708,6 +732,27 @@
         });
 
         updatePageCount();
+
+        // Función para preparar e imprimir
+        function prepareAndPrint() {
+            // Asegurar que todos los estilos de color se mantengan
+            const frames = document.querySelectorAll('.photo-frame');
+            frames.forEach(frame => {
+                frame.style.webkitPrintColorAdjust = 'exact';
+                frame.style.printColorAdjust = 'exact';
+            });
+
+            const nameFields = document.querySelectorAll('.name-field');
+            nameFields.forEach(field => {
+                field.style.webkitPrintColorAdjust = 'exact';
+                field.style.printColorAdjust = 'exact';
+            });
+
+            // Pequeño delay para asegurar que los estilos se apliquen
+            setTimeout(() => {
+                window.print();
+            }, 100);
+        }
     </script>
 </body>
 </html>
