@@ -609,7 +609,7 @@
       <button class="pixabay" onclick="searchPixabay()">🌄 Pixabay</button>
       <button class="pexels" onclick="searchPexels()">📸 Pexels</button>
       <button class="freepik" onclick="searchFreepik()">🎨 Freepik</button>
-      <button class="ai" onclick="openAIModal()">✨ Crear con IA (Arkaios)</button>
+      <!-- Botón IA Removido -->
     </div>
 
     <!-- Contenedor de páginas -->
@@ -635,34 +635,7 @@
     <button class="edit-btn edit-btn-delete" id="btnDeleteImage">🗑️ Eliminar Imagen</button>
   </div>
 
-  <!-- Modal de IA -->
-  <div id="aiModal" class="ai-modal">
-    <div class="ai-modal-content">
-      <h3>✨ Generar Imágenes con Arkaios AI</h3>
-
-      <div>
-        <label>API Key (Opcional):</label>
-        <input type="text" id="grokKey" placeholder="sk-...">
-      </div>
-
-      <div>
-        <label>Describe las imágenes que quieres generar:</label>
-        <textarea id="aiPrompt" placeholder="Ejemplo: Un bosque mágico con criaturas fantásticas"></textarea>
-      </div>
-
-      <div>
-        <label>Número de imágenes (máx. 6 por hoja):</label>
-        <input type="number" id="imageCount" min="1" max="12" value="6">
-      </div>
-
-      <div class="ai-modal-buttons">
-        <button class="generate" onclick="generateAIImage()">Generar</button>
-        <button class="cancel" onclick="closeAIModal()">Cancelar</button>
-      </div>
-
-      <div id="aiStatus"></div>
-    </div>
-  </div>
+  <!-- MODAL DE IA REMOVIDO -->
   <!-- Inputs ocultos -->
   <input type="file" id="fileInputHidden" accept="image/*" style="display:none">
   <input type="file" id="fileInputBulkLarge" multiple accept="image/*" style="display:none">
@@ -956,15 +929,7 @@
               '📷\nClic para subir\n12 cm' :
               '📷\nClic para subir\n5 cm';
 
-            const btnGen = document.createElement('button');
-            btnGen.textContent = '✨ Generar';
-            btnGen.className = 'btn-gen-circle';
-            btnGen.onclick = (e) => {
-              e.stopPropagation();
-              openGeneratorInCircle(page.id, circle.id);
-            };
-
-            label.appendChild(btnGen);
+            <!-- Botón Generar IA Removido -->
             circleDiv.appendChild(label);
           }
 
@@ -1360,110 +1325,9 @@
     }
 
     // ===== GENERACIÓN CON IA (GROK/ARKAIOS) =====
-    function openAIModal() {
-      const storedKey = localStorage.getItem('grok_api_key');
-      if (storedKey) {
-        document.getElementById('grokKey').value = storedKey;
-      }
-      document.getElementById('aiModal').style.display = 'flex';
-    }
 
-    function closeAIModal() {
-      document.getElementById('aiModal').style.display = 'none';
-      document.getElementById('aiStatus').textContent = '';
-      circleToGenerate = null;
-      document.getElementById('imageCount').disabled = false;
-    }
-
-    function openGeneratorInCircle(pageId, circleId) {
-      circleToGenerate = { pageId, circleId };
-      document.getElementById('aiPrompt').value = '';
-      document.getElementById('imageCount').value = 1;
-      document.getElementById('imageCount').disabled = true;
-      document.getElementById('aiModal').style.display = 'flex';
-      document.getElementById('aiPrompt').focus();
-    }
-
-    async function generateAIImage() {
-      const apiKey = document.getElementById('grokKey').value.trim();
-      const prompt = document.getElementById('aiPrompt').value.trim();
-      const count = parseInt(document.getElementById('imageCount').value) || 1;
-      const statusDiv = document.getElementById('aiStatus');
-
-      if (!prompt) {
-        alert('Por favor describe las imágenes que quieres generar');
-        return;
-      }
-
-      if (apiKey) localStorage.setItem('grok_api_key', apiKey);
-
-      statusDiv.textContent = '⏳ Generando imágenes con Arkaios AI...';
-      statusDiv.style.background = '#9f7aea';
-
-      try {
-        const isLocal = location.hostname === 'localhost' ||
-          location.hostname === '127.0.0.1' ||
-          location.protocol === 'file:';
-
-        const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
-        const endpoint = isLocal ? (localBase + '/api/arkaios-image') : '/api/arkaios-image';
-
-        const payload = {
-          model: "dall-e-3",
-          prompt: prompt,
-          n: 1,
-          size: "1024x1024"
-        };
-
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-          const errData = await response.json();
-          throw new Error(errData.error || response.statusText);
-        }
-
-        const data = await response.json();
-
-        if (data.data && data.data.length > 0) {
-          const imageUrl = data.data[0].url;
-
-          if (circleToGenerate) {
-            // Generar en círculo específico
-            toDataURL(imageUrl, function (dataUrl) {
-              updateCircle(circleToGenerate.pageId, circleToGenerate.circleId, {
-                imageData: dataUrl || imageUrl,
-                scale: 100,
-                posX: 50,
-                posY: 50,
-                locked: false
-              });
-              statusDiv.textContent = '✅ ¡Imagen generada!';
-              statusDiv.style.background = '#48bb78';
-              setTimeout(closeAIModal, 1000);
-            });
-          } else {
-            // Generar en lote
-            applyExternalImages([imageUrl], `Arkaios AI: ${prompt}`);
-            statusDiv.textContent = '✅ ¡Imágenes generadas!';
-            statusDiv.style.background = '#48bb78';
-            setTimeout(closeAIModal, 1000);
-          }
-        } else {
-          throw new Error("No se recibió imagen de la API.");
-        }
-
-      } catch (error) {
-        console.error(error);
-        statusDiv.textContent = '❌ Error: ' + error.message;
-        statusDiv.style.background = '#fc8181';
-      }
-    }
+    // Las funciones de generación con IA local han sido removidas.
+    // Ahora el sistema se comunica globalmente a través de ARKAIOS Principal.
 
     // ===== EVENTOS ADICIONALES =====
     btnAddPage.addEventListener('click', addPage);

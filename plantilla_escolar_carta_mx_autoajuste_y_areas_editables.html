@@ -587,8 +587,7 @@
     <button class="pexels" onclick="searchPexels()">📸 Pexels</button>
     <button class="freepik" onclick="searchFreepik()">🎨 Freepik</button>
 
-    <!-- Botón IA -->
-    <button class="ai" onclick="openArkaiosAI()">✨ Crear con IA (Arkaios)</button>
+    <!-- Botón IA Removido (Se usa integración global) -->
   </div>
 
   <!-- Crédito de fuente (se muestra cuando se usan APIs) -->
@@ -657,34 +656,7 @@
     <div class="image-page grid-3" id="imagePage"></div>
   </div>
 
-  <!-- MODAL DE IA -->
-  <div id="aiModal" class="ai-modal">
-    <div class="ai-modal-content">
-      <h3>✨ Generar Imagen con Arkaios AI</h3>
-
-      <div>
-        <label>API Key (Opcional):</label>
-        <input type="text" id="grokKey" placeholder="sk-...">
-      </div>
-
-      <div>
-        <label>Describe la imagen que quieres generar:</label>
-        <textarea id="aiPrompt" placeholder="Ejemplo: Un paisaje futurista con montañas y un atardecer"></textarea>
-      </div>
-
-      <div>
-        <label>Número de imágenes:</label>
-        <input type="number" id="imageCount" min="1" max="12" value="3">
-      </div>
-
-      <div class="ai-modal-buttons">
-        <button class="generate" onclick="generateAIImage()">Generar</button>
-        <button class="cancel" onclick="closeAIModal()">Cancelar</button>
-      </div>
-
-      <div id="aiStatus"></div>
-    </div>
-  </div>
+  <!-- MODAL DE IA REMOVIDO -->
 
   <script>
     // ===== CONFIGURACIÓN DE API KEYS =====
@@ -1007,108 +979,6 @@
     }
 
     // ===== GENERACIÓN CON IA (GROK/ARKAIOS) =====
-    function openAIModal() {
-      const storedKey = localStorage.getItem('grok_api_key');
-      if (storedKey) {
-        document.getElementById('grokKey').value = storedKey;
-      }
-      document.getElementById('aiModal').style.display = 'flex';
-    }
-
-    function closeAIModal() {
-      document.getElementById('aiModal').style.display = 'none';
-      document.getElementById('aiStatus').textContent = '';
-      slotToGenerate = -1;
-      document.getElementById('imageCount').disabled = false;
-    }
-
-    function openGeneratorInSlot(index) {
-      slotToGenerate = index;
-      document.getElementById('aiPrompt').value = '';
-      document.getElementById('imageCount').value = 1;
-      document.getElementById('imageCount').disabled = true;
-      document.getElementById('aiModal').style.display = 'flex';
-      document.getElementById('aiPrompt').focus();
-    }
-
-    async function generateAIImage() {
-      const apiKey = document.getElementById('grokKey').value.trim();
-      const prompt = document.getElementById('aiPrompt').value.trim();
-      const count = parseInt(document.getElementById('imageCount').value) || 1;
-      const statusDiv = document.getElementById('aiStatus');
-
-      if (!prompt) {
-        alert('Por favor describe la imagen que quieres generar');
-        return;
-      }
-
-      if (apiKey) localStorage.setItem('grok_api_key', apiKey);
-
-      statusDiv.textContent = '⏳ Generando imágenes con Arkaios AI...';
-      statusDiv.style.background = '#3b82f6';
-
-      try {
-        // Detectar si estamos en entorno local o producción
-        const isLocal = location.hostname === 'localhost' ||
-          location.hostname === '127.0.0.1' ||
-          location.protocol === 'file:';
-
-        const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
-        const endpoint = isLocal ? (localBase + '/api/arkaios-image') : '/api/arkaios-image';
-
-        const payload = {
-          model: "dall-e-3",
-          prompt: prompt,
-          n: 1,
-          size: "1024x1024"
-        };
-
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-          const errData = await response.json();
-          throw new Error(errData.error || response.statusText);
-        }
-
-        const data = await response.json();
-
-        if (data.data && data.data.length > 0) {
-          const imageUrl = data.data[0].url;
-
-          if (slotToGenerate !== -1) {
-            // Generar en slot específico
-            toDataURL(imageUrl, function (dataUrl) {
-              imageSlots[slotToGenerate] = dataUrl || imageUrl;
-              changeImageLayout();
-              statusDiv.textContent = '✅ ¡Imagen generada!';
-              statusDiv.style.background = '#27ae60';
-              setTimeout(closeAIModal, 1000);
-            });
-          } else {
-            // Generar en lote
-            applyExternalImages([imageUrl], `Arkaios AI: ${prompt}`);
-            statusDiv.textContent = '✅ ¡Imágenes generadas!';
-            statusDiv.style.background = '#27ae60';
-            setTimeout(closeAIModal, 1000);
-          }
-        } else {
-          throw new Error("No se recibió imagen de la API.");
-        }
-
-      } catch (error) {
-        console.error(error);
-        statusDiv.textContent = '❌ Error: ' + error.message;
-        statusDiv.style.background = '#e74c3c';
-      }
-    }
-
-    // ===== ARKAIOS AI INTEGRATION =====
     function openArkaiosAI() {
       const prompt = prompt("¿Qué imagen quieres crear con Arkaios AI?");
       if (prompt) {

@@ -545,7 +545,7 @@
       <div class="botones-accion">
         <button class="btn btn-primary" onclick="searchPexels()" style="background: #05a081;">📸 Pexels</button>
         <button class="btn btn-primary" onclick="searchFreepik()" style="background: #336aea;">🎨 Freepik</button>
-        <button class="btn btn-primary" onclick="openAIModal()" style="background: #8e44ad;">✨ Crear con IA</button>
+        <!-- Botón IA Removido -->
         <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir hojas</button>
         <button class="btn btn-danger" onclick="limpiarTodo()">🗑️ Limpiar todo</button>
       </div>
@@ -595,42 +595,7 @@
     </div>
   </div>
 
-  <!-- Modal IA -->
-  <div id="aiModal"
-    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;">
-    <div
-      style="background: #1f2937; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; border: 1px solid #3b82f6;">
-      <h3 style="color: #3b82f6; margin-bottom: 15px;">✨ Generar Imagen con Arkaios AI</h3>
-
-      <div style="margin-bottom: 15px;">
-        <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Tu API Key (Opcional):</label>
-        <input type="password" id="grokKey" placeholder="sk-..."
-          style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
-        <small style="color: #9ca3af;">Si no la pones, se usará la del servidor.</small>
-      </div>
-
-      <div style="margin-bottom: 15px;">
-        <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Describe tu imagen:</label>
-        <textarea id="aiPrompt" rows="4" placeholder="Un paisaje espacial con planetas coloridos..."
-          style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;"></textarea>
-      </div>
-
-      <div style="margin-bottom: 15px;">
-        <label style="display: block; color: #e5e7eb; margin-bottom: 5px;">Número de imágenes:</label>
-        <input type="number" id="imageCount" min="1" max="4" value="1"
-          style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #4b5563; background: #374151; color: white;">
-      </div>
-
-      <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button onclick="closeAIModal()"
-          style="background: #4b5563; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Cancelar</button>
-        <button onclick="generateAIImage()"
-          style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Generar</button>
-      </div>
-
-      <div id="aiStatus" style="margin-top: 10px; color: #e5e7eb; font-size: 0.9rem;"></div>
-    </div>
-  </div>
+  <!-- MODAL DE IA REMOVIDO -->
 
   <script>
     const inputImagenes = document.getElementById('input-imagenes');
@@ -711,92 +676,9 @@
       }
     }
 
-    // ===== AI GENERATION =====
-    function openAIModal() {
-      const storedKey = localStorage.getItem('grok_api_key');
-      if (storedKey) document.getElementById('grokKey').value = storedKey;
-      document.getElementById('aiModal').style.display = 'flex';
-    }
+    // Las funciones de generación con IA local han sido removidas.
+    // Ahora el sistema se comunica globalmente a través de ARKAIOS Principal.
 
-    function closeAIModal() {
-      document.getElementById('aiModal').style.display = 'none';
-      document.getElementById('aiStatus').textContent = '';
-      indiceGenerando = -1;
-      document.getElementById('imageCount').disabled = false;
-    }
-
-    async function generateAIImage() {
-      const apiKey = document.getElementById('grokKey').value.trim();
-      const prompt = document.getElementById('aiPrompt').value.trim();
-      const count = parseInt(document.getElementById('imageCount').value) || 1;
-      const statusDiv = document.getElementById('aiStatus');
-
-      if (!prompt) {
-        alert('Por favor describe la imagen');
-        return;
-      }
-
-      if (apiKey) localStorage.setItem('grok_api_key', apiKey);
-
-      statusDiv.textContent = '⏳ Generando con Arkaios AI...';
-
-      const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
-      const localBase = location.protocol === 'file:' ? 'http://localhost:3000' : location.origin;
-      const endpoint = isLocal ? (localBase + '/api/arkaios-image') : '/api/arkaios-image';
-
-      try {
-        const payload = {
-          model: "dall-e-3",
-          prompt: prompt,
-          n: 1,
-          size: "1024x1024"
-        };
-
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-          const errData = await response.json();
-          throw new Error(errData.error || response.statusText);
-        }
-
-        const data = await response.json();
-
-        if (data.data && data.data.length > 0) {
-          const imageUrl = data.data[0].url;
-
-          if (indiceGenerando !== -1) {
-            toDataURL(imageUrl, function (dataUrl) {
-              imagenes[indiceGenerando] = dataUrl || imageUrl;
-              estadosImagen[indiceGenerando] = { zoom: 100, x: 0, y: 0, fijada: false };
-              generarPlantilla();
-              closeAIModal();
-            });
-          } else {
-            applyExternalImages([imageUrl], `Arkaios: ${prompt}`);
-            closeAIModal();
-          }
-        } else {
-          throw new Error("No se recibió imagen de la API.");
-        }
-
-      } catch (error) {
-        console.error(error);
-        statusDiv.textContent = '❌ Error: ' + error.message;
-      }
-    }
-
-    function abrirGeneradorEnCelda(idx) {
-      indiceGenerando = idx;
-      document.getElementById('aiPrompt').value = '';
-      document.getElementById('imageCount').value = 1;
-      document.getElementById('imageCount').disabled = true;
-      document.getElementById('aiModal').style.display = 'flex';
-      document.getElementById('aiPrompt').focus();
-    }
 
     // Event Listeners
     selectorTamano.addEventListener('change', generarPlantilla);
@@ -971,20 +853,8 @@
           inputIndividual.click();
         };
 
-        const btnGen = document.createElement('button');
-        btnGen.textContent = '✨ Generar';
-        btnGen.className = 'btn-celda no-print';
-        btnGen.setAttribute('data-html2canvas-ignore', 'true');
-        btnGen.style.background = '#8e44ad';
-        btnGen.style.fontSize = '10px';
-        btnGen.style.opacity = '1';
-        btnGen.onclick = function (e) {
-          e.stopPropagation();
-          abrirGeneradorEnCelda(idx);
-        };
-
+        <!-- Botón Generar IA Removido -->
         container.appendChild(icono);
-        container.appendChild(btnGen);
         celda.appendChild(container);
       }
 

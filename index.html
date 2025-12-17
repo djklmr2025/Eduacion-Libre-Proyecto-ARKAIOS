@@ -1573,7 +1573,9 @@
             input.value = '';
 
             try {
-                const response = await fetch('/api/arkaios', {
+                // Comunicación con el demon (Gemini-lab)
+                const endpoint = 'https://gemini-lab-ten.vercel.app/api/arkaios';
+                const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ prompt: text })
@@ -1581,7 +1583,8 @@
                 const data = await response.json();
                 addMessage(data.response || 'Respuesta de ARKAIOS', 'assistant');
             } catch (e) {
-                addMessage('Error de conexión con la IA', 'assistant');
+                console.error('Error connecting to Gemini-lab:', e);
+                addMessage('Error de conexión con el demonio de IA (Gemini-lab)', 'assistant');
             }
         }
 
@@ -1621,11 +1624,13 @@
             }
 
             const items = itemsText.split('\n').map(line => line.trim()).filter(line => line);
-            statusDiv.innerHTML = '⏳ Procesando... Esto puede tomar unos momentos.';
+            statusDiv.innerHTML = '⏳ Procesando vía Gemini-lab...';
             statusDiv.style.color = 'var(--warning)';
 
             try {
-                const response = await fetch('/api/batch-images', {
+                // Redirigir al demon (Gemini-lab)
+                const endpoint = 'https://gemini-lab-ten.vercel.app/api/batch-images';
+                const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ category, items })
@@ -1678,6 +1683,33 @@
                 statusDiv.style.color = 'var(--error)';
             }
         }
+
+        // Bridge para solicitudes de imágenes desde plantillas (iframes)
+        window.addEventListener('message', async (event) => {
+            if (event.data.type === 'ARKAIOS_GENERATE_IMAGE') {
+                const prompt = event.data.prompt;
+                const iframe = document.getElementById('plantillaFrame');
+
+                try {
+                    const endpoint = 'https://gemini-lab-ten.vercel.app/api/arkaios-image';
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt, n: 1, size: "1024x1024" })
+                    });
+                    const data = await response.json();
+
+                    if (data.data && data.data[0].url) {
+                        iframe.contentWindow.postMessage({
+                            type: 'ARKAIOS_IMAGE_RESULT',
+                            image: data.data[0].url
+                        }, '*');
+                    }
+                } catch (e) {
+                    console.error('Error generando imagen vía Gemini-lab:', e);
+                }
+            }
+        });
 
         // Inicializar
         window.onload = initLists;
