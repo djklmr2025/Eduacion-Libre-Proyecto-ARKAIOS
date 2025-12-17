@@ -783,7 +783,7 @@
           btnGen.className = 'btn-gen-slot';
           btnGen.onclick = (e) => {
             e.stopPropagation();
-            openGeneratorInSlot(i);
+            openArkaiosAI(i);
           };
 
           placeholder.appendChild(btnGen);
@@ -832,21 +832,28 @@
 
     function removeImage(index) {
       imageSlots[index] = null;
+      // Limpiar nulos al final para que no crezca infinitamente
+      while (imageSlots.length > 0 && imageSlots[imageSlots.length - 1] === null) {
+        imageSlots.pop();
+      }
       changeImageLayout();
     }
 
     function loadBulkImages(event) {
       const files = Array.from(event.target.files);
-      const layout = parseInt(document.getElementById('imageLayout').value, 10);
       let loaded = 0;
 
-      files.forEach((file, i) => {
-        if (i >= layout) return;
+      files.forEach((file) => {
         const reader = new FileReader();
         reader.onload = (e) => {
-          imageSlots[i] = e.target.result;
+          let firstEmpty = imageSlots.indexOf(null);
+          if (firstEmpty === -1) {
+            imageSlots.push(e.target.result);
+          } else {
+            imageSlots[firstEmpty] = e.target.result;
+          }
           loaded++;
-          if (loaded === Math.min(files.length, layout)) {
+          if (loaded === files.length) {
             changeImageLayout();
           }
         };
@@ -877,18 +884,17 @@
     }
 
     function applyExternalImages(urls, sourceName) {
-      const layout = parseInt(document.getElementById('imageLayout').value, 10);
-      let currentUrlIdx = 0;
-
-      for (let i = 0; i < layout; i++) {
-        if (!imageSlots[i] && currentUrlIdx < urls.length) {
-          imageSlots[i] = urls[currentUrlIdx];
-          currentUrlIdx++;
+      urls.forEach(url => {
+        let firstEmpty = imageSlots.indexOf(null);
+        if (firstEmpty === -1) {
+          imageSlots.push(url);
+        } else {
+          imageSlots[firstEmpty] = url;
         }
-      }
+      });
 
       changeImageLayout();
-      showSourceCredit(sourceName, currentUrlIdx);
+      showSourceCredit(sourceName, urls.length);
     }
 
     // ===== PIXABAY API =====
@@ -896,8 +902,8 @@
       const query = prompt("¿Qué imágenes buscas en Pixabay?");
       if (!query) return;
 
-      const countStr = prompt("¿Cuántas imágenes quieres?", "12");
-      const count = parseInt(countStr) || 12;
+      const countStr = prompt("¿Cuántas imágenes quieres?", "1");
+      const count = parseInt(countStr) || 1;
 
       try {
         const response = await fetch(
@@ -923,8 +929,8 @@
       const query = prompt("¿Qué imágenes buscas en Pexels?");
       if (!query) return;
 
-      const countStr = prompt("¿Cuántas imágenes quieres?", "12");
-      const count = parseInt(countStr) || 12;
+      const countStr = prompt("¿Cuántas imágenes quieres?", "1");
+      const count = parseInt(countStr) || 1;
 
       try {
         const response = await fetch(
@@ -953,8 +959,8 @@
       const query = prompt("¿Qué imágenes buscas en Freepik?");
       if (!query) return;
 
-      const countStr = prompt("¿Cuántas imágenes quieres?", "12");
-      const count = parseInt(countStr) || 12;
+      const countStr = prompt("¿Cuántas imágenes quieres?", "1");
+      const count = parseInt(countStr) || 1;
 
       try {
         const response = await fetch(
@@ -979,13 +985,15 @@
     }
 
     // ===== GENERACIÓN CON IA (GROK/ARKAIOS) =====
-    function openArkaiosAI() {
-      const prompt = prompt("¿Qué imagen quieres crear con Arkaios AI?");
-      if (prompt) {
+    function openArkaiosAI(slotIndex = null) {
+      const p = prompt("¿Qué imagen quieres crear con Arkaios AI?");
+      if (p) {
+        slotToGenerate = slotIndex;
         // Enviar mensaje al padre (index.html)
         window.parent.postMessage({
           type: 'ARKAIOS_GENERATE_IMAGE',
-          prompt: prompt
+          prompt: p,
+          cellIndex: slotIndex
         }, '*');
       }
     }
@@ -996,7 +1004,12 @@
       if (data.type === 'ARKAIOS_IMAGE_RESULT') {
         const imageUrl = data.image;
         if (imageUrl) {
-          applyExternalImages([imageUrl], `Arkaios AI`);
+          if (data.cellIndex !== null && data.cellIndex !== undefined) {
+            imageSlots[data.cellIndex] = imageUrl;
+            changeImageLayout();
+          } else {
+            applyExternalImages([imageUrl], `Arkaios AI`);
+          }
         }
       }
     });

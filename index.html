@@ -1702,11 +1702,34 @@
                     if (data.data && data.data[0].url) {
                         iframe.contentWindow.postMessage({
                             type: 'ARKAIOS_IMAGE_RESULT',
-                            image: data.data[0].url
+                            image: data.data[0].url,
+                            cellIndex: event.data.cellIndex // Reenviar índice si existe
                         }, '*');
                     }
                 } catch (e) {
                     console.error('Error generando imagen vía Gemini-lab:', e);
+                }
+            }
+
+            if (event.data.type === 'ARKAIOS_GOOGLE_SEARCH') {
+                const query = event.data.query;
+                const iframe = document.getElementById('plantillaFrame');
+
+                try {
+                    const endpoint = `https://gemini-lab-ten.vercel.app/api/google-images?query=${encodeURIComponent(query)}`;
+                    const response = await fetch(endpoint);
+                    const data = await response.json();
+
+                    iframe.contentWindow.postMessage({
+                        type: 'ARKAIOS_GOOGLE_RESULT',
+                        data: data
+                    }, '*');
+                } catch (e) {
+                    console.error('Error en búsqueda de Google vía Gemini-lab:', e);
+                    iframe.contentWindow.postMessage({
+                        type: 'ARKAIOS_GOOGLE_RESULT',
+                        data: { success: false, error: e.message }
+                    }, '*');
                 }
             }
         });

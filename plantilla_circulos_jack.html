@@ -609,6 +609,7 @@
       <button class="pixabay" onclick="searchPixabay()">🌄 Pixabay</button>
       <button class="pexels" onclick="searchPexels()">📸 Pexels</button>
       <button class="freepik" onclick="searchFreepik()">🎨 Freepik</button>
+      <button class="google" onclick="openGoogleModal()" style="background: #4285F4; color: white;">🔍 Google</button>
       <!-- Botón IA Removido -->
     </div>
 
@@ -1212,17 +1213,13 @@
     function applyExternalImages(urls, sourceName) {
       if (!Array.isArray(urls) || urls.length === 0) return;
 
-      const slotsPerPage = 6;
-      const requiredPages = Math.ceil(urls.length / slotsPerPage);
-
-      while (pages.length < requiredPages) {
-        addPage();
-      }
-
       let idx = 0;
-      pages.forEach(page => {
-        page.circles.forEach(circle => {
-          if (idx < urls.length) {
+
+      // Intentar llenar huecos vacíos primero
+      for (let pIdx = 0; pIdx < pages.length; pIdx++) {
+        for (let cIdx = 0; cIdx < pages[pIdx].circles.length; cIdx++) {
+          let circle = pages[pIdx].circles[cIdx];
+          if (!circle.imageData && idx < urls.length) {
             circle.imageData = urls[idx];
             circle.scale = 100;
             circle.posX = 50;
@@ -1230,8 +1227,25 @@
             circle.locked = false;
             idx++;
           }
-        });
-      });
+        }
+      }
+
+      // Si sobran imágenes, crear nuevas páginas
+      while (idx < urls.length) {
+        addPage(); // Esto añade una página al final
+        let lastPage = pages[pages.length - 1];
+        for (let cIdx = 0; cIdx < lastPage.circles.length; cIdx++) {
+          if (idx < urls.length) {
+            let circle = lastPage.circles[cIdx];
+            circle.imageData = urls[idx];
+            circle.scale = 100;
+            circle.posX = 50;
+            circle.posY = 50;
+            circle.locked = false;
+            idx++;
+          }
+        }
+      }
 
       renderPages();
       showSourceCredit(sourceName, urls.length);
@@ -1242,8 +1256,8 @@
       const query = prompt("¿Qué imágenes buscas en Pixabay?");
       if (!query) return;
 
-      const countStr = prompt("¿Cuántas imágenes quieres?", "12");
-      const count = parseInt(countStr) || 12;
+      const countStr = prompt("¿Cuántas imágenes quieres?", "1");
+      const count = parseInt(countStr) || 1;
 
       try {
         const response = await fetch(
@@ -1269,8 +1283,8 @@
       const query = prompt("¿Qué imágenes buscas en Pexels?");
       if (!query) return;
 
-      const countStr = prompt("¿Cuántas imágenes quieres?", "12");
-      const count = parseInt(countStr) || 12;
+      const countStr = prompt("¿Cuántas imágenes quieres?", "1");
+      const count = parseInt(countStr) || 1;
 
       try {
         const response = await fetch(
@@ -1341,14 +1355,26 @@
       }
     });
 
-    // ===== ARKAIOS AI INTEGRATION =====
-    function openArkaiosAI() {
-      const prompt = prompt("¿Qué imagen quieres crear con Arkaios AI?");
-      if (prompt) {
+    // ===== ARKAIOS AI & GOOGLE INTEGRATION =====
+    let aiGeneratingInCircle = null;
+
+    function openArkaiosAI(circleId = null) {
+      const p = prompt("¿Qué imagen quieres crear con Arkaios AI?");
+      if (p) {
+        aiGeneratingInCircle = circleId;
         window.parent.postMessage({
           type: 'ARKAIOS_GENERATE_IMAGE',
-          prompt: prompt
+          prompt: p,
+          cellIndex: circleId
         }, '*');
+      }
+    }
+
+    function openGoogleModal() {
+      const q = prompt("¿Qué imágenes quieres buscar en Google?");
+      if (q) {
+        window.parent.postMessage({ type: 'ARKAIOS_GOOGLE_SEARCH', query: q }, '*');
+        alert("Buscando en Google... (Los resultados se añadirán automáticamente)");
       }
     }
 
@@ -1357,7 +1383,29 @@
       if (data.type === 'ARKAIOS_IMAGE_RESULT') {
         const imageUrl = data.image;
         if (imageUrl) {
-          applyExternalImages([imageUrl], `Arkaios AI`);
+          if (data.cellIndex !== null && data.cellIndex !== undefined) {
+            // Buscar el círculo por ID
+            pages.forEach(p => {
+              p.circles.forEach(c => {
+                if (c.id === data.cellIndex) {
+                  c.imageData = imageUrl;
+                  renderPages();
+                }
+              });
+            });
+          } else {
+            applyExternalImages([imageUrl], `Arkaios AI`);
+          }
+        }
+      }
+
+      if (data.type === 'ARKAIOS_GOOGLE_RESULT') {
+        const res = data.data;
+        if (res.success && res.images) {
+          const urls = res.images.map(img => img.url);
+          applyExternalImages(urls, "Google Search");
+        } else {
+          alert("Error en búsqueda de Google: " + (res.error || "Desconocido"));
         }
       }
     });
