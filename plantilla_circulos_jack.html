@@ -606,10 +606,7 @@
       <button class="danger" id="btnClearAll">🗑️ Limpiar Todo</button>
       <button id="btnBulkLarge">📂 Cargar Lote (Grandes)</button>
       <button id="btnBulkSmall">📂 Cargar Lote (Pequeños)</button>
-      <button class="pixabay" onclick="searchPixabay()">🌄 Pixabay</button>
-      <button class="pexels" onclick="searchPexels()">📸 Pexels</button>
-      <button class="freepik" onclick="searchFreepik()">🎨 Freepik</button>
-      <button class="google" onclick="openGoogleModal()" style="background: #4285F4; color: white;">🔍 Google</button>
+      <button class="pexels" onclick="searchPexels()">📸 Buscar en Pexels</button>
       <!-- Botón IA Removido -->
     </div>
 
@@ -645,8 +642,6 @@
   <script>
     // ===== CONFIGURACIÓN DE API KEYS =====
     const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
-    const FREEPIK_API_KEY = 'FPSX890e70b7164ab7a1b05182a68d64ad06';
-    const PIXABAY_API_KEY = '53456758-e7788c27d5c820739d362581f';
 
     // ===== VARIABLES GLOBALES =====
     let pages = [];
@@ -1251,32 +1246,6 @@
       showSourceCredit(sourceName, urls.length);
     }
 
-    // ===== PIXABAY API =====
-    async function searchPixabay() {
-      const query = prompt("¿Qué imágenes buscas en Pixabay?");
-      if (!query) return;
-
-      const countStr = prompt("¿Cuántas imágenes quieres?", "1");
-      const count = parseInt(countStr) || 1;
-
-      try {
-        const response = await fetch(
-          `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=${count}`
-        );
-        const data = await response.json();
-
-        if (!data.hits || data.hits.length === 0) {
-          alert('No se encontraron imágenes en Pixabay');
-          return;
-        }
-
-        const images = data.hits.map(hit => hit.largeImageURL);
-        applyExternalImages(images, `Pixabay: ${query}`);
-      } catch (error) {
-        console.error(error);
-        alert('Error al buscar en Pixabay');
-      }
-    }
 
     // ===== PEXELS API =====
     async function searchPexels() {
@@ -1308,35 +1277,6 @@
       }
     }
 
-    // ===== FREEPIK API =====
-    async function searchFreepik() {
-      const query = prompt("¿Qué imágenes buscas en Freepik?");
-      if (!query) return;
-
-      const countStr = prompt("¿Cuántas imágenes quieres?", "12");
-      const count = parseInt(countStr) || 12;
-
-      try {
-        const response = await fetch(
-          `https://api.freepik.com/v1/resources?locale=es-ES&q=${encodeURIComponent(query)}&limit=${count}`,
-          {
-            headers: { 'X-Freepik-API-Key': FREEPIK_API_KEY }
-          }
-        );
-        const data = await response.json();
-
-        if (!data.data || data.data.length === 0) {
-          alert('No se encontraron imágenes en Freepik');
-          return;
-        }
-
-        const images = data.data.map(item => item.image.source.url);
-        applyExternalImages(images, `Freepik: ${query}`);
-      } catch (error) {
-        console.error(error);
-        alert('Error al buscar en Freepik. Verifica tu API Key.');
-      }
-    }
 
     // ===== GENERACIÓN CON IA (GROK/ARKAIOS) =====
 
@@ -1355,60 +1295,6 @@
       }
     });
 
-    // ===== ARKAIOS AI & GOOGLE INTEGRATION =====
-    let aiGeneratingInCircle = null;
-
-    function openArkaiosAI(circleId = null) {
-      const p = prompt("¿Qué imagen quieres crear con Arkaios AI?");
-      if (p) {
-        aiGeneratingInCircle = circleId;
-        window.parent.postMessage({
-          type: 'ARKAIOS_GENERATE_IMAGE',
-          prompt: p,
-          cellIndex: circleId
-        }, '*');
-      }
-    }
-
-    function openGoogleModal() {
-      const q = prompt("¿Qué imágenes quieres buscar en Google?");
-      if (q) {
-        window.parent.postMessage({ type: 'ARKAIOS_GOOGLE_SEARCH', query: q }, '*');
-        alert("Buscando en Google... (Los resultados se añadirán automáticamente)");
-      }
-    }
-
-    window.addEventListener('message', (event) => {
-      const data = event.data;
-      if (data.type === 'ARKAIOS_IMAGE_RESULT') {
-        const imageUrl = data.image;
-        if (imageUrl) {
-          if (data.cellIndex !== null && data.cellIndex !== undefined) {
-            // Buscar el círculo por ID
-            pages.forEach(p => {
-              p.circles.forEach(c => {
-                if (c.id === data.cellIndex) {
-                  c.imageData = imageUrl;
-                  renderPages();
-                }
-              });
-            });
-          } else {
-            applyExternalImages([imageUrl], `Arkaios AI`);
-          }
-        }
-      }
-
-      if (data.type === 'ARKAIOS_GOOGLE_RESULT') {
-        const res = data.data;
-        if (res.success && res.images) {
-          const urls = res.images.map(img => img.url);
-          applyExternalImages(urls, "Google Search");
-        } else {
-          alert("Error en búsqueda de Google: " + (res.error || "Desconocido"));
-        }
-      }
-    });
 
     // ===== INICIALIZACIÓN =====
     addPage();

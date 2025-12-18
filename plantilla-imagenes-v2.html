@@ -649,16 +649,7 @@
             emptyText.className = 'empty-cell-text';
             emptyText.textContent = '🖼️';
 
-            const btnGen = document.createElement('button');
-            btnGen.textContent = '✨ Generar';
-            btnGen.className = 'btn-gen-cell no-print';
-            btnGen.setAttribute('data-html2canvas-ignore', 'true');
-            btnGen.onclick = (e) => {
-                e.stopPropagation();
-                openArkaiosAI(globalIndex);
-            };
 
-            emptyText.appendChild(btnGen);
 
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-button';
@@ -796,7 +787,6 @@
 
         // ===== API KEYS & INTEGRATION =====
         const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
-        const FREEPIK_API_KEY = 'FPSX890e70b7164ab7a1b05182a68d64ad06';
 
         function applyExternalImages(urls, sourceName) {
             urls.forEach(url => {

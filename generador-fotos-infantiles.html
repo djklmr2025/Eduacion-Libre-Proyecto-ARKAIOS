@@ -755,15 +755,6 @@
                     placeholder.className = 'row-preview-placeholder';
                     placeholder.textContent = '📷';
 
-                    const btnGen = document.createElement('button');
-                    btnGen.textContent = '✨ Generar';
-                    btnGen.className = 'btn-gen-row';
-                    btnGen.style.cssText = "background: #8e44ad; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; margin-top: 5px;";
-                    btnGen.onclick = (e) => {
-                        e.stopPropagation();
-                        openArkaiosAIOnRow(row);
-                    };
-                    placeholder.appendChild(btnGen);
                     preview.appendChild(placeholder);
                 }
 
