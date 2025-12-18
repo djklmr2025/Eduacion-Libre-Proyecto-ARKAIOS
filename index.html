@@ -665,7 +665,20 @@
 
         /* Zoom & Compact Mode Overrides */
         #frameWrapper {
+            width: 100%;
+            height: 100%;
             overflow: auto !important;
+            position: relative;
+            background: white;
+            /* Asegurar fondo para ver contenido */
+            border-radius: 20px;
+        }
+
+        #mainIframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
         }
 
         #plantillaFrame {
