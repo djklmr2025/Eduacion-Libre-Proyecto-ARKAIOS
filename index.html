@@ -4,306 +4,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ARKAIOS Plantillas - Centro Educativo 2025 [Audit V1.0]</title>
+    <title>ARKAIOS EDITOR - NEXUS v3.0</title>
 
     <script src="https://js.puter.com/v2/"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
-    <!-- CRITICAL: Detectar iframe ANTES de cargar estilos -->
+    <!-- FUENTES FUTURISTAS -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- DETECTOR IFRAME -->
     <script>
         if (window.self !== window.top) {
             document.documentElement.classList.add('is-iframe');
         }
+        // Configurar worker para PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Poppins:wght@300;400;500;600;700;800&display=swap');
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        /* ========== VARIABLES CYBERPUNK ========== */
         :root {
-            /* Colores base modernos */
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-tertiary: #334155;
+            /* Colores base neón */
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff00e6;
+            --neon-blue: #0066ff;
+            --neon-purple: #6a00ff;
+            --neon-green: #00ff9d;
+            --neon-yellow: #ffee00;
 
-            /* Gradientes premium */
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-secondary: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-            --gradient-accent: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            --gradient-dark: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            /* Fondos oscuros */
+            --bg-primary: #0a0a12;
+            --bg-secondary: #11101f;
+            --bg-tertiary: #1c1b2e;
 
-            /* Colores de acento */
-            --accent-blue: #667eea;
-            --accent-purple: #764ba2;
-            --accent-orange: #fda085;
-            --accent-yellow: #f6d365;
+            /* Gradientes futuristas */
+            --gradient-cyber: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-purple) 50%, var(--neon-magenta) 100%);
+            --gradient-dark: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            --grid-overlay:
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
 
             /* Texto */
-            --text-primary: #f1f5f9;
-            --text-secondary: #cbd5e1;
-            --text-muted: #94a3b8;
+            --text-primary: #e0e0ff;
+            --text-secondary: #a0a0d0;
+            --text-muted: #606090;
 
-            /* Bordes y sombras */
-            --border-color: #334155;
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
-            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.3);
-            --shadow-glow: 0 0 20px rgba(102, 126, 234, 0.3);
+            /* Sombras de glow */
+            --glow-cyan: 0 0 15px rgba(0, 243, 255, 0.8);
+            --glow-magenta: 0 0 15px rgba(255, 0, 230, 0.8);
+            --glow-purple: 0 0 15px rgba(106, 0, 255, 0.6);
+            --shadow-deep: 0 10px 40px rgba(0, 0, 0, 0.5);
 
-            /* Estados */
-            --success: #22c55e;
-            --error: #ef4444;
-            --warning: #f59e0b;
+            /* Bordes */
+            --border-cyber: 1px solid rgba(0, 243, 255, 0.3);
         }
 
+        /* ========== RESET & BASE ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
         body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
             position: relative;
         }
 
-        /* Fondo animado con formas decorativas */
+        /* ========== GRID MATRIX BACKGROUND ========== */
         body::before {
             content: '';
             position: fixed;
-            top: -50%;
-            right: -50%;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
-            animation: float 20s ease-in-out infinite;
-            pointer-events: none;
+            background: var(--grid-overlay);
+            background-size: 40px 40px;
             z-index: 0;
+            pointer-events: none;
+            opacity: 0.3;
         }
 
-        body::after {
-            content: '';
+        /* ========== PARTICULAS ANIMADAS ========== */
+        .particles {
             position: fixed;
-            bottom: -50%;
-            left: -50%;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, rgba(253, 160, 133, 0.1) 0%, transparent 70%);
-            animation: float 25s ease-in-out infinite reverse;
             pointer-events: none;
-            z-index: 0;
+            z-index: 1;
         }
 
-        @keyframes float {
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            animation: float-particle 10s infinite;
+            box-shadow: var(--glow-cyan);
+        }
+
+        @keyframes float-particle {
 
             0%,
             100% {
-                transform: translate(0, 0) rotate(0deg);
+                transform: translateY(0) translateX(0);
+                opacity: 0;
             }
 
-            33% {
-                transform: translate(30px, -30px) rotate(120deg);
+            10% {
+                opacity: 1;
             }
 
-            66% {
-                transform: translate(-20px, 20px) rotate(240deg);
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100vh) translateX(50px);
+                opacity: 0;
             }
         }
 
-        /* Ocultar elementos en iframe */
-        .is-iframe body,
-        .is-iframe header,
-        .is-iframe nav,
-        .is-iframe .toggle-nav,
-        .is-iframe .ai-button,
-        .is-iframe .ai-panel,
-        .is-iframe .auto-save-indicator,
-        .is-iframe .view-controls,
-        .is-iframe .layout {
-            display: none !important;
-            visibility: hidden !important;
-        }
-
-        .is-iframe main {
-            display: none !important;
-        }
-
-        .is-iframe {
-            background: transparent !important;
-        }
-
-        /* Header premium con glassmorphism */
+        /* ========== GLASSMORPHISM HEADER ========== */
         header {
-            padding: 20px 32px;
-            background: rgba(30, 41, 59, 0.8);
+            position: relative;
+            z-index: 1000;
+            padding: 20px 40px;
+            background: rgba(17, 16, 31, 0.6);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            border-bottom: var(--border-cyber);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 24px;
-            flex-wrap: wrap;
-            box-shadow: var(--shadow-md);
-            position: relative;
-            z-index: 100;
-        }
-
-        header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--gradient-primary);
-            opacity: 0.5;
+            box-shadow: var(--shadow-deep);
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 16px;
-            font-family: 'Playfair Display', serif;
+            gap: 20px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
         }
 
         .logo-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--gradient-primary);
-            border-radius: 12px;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-cyber);
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            box-shadow: var(--shadow-glow);
-            animation: pulse 3s ease-in-out infinite;
+            font-size: 32px;
+            animation: pulse-logo 2s infinite;
+            box-shadow: var(--glow-cyan), var(--glow-purple);
         }
 
-        @keyframes pulse {
+        @keyframes pulse-logo {
 
             0%,
             100% {
                 transform: scale(1);
-                box-shadow: var(--shadow-glow);
             }
 
             50% {
-                transform: scale(1.05);
-                box-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+                transform: scale(1.1);
             }
         }
 
         .logo h1 {
-            font-size: 28px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 36px;
             font-weight: 900;
-            background: var(--gradient-primary);
+            background: var(--gradient-cyber);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.5px;
+            text-shadow: var(--glow-cyan);
+            letter-spacing: 2px;
         }
 
         .logo .version {
-            background: var(--gradient-secondary);
+            background: var(--gradient-cyber);
             color: var(--bg-primary);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
+            padding: 6px 16px;
+            border-radius: 25px;
+            font-size: 12px;
             font-weight: 700;
-            letter-spacing: 0.5px;
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--glow-cyan);
         }
 
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        /* Botones premium */
+        /* ========== CYBERPUNK BUTTONS ========== */
         .btn-premium {
-            padding: 12px 24px;
+            padding: 14px 28px;
             border: none;
             border-radius: 12px;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Orbitron', sans-serif;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s;
             position: relative;
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-premium::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .btn-premium:hover::before {
-            width: 300px;
-            height: 300px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .btn-primary {
-            background: var(--gradient-primary);
-            color: white;
-            box-shadow: var(--shadow-md);
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--neon-cyan);
+            border: 2px solid var(--neon-cyan);
+            box-shadow: var(--glow-cyan);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            background: var(--neon-cyan);
+            color: var(--bg-primary);
+            transform: translateY(-3px);
+            box-shadow: var(--glow-cyan), 0 5px 20px rgba(0, 243, 255, 0.5);
         }
 
         .btn-secondary {
-            background: rgba(51, 65, 85, 0.6);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
+            background: rgba(255, 0, 230, 0.1);
+            color: var(--neon-magenta);
+            border: 2px solid var(--neon-magenta);
+            box-shadow: var(--glow-magenta);
         }
 
         .btn-secondary:hover {
-            background: rgba(51, 65, 85, 0.9);
-            border-color: var(--accent-blue);
+            background: var(--neon-magenta);
+            color: var(--bg-primary);
+            transform: translateY(-3px);
+            box-shadow: var(--glow-magenta), 0 5px 20px rgba(255, 0, 230, 0.5);
         }
 
-        /* Layout principal */
-        .layout {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Sidebar mejorado */
+        /* ========== FUTURISTIC SIDEBAR ========== */
         nav {
-            width: 280px;
-            background: rgba(30, 41, 59, 0.6);
+            width: 320px;
+            background: rgba(17, 16, 31, 0.7);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(102, 126, 234, 0.2);
-            padding: 24px 0;
+            border-right: var(--border-cyber);
+            padding: 30px 20px;
             overflow-y: auto;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-md);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 999;
+            box-shadow: var(--shadow-deep);
         }
 
         nav.collapsed {
@@ -313,40 +275,40 @@
         }
 
         .nav-section {
-            margin-bottom: 32px;
-            padding: 0 16px;
+            margin-bottom: 40px;
         }
 
         .nav-title {
-            font-size: 11px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            padding: 0 12px;
+            letter-spacing: 3px;
+            color: var(--neon-cyan);
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            text-shadow: var(--glow-cyan);
         }
 
+        /* ========== TEMPLATE BUTTONS - 3D EFFECT ========== */
         .btn {
             width: 100%;
-            padding: 14px 16px;
-            margin-bottom: 8px;
-            background: transparent;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            background: rgba(28, 27, 46, 0.5);
+            border: var(--border-cyber);
+            border-radius: 14px;
             color: var(--text-secondary);
-            border: none;
-            border-radius: 12px;
-            text-align: left;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
             position: relative;
             overflow: hidden;
         }
@@ -354,247 +316,248 @@
         .btn::before {
             content: '';
             position: absolute;
-            left: 0;
             top: 0;
-            bottom: 0;
-            width: 3px;
-            background: var(--gradient-primary);
-            transform: scaleY(0);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn:hover {
-            background: rgba(102, 126, 234, 0.1);
-            color: var(--text-primary);
-            transform: translateX(4px);
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.2), transparent);
+            transition: left 0.6s;
         }
 
         .btn:hover::before {
-            transform: scaleY(1);
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateX(8px) scale(1.02);
+            border-color: var(--neon-magenta);
+            color: var(--neon-cyan);
+            box-shadow: var(--glow-cyan);
+            background: rgba(28, 27, 46, 0.8);
         }
 
         .btn.active {
-            background: var(--gradient-primary);
-            color: white;
-            font-weight: 600;
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn.active::before {
-            transform: scaleY(1);
-            background: white;
+            background: var(--gradient-cyber);
+            color: var(--bg-primary);
+            border-color: transparent;
+            box-shadow: var(--glow-cyan), var(--glow-purple);
+            font-weight: 700;
         }
 
         .btn-icon {
-            font-size: 18px;
-            min-width: 20px;
-            text-align: center;
+            font-size: 22px;
+            filter: drop-shadow(0 0 5px currentColor);
         }
 
-        /* Toggle button mejorado */
+        /* ========== TOGGLE BUTTON CYBER ========== */
         .toggle-nav {
             position: fixed;
-            left: 280px;
+            left: 320px;
             top: 50%;
             transform: translateY(-50%);
-            width: 32px;
-            height: 64px;
-            background: var(--gradient-primary);
-            border: none;
-            border-radius: 0 12px 12px 0;
-            color: white;
-            font-size: 16px;
+            width: 36px;
+            height: 80px;
+            background: rgba(0, 243, 255, 0.1);
+            border: var(--border-cyber);
+            border-left: none;
+            border-radius: 0 20px 20px 0;
+            color: var(--neon-cyan);
+            font-size: 20px;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 101;
+            transition: all 0.4s;
+            z-index: 1001;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-deep);
+            font-weight: bold;
         }
 
         .toggle-nav:hover {
-            width: 40px;
-            box-shadow: var(--shadow-lg);
+            width: 44px;
+            background: rgba(0, 243, 255, 0.2);
+            box-shadow: var(--glow-cyan);
         }
 
         nav.collapsed+.toggle-nav {
             left: 0;
         }
 
-        /* View Controls (Floating Bar) */
+        /* ========== MAIN LAYOUT ========== */
+        .layout {
+            display: flex;
+            flex: 1;
+            height: 100%;
+            position: relative;
+            z-index: 2;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+
+        /* ========== VIEW CONTROLS FLOATING ========== */
         .view-controls {
             position: fixed;
-            bottom: 32px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 1000;
             display: flex;
-            gap: 12px;
+            gap: 15px;
             align-items: center;
-            padding: 12px 24px;
-            background: rgba(30, 41, 59, 0.9);
+            padding: 16px 32px;
+            background: rgba(17, 16, 31, 0.8);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border-radius: 50px;
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            box-shadow: var(--shadow-lg);
-            transition: all 0.3s ease;
+            border: var(--border-cyber);
+            box-shadow: var(--shadow-deep), var(--glow-cyan);
         }
 
-        .view-controls:hover {
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            transform: translateX(-50%) translateY(-2px);
+        /* ========== ZOOM CONTROL CYBER ========== */
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--neon-cyan);
         }
 
-
-        /* Scrollbar personalizado */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        .zoom-slider {
+            width: 120px;
+            height: 6px;
+            background: rgba(0, 243, 255, 0.2);
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+            -webkit-appearance: none;
         }
 
-        ::-webkit-scrollbar-track {
-            background: rgba(51, 65, 85, 0.3);
-            border-radius: 4px;
+        .zoom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: var(--glow-cyan);
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--gradient-primary);
-            border-radius: 4px;
+        .zoom-value {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            min-width: 50px;
+            text-shadow: var(--glow-cyan);
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-purple);
+        /* ========== WORKSPACE & PDF GRID ========== */
+        #frameWrapper {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
         }
 
-        /* Workspace & Works Base Styles */
-        #workspace-list,
-        #works-base-list {
-            margin-bottom: 15px;
+        /* ========== PINTEREST-STYLE PDF GRID ========== */
+        .pdf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+            padding: 30px;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .pdf-card {
+            background: rgba(28, 27, 46, 0.5);
+            border: var(--border-cyber);
+            border-radius: 18px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 3/4;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-        }
-
-        .workspace-item,
-        .work-item {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 10px 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            font-size: 13px;
-            transition: all 0.3s;
+            justify-content: center;
         }
 
-        .workspace-item:hover,
-        .work-item:hover {
-            background: rgba(255, 255, 255, 0.1);
+        .pdf-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: var(--glow-cyan), var(--glow-purple);
+            border-color: var(--neon-magenta);
+            background: rgba(28, 27, 46, 0.8);
         }
 
-        .item-actions {
-            display: flex;
-            gap: 5px;
+        .pdf-card::before {
+            content: '📄';
+            font-size: 60px;
+            filter: drop-shadow(0 0 10px var(--neon-cyan));
+            margin-bottom: 15px;
         }
 
-        .action-btn {
-            background: transparent;
-            border: none;
+        .pdf-card .name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--neon-cyan);
+            text-align: center;
+            text-shadow: var(--glow-cyan);
+            margin-bottom: 8px;
+        }
+
+        .pdf-card .info {
+            font-size: 12px;
             color: var(--text-muted);
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            transition: all 0.2s;
+            text-align: center;
         }
 
-        .action-btn:hover {
-            color: white;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            nav {
-                width: 240px;
-            }
-
-            .toggle-nav {
-                left: 240px;
-            }
-
-            .ai-panel {
-                width: 100%;
-                right: -100%;
-            }
-
-            .logo h1 {
-                font-size: 20px;
-            }
-
-            main {
-                padding: 16px;
-            }
-        }
-
-        /* Loading dots animation */
-        .loading-dots::after {
-            content: '...';
-            animation: dots 1.5s steps(4, end) infinite;
-        }
-
-        @keyframes dots {
-
-            0%,
-            20% {
-                content: '.';
-            }
-
-            40% {
-                content: '..';
-            }
-
-            60%,
-            100% {
-                content: '...';
-            }
-        }
-
-        /* Auto-save indicator */
-        .auto-save-indicator {
-            position: fixed;
-            bottom: 32px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 12px 24px;
-            background: rgba(34, 197, 94, 0.9);
-            backdrop-filter: blur(10px);
-            color: white;
-            border-radius: 24px;
-            font-size: 13px;
-            font-weight: 600;
+        .pdf-card .actions {
+            position: absolute;
+            bottom: 15px;
+            display: flex;
+            gap: 10px;
             opacity: 0;
             transition: opacity 0.3s;
-            pointer-events: none;
-            z-index: 998;
-            box-shadow: var(--shadow-md);
         }
 
-        .auto-save-indicator.show {
+        .pdf-card:hover .actions {
             opacity: 1;
         }
 
+        .action-btn {
+            padding: 8px 12px;
+            background: rgba(0, 243, 255, 0.1);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 8px;
+            color: var(--neon-cyan);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
 
+        .action-btn:hover {
+            background: var(--neon-cyan);
+            color: var(--bg-primary);
+            box-shadow: var(--glow-cyan);
+        }
+
+        /* ========== MODAL CYBER UPLOAD ========== */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            z-index: 2000;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 3000;
             display: none;
             align-items: center;
             justify-content: center;
@@ -606,333 +569,159 @@
 
         .modal-content {
             background: var(--bg-secondary);
-            padding: 32px;
+            border: var(--border-cyber);
             border-radius: 24px;
+            padding: 40px;
             width: 90%;
-            max-width: 500px;
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            box-shadow: var(--shadow-lg);
+            max-width: 600px;
+            box-shadow: var(--shadow-deep), var(--glow-cyan);
             position: relative;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
         }
 
         .modal-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .close-modal {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
+            font-family: 'Orbitron', sans-serif;
             font-size: 24px;
+            color: var(--neon-cyan);
+            text-shadow: var(--glow-cyan);
+            margin-bottom: 30px;
+        }
+
+        .upload-zone {
+            border: 3px dashed var(--neon-cyan);
+            border-radius: 18px;
+            padding: 60px 40px;
+            text-align: center;
             cursor: pointer;
+            transition: all 0.4s;
+            background: rgba(0, 243, 255, 0.05);
         }
 
-        .form-group {
-            margin-bottom: 20px;
+        .upload-zone:hover {
+            border-color: var(--neon-magenta);
+            background: rgba(255, 0, 230, 0.05);
+            box-shadow: var(--glow-magenta);
         }
 
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-secondary);
-            font-size: 14px;
+        .upload-zone.dragover {
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: var(--glow-cyan);
         }
 
-        .form-input,
-        .form-textarea {
-            width: 100%;
-            padding: 12px;
-            background: rgba(51, 65, 85, 0.4);
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-family: inherit;
-        }
-
-        .form-textarea {
-            height: 150px;
-            resize: vertical;
-        }
-
-        /* Zoom & Compact Mode Overrides */
-        #frameWrapper {
-            width: 100%;
-            height: 100%;
-            overflow: auto !important;
-            position: relative;
-            background: white;
-            /* Asegurar fondo para ver contenido */
-            border-radius: 20px;
-        }
-
-        #mainIframe {
+        /* ========== IFRAME PLANTILLAS ========== */
+        #plantillaFrame {
             width: 100%;
             height: 100%;
             border: none;
-            display: block;
-        }
-
-        #plantillaFrame {
-            transform-origin: top center;
-            transition: transform 0.2s ease;
-        }
-
-        /* Zoom Controls */
-        .zoom-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            height: 16px;
-            background: var(--accent-blue);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .zoom-slider::-webkit-slider-thumb:hover {
+            display: none;
             background: white;
         }
 
-        .zoom-value {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            min-width: 40px;
+        /* ========== SCROLLBAR CYBER ========== */
+        ::-webkit-scrollbar {
+            width: 10px;
         }
 
-        /* Compact Mode (Zen) */
-        body.compact-mode header {
-            display: none !important;
+        ::-webkit-scrollbar-track {
+            background: rgba(28, 27, 46, 0.5);
+            border-radius: 5px;
         }
 
-        body.compact-mode nav {
-            display: none !important;
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient-cyber);
+            border-radius: 5px;
+            box-shadow: var(--glow-cyan);
         }
 
+        /* ========== COMPACT MODE ZEN ========== */
+        body.compact-mode header,
+        body.compact-mode nav,
         body.compact-mode .toggle-nav {
             display: none !important;
         }
 
-        body.compact-mode main {
-            padding: 0 !important;
-        }
-
-        body.compact-mode #frameWrapper {
-            border-radius: 0 !important;
-            border: none !important;
-        }
-
         body.compact-mode .view-controls {
-            position: fixed;
             bottom: 20px;
+            padding: 12px 24px;
+        }
+
+        /* ========== INDICATOR ========== */
+        .auto-save-indicator {
+            position: fixed;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 1000;
-            background: rgba(30, 41, 59, 0.9);
-            box-shadow: var(--shadow-lg);
-            border-radius: 50px;
-            padding: 10px 30px;
-        }
-
-        /* Dashboard Visual Styles */
-        .dashboard-container {
-            width: 100%;
-            height: 100%;
-            padding: 40px;
-            overflow-y: auto;
-            display: none;
-            /* Se activa dinámicamente */
-            flex-direction: column;
-            gap: 32px;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%);
-            backdrop-filter: blur(20px);
-        }
-
-        .dashboard-container.active {
-            display: flex;
-        }
-
-        .dashboard-section {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .dashboard-section-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid rgba(102, 126, 234, 0.3);
-            padding-bottom: 8px;
-        }
-
-        .file-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .file-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .file-card:hover {
-            background: rgba(102, 126, 234, 0.1);
-            border-color: var(--accent-blue);
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .file-card .icon {
-            font-size: 40px;
-            margin-bottom: 8px;
-            display: block;
-            text-align: center;
-        }
-
-        .file-card .name {
-            font-weight: 600;
-            color: white;
-            font-size: 14px;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .file-card .info {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-align: center;
-        }
-
-        .file-card .actions {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 8px;
+            padding: 14px 28px;
+            background: rgba(0, 255, 157, 0.9);
+            color: var(--bg-primary);
+            border-radius: 30px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
             opacity: 0;
             transition: opacity 0.3s;
+            z-index: 2000;
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.5);
         }
 
-        .file-card:hover .actions {
+        .auto-save-indicator.show {
             opacity: 1;
         }
 
-        .card-btn {
-            background: rgba(102, 126, 234, 0.2);
-            border: none;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            cursor: pointer;
-        }
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            nav {
+                width: 280px;
+            }
 
-        .card-btn:hover {
-            background: var(--accent-blue);
-        }
+            .toggle-nav {
+                left: 280px;
+            }
 
-        /* REGLAS CRÍTICAS DE LAYOUT - NO BORRAR */
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100vh;
-            /* Asegurar altura completa */
-            overflow: hidden !important;
-        }
+            .logo h1 {
+                font-size: 24px;
+            }
 
-        .layout {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            overflow: hidden;
-        }
-
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            width: 100% !important;
-            height: 100% !important;
-            padding: 0 !important;
-            /* Quitar padding que pueda restar espacio */
-            position: relative;
-        }
-
-        #frameWrapper {
-            flex: 1;
-            width: 100% !important;
-            height: 100% !important;
-            overflow: hidden !important;
-            display: flex;
-            background: white;
-            border-radius: 0 !important;
-            /* Maximizar espacio */
-        }
-
-        #mainIframe {
-            width: 100% !important;
-            height: 100% !important;
-            border: none;
-            display: block;
+            .pdf-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 15px;
+                padding: 20px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Header Premium -->
+    <!-- PARTICULAS ANIMADAS -->
+    <div class="particles" id="particles"></div>
+
+    <!-- HEADER CYBER -->
     <header>
-        <div class="logo" onclick="toggleDashboard()" style="cursor:pointer">
+        <div class="logo" onclick="toggleDashboard()">
             <div class="logo-icon">🎓</div>
             <div>
                 <h1>ARKAIOS</h1>
-                <span class="version">Escritorio Central</span>
+                <span class="version">NEXUS v3.0</span>
             </div>
         </div>
         <div class="header-actions">
             <button class="btn-premium btn-secondary" onclick="window.location.reload()">
                 <span>🔄</span>
-                <span>Actualizar</span>
+                <span>Reboot</span>
             </button>
             <button class="btn-premium btn-primary" id="saveBtn">
                 <span>💾</span>
-                <span>Guardar</span>
+                <span>Guardar Estado</span>
             </button>
         </div>
     </header>
 
+    <!-- LAYOUT PRINCIPAL -->
     <div class="layout">
-        <!-- Sidebar Premium -->
+        <!-- SIDEBAR CYBER -->
         <nav id="sidebar">
             <div class="nav-section">
                 <div class="nav-title">
                     <span>📝</span>
-                    <span>Texto y Tareas</span>
+                    <span>Modulos Texto</span>
                 </div>
                 <button class="btn active" data-target="plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html">
                     <span class="btn-icon">📄</span>
@@ -951,7 +740,7 @@
             <div class="nav-section">
                 <div class="nav-title">
                     <span>📸</span>
-                    <span>Fotografías</span>
+                    <span>Modulos Imagen</span>
                 </div>
                 <button class="btn" data-target="generador-fotos-infantiles.html">
                     <span class="btn-icon">👶</span>
@@ -974,51 +763,46 @@
             <div class="nav-section">
                 <div class="nav-title">
                     <span>🏗️</span>
-                    <span>Proyectos Recientes</span>
+                    <span>Workspace Proyectos</span>
                 </div>
-                <div id="injected-workspace-items">
-                    <!-- Automáticamente inyectados -->
-                </div>
+                <div id="workspace-list"></div>
                 <button class="btn" onclick="addNewWorkspaceItem()">
                     <span class="btn-icon">➕</span>
-                    <span>Guardar Versión</span>
+                    <span>Guardar Proyecto</span>
                 </button>
             </div>
 
             <div class="nav-section">
                 <div class="nav-title">
                     <span>📁</span>
-                    <span>Base de Trabajos</span>
+                    <span>Base PDFs</span>
                 </div>
-                <div id="works-base-list" style="max-height: 200px; overflow-y: auto;">
-                    <!-- Dynamic completed works -->
-                </div>
-                <button class="btn" onclick="document.getElementById('workUpload').click()">
+                <div id="works-base-list"></div>
+                <button class="btn" onclick="openUploadModal()">
                     <span class="btn-icon">📤</span>
-                    <span>Subir Trabajo (.pdf)</span>
+                    <span>Subir PDF / Continuar</span>
                 </button>
-                <input type="file" id="workUpload" accept=".pdf" style="display:none"
-                    onchange="handleWorkUpload(event)">
             </div>
         </nav>
 
         <button class="toggle-nav" id="toggleNav" title="Ocultar/Mostrar menú">‹</button>
 
         <main>
+            <!-- CONTROLES FLOATING -->
             <div class="view-controls">
                 <div class="zoom-controls">
-                    <span class="btn-icon">🔍</span>
+                    <span>🔍</span>
                     <input type="range" min="50" max="150" value="100" class="zoom-slider" id="zoomSlider"
                         oninput="updateZoom(this.value)">
                     <span class="zoom-value" id="zoomValue">100%</span>
                 </div>
                 <button class="btn-premium btn-secondary" onclick="toggleCompactMode()" id="compactBtn">
                     <span>🧘</span>
-                    <span>Modo Zen</span>
+                    <span>Zen Mode</span>
                 </button>
                 <button class="btn-premium btn-secondary" onclick="toggleFullscreen()" id="fullscreenBtn">
                     <span>⛶</span>
-                    <span>Pantalla completa</span>
+                    <span>Fullscreen</span>
                 </button>
                 <button class="btn-premium btn-primary" id="downloadBtn">
                     <span>📥</span>
@@ -1026,213 +810,225 @@
                 </button>
             </div>
 
-            <div id="frameWrapper"
-                style="flex: 1; width: 100%; display: flex; flex-direction: column; justify-content: center; overflow: hidden; background: rgba(0,0,0,0.2); border-radius: 24px; border: 1px solid rgba(102, 126, 234, 0.1); position: relative;">
+            <!-- CONTENEDOR PRINCIPAL -->
+            <div id="frameWrapper">
+                <!-- DASHBOARD VISUAL -->
+                <div id="dashboardContainer" class="pdf-grid"></div>
 
-                <!-- Dashboard Visual -->
-                <div id="dashboardContainer" class="dashboard-container active">
-                    <div class="dashboard-section">
-                        <div class="dashboard-section-title"><span>🌟</span> Mis Proyectos</div>
-                        <div id="dash-workspace-grid" class="file-grid"></div>
-                    </div>
-
-                    <div class="dashboard-section">
-                        <div class="dashboard-section-title"><span>📄</span> Plantillas Maestras</div>
-                        <div id="dash-templates-grid" class="file-grid"></div>
-                    </div>
-
-                    <div class="dashboard-section">
-                        <div class="dashboard-section-title"><span>📂</span> Trabajos Finalizados</div>
-                        <div id="dash-works-grid" class="file-grid"></div>
-                    </div>
-                </div>
-
-                <!-- Iframe de Plantillas -->
-                <iframe id="plantillaFrame" src="about:blank"
-                    style="width: 100%; height: 100%; border: none; display: none;"></iframe>
+                <!-- IFRAME DE PLANTILLAS -->
+                <iframe id="plantillaFrame" src="about:blank"></iframe>
             </div>
         </main>
     </div>
 
-    <!-- Auto-save indicator -->
-    <div class="auto-save-indicator" id="autoSaveIndicator">
-        ✓ Guardado correctamente
+    <!-- MODAL SUBIR PDF -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal-content">
+            <h2 class="modal-title">📤 SUBIR PDF PARA CONTINUAR</h2>
+            <div class="upload-zone" onclick="document.getElementById('hiddenFileInput').click()">
+                <div style="font-size: 48px; margin-bottom: 20px;">☁️⬆️</div>
+                <p style="font-size: 18px; margin-bottom: 10px;">Arrastra tu PDF aquí o haz clic</p>
+                <p style="color: var(--text-muted);">Los campos se extraerán automáticamente</p>
+            </div>
+            <input type="file" id="hiddenFileInput" accept=".pdf" style="display: none;"
+                onchange="handlePDFUpload(event)">
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="btn-premium btn-secondary" onclick="closeUploadModal()">Cancelar</button>
+            </div>
+        </div>
     </div>
 
+    <!-- INDICADOR -->
+    <div class="auto-save-indicator" id="autoSaveIndicator">✓ Guardado</div>
+
     <script>
-        // Variables globales
+        // ===== VARIABLES GLOBALES =====
         let currentTemplate = 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html';
         let workspaceItems = JSON.parse(localStorage.getItem('arkaios_workspace') || '[]');
         let completedWorks = JSON.parse(localStorage.getItem('arkaios_works') || '[]');
 
-        // Inicializar Workspace y Base de Trabajos
-        function initLists() {
-            renderWorkspace();
-            renderWorksBase();
-            renderDashboard();
-            autoInjectWorkspace();
-        }
-
-        function toggleDashboard() {
-            const dash = document.getElementById('dashboardContainer');
-            const frame = document.getElementById('plantillaFrame');
-            const zoomValue = document.getElementById('zoomSlider').value;
-
-            if (dash.classList.contains('active')) {
-                // Si el dashboard está activo, no hacemos nada a menos que haya una plantilla
-                if (currentTemplate) hideDashboard();
-            } else {
-                showDashboard();
+        // ===== INICIAR PARTICULAS =====
+        function initParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                container.appendChild(particle);
             }
         }
 
-        function showDashboard() {
-            document.getElementById('dashboardContainer').classList.add('active');
-            document.getElementById('plantillaFrame').style.display = 'none';
-            renderDashboard(); // Actualizar datos
-        }
-
-        function hideDashboard() {
-            document.getElementById('dashboardContainer').classList.remove('active');
-            document.getElementById('plantillaFrame').style.display = 'block';
-        }
-
-        function autoInjectWorkspace() {
-            const container = document.getElementById('injected-workspace-items');
-            if (!container) return;
+        // ===== DASHBOARD PINTEREST-STYLE =====
+        function renderDashboard() {
+            const container = document.getElementById('dashboardContainer');
             container.innerHTML = '';
 
-            workspaceItems.forEach((item, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'btn';
-                btn.dataset.target = item.template;
-                btn.innerHTML = `<span class="btn-icon">📁</span><span>${item.name}</span>`;
-                btn.onclick = () => loadWorkspaceItem(index);
-                container.appendChild(btn);
-            });
+            // Sección Proyectos Guardados
+            const wsSection = document.createElement('div');
+            wsSection.innerHTML = `<div style="grid-column: 1 / -1; margin-bottom: 20px;">
+                <h2 style="font-family: Orbitron; color: var(--neon-cyan); text-shadow: var(--glow-cyan);">
+                    🏗️ PROYECTOS GUARDADOS
+                </h2>
+            </div>`;
+
+            if (workspaceItems.length === 0) {
+                wsSection.innerHTML += `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted);">
+                    No hay proyectos guardados
+                </div>`;
+            } else {
+                workspaceItems.forEach((item, index) => {
+                    const card = createPDFCard(item.name, '🏗️', 'Proyecto', () => loadWorkspaceItem(index), () => removeWorkspaceItem(index));
+                    wsSection.appendChild(card);
+                });
+            }
+            container.appendChild(wsSection);
+
+            // Sección PDFs Finalizados
+            const pdfSection = document.createElement('div');
+            pdfSection.innerHTML = `<div style="grid-column: 1 / -1; margin: 40px 0 20px;">
+                <h2 style="font-family: Orbitron; color: var(--neon-magenta); text-shadow: var(--glow-magenta);">
+                    📚 TRABAJOS FINALIZADOS
+                </h2>
+            </div>`;
+
+            if (completedWorks.length === 0) {
+                pdfSection.innerHTML += `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted);">
+                    No hay PDFs guardados
+                </div>`;
+            } else {
+                completedWorks.forEach((item, index) => {
+                    const card = createPDFCard(item.name, '📄', 'PDF Finalizado', () => downloadWork(index), () => removeWork(index));
+                    pdfSection.appendChild(card);
+                });
+            }
+            container.appendChild(pdfSection);
         }
 
-        function renderDashboard() {
-            // 1. Mis Proyectos (Workspace)
-            const wsGrid = document.getElementById('dash-workspace-grid');
-            wsGrid.innerHTML = '';
-            if (workspaceItems.length === 0) wsGrid.innerHTML = '<div class="info">No tienes proyectos guardados aún.</div>';
-            workspaceItems.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'file-card';
-                card.onclick = () => loadWorkspaceItem(index);
-                card.innerHTML = `
-                    <span class="icon">🏗️</span>
-                    <span class="name">${item.name}</span>
-                    <span class="info">${item.template}</span>
-                    <div class="actions">
-                        <button class="card-btn" onclick="event.stopPropagation(); removeWorkspaceItem(${index})">Eliminar</button>
-                    </div>
-                `;
-                wsGrid.appendChild(card);
-            });
-
-            // 2. Plantillas Maestras
-            const tGrid = document.getElementById('dash-templates-grid');
-            tGrid.innerHTML = '';
-            const masterTemplates = [
-                { name: 'Carta MX - Escolar', target: 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html', icon: '📄' },
-                { name: 'Hoja Milimétrica', target: 'hoja_milimetrica_interactiva.html', icon: '📐' },
-                { name: 'Biografía Pro', target: 'biografia_profesional.html', icon: '👤' },
-                { name: 'Fotos Infantiles', target: 'generador-fotos-infantiles.html', icon: '👶' }
-            ];
-            masterTemplates.forEach(t => {
-                const card = document.createElement('div');
-                card.className = 'file-card';
-                card.onclick = () => loadTemplate(t.target);
-                card.innerHTML = `
-                    <span class="icon">${t.icon}</span>
-                    <span class="name">${t.name}</span>
-                    <span class="info">Plantilla Maestra</span>
-                `;
-                tGrid.appendChild(card);
-            });
-
-            // 3. Trabajos Finalizados
-            const bfGrid = document.getElementById('dash-works-grid');
-            bfGrid.innerHTML = '';
-            if (completedWorks.length === 0) bfGrid.innerHTML = '<div class="info">No hay PDFs guardados.</div>';
-            completedWorks.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'file-card';
-                card.onclick = () => downloadWork(index);
-                card.innerHTML = `
-                    <span class="icon">📕</span>
-                    <span class="name">${item.name}</span>
-                    <span class="info">PDF Finalizado</span>
-                    <div class="actions">
-                        <button class="card-btn" onclick="event.stopPropagation(); removeWork(${index})">Eliminar</button>
-                    </div>
-                `;
-                bfGrid.appendChild(card);
-            });
+        function createPDFCard(name, icon, type, onClick, onDelete) {
+            const card = document.createElement('div');
+            card.className = 'pdf-card';
+            card.onclick = onClick;
+            card.innerHTML = `
+                <div style="font-size: 60px; margin-bottom: 15px; filter: drop-shadow(0 0 10px var(--neon-cyan));">${icon}</div>
+                <div class="name" style="font-size: 14px;">${name}</div>
+                <div class="info" style="font-size: 12px; color: var(--text-muted);">${type}</div>
+                <div class="actions" onclick="event.stopPropagation();">
+                    <button class="action-btn" onclick="${onDelete.toString().replace(/"/g, '&quot;')}">🗑️</button>
+                </div>
+            `;
+            return card;
         }
 
+        // ===== SUBIR PDF Y CONTINUAR =====
+        function openUploadModal() {
+            document.getElementById('uploadModal').classList.add('active');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.remove('active');
+        }
+
+        async function handlePDFUpload(event) {
+            const file = event.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                const pdfData = e.target.result;
+
+                // Guardar en base de trabajos
+                completedWorks.push({
+                    name: file.name,
+                    data: pdfData,
+                    timestamp: Date.now(),
+                    status: 'imported'
+                });
+                localStorage.setItem('arkaios_works', JSON.stringify(completedWorks));
+
+                // Intentar extraer texto (versión simplificada)
+                showIndicator('Extrayendo contenido del PDF...');
+
+                // VER NOTA IMPORTANTE ABAJO
+                await extractPDFContent(pdfData);
+
+                closeUploadModal();
+                showIndicator('¡PDF importado! Puedes continuar editando.');
+                renderDashboard();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ===== NOTA IMPORTANTE SOBRE EXTRACCIÓN DE PDF =====
+        // La extracción completa de PDF a formato editable HTML es extremadamente compleja
+        // y requiere OCR + análisis de layout. Para este proyecto, implementaremos:
+        // 1. Extraer texto básico usando PDF.js
+        // 2. Crear una plantilla genérica con campos editables
+        // 3. Asignar el texto extraído a esos campos
+        // 4. Permitir al usuario reorganizar el contenido
+
+        async function extractPDFContent(pdfData) {
+            try {
+                const loadingTask = pdfjsLib.getDocument(pdfData);
+                const pdf = await loadingTask.promise;
+                const textContent = [];
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const text = await page.getTextContent();
+                    const pageText = text.items.map(item => item.str).join(' ');
+                    textContent.push(pageText);
+                }
+
+                // GUARDAR COMO NUEVO PROYECTO CON CONTENIDO EXTRAÍDO
+                const projectName = `PDF Importado ${new Date().toLocaleDateString()}`;
+                workspaceItems.push({
+                    name: projectName,
+                    template: currentTemplate,
+                    data: {
+                        extractedText: textContent.join('\n\n'),
+                        imported: true
+                    },
+                    timestamp: Date.now()
+                });
+                localStorage.setItem('arkaios_workspace', JSON.stringify(workspaceItems));
+
+            } catch (error) {
+                console.error('Error al procesar PDF:', error);
+                showIndicator('Error: No se pudo extraer texto del PDF');
+            }
+        }
+
+        // ===== FUNCIONES EXISTENTES (MEJORADAS) =====
         function loadTemplate(target) {
             currentTemplate = target;
             const frame = document.getElementById('plantillaFrame');
             frame.src = target;
-            hideDashboard();
 
-            // Marcar botón activo en sidebar
+            document.getElementById('dashboardContainer').style.display = 'none';
+            frame.style.display = 'block';
+
             document.querySelectorAll('.btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.target === target);
             });
         }
 
-        function renderWorkspace() {
-            const list = document.getElementById('workspace-list');
-            if (!list) return;
-            list.innerHTML = '';
-            workspaceItems.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'workspace-item';
-                div.innerHTML = `
-                    <span title="${item.template}">${item.name}</span>
-                    <div class="item-actions">
-                        <button class="action-btn" onclick="loadWorkspaceItem(${index})" title="Cargar">📂</button>
-                        <button class="action-btn" onclick="injectWorkspaceItem(${index})" title="Inyectar al Menú">💉</button>
-                        <button class="action-btn" onclick="removeWorkspaceItem(${index})" title="Eliminar">🗑️</button>
-                    </div>
-                `;
-                list.appendChild(div);
-            });
-        }
-
-        function renderWorksBase() {
-            const list = document.getElementById('works-base-list');
-            if (!list) return;
-            list.innerHTML = '';
-            completedWorks.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'work-item';
-                div.innerHTML = `
-                    <span>${item.name}</span>
-                    <div class="item-actions">
-                        <button class="action-btn" onclick="downloadWork(${index})" title="Descargar">⬇️</button>
-                        <button class="action-btn" onclick="removeWork(${index})" title="Eliminar">🗑️</button>
-                    </div>
-                `;
-                list.appendChild(div);
-            });
-        }
-
         function addNewWorkspaceItem() {
-            const name = prompt('Nombre para esta nueva plantilla:', `Nueva Plantilla ${workspaceItems.length + 1}`);
-            if (!name) return;
-
-            const frame = document.getElementById('plantillaFrame');
+            const iframe = document.getElementById('plantillaFrame');
             let data = null;
+
             try {
-                if (frame.contentWindow.ARKAIOS_getData) {
-                    data = frame.contentWindow.ARKAIOS_getData();
+                if (iframe.contentWindow && iframe.contentWindow.ARKAIOS_getData) {
+                    data = iframe.contentWindow.ARKAIOS_getData();
                 }
-            } catch (e) { console.warn('No se pudieron obtener datos del iframe'); }
+            } catch (e) {
+                console.warn('No se pudieron obtener datos del iframe');
+            }
+
+            const name = prompt('🤖 Nombre del proyecto:', `Proyecto ${workspaceItems.length + 1}`);
+            if (!name) return;
 
             workspaceItems.push({
                 name: name,
@@ -1240,68 +1036,36 @@
                 data: data,
                 timestamp: Date.now()
             });
+
             localStorage.setItem('arkaios_workspace', JSON.stringify(workspaceItems));
-            renderWorkspace();
-            showIndicator('Guardado en Workspace');
+            showIndicator('✓ Proyecto guardado en Workspace');
+            renderDashboard();
         }
 
         function loadWorkspaceItem(index) {
             const item = workspaceItems[index];
             currentTemplate = item.template;
             const frame = document.getElementById('plantillaFrame');
+
             frame.src = item.template;
             frame.onload = () => {
-                if (item.data && frame.contentWindow.ARKAIOS_setData) {
+                if (item.data && frame.contentWindow && frame.contentWindow.ARKAIOS_setData) {
                     frame.contentWindow.ARKAIOS_setData(item.data);
                 }
             };
-            showIndicator('Cargado desde Workspace');
-        }
 
-        function injectWorkspaceItem(index) {
-            const item = workspaceItems[index];
-            const existingBtn = Array.from(document.querySelectorAll('.btn')).find(b => b.textContent.includes(item.name));
-            if (existingBtn) {
-                alert('Esta plantilla ya está en el menú');
-                return;
-            }
-
-            const navSections = document.querySelectorAll('.nav-section');
-            const navSection = navSections[0]; // Añadir a la primera sección (Texto y Tareas)
-            const btn = document.createElement('button');
-            btn.className = 'btn';
-            btn.dataset.target = item.template;
-            btn.innerHTML = `<span class="btn-icon">✨</span><span>${item.name}</span>`;
-            btn.onclick = () => loadWorkspaceItem(index);
-
-            navSection.appendChild(btn);
-            showIndicator('Inyectado en el menú');
+            document.getElementById('dashboardContainer').style.display = 'none';
+            frame.style.display = 'block';
+            showIndicator('✓ Proyecto cargado desde Workspace');
         }
 
         function removeWorkspaceItem(index) {
-            if (confirm('¿Eliminar esta plantilla del workspace?')) {
+            if (confirm('⚠️ ¿Eliminar este proyecto permanentemente?')) {
                 workspaceItems.splice(index, 1);
                 localStorage.setItem('arkaios_workspace', JSON.stringify(workspaceItems));
-                renderWorkspace();
+                renderDashboard();
+                showIndicator('✓ Proyecto eliminado');
             }
-        }
-
-        function handleWorkUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                completedWorks.push({
-                    name: file.name,
-                    data: e.target.result, // Base64 del PDF
-                    timestamp: Date.now()
-                });
-                localStorage.setItem('arkaios_works', JSON.stringify(completedWorks));
-                renderWorksBase();
-                showIndicator('Trabajo guardado');
-            };
-            reader.readAsDataURL(file);
         }
 
         function downloadWork(index) {
@@ -1310,104 +1074,141 @@
             link.href = item.data;
             link.download = item.name;
             link.click();
+            showIndicator('✓ Descarga iniciada');
         }
 
         function removeWork(index) {
-            if (confirm('¿Eliminar este trabajo?')) {
+            if (confirm('⚠️ ¿Eliminar este PDF?')) {
                 completedWorks.splice(index, 1);
                 localStorage.setItem('arkaios_works', JSON.stringify(completedWorks));
-                renderWorksBase();
+                renderDashboard();
+                showIndicator('✓ PDF eliminado');
+            }
+        }
+
+        function updateZoom(value) {
+            const iframe = document.getElementById('plantillaFrame');
+            const display = document.getElementById('zoomValue');
+            iframe.style.transform = `scale(${value / 100})`;
+            iframe.style.transformOrigin = 'top center';
+            display.textContent = value + '%';
+        }
+
+        function toggleCompactMode() {
+            document.body.classList.toggle('compact-mode');
+            showIndicator(document.body.classList.contains('compact-mode') ? '✓ Modo Zen activado' : '✓ Modo Zen desactivado');
+        }
+
+        function toggleFullscreen() {
+            const wrapper = document.getElementById('frameWrapper');
+            if (!document.fullscreenElement) {
+                // Try standard fullscreen API first
+                if (wrapper.requestFullscreen) {
+                    wrapper.requestFullscreen();
+                } else {
+                    // Fallback to CSS class for iframe sizing if API not supported/desired
+                    wrapper.classList.toggle('fullscreen');
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
             }
         }
 
         function showIndicator(msg) {
             const indicator = document.getElementById('autoSaveIndicator');
-            if (!indicator) return;
-            indicator.textContent = '✓ ' + msg;
+            indicator.textContent = msg;
             indicator.classList.add('show');
             setTimeout(() => indicator.classList.remove('show'), 3000);
         }
 
-        // Descargar PDF actual
-        document.getElementById('downloadBtn').addEventListener('click', async () => {
-            const iframe = document.getElementById('plantillaFrame');
-            try {
-                // Si la plantilla tiene su propia función de impresión, usarla
-                if (iframe.contentWindow.printTemplate) {
-                    iframe.contentWindow.printTemplate();
-                    return;
-                }
+        // ===== INICIALIZACIÓN =====
+        window.onload = function () {
+            initParticles();
+            renderDashboard();
 
-                const canvas = await html2canvas(iframe.contentDocument.body, {
-                    scale: 2,
-                    useCORS: true,
-                    logging: false
+            // Cargar plantilla inicial
+            const frame = document.getElementById('plantillaFrame');
+            frame.src = currentTemplate;
+
+            // Configurar drag & drop para PDF
+            const uploadZone = document.querySelector('.upload-zone');
+            if (uploadZone) {
+                uploadZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadZone.classList.add('dragover');
                 });
-
-                const imgData = canvas.toDataURL('image/png');
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({
-                    orientation: 'portrait',
-                    unit: 'mm',
-                    format: 'letter'
+                uploadZone.addEventListener('dragleave', () => {
+                    uploadZone.classList.remove('dragover');
                 });
-
-                const imgWidth = 210;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-                pdf.save(`plantilla_${Date.now()}.pdf`);
-            } catch (error) {
-                console.error('Error al generar PDF:', error);
-                alert('Error al generar el PDF. Por favor, intenta de nuevo o usa Ctrl+P.');
+                uploadZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadZone.classList.remove('dragover');
+                    handlePDFUpload({ files: e.dataTransfer.files });
+                });
             }
-        });
 
-        // Toggle sidebar
-        const toggleNav = document.getElementById('toggleNav');
-        if (toggleNav) {
-            toggleNav.addEventListener('click', function () {
-                const nav = document.getElementById('sidebar');
-                nav.classList.toggle('collapsed');
-                this.classList.toggle('collapsed');
-                this.textContent = nav.classList.contains('collapsed') ? '›' : '‹';
+            // Toggle sidebar
+            const toggleNav = document.getElementById('toggleNav');
+            if (toggleNav) {
+                toggleNav.addEventListener('click', function () {
+                    const nav = document.getElementById('sidebar');
+                    nav.classList.toggle('collapsed');
+                    this.textContent = nav.classList.contains('collapsed') ? '›' : '‹';
+                });
+            }
+
+            // Navegación de botones
+            document.querySelectorAll('.btn[data-target]').forEach(btn => {
+                btn.addEventListener('click', () => loadTemplate(btn.dataset.target));
             });
-        }
 
-        // Navegación entre plantillas
-        document.querySelectorAll('.btn').forEach(btn => {
-            if (btn.dataset.target) {
-                btn.addEventListener('click', () => {
-                    loadTemplate(btn.dataset.target);
+            // Botón exportar PDF
+            const downloadBtn = document.getElementById('downloadBtn');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', async () => {
+                    showIndicator('🖨️ Generando PDF...');
+                    const iframe = document.getElementById('plantillaFrame');
+                    try {
+                        // Intentar usar la función de impresión nativa de la plantilla
+                        if (iframe.contentWindow && iframe.contentWindow.print) {
+                            iframe.contentWindow.print();
+                            showIndicator('✓ Diálogo de impresión abierto');
+                            return;
+                        }
+                        // Fallback a captura
+                        const canvas = await html2canvas(iframe.contentDocument.body, {
+                            scale: 2,
+                            useCORS: true,
+                            logging: false
+                        });
+
+                        const imgData = canvas.toDataURL('image/png');
+                        const { jsPDF } = window.jspdf;
+                        const pdf = new jsPDF({
+                            orientation: 'portrait',
+                            unit: 'mm',
+                            format: 'letter'
+                        });
+
+                        const imgWidth = 210;
+                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                        pdf.save(`ARKAIOS_${Date.now()}.pdf`);
+                        showIndicator('✓ PDF exportado exitosamente');
+                    } catch (error) {
+                        console.error('Error:', error);
+                        // Fallback final: usar window.print()
+                        window.print();
+                    }
                 });
             }
-        });
 
-        // Zoom logic
-        function updateZoom(value) {
-            const iframe = document.getElementById('plantillaFrame');
-            const display = document.getElementById('zoomValue');
-            const scale = value / 100;
-            if (iframe) {
-                iframe.style.transform = `scale(${scale})`;
-                iframe.style.transformOrigin = 'top center';
-            }
-            if (display) display.textContent = `${value}%`;
-        }
-
-        function toggleCompactMode() {
-            document.body.classList.toggle('compact-mode');
-        }
-
-        function toggleFullscreen() {
-            const wrapper = document.getElementById('frameWrapper');
-            if (wrapper) wrapper.classList.toggle('fullscreen');
-        }
-
-
-
-
-        // Inicializar
-        window.onload = initLists;
+            // Mostrar dashboard inicialmente
+            document.getElementById('plantillaFrame').style.display = 'none';
+            document.getElementById('dashboardContainer').style.display = 'grid';
+        };
     </script>
 </body>
 
