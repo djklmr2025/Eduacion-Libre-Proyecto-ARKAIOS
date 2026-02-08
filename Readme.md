@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="https://github.com/djklmr2025/Eduacion-Libre-Proyecto-ARKAIOS/blob/MAIN/Gemini_Generated_Image_lzajvflzajvflzaj.png?raw=true" alt="Banner ARKAIOS" width="800">
-</p>
+![Banner ARKAIOS](https://github.com/djklmr2025/Eduacion-Libre-Proyecto-ARKAIOS/blob/MAIN/Gemini_Generated_Image_lzajvflzajvflzaj.png?raw=true)
 # 🎓 Centro de Plantillas Educativas - Proyecto ARKAIOS
 
 [![Proyecto ARKAIOS](https://img.shields.io/badge/Proyecto-ARKAIOS-orange?style=for-the-badge)](https://github.com/djklmr2025/Eduacion-Libre-Proyecto-ARKAIOS)
