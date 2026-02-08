@@ -815,10 +815,18 @@
                 <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.8;">${icon}</div>
                 <div class="name">${name}</div>
                 <div class="info">${type}</div>
-                <div class="actions" onclick="event.stopPropagation();">
-                    <button class="action-btn" onclick="(${onDelete.toString()})()">🗑️ Eliminar</button>
+                <div class="actions">
+                    <button class="action-btn delete-btn">🗑️ Eliminar</button>
                 </div>
             `;
+            
+            // Agregar evento al botón eliminar
+            const deleteBtn = card.querySelector('.delete-btn');
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                onDelete();
+            });
+            
             return card;
         }
 
