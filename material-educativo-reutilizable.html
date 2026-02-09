@@ -537,6 +537,15 @@
 
             // Form
             document.getElementById('catalogForm').addEventListener('submit', handleCatalogSubmit);
+
+// Botón Guardar (backup): en algunos navegadores/embeds el submit puede no disparar
+const saveBtn = document.querySelector('#catalogModal .btn-save');
+if (saveBtn) {
+    saveBtn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        handleCatalogSubmit(ev);
+    });
+}
         }
 
         async function handleFileSelect(e) {
@@ -600,34 +609,48 @@
         }
 
         function handleCatalogSubmit(e) {
-            e.preventDefault();
+    // Puede venir desde submit del form o click del botón
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
 
-            if (!pendingFile) return;
+    if (!pendingFile) {
+        showNotification('⚠️ No hay archivo pendiente por guardar', 'warning');
+        return;
+    }
 
-            const material = {
-                id: Date.now(),
-                title: document.getElementById('materialTitle').value,
-                description: document.getElementById('materialDescription').value,
-                type: document.getElementById('materialType').value,
-                fileName: pendingFile.name,
-                fileData: pendingFile.data,
-                fileSize: pendingFile.size,
-                preview: pendingFile.preview,
-                uploadDate: new Date().toISOString(),
-                // Nomenclatura automática
-                code: generateCode(document.getElementById('materialType').value)
-            };
+    // Si el título está vacío, autocompletar con el nombre del archivo
+    const titleEl = document.getElementById('materialTitle');
+    const descEl = document.getElementById('materialDescription');
+    const typeEl = document.getElementById('materialType');
 
-            materials.push(material);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(materials));
+    const safeTitle = (titleEl.value || '').trim() || (pendingFile.name || 'Documento').replace(/\.pdf$/i, '');
 
-            closeCatalogModal();
-            renderLibrary();
-            showNotification('✅ Material guardado exitosamente');
+    const materialType = (typeEl.value || 'other');
 
-            // Reset
-            document.getElementById('fileInput').value = '';
-        }
+    const material = {
+        id: Date.now(),
+        title: safeTitle,
+        description: (descEl.value || '').trim(),
+        type: materialType,
+        fileName: pendingFile.name,
+        fileData: pendingFile.data,
+        fileSize: pendingFile.size,
+        preview: pendingFile.preview,
+        uploadDate: new Date().toISOString(),
+        // Nomenclatura automática
+        code: generateCode(materialType)
+    };
+
+    materials.push(material);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(materials));
+
+    closeCatalogModal();
+    renderLibrary();
+    showNotification('✅ Material guardado exitosamente');
+
+    // Reset input (evita que el mismo archivo no dispare change)
+    const fileInput = document.getElementById('fileInput');
+    if (fileInput) fileInput.value = '';
+}
 
         function generateCode(type) {
             const prefixes = {
