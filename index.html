@@ -355,20 +355,21 @@
             height: 100%;
         }
 
-        .pdf-card {
-            background: var(--bg-white);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius-lg);
-            padding: 24px;
-            cursor: pointer;
-            transition: all 0.2s;
-            aspect-ratio: 3/4;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-sm);
-        }
+	        .pdf-card {
+	            background: var(--bg-white);
+	            border: 1px solid var(--border-color);
+	            border-radius: var(--border-radius-lg);
+	            padding: 24px;
+	            cursor: pointer;
+	            transition: all 0.2s;
+	            aspect-ratio: 3/4;
+	            position: relative;
+	            display: flex;
+	            flex-direction: column;
+	            align-items: center;
+	            justify-content: center;
+	            box-shadow: var(--shadow-sm);
+	        }
 
         .pdf-card:hover {
             transform: translateY(-4px);
@@ -376,12 +377,12 @@
             border-color: var(--primary-blue);
         }
 
-        .pdf-card::before {
-            content: '📄';
-            font-size: 48px;
-            margin-bottom: 16px;
-            opacity: 0.8;
-        }
+	        .pdf-card::before {
+	            content: none;
+	            font-size: 48px;
+	            margin-bottom: 16px;
+	            opacity: 0.8;
+	        }
 
         .pdf-card .name {
             font-family: 'Poppins', sans-serif;
@@ -423,11 +424,193 @@
             transition: all 0.2s;
         }
 
-        .action-btn:hover {
-            background: var(--accent-red);
-            color: white;
-            border-color: var(--accent-red);
-        }
+	        .action-btn:hover {
+	            background: var(--accent-red);
+	            color: white;
+	            border-color: var(--accent-red);
+	        }
+
+	        /* ===== \"Pinterest\" cards (Biblioteca/Proyectos) ===== */
+	        .pin-card {
+	            background: var(--bg-white);
+	            border: 1px solid var(--border-color);
+	            border-radius: var(--border-radius-lg);
+	            overflow: hidden;
+	            cursor: pointer;
+	            transition: all 0.2s;
+	            box-shadow: var(--shadow-sm);
+	            display: flex;
+	            flex-direction: column;
+	            min-height: 280px;
+	        }
+
+	        .pin-card:hover {
+	            transform: translateY(-4px);
+	            box-shadow: var(--shadow-lg);
+	            border-color: var(--primary-blue);
+	        }
+
+	        .pin-thumb {
+	            height: 150px;
+	            background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
+	            position: relative;
+	        }
+
+	        .pin-thumb img {
+	            width: 100%;
+	            height: 100%;
+	            object-fit: cover;
+	            display: block;
+	        }
+
+	        .pin-thumb .pin-thumb-placeholder {
+	            position: absolute;
+	            inset: 0;
+	            display: flex;
+	            align-items: center;
+	            justify-content: center;
+	            color: rgba(255, 255, 255, 0.92);
+	            font-weight: 700;
+	            font-family: 'Poppins', sans-serif;
+	            font-size: 14px;
+	            letter-spacing: 0.3px;
+	            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+	        }
+
+	        .pin-body {
+	            padding: 16px 16px 10px;
+	            display: flex;
+	            flex-direction: column;
+	            gap: 8px;
+	            flex: 1;
+	        }
+
+	        .pin-title {
+	            font-family: 'Poppins', sans-serif;
+	            font-size: 14px;
+	            font-weight: 700;
+	            color: var(--text-primary);
+	            line-height: 1.25;
+	        }
+
+	        .pin-desc {
+	            font-size: 12px;
+	            color: var(--text-secondary);
+	            line-height: 1.35;
+	            white-space: pre-wrap;
+	        }
+
+	        .pin-links {
+	            display: flex;
+	            flex-wrap: wrap;
+	            gap: 6px;
+	            margin-top: 2px;
+	        }
+
+	        .link-chip {
+	            display: inline-flex;
+	            align-items: center;
+	            gap: 6px;
+	            padding: 6px 10px;
+	            border: 1px solid var(--border-color);
+	            background: var(--bg-lighter);
+	            border-radius: 999px;
+	            font-size: 11px;
+	            font-weight: 600;
+	            color: var(--text-secondary);
+	            max-width: 100%;
+	        }
+
+	        .link-chip a {
+	            color: inherit;
+	            text-decoration: none;
+	            overflow: hidden;
+	            text-overflow: ellipsis;
+	            white-space: nowrap;
+	            max-width: 220px;
+	        }
+
+	        .link-chip a:hover {
+	            text-decoration: underline;
+	            color: var(--primary-blue-dark);
+	        }
+
+	        .pin-footer {
+	            padding: 12px 16px 16px;
+	            display: flex;
+	            align-items: center;
+	            justify-content: space-between;
+	            gap: 10px;
+	        }
+
+	        .pin-badge {
+	            display: inline-flex;
+	            align-items: center;
+	            gap: 6px;
+	            padding: 6px 10px;
+	            border-radius: 999px;
+	            border: 1px solid var(--border-color);
+	            background: var(--bg-white);
+	            font-size: 11px;
+	            font-weight: 700;
+	            color: var(--text-secondary);
+	            max-width: 65%;
+	            overflow: hidden;
+	            text-overflow: ellipsis;
+	            white-space: nowrap;
+	        }
+
+	        /* ===== Save modal form ===== */
+	        .form-row {
+	            margin-bottom: 14px;
+	        }
+
+	        .form-label {
+	            font-size: 12px;
+	            font-weight: 700;
+	            color: var(--text-secondary);
+	            margin-bottom: 8px;
+	        }
+
+	        .form-input,
+	        .form-textarea,
+	        .form-select {
+	            width: 100%;
+	            padding: 12px 14px;
+	            border: 1px solid var(--border-color);
+	            border-radius: var(--border-radius-md);
+	            outline: none;
+	            background: var(--bg-white);
+	            color: var(--text-primary);
+	            font-family: 'Inter', sans-serif;
+	            font-size: 13px;
+	            transition: border-color 0.2s, box-shadow 0.2s;
+	        }
+
+	        .form-textarea {
+	            min-height: 90px;
+	            resize: vertical;
+	        }
+
+	        .form-input:focus,
+	        .form-textarea:focus,
+	        .form-select:focus {
+	            border-color: var(--primary-blue);
+	            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+	        }
+
+	        .form-help {
+	            font-size: 12px;
+	            color: var(--text-muted);
+	            margin-top: 6px;
+	        }
+
+	        .modal-actions {
+	            margin-top: 18px;
+	            display: flex;
+	            justify-content: flex-end;
+	            gap: 12px;
+	        }
 
         .modal-overlay {
             position: fixed;
@@ -709,10 +892,10 @@
         </main>
     </div>
 
-    <!-- MODAL SUBIR PDF (se mantiene porque el dashboard lo usa internamente si lo ocupas) -->
-    <div class="modal-overlay" id="uploadModal">
-        <div class="modal-content">
-            <h2 class="modal-title">📤 Subir Documento PDF</h2>
+	    <!-- MODAL SUBIR PDF (se mantiene porque el dashboard lo usa internamente si lo ocupas) -->
+	    <div class="modal-overlay" id="uploadModal">
+	        <div class="modal-content">
+	            <h2 class="modal-title">📤 Subir Documento PDF</h2>
             <div class="upload-zone" onclick="document.getElementById('hiddenFileInput').click()">
                 <div style="font-size: 40px; margin-bottom: 16px;">📄</div>
                 <p style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">Arrastra tu PDF aquí o haz clic</p>
@@ -723,10 +906,45 @@
             <div style="margin-top: 20px; text-align: center;">
                 <button class="btn-premium btn-secondary" onclick="closeUploadModal()">Cancelar</button>
             </div>
-        </div>
-    </div>
+	        </div>
+	    </div>
 
-    <div class="auto-save-indicator" id="autoSaveIndicator">✓ Guardado</div>
+	    <!-- MODAL GUARDAR / CATALOGAR MATERIAL (Biblioteca tipo Pinterest) -->
+	    <div class="modal-overlay" id="saveModal">
+	        <div class="modal-content">
+	            <h2 class="modal-title">📌 Catalogar Material</h2>
+
+	            <div class="form-row">
+	                <div class="form-label">Título del Material</div>
+	                <input class="form-input" id="saveModalTitle" type="text" placeholder="Ej. El concepto del Yo" />
+	            </div>
+
+	            <div class="form-row">
+	                <div class="form-label">Descripción</div>
+	                <textarea class="form-textarea" id="saveModalDescription"
+	                    placeholder="Describe el material y pega enlaces (https://...) si aplica"></textarea>
+	                <div class="form-help">Los enlaces se detectan y se muestran como chips en la Biblioteca.</div>
+	            </div>
+
+	            <div class="form-row">
+	                <div class="form-label">Tipo de Plantilla (actual)</div>
+	                <select class="form-input form-select" id="saveModalTemplate" disabled></select>
+	                <div class="form-help">Se guarda en este navegador (localStorage).</div>
+	            </div>
+
+	            <div class="modal-actions">
+	                <button class="btn-premium btn-secondary" id="saveModalCancel">Cancelar</button>
+	                <button class="btn-premium btn-primary" id="saveModalConfirm">
+	                    <span>💾</span>
+	                    <span>Guardar</span>
+	                </button>
+	            </div>
+
+	            <div class="form-help" id="saveModalStatus" style="display:none; margin-top: 12px;"></div>
+	        </div>
+	    </div>
+
+	    <div class="auto-save-indicator" id="autoSaveIndicator">✓ Guardado</div>
 
     <script>
         // ===== VARIABLES GLOBALES =====
@@ -812,80 +1030,445 @@
             });
         }
 
-        // ===== DASHBOARD =====
-        function renderDashboard() {
-            const container = document.getElementById('dashboardContainer');
-            container.innerHTML = '';
+	        // ===== DASHBOARD =====
+	        function escapeHTML(str) {
+	            return String(str ?? '')
+	                .replaceAll('&', '&amp;')
+	                .replaceAll('<', '&lt;')
+	                .replaceAll('>', '&gt;')
+	                .replaceAll('"', '&quot;')
+	                .replaceAll("'", '&#039;');
+	        }
 
-            // Proyectos Guardados
-            const wsSection = document.createElement('div');
-            wsSection.innerHTML = `<div class="section-header">
-                <h2>🏗️ Proyectos Guardados</h2>
-            </div>`;
+	        function truncate(str, maxLen) {
+	            const s = String(str ?? '');
+	            if (s.length <= maxLen) return s;
+	            return s.slice(0, Math.max(0, maxLen - 1)).trimEnd() + '…';
+	        }
 
-            if (workspaceItems.length === 0) {
-                wsSection.innerHTML += `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 40px;">
-                    No hay proyectos guardados
-                </div>`;
-            } else {
-                workspaceItems.forEach((item, index) => {
-                    const card = createPDFCard(item.name, '🏗️', 'Proyecto', () => loadWorkspaceItem(index), () => removeWorkspaceItem(index));
-                    wsSection.appendChild(card);
-                });
-            }
-            container.appendChild(wsSection);
+	        function prettifyTargetName(target) {
+	            const t = String(target ?? '').trim();
+	            if (!t) return 'Plantilla';
+	            const base = t.replace(/\.html?$/i, '');
+	            return base
+	                .replaceAll('_', ' ')
+	                .replaceAll('-', ' ')
+	                .replace(/\s+/g, ' ')
+	                .trim();
+	        }
 
-            // PDFs Finalizados
-            const pdfSection = document.createElement('div');
-            pdfSection.innerHTML = `<div class="section-header" style="margin-top: 32px;">
-                <h2>📚 Documentos Finalizados</h2>
-            </div>`;
+	        function extractUrls(text) {
+	            const s = String(text ?? '');
+	            const urls = [];
+	            const re = /https?:\/\/[^\s<>\")\]]+/gi;
+	            let m;
+	            while ((m = re.exec(s)) !== null) {
+	                urls.push(m[0]);
+	            }
+	            return Array.from(new Set(urls)).slice(0, 10);
+	        }
 
-            if (completedWorks.length === 0) {
-                pdfSection.innerHTML += `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 40px;">
-                    No hay documentos guardados
-                </div>`;
-            } else {
-                completedWorks.forEach((item, index) => {
-                    const card = createPDFCard(item.name, '📄', 'PDF', () => downloadWork(index), () => removeWork(index));
-                    pdfSection.appendChild(card);
-                });
-            }
-            container.appendChild(pdfSection);
-        }
+	        function prettifyUrlLabel(url) {
+	            try {
+	                const u = new URL(url);
+	                return (u.hostname || url).replace(/^www\./, '');
+	            } catch {
+	                return url;
+	            }
+	        }
 
-        function createPDFCard(name, icon, type, onClick, onDelete) {
-            const card = document.createElement('div');
-            card.className = 'pdf-card';
-            card.onclick = onClick;
-            card.innerHTML = `
-                <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.8;">${icon}</div>
-                <div class="name">${name}</div>
-                <div class="info">${type}</div>
-                <div class="actions">
-                    <button class="action-btn delete-btn">🗑️ Eliminar</button>
-                </div>
-            `;
+	        function createSectionHeader(title, opts = {}) {
+	            const header = document.createElement('div');
+	            header.className = 'section-header';
+	            if (opts.marginTop) header.style.marginTop = opts.marginTop + 'px';
 
-            const deleteBtn = card.querySelector('.delete-btn');
-            deleteBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                onDelete();
-            });
+	            const h2 = document.createElement('h2');
+	            h2.textContent = title;
+	            header.appendChild(h2);
+	            return header;
+	        }
 
-            return card;
-        }
+	        function createEmptyState(text) {
+	            const el = document.createElement('div');
+	            el.style.gridColumn = '1 / -1';
+	            el.style.textAlign = 'center';
+	            el.style.color = 'var(--text-muted)';
+	            el.style.padding = '28px 12px';
+	            el.textContent = text;
+	            return el;
+	        }
 
-        function toggleDashboard() {
-            const dashboard = document.getElementById('dashboardContainer');
-            const iframe = document.getElementById('plantillaFrame');
+	        function renderDashboard() {
+	            const container = document.getElementById('dashboardContainer');
+	            container.innerHTML = '';
 
-            if (dashboard.style.display === 'none') {
-                dashboard.style.display = 'grid';
-                iframe.style.display = 'none';
-                renderDashboard();
-            }
-        }
+	            // Biblioteca / Proyectos (Workspace)
+	            container.appendChild(createSectionHeader('📌 Biblioteca / Proyectos Guardados'));
+
+	            if (workspaceItems.length === 0) {
+	                container.appendChild(createEmptyState('No hay material guardado todavía. Usa “Guardar” para crear tu primera ficha.'));
+	            } else {
+	                workspaceItems.forEach((item, index) => {
+	                    const card = createWorkspaceCard(item, index);
+	                    container.appendChild(card);
+	                });
+	            }
+
+	            // PDFs Finalizados
+	            container.appendChild(createSectionHeader('📚 Documentos Finalizados', { marginTop: 32 }));
+
+	            if (completedWorks.length === 0) {
+	                container.appendChild(createEmptyState('No hay documentos guardados'));
+	            } else {
+	                completedWorks.forEach((item, index) => {
+	                    const card = createPDFCard(item.name, '📄', 'PDF', () => downloadWork(index), () => removeWork(index));
+	                    container.appendChild(card);
+	                });
+	            }
+	        }
+
+	        function createWorkspaceCard(item, index) {
+	            const card = document.createElement('div');
+	            card.className = 'pin-card';
+	            card.onclick = () => loadWorkspaceItem(index);
+
+	            const title = (item && item.name) ? item.name : 'Sin título';
+	            const desc = (item && item.description) ? item.description : '';
+	            const links = Array.isArray(item && item.links) && item.links.length ? item.links : extractUrls(desc);
+	            const templateLabel = prettifyTargetName((item && item.template) ? item.template : currentTemplate);
+
+	            const thumb = document.createElement('div');
+	            thumb.className = 'pin-thumb';
+	            if (item && item.thumbnail) {
+	                const img = document.createElement('img');
+	                img.src = item.thumbnail;
+	                img.alt = 'Vista previa';
+	                thumb.appendChild(img);
+	            } else {
+	                const ph = document.createElement('div');
+	                ph.className = 'pin-thumb-placeholder';
+	                ph.textContent = 'VISTA PREVIA';
+	                thumb.appendChild(ph);
+	            }
+
+	            const body = document.createElement('div');
+	            body.className = 'pin-body';
+
+	            const t = document.createElement('div');
+	            t.className = 'pin-title';
+	            t.textContent = title;
+
+	            const d = document.createElement('div');
+	            d.className = 'pin-desc';
+	            d.textContent = desc ? truncate(desc, 180) : 'Sin descripción';
+	            if (!desc) d.style.color = 'var(--text-muted)';
+
+	            body.appendChild(t);
+	            body.appendChild(d);
+
+	            if (links && links.length) {
+	                const linkWrap = document.createElement('div');
+	                linkWrap.className = 'pin-links';
+
+	                links.slice(0, 3).forEach((url) => {
+	                    const chip = document.createElement('span');
+	                    chip.className = 'link-chip';
+
+	                    const a = document.createElement('a');
+	                    a.href = url;
+	                    a.target = '_blank';
+	                    a.rel = 'noopener noreferrer';
+	                    a.textContent = prettifyUrlLabel(url);
+	                    a.addEventListener('click', (e) => e.stopPropagation());
+
+	                    chip.appendChild(document.createTextNode('🔗 '));
+	                    chip.appendChild(a);
+	                    linkWrap.appendChild(chip);
+	                });
+
+	                body.appendChild(linkWrap);
+	            }
+
+	            const footer = document.createElement('div');
+	            footer.className = 'pin-footer';
+
+	            const badge = document.createElement('span');
+	            badge.className = 'pin-badge';
+	            badge.textContent = '🧩 ' + templateLabel;
+
+	            const del = document.createElement('button');
+	            del.className = 'action-btn delete-btn';
+	            del.textContent = '🗑️ Eliminar';
+	            del.title = 'Eliminar';
+	            del.addEventListener('click', (e) => {
+	                e.stopPropagation();
+	                removeWorkspaceItem(index);
+	            });
+
+	            footer.appendChild(badge);
+	            footer.appendChild(del);
+
+	            card.appendChild(thumb);
+	            card.appendChild(body);
+	            card.appendChild(footer);
+
+	            return card;
+	        }
+
+	        function createPDFCard(name, icon, type, onClick, onDelete) {
+	            const card = document.createElement('div');
+	            card.className = 'pdf-card';
+	            card.onclick = onClick;
+	            card.innerHTML = `
+	                <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.8;">${icon}</div>
+	                <div class="name">${escapeHTML(name)}</div>
+	                <div class="info">${escapeHTML(type)}</div>
+	                <div class="actions">
+	                    <button class="action-btn delete-btn">🗑️ Eliminar</button>
+	                </div>
+	            `;
+
+	            const deleteBtn = card.querySelector('.delete-btn');
+	            deleteBtn.addEventListener('click', (e) => {
+	                e.stopPropagation();
+	                onDelete();
+	            });
+
+	            return card;
+	        }
+
+	        function showDashboardView() {
+	            const dashboard = document.getElementById('dashboardContainer');
+	            const iframe = document.getElementById('plantillaFrame');
+	            dashboard.style.display = 'grid';
+	            iframe.style.display = 'none';
+	            renderDashboard();
+	        }
+
+	        function toggleDashboard() {
+	            showDashboardView();
+	        }
+
+	        // ===== GUARDAR / CATALOGO (Biblioteca tipo Pinterest) =====
+	        function populateSaveModalTemplate() {
+	            const select = document.getElementById('saveModalTemplate');
+	            if (!select) return;
+
+	            const opt = document.createElement('option');
+	            opt.value = currentTemplate;
+	            opt.textContent = prettifyTargetName(currentTemplate);
+	            select.innerHTML = '';
+	            select.appendChild(opt);
+	            select.value = currentTemplate;
+	        }
+
+	        function openSaveModal() {
+	            const iframe = document.getElementById('plantillaFrame');
+	            if (!iframe || iframe.style.display === 'none') {
+	                showIndicator('Abre una plantilla antes de guardar');
+	                return;
+	            }
+
+	            const modal = document.getElementById('saveModal');
+	            const title = document.getElementById('saveModalTitle');
+	            const status = document.getElementById('saveModalStatus');
+
+	            if (!modal || !title) return;
+
+	            if (status) {
+	                status.style.display = 'none';
+	                status.textContent = '';
+	            }
+
+	            populateSaveModalTemplate();
+
+	            if (!title.value.trim()) {
+	                title.value = `${prettifyTargetName(currentTemplate)} - ${new Date().toLocaleDateString()}`;
+	            }
+
+	            modal.classList.add('active');
+	            setTimeout(() => title.focus(), 0);
+	        }
+
+	        function closeSaveModal() {
+	            const modal = document.getElementById('saveModal');
+	            if (modal) modal.classList.remove('active');
+	        }
+
+	        function wireSaveModal() {
+	            const modal = document.getElementById('saveModal');
+	            if (!modal || modal.dataset.wired === '1') return;
+	            modal.dataset.wired = '1';
+
+	            const cancel = document.getElementById('saveModalCancel');
+	            const confirm = document.getElementById('saveModalConfirm');
+
+	            if (cancel) cancel.addEventListener('click', closeSaveModal);
+	            if (confirm) confirm.addEventListener('click', saveFromModal);
+
+	            modal.addEventListener('click', (e) => {
+	                if (e.target === modal) closeSaveModal();
+	            });
+
+	            document.addEventListener('keydown', (e) => {
+	                if (e.key === 'Escape' && modal.classList.contains('active')) {
+	                    closeSaveModal();
+	                }
+	            });
+	        }
+
+	        async function makeIframeThumbnail(iframe) {
+	            try {
+	                if (!iframe || !iframe.contentDocument || !iframe.contentDocument.body) return null;
+
+	                const sourceCanvas = await html2canvas(iframe.contentDocument.body, {
+	                    scale: 1.5,
+	                    useCORS: true,
+	                    logging: false,
+	                    backgroundColor: '#ffffff'
+	                });
+
+	                const targetW = 560;
+	                const targetH = 350;
+	                const targetRatio = targetW / targetH;
+	                const srcRatio = sourceCanvas.width / sourceCanvas.height;
+
+	                let sx = 0;
+	                let sy = 0;
+	                let sw = sourceCanvas.width;
+	                let sh = sourceCanvas.height;
+
+	                if (srcRatio > targetRatio) {
+	                    sw = sourceCanvas.height * targetRatio;
+	                    sx = (sourceCanvas.width - sw) / 2;
+	                } else {
+	                    sh = sourceCanvas.width / targetRatio;
+	                    sy = (sourceCanvas.height - sh) / 2;
+	                }
+
+	                const thumb = document.createElement('canvas');
+	                thumb.width = targetW;
+	                thumb.height = targetH;
+
+	                const ctx = thumb.getContext('2d');
+	                if (!ctx) return null;
+
+	                ctx.drawImage(sourceCanvas, sx, sy, sw, sh, 0, 0, targetW, targetH);
+
+	                let q = 0.75;
+	                let out = thumb.toDataURL('image/jpeg', q);
+	                while (out.length > 650000 && q > 0.45) {
+	                    q = Math.round((q - 0.1) * 100) / 100;
+	                    out = thumb.toDataURL('image/jpeg', q);
+	                }
+
+	                return out;
+	            } catch (e) {
+	                console.warn('No se pudo generar thumbnail:', e);
+	                return null;
+	            }
+	        }
+
+	        async function saveFromModal() {
+	            const titleEl = document.getElementById('saveModalTitle');
+	            const descEl = document.getElementById('saveModalDescription');
+	            const status = document.getElementById('saveModalStatus');
+	            const confirmBtn = document.getElementById('saveModalConfirm');
+
+	            const name = titleEl ? titleEl.value.trim() : '';
+	            const description = descEl ? descEl.value.trim() : '';
+
+	            if (!name) {
+	                if (status) {
+	                    status.style.display = 'block';
+	                    status.style.color = 'var(--accent-red)';
+	                    status.textContent = 'Escribe un título para guardar.';
+	                }
+	                return;
+	            }
+
+	            const iframe = document.getElementById('plantillaFrame');
+
+	            if (confirmBtn) {
+	                confirmBtn.disabled = true;
+	                confirmBtn.dataset.prev = confirmBtn.innerHTML;
+	                confirmBtn.innerHTML = '<span>⏳</span><span>Guardando...</span>';
+	            }
+
+	            let data = null;
+	            try {
+	                if (iframe && iframe.contentWindow && iframe.contentWindow.ARKAIOS_getData) {
+	                    data = iframe.contentWindow.ARKAIOS_getData();
+	                }
+	            } catch (e) {
+	                console.warn('No se pudieron obtener datos del iframe:', e);
+	            }
+
+	            let thumbnail = null;
+	            try {
+	                thumbnail = await makeIframeThumbnail(iframe);
+	            } catch (e) {
+	                console.warn('No se pudo capturar vista previa:', e);
+	                thumbnail = null;
+	            }
+
+	            const links = extractUrls(description);
+
+	            const item = {
+	                id: `ark_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
+	                name,
+	                description,
+	                links,
+	                template: currentTemplate,
+	                data,
+	                thumbnail,
+	                timestamp: Date.now()
+	            };
+
+	            workspaceItems.unshift(item);
+
+	            let persisted = false;
+	            try {
+	                localStorage.setItem('arkaios_workspace', JSON.stringify(workspaceItems));
+	                persisted = true;
+	            } catch (e) {
+	                console.warn('localStorage lleno al guardar:', e);
+	                if (thumbnail) {
+	                    item.thumbnail = null;
+	                    try {
+	                        localStorage.setItem('arkaios_workspace', JSON.stringify(workspaceItems));
+	                        persisted = true;
+	                        showIndicator('✓ Guardado (sin vista previa por límite de almacenamiento)');
+	                    } catch (e2) {
+	                        workspaceItems.shift();
+	                        if (status) {
+	                            status.style.display = 'block';
+	                            status.style.color = 'var(--accent-red)';
+	                            status.textContent = 'No se pudo guardar: almacenamiento lleno.';
+	                        }
+	                    }
+	                } else {
+	                    workspaceItems.shift();
+	                    if (status) {
+	                        status.style.display = 'block';
+	                        status.style.color = 'var(--accent-red)';
+	                        status.textContent = 'No se pudo guardar: almacenamiento lleno.';
+	                    }
+	                }
+	            }
+
+	            if (persisted) {
+	                if (!thumbnail) showIndicator('✓ Material guardado');
+	                closeSaveModal();
+	                showDashboardView();
+	            }
+
+	            if (confirmBtn) {
+	                const prev = confirmBtn.dataset.prev;
+	                if (prev) confirmBtn.innerHTML = prev;
+	                confirmBtn.disabled = false;
+	            }
+	        }
 
         // ===== MODAL PDF =====
         function openUploadModal() {
@@ -1069,16 +1652,21 @@
         }
 
         // ===== INICIALIZACIÓN =====
-        window.onload = async function () {
-            // 1) Menú dinámico (si existe modules.json)
-            await initDynamicMenu();
+	        window.onload = async function () {
+	            // 1) Menú dinámico (si existe modules.json)
+	            await initDynamicMenu();
 
-            // 2) Render dashboard
-            renderDashboard();
+	            // 2) Render dashboard
+	            renderDashboard();
+	
+	            // 2.1) Guardar -> Biblioteca (fichas tipo Pinterest)
+	            const saveBtn = document.getElementById('saveBtn');
+	            if (saveBtn) saveBtn.addEventListener('click', openSaveModal);
+	            wireSaveModal();
 
-            // 3) Plantilla default precargada (pero oculta)
-            const frame = document.getElementById('plantillaFrame');
-            frame.src = currentTemplate;
+	            // 3) Plantilla default precargada (pero oculta)
+	            const frame = document.getElementById('plantillaFrame');
+	            frame.src = currentTemplate;
 
             // Drag & drop
             const uploadZone = document.querySelector('.upload-zone');
