@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ARKAIOS | Material Reutilizable</title>
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Educativo Reutilizable - ARKAIOS</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
 
     <style>
         :root {
@@ -17,492 +18,791 @@
             --bg-white: #ffffff;
             --bg-light: #f8fafc;
             --bg-lighter: #f1f5f9;
-            --border-color: #e2e8f0;
             --text-primary: #1e293b;
             --text-secondary: #475569;
             --text-muted: #94a3b8;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --border-color: #e2e8f0;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --radius-md: 10px;
-            --radius-lg: 14px;
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
-        html,
         body {
-            height: 100%;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Inter', sans-serif;
             background: var(--bg-light);
             color: var(--text-primary);
+            padding: 32px;
+            min-height: 100vh;
         }
 
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background: var(--bg-white);
-            border-bottom: 1px solid var(--border-color);
-            padding: 14px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            box-shadow: var(--shadow-sm);
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        .title {
-            display: flex;
-            align-items: baseline;
-            gap: 10px;
-            min-width: 220px;
-        }
-
-        .title h1 {
+        h1 {
             font-family: 'Poppins', sans-serif;
-            font-size: 16px;
-            font-weight: 800;
-            letter-spacing: -0.2px;
-        }
-
-        .title .hint {
-            font-size: 12px;
-            color: var(--text-muted);
-            white-space: nowrap;
-        }
-
-        .controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-            justify-content: flex-end;
-        }
-
-        .search {
-            width: min(520px, 100%);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            background: var(--bg-lighter);
-        }
-
-        .search input {
-            flex: 1;
-            border: none;
-            outline: none;
-            background: transparent;
-            color: var(--text-primary);
-            font-size: 13px;
-        }
-
-        .btn {
-            border: 1px solid var(--border-color);
-            background: var(--bg-white);
-            color: var(--text-secondary);
-            border-radius: var(--radius-md);
-            padding: 10px 12px;
+            font-size: 32px;
             font-weight: 700;
-            font-size: 12px;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 32px;
+        }
+
+        /* UPLOAD ZONE */
+        .upload-section {
+            background: var(--bg-white);
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 32px;
             cursor: pointer;
-            transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
-            box-shadow: var(--shadow-sm);
-            white-space: nowrap;
+            transition: all 0.3s;
         }
 
-        .btn:hover {
-            transform: translateY(-1px);
+        .upload-section:hover {
             border-color: var(--primary-blue);
-            box-shadow: var(--shadow-lg);
+            background: #eff6ff;
         }
 
-        main {
-            padding: 18px 16px 24px;
+        .upload-section.dragover {
+            border-color: var(--primary-blue);
+            background: #dbeafe;
+            transform: scale(1.02);
         }
 
-        .grid {
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .upload-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* FILTERS */
+        .filters {
+            background: var(--bg-white);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-lighter);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .filter-btn.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        /* LIBRARY GRID */
+        .library-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
         }
 
-        .card {
+        .material-card {
             background: var(--bg-white);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
+            border-radius: 12px;
             overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
+            transition: all 0.3s;
             box-shadow: var(--shadow-sm);
-            display: flex;
-            flex-direction: column;
-            min-height: 280px;
         }
 
-        .card:hover {
-            transform: translateY(-2px);
+        .material-card:hover {
+            transform: translateY(-4px);
             box-shadow: var(--shadow-lg);
             border-color: var(--primary-blue);
         }
 
-        .thumb {
-            height: 150px;
-            background: linear-gradient(135deg, #0ea5e9 0%, #1e40af 100%);
-            position: relative;
-        }
-
-        .thumb img {
+        .card-preview {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .thumb .ph {
-            position: absolute;
-            inset: 0;
+            height: 200px;
+            background: var(--bg-lighter);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: rgba(255, 255, 255, 0.92);
-            font-family: 'Poppins', sans-serif;
-            font-weight: 800;
-            font-size: 12px;
-            letter-spacing: 0.3px;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            position: relative;
         }
 
-        .body {
-            padding: 14px 14px 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            flex: 1;
-        }
-
-        .name {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 800;
-            font-size: 13px;
-            line-height: 1.25;
-        }
-
-        .desc {
-            font-size: 12px;
-            color: var(--text-secondary);
-            line-height: 1.35;
-            white-space: pre-wrap;
-        }
-
-        .chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 10px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-lighter);
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-secondary);
+        .card-preview canvas {
             max-width: 100%;
+            max-height: 100%;
         }
 
-        .chip a {
-            color: inherit;
-            text-decoration: none;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: 220px;
+        .card-preview .placeholder {
+            font-size: 64px;
+            opacity: 0.3;
         }
 
-        .chip a:hover {
-            text-decoration: underline;
-            color: var(--primary-blue-dark);
-        }
-
-        .footer {
-            padding: 12px 14px 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .badge {
+        .card-type-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--primary-blue);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
             font-size: 11px;
-            font-weight: 800;
+            font-weight: 600;
+        }
+
+        .card-content {
+            padding: 16px;
+        }
+
+        .card-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .card-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .card-meta {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-download {
+            background: var(--bg-lighter);
             color: var(--text-secondary);
             border: 1px solid var(--border-color);
-            border-radius: 999px;
-            padding: 6px 10px;
-            max-width: 65%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            background: var(--bg-white);
         }
 
-        .danger {
-            border-color: #fecaca;
-            background: #fff1f2;
-            color: #991b1b;
+        .btn-download:hover {
+            background: var(--accent-green);
+            color: white;
+            border-color: var(--accent-green);
         }
 
-        .danger:hover {
-            border-color: #ef4444;
+        .btn-reuse {
+            background: var(--primary-blue);
+            color: white;
         }
 
-        .empty {
+        .btn-reuse:hover {
+            background: var(--primary-blue-dark);
+        }
+
+        .btn-delete {
+            padding: 10px;
+            background: transparent;
+            border: 1px solid var(--border-color);
             color: var(--text-muted);
+        }
+
+        .btn-delete:hover {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-white);
+            border-radius: 16px;
+            padding: 32px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: var(--bg-lighter);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-save {
+            flex: 1;
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
             text-align: center;
-            padding: 28px 12px;
+            padding: 80px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        /* NOTIFICATION */
+        .notification {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--accent-green);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 2000;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
-
 <body>
-    <header>
-        <div class="title">
-            <h1>📖 Material Reutilizable</h1>
-            <div class="hint">Lee desde <code>localStorage</code></div>
+    <div class="container">
+        <h1>📚 Material Educativo Reutilizable</h1>
+        <p class="subtitle">Sube, organiza y reutiliza tus plantillas y documentos educativos</p>
+
+        <!-- UPLOAD ZONE -->
+        <div class="upload-section" id="uploadZone">
+            <div class="upload-icon">📤</div>
+            <div class="upload-title">Subir Material Educativo</div>
+            <p class="upload-hint">Arrastra archivos PDF aquí o haz clic para seleccionar</p>
+            <input type="file" id="fileInput" accept=".pdf" multiple style="display: none;">
         </div>
 
-        <div class="controls">
-            <div class="search" title="Buscar por título o descripción">
-                <span>🔎</span>
-                <input id="q" type="text" placeholder="Buscar material..." autocomplete="off" />
-            </div>
-            <button class="btn" id="refreshBtn">Actualizar</button>
+        <!-- FILTERS -->
+        <div class="filters">
+            <span style="font-weight: 600; margin-right: 8px;">Filtrar:</span>
+            <button class="filter-btn active" data-filter="all">📋 Todos</button>
+            <button class="filter-btn" data-filter="circular">⭕ Circulares</button>
+            <button class="filter-btn" data-filter="images">🖼️ Imágenes</button>
+            <button class="filter-btn" data-filter="text">📝 Texto</button>
+            <button class="filter-btn" data-filter="photos">📸 Fotos</button>
+            <button class="filter-btn" data-filter="other">📄 Otros</button>
         </div>
-    </header>
 
-    <main>
-        <div id="grid" class="grid"></div>
-        <div id="empty" class="empty" style="display:none;">No hay material guardado todavía.</div>
-    </main>
+        <!-- LIBRARY GRID -->
+        <div class="library-grid" id="libraryGrid">
+            <!-- Cards se generan dinámicamente -->
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div class="empty-state" id="emptyState">
+            <div class="empty-icon">📚</div>
+            <div class="empty-title">No hay material guardado</div>
+            <p>Sube tus primeros documentos educativos para comenzar</p>
+        </div>
+    </div>
+
+    <!-- MODAL CATALOGAR -->
+    <div class="modal" id="catalogModal">
+        <div class="modal-content">
+            <h2 class="modal-title">📝 Catalogar Material</h2>
+            <form id="catalogForm">
+                <div class="form-group">
+                    <label class="form-label">Título del Material</label>
+                    <input type="text" class="form-input" id="materialTitle" placeholder="Ej: Diploma de Honor 2024" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-textarea" id="materialDescription" placeholder="Describe brevemente el contenido..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tipo de Plantilla</label>
+                    <select class="form-select" id="materialType">
+                        <option value="other">📄 Otro</option>
+                        <option value="circular">⭕ Circular / Jack</option>
+                        <option value="images">🖼️ Cuadros de Imágenes</option>
+                        <option value="text">📝 Carta / Texto</option>
+                        <option value="photos">📸 Fotos Infantiles</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeCatalogModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-save">💾 Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION -->
+    <div class="notification" id="notification"></div>
 
     <script>
-        const STORAGE_KEY = 'arkaios_workspace';
+        // STORAGE KEY
+        const STORAGE_KEY = 'arkaios_material_biblioteca';
+        
+        // MAPEO DE PLANTILLAS
+        const TEMPLATE_MAP = {
+            'circular': 'plantilla_circulos_jack.html',
+            'images': 'plantilla-cuadros-imagenes-v2.html',
+            'text': 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html',
+            'photos': 'generador-fotos-infantiles.html',
+            'other': null
+        };
 
-        function prettifyTargetName(target) {
-            const t = String(target ?? '').trim();
-            if (!t) return 'Plantilla';
-            const base = t.replace(/\.html?$/i, '');
-            return base
-                .replaceAll('_', ' ')
-                .replaceAll('-', ' ')
-                .replace(/\s+/g, ' ')
-                .trim();
+        let materials = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        let currentFilter = 'all';
+        let pendingFile = null;
+        let pendingPreview = null;
+
+        // INIT
+        document.addEventListener('DOMContentLoaded', () => {
+            renderLibrary();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Upload zone
+            const uploadZone = document.getElementById('uploadZone');
+            const fileInput = document.getElementById('fileInput');
+
+            uploadZone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', handleFileSelect);
+
+            // Drag & drop
+            uploadZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadZone.classList.add('dragover');
+            });
+
+            uploadZone.addEventListener('dragleave', () => {
+                uploadZone.classList.remove('dragover');
+            });
+
+            uploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadZone.classList.remove('dragover');
+                handleFileSelect({ target: { files: e.dataTransfer.files } });
+            });
+
+            // Filters
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    renderLibrary();
+                });
+            });
+
+            // Form
+            document.getElementById('catalogForm').addEventListener('submit', handleCatalogSubmit);
+
+// Botón Guardar (backup): en algunos navegadores/embeds el submit puede no disparar
+const saveBtn = document.querySelector('#catalogModal .btn-save');
+if (saveBtn) {
+    saveBtn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        handleCatalogSubmit(ev);
+    });
+}
         }
 
-        function truncate(str, maxLen) {
-            const s = String(str ?? '');
-            if (s.length <= maxLen) return s;
-            return s.slice(0, Math.max(0, maxLen - 1)).trimEnd() + '…';
-        }
+        async function handleFileSelect(e) {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
 
-        function extractUrls(text) {
-            const s = String(text ?? '');
-            const urls = [];
-            const re = /https?:\/\/[^\s<>\")\]]+/gi;
-            let m;
-            while ((m = re.exec(s)) !== null) urls.push(m[0]);
-            return Array.from(new Set(urls)).slice(0, 10);
-        }
-
-        function prettifyUrlLabel(url) {
-            try {
-                const u = new URL(url);
-                return (u.hostname || url).replace(/^www\./, '');
-            } catch {
-                return url;
-            }
-        }
-
-        function loadItems() {
-            try {
-                return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-            } catch {
-                return [];
-            }
-        }
-
-        function isInsideEditorIframe() {
-            try {
-                return window.parent && window.parent !== window && typeof window.parent.loadWorkspaceItem === 'function';
-            } catch {
-                return false;
-            }
-        }
-
-        function openInEditor(index) {
-            if (!isInsideEditorIframe()) return false;
-            try {
-                window.parent.loadWorkspaceItem(index);
-                return true;
-            } catch {
-                return false;
-            }
-        }
-
-        function deleteInEditor(index) {
-            if (!isInsideEditorIframe()) return false;
-            try {
-                if (typeof window.parent.removeWorkspaceItem === 'function') {
-                    window.parent.removeWorkspaceItem(index);
-                } else {
-                    // fallback local
-                    const items = loadItems();
-                    items.splice(index, 1);
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-                }
-                return true;
-            } catch {
-                return false;
-            }
-        }
-
-        function render(items, q) {
-            const grid = document.getElementById('grid');
-            const empty = document.getElementById('empty');
-            grid.innerHTML = '';
-
-            const query = String(q ?? '').trim().toLowerCase();
-            const filtered = query
-                ? items.filter(it => String(it?.name ?? '').toLowerCase().includes(query) || String(it?.description ?? '').toLowerCase().includes(query))
-                : items;
-
-            if (!filtered.length) {
-                empty.style.display = 'block';
+            const file = files[0];
+            if (file.type !== 'application/pdf') {
+                showNotification('⚠️ Solo se permiten archivos PDF', 'warning');
                 return;
             }
-            empty.style.display = 'none';
 
-            filtered.forEach((item, filteredIdx) => {
-                // Map back to original index for parent interactions
-                const originalIndex = query ? items.indexOf(item) : filteredIdx;
+            // Generar preview
+            const preview = await generatePDFPreview(file);
+            
+            // Guardar archivo temporalmente
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                pendingFile = {
+                    name: file.name,
+                    data: e.target.result,
+                    size: file.size,
+                    preview: preview
+                };
+                openCatalogModal();
+            };
+            reader.readAsDataURL(file);
+        }
 
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.addEventListener('click', () => {
-                    const ok = openInEditor(originalIndex);
-                    if (!ok) {
-                        alert('Este módulo se usa dentro del editor ARKAIOS. Abre index.html para cargar un material.');
+        async function generatePDFPreview(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                const page = await pdf.getPage(1);
+                
+                const scale = 1.5;
+                const viewport = page.getViewport({ scale });
+                
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                
+                await page.render({ canvasContext: context, viewport }).promise;
+                
+                return canvas.toDataURL('image/png');
+            } catch (error) {
+                console.error('Error generating preview:', error);
+                return null;
+            }
+        }
+
+        function openCatalogModal() {
+            document.getElementById('catalogModal').classList.add('active');
+        }
+
+        function closeCatalogModal() {
+            document.getElementById('catalogModal').classList.remove('active');
+            document.getElementById('catalogForm').reset();
+            pendingFile = null;
+        }
+
+        function handleCatalogSubmit(e) {
+    // Puede venir desde submit del form o click del botón
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+
+    if (!pendingFile) {
+        showNotification('⚠️ No hay archivo pendiente por guardar', 'warning');
+        return;
+    }
+
+    // Si el título está vacío, autocompletar con el nombre del archivo
+    const titleEl = document.getElementById('materialTitle');
+    const descEl = document.getElementById('materialDescription');
+    const typeEl = document.getElementById('materialType');
+
+    const safeTitle = (titleEl.value || '').trim() || (pendingFile.name || 'Documento').replace(/\.pdf$/i, '');
+
+    const materialType = (typeEl.value || 'other');
+
+    const material = {
+        id: Date.now(),
+        title: safeTitle,
+        description: (descEl.value || '').trim(),
+        type: materialType,
+        fileName: pendingFile.name,
+        fileData: pendingFile.data,
+        fileSize: pendingFile.size,
+        preview: pendingFile.preview,
+        uploadDate: new Date().toISOString(),
+        // Nomenclatura automática
+        code: generateCode(materialType)
+    };
+
+    materials.push(material);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(materials));
+
+    closeCatalogModal();
+    renderLibrary();
+    showNotification('✅ Material guardado exitosamente');
+
+    // Reset input (evita que el mismo archivo no dispare change)
+    const fileInput = document.getElementById('fileInput');
+    if (fileInput) fileInput.value = '';
+}
+
+        function generateCode(type) {
+            const prefixes = {
+                'circular': 'CIR',
+                'images': 'IMG',
+                'text': 'TXT',
+                'photos': 'FOT',
+                'other': 'GEN'
+            };
+            
+            const prefix = prefixes[type] || 'GEN';
+            const count = materials.filter(m => m.type === type).length + 1;
+            const date = new Date().toISOString().slice(2, 10).replace(/-/g, '');
+            
+            return `${prefix}-${date}-${String(count).padStart(3, '0')}`;
+        }
+
+        function renderLibrary() {
+            const grid = document.getElementById('libraryGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            const filtered = currentFilter === 'all' 
+                ? materials 
+                : materials.filter(m => m.type === currentFilter);
+
+            if (filtered.length === 0) {
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            emptyState.style.display = 'none';
+
+            grid.innerHTML = filtered.map(material => `
+                <div class="material-card">
+                    <div class="card-preview">
+                        ${material.preview 
+                            ? `<img src="${material.preview}" alt="${material.title}" style="max-width: 100%; max-height: 100%;">` 
+                            : `<div class="placeholder">📄</div>`
+                        }
+                        <span class="card-type-badge">${getTypeLabel(material.type)}</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-title">${material.title}</div>
+                        <div class="card-description">${material.description || 'Sin descripción'}</div>
+                        <div class="card-meta">
+                            <span>📋 ${material.code}</span>
+                            <span>📅 ${new Date(material.uploadDate).toLocaleDateString()}</span>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn btn-download" onclick="downloadMaterial(${material.id})">
+                                📥 Descargar
+                            </button>
+                            <button class="btn btn-reuse" onclick="reuseMaterial(${material.id})">
+                                🔄 Reutilizar
+                            </button>
+                            <button class="btn btn-delete" onclick="deleteMaterial(${material.id})">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getTypeLabel(type) {
+            const labels = {
+                'circular': '⭕ Circular',
+                'images': '🖼️ Imágenes',
+                'text': '📝 Texto',
+                'photos': '📸 Fotos',
+                'other': '📄 Otro'
+            };
+            return labels[type] || '📄 Documento';
+        }
+
+        function downloadMaterial(id) {
+            const material = materials.find(m => m.id === id);
+            if (!material) return;
+
+            const link = document.createElement('a');
+            link.href = material.fileData;
+            link.download = material.fileName;
+            link.click();
+
+            showNotification('✅ Descarga iniciada');
+        }
+
+        function reuseMaterial(id) {
+            const material = materials.find(m => m.id === id);
+            if (!material) return;
+
+            const template = TEMPLATE_MAP[material.type];
+            
+            if (template) {
+                // Guardar en localStorage para que la plantilla lo cargue
+                localStorage.setItem('arkaios_pending_load', JSON.stringify({
+                    type: material.type,
+                    data: material.fileData,
+                    metadata: {
+                        title: material.title,
+                        code: material.code
                     }
-                });
+                }));
 
-                const thumb = document.createElement('div');
-                thumb.className = 'thumb';
-                if (item?.thumbnail) {
-                    const img = document.createElement('img');
-                    img.src = item.thumbnail;
-                    img.alt = 'Vista previa';
-                    thumb.appendChild(img);
+                // Abrir plantilla
+                if (window.parent && window.parent.loadTemplate) {
+                    window.parent.loadTemplate(template);
                 } else {
-                    const ph = document.createElement('div');
-                    ph.className = 'ph';
-                    ph.textContent = 'VISTA PREVIA';
-                    thumb.appendChild(ph);
+                    window.location.href = template;
                 }
-
-                const body = document.createElement('div');
-                body.className = 'body';
-
-                const name = document.createElement('div');
-                name.className = 'name';
-                name.textContent = item?.name || 'Sin título';
-
-                const desc = document.createElement('div');
-                desc.className = 'desc';
-                const d = String(item?.description ?? '');
-                desc.textContent = d ? truncate(d, 180) : 'Sin descripción';
-                if (!d) desc.style.color = 'var(--text-muted)';
-
-                body.appendChild(name);
-                body.appendChild(desc);
-
-                const links = Array.isArray(item?.links) && item.links.length ? item.links : extractUrls(d);
-                if (links.length) {
-                    const chips = document.createElement('div');
-                    chips.className = 'chips';
-                    links.slice(0, 3).forEach((url) => {
-                        const chip = document.createElement('span');
-                        chip.className = 'chip';
-
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.target = '_blank';
-                        a.rel = 'noopener noreferrer';
-                        a.textContent = prettifyUrlLabel(url);
-                        a.addEventListener('click', (e) => e.stopPropagation());
-
-                        chip.appendChild(document.createTextNode('🔗 '));
-                        chip.appendChild(a);
-                        chips.appendChild(chip);
-                    });
-                    body.appendChild(chips);
-                }
-
-                const footer = document.createElement('div');
-                footer.className = 'footer';
-
-                const badge = document.createElement('span');
-                badge.className = 'badge';
-                badge.textContent = '🧩 ' + prettifyTargetName(item?.template);
-
-                const del = document.createElement('button');
-                del.className = 'btn danger';
-                del.textContent = 'Eliminar';
-                del.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if (!confirm('¿Eliminar este material?')) return;
-                    const ok = deleteInEditor(originalIndex);
-                    if (!ok) {
-                        const itemsNow = loadItems();
-                        itemsNow.splice(originalIndex, 1);
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(itemsNow));
-                    }
-                    refresh();
-                });
-
-                footer.appendChild(badge);
-                footer.appendChild(del);
-
-                card.appendChild(thumb);
-                card.appendChild(body);
-                card.appendChild(footer);
-                grid.appendChild(card);
-            });
+                
+                showNotification('🔄 Abriendo en plantilla correspondiente...');
+            } else {
+                // Si no hay plantilla específica, solo descargar
+                downloadMaterial(id);
+                showNotification('ℹ️ Este tipo de archivo no tiene plantilla asignada');
+            }
         }
 
-        function refresh() {
-            const items = loadItems();
-            const q = document.getElementById('q').value;
-            render(items, q);
+        function deleteMaterial(id) {
+            if (!confirm('¿Eliminar este material permanentemente?')) return;
+
+            materials = materials.filter(m => m.id !== id);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(materials));
+            renderLibrary();
+            showNotification('✅ Material eliminado');
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('refreshBtn').addEventListener('click', refresh);
-            document.getElementById('q').addEventListener('input', refresh);
-            refresh();
-        });
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.background = type === 'warning' ? '#f59e0b' : '#10b981';
+            notification.classList.add('show');
+            setTimeout(() => notification.classList.remove('show'), 3000);
+        }
+
+        // API PARA INTEGRACIÓN CON ARKAIOS
+        window.ARKAIOS_MaterialLibrary = {
+            addFromPDF: function(pdfData, metadata) {
+                // Esta función puede ser llamada desde el botón "Imprimir"
+                // de otras plantillas para auto-guardar en la biblioteca
+                pendingFile = {
+                    data: pdfData,
+                    preview: metadata.preview,
+                    name: metadata.name || 'documento.pdf',
+                    size: metadata.size || 0
+                };
+                openCatalogModal();
+            }
+        };
     </script>
 </body>
-
 </html>
-
