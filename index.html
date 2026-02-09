@@ -1738,6 +1738,59 @@
             document.getElementById('plantillaFrame').style.display = 'none';
             document.getElementById('dashboardContainer').style.display = 'grid';
         };
+
+		// Manejar el botón Guardar
+const saveBtn = document.getElementById('saveBtn');
+if (saveBtn) {
+  saveBtn.addEventListener('click', async function() {
+    console.log('Botón Guardar clickeado');
+    
+    // Obtener el contenido del canvas
+    const iframe = document.getElementById('pdfViewer');
+    if (!iframe || !iframe.contentWindow) {
+      alert('No se encontró el visor PDF');
+      return;
+    }
+    
+    try {
+      const canvas = iframe.contentWindow.document.querySelector('canvas');
+      if (!canvas) {
+        alert('No se encontró el canvas del PDF');
+        return;
+      }
+      
+      // Convertir canvas a blob
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      
+      // Crear FormData y enviar a la API
+      const formData = new FormData();
+      formData.append('material', blob, 'material.png');
+      
+      // Mostrar indicador de carga
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Guardando...';
+      
+      const response = await fetch('/api/save-material', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        alert('Material guardado exitosamente');
+      } else {
+        alert('Error: ' + (result.error || 'No se pudo guardar'));
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al guardar: ' + error.message);
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = '💾 Guardar';
+    }
+  });
+}
     </script>
 </body>
 
