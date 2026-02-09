@@ -4,66 +4,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ARKAIOS EDITOR - NEXUS v3.0 [Audit V1.1]</title>
+    <title>ARKAIOS - Sistema Educativo Profesional v3.0</title>
 
     <script src="https://js.puter.com/v2/"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
-    <!-- FUENTES FUTURISTAS -->
+    <!-- FUENTES PROFESIONALES -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
         rel="stylesheet">
 
-    <!-- DETECTOR IFRAME -->
     <script>
         if (window.self !== window.top) {
             document.documentElement.classList.add('is-iframe');
         }
-        // Configurar worker para PDF.js
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     </script>
 
     <style>
-        /* ========== VARIABLES CYBERPUNK ========== */
+        /* ========== VARIABLES PROFESIONALES ========== */
         :root {
-            /* Colores base neón */
-            --neon-cyan: #00f3ff;
-            --neon-magenta: #ff00e6;
-            --neon-blue: #0066ff;
-            --neon-purple: #6a00ff;
-            --neon-green: #00ff9d;
-            --neon-yellow: #ffee00;
+            --primary-blue: #2563eb;
+            --primary-blue-dark: #1e40af;
+            --primary-blue-light: #3b82f6;
 
-            /* Fondos oscuros */
-            --bg-primary: #0a0a12;
-            --bg-secondary: #11101f;
-            --bg-tertiary: #1c1b2e;
+            --secondary-gray: #64748b;
+            --secondary-gray-dark: #475569;
+            --secondary-gray-light: #94a3b8;
 
-            /* Gradientes futuristas */
-            --gradient-cyber: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-purple) 50%, var(--neon-magenta) 100%);
-            --gradient-dark: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-            --grid-overlay:
-                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            --bg-white: #ffffff;
+            --bg-light: #f8fafc;
+            --bg-lighter: #f1f5f9;
+            --bg-gray: #e2e8f0;
 
-            /* Texto */
-            --text-primary: #e0e0ff;
-            --text-secondary: #a0a0d0;
-            --text-muted: #606090;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
 
-            /* Sombras de glow */
-            --glow-cyan: 0 0 15px rgba(0, 243, 255, 0.8);
-            --glow-magenta: 0 0 15px rgba(255, 0, 230, 0.8);
-            --glow-purple: 0 0 15px rgba(106, 0, 255, 0.6);
-            --shadow-deep: 0 10px 40px rgba(0, 0, 0, 0.5);
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
 
-            /* Bordes */
-            --border-cyber: 1px solid rgba(0, 243, 255, 0.3);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+            --border-color: #e2e8f0;
+            --border-radius-sm: 6px;
+            --border-radius-md: 10px;
+            --border-radius-lg: 14px;
         }
 
-        /* ========== RESET & BASE ========== */
         * {
             margin: 0;
             padding: 0;
@@ -75,197 +69,115 @@
             width: 100%;
             height: 100vh;
             overflow: hidden;
-            font-family: 'Rajdhani', sans-serif;
-            background: var(--bg-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-light);
             color: var(--text-primary);
-            position: relative;
         }
 
-        /* ========== GRID MATRIX BACKGROUND ========== */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--grid-overlay);
-            background-size: 40px 40px;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.3;
-        }
-
-        /* ========== PARTICULAS ANIMADAS ========== */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: var(--neon-cyan);
-            border-radius: 50%;
-            animation: float-particle 10s infinite;
-            box-shadow: var(--glow-cyan);
-        }
-
-        @keyframes float-particle {
-
-            0%,
-            100% {
-                transform: translateY(0) translateX(0);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 1;
-            }
-
-            90% {
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(-100vh) translateX(50px);
-                opacity: 0;
-            }
-        }
-
-        /* ========== GLASSMORPHISM HEADER ========== */
         header {
             position: relative;
             z-index: 1000;
-            padding: 20px 40px;
-            background: rgba(17, 16, 31, 0.6);
-            backdrop-filter: blur(20px);
-            border-bottom: var(--border-cyber);
+            padding: 16px 32px;
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: var(--shadow-deep);
+            box-shadow: var(--shadow-sm);
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: opacity 0.2s;
         }
 
         .logo:hover {
-            transform: scale(1.05);
+            opacity: 0.8;
         }
 
         .logo-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--gradient-cyber);
-            border-radius: 16px;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+            border-radius: var(--border-radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
-            animation: pulse-logo 2s infinite;
-            box-shadow: var(--glow-cyan), var(--glow-purple);
-        }
-
-        @keyframes pulse-logo {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.1);
-            }
+            font-size: 24px;
+            box-shadow: var(--shadow-md);
         }
 
         .logo h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 36px;
-            font-weight: 900;
-            background: var(--gradient-cyber);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: var(--glow-cyan);
-            letter-spacing: 2px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
         }
 
         .logo .version {
-            background: var(--gradient-cyber);
-            color: var(--bg-primary);
-            padding: 6px 16px;
-            border-radius: 25px;
-            font-size: 12px;
-            font-weight: 700;
-            box-shadow: var(--glow-cyan);
+            background: var(--bg-lighter);
+            color: var(--text-secondary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
         }
 
-        /* ========== CYBERPUNK BUTTONS ========== */
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
         .btn-premium {
-            padding: 14px 28px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 12px;
-            font-family: 'Orbitron', sans-serif;
+            border-radius: var(--border-radius-sm);
+            font-family: 'Inter', sans-serif;
             font-size: 14px;
-            font-weight: 700;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-primary {
-            background: rgba(0, 243, 255, 0.1);
-            color: var(--neon-cyan);
-            border: 2px solid var(--neon-cyan);
-            box-shadow: var(--glow-cyan);
+            background: var(--primary-blue);
+            color: white;
+            box-shadow: var(--shadow-sm);
         }
 
         .btn-primary:hover {
-            background: var(--neon-cyan);
-            color: var(--bg-primary);
-            transform: translateY(-3px);
-            box-shadow: var(--glow-cyan), 0 5px 20px rgba(0, 243, 255, 0.5);
+            background: var(--primary-blue-dark);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
         }
 
         .btn-secondary {
-            background: rgba(255, 0, 230, 0.1);
-            color: var(--neon-magenta);
-            border: 2px solid var(--neon-magenta);
-            box-shadow: var(--glow-magenta);
+            background: var(--bg-white);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
         }
 
         .btn-secondary:hover {
-            background: var(--neon-magenta);
-            color: var(--bg-primary);
-            transform: translateY(-3px);
-            box-shadow: var(--glow-magenta), 0 5px 20px rgba(255, 0, 230, 0.5);
+            background: var(--bg-lighter);
+            border-color: var(--secondary-gray);
         }
 
-        /* ========== FUTURISTIC SIDEBAR ========== */
         nav {
-            width: 320px;
-            background: rgba(17, 16, 31, 0.7);
-            backdrop-filter: blur(20px);
-            border-right: var(--border-cyber);
-            padding: 30px 20px;
+            width: 280px;
+            background: var(--bg-white);
+            border-right: 1px solid var(--border-color);
+            padding: 24px 16px;
             overflow-y: auto;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 999;
-            box-shadow: var(--shadow-deep);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
         }
 
         nav.collapsed {
@@ -275,161 +187,134 @@
         }
 
         .nav-section {
-            margin-bottom: 40px;
+            margin-bottom: 32px;
         }
 
         .nav-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            color: var(--neon-cyan);
-            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            text-shadow: var(--glow-cyan);
+            gap: 8px;
+            padding: 0 12px;
         }
 
-        /* ========== TEMPLATE BUTTONS - 3D EFFECT ========== */
         .btn {
             width: 100%;
-            padding: 16px 20px;
-            margin-bottom: 12px;
-            background: rgba(28, 27, 46, 0.5);
-            border: var(--border-cyber);
-            border-radius: 14px;
+            padding: 12px 16px;
+            margin-bottom: 6px;
+            background: transparent;
+            border: none;
+            border-radius: var(--border-radius-sm);
             color: var(--text-secondary);
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 15px;
-            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.4s;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 15px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.2), transparent);
-            transition: left 0.6s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
+            gap: 12px;
+            text-align: left;
         }
 
         .btn:hover {
-            transform: translateX(8px) scale(1.02);
-            border-color: var(--neon-magenta);
-            color: var(--neon-cyan);
-            box-shadow: var(--glow-cyan);
-            background: rgba(28, 27, 46, 0.8);
+            background: var(--bg-lighter);
+            color: var(--text-primary);
         }
 
         .btn.active {
-            background: var(--gradient-cyber);
-            color: var(--bg-primary);
-            border-color: transparent;
-            box-shadow: var(--glow-cyan), var(--glow-purple);
-            font-weight: 700;
+            background: var(--primary-blue);
+            color: white;
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
         }
 
         .btn-icon {
-            font-size: 22px;
-            filter: drop-shadow(0 0 5px currentColor);
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
         }
 
-        /* ========== TOGGLE BUTTON CYBER ========== */
         .toggle-nav {
             position: fixed;
-            left: 320px;
+            left: 280px;
             top: 50%;
             transform: translateY(-50%);
-            width: 36px;
-            height: 80px;
-            background: rgba(0, 243, 255, 0.1);
-            border: var(--border-cyber);
+            width: 32px;
+            height: 64px;
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
             border-left: none;
-            border-radius: 0 20px 20px 0;
-            color: var(--neon-cyan);
-            font-size: 20px;
+            border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+            color: var(--text-secondary);
+            font-size: 18px;
             cursor: pointer;
-            transition: all 0.4s;
+            transition: all 0.2s;
             z-index: 1001;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: var(--shadow-deep);
-            font-weight: bold;
+            box-shadow: var(--shadow-sm);
         }
 
         .toggle-nav:hover {
-            width: 44px;
-            background: rgba(0, 243, 255, 0.2);
-            box-shadow: var(--glow-cyan);
+            background: var(--bg-lighter);
+            color: var(--text-primary);
         }
 
         nav.collapsed+.toggle-nav {
             left: 0;
         }
 
-        /* ========== MAIN LAYOUT ========== */
         .layout {
             display: flex;
             flex: 1;
-            height: 100%;
-            position: relative;
-            z-index: 2;
+            height: calc(100vh - 81px);
         }
 
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 0;
+            background: var(--bg-lighter);
         }
 
-        /* ========== VIEW CONTROLS FLOATING ========== */
         .view-controls {
             position: fixed;
-            bottom: 30px;
+            bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 1000;
             display: flex;
-            gap: 15px;
+            gap: 12px;
             align-items: center;
-            padding: 16px 32px;
-            background: rgba(17, 16, 31, 0.8);
-            backdrop-filter: blur(20px);
-            border-radius: 50px;
-            border: var(--border-cyber);
-            box-shadow: var(--shadow-deep), var(--glow-cyan);
+            padding: 12px 20px;
+            background: var(--bg-white);
+            border-radius: 40px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
         }
 
-        /* ========== ZOOM CONTROL CYBER ========== */
         .zoom-controls {
             display: flex;
             align-items: center;
-            gap: 12px;
-            color: var(--neon-cyan);
+            gap: 10px;
+            color: var(--text-secondary);
+            padding-right: 12px;
+            border-right: 1px solid var(--border-color);
         }
 
         .zoom-slider {
-            width: 120px;
-            height: 6px;
-            background: rgba(0, 243, 255, 0.2);
-            border-radius: 3px;
+            width: 100px;
+            height: 4px;
+            background: var(--bg-lighter);
+            border-radius: 2px;
             outline: none;
             cursor: pointer;
             -webkit-appearance: none;
@@ -437,22 +322,22 @@
 
         .zoom-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            background: var(--neon-cyan);
+            width: 16px;
+            height: 16px;
+            background: var(--primary-blue);
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: var(--glow-cyan);
+            box-shadow: var(--shadow-sm);
         }
 
         .zoom-value {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            min-width: 50px;
-            text-shadow: var(--glow-cyan);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            min-width: 45px;
+            color: var(--text-primary);
         }
 
-        /* ========== WORKSPACE & PDF GRID ========== */
         #frameWrapper {
             flex: 1;
             width: 100%;
@@ -461,53 +346,49 @@
             position: relative;
         }
 
-        /* ========== PINTEREST-STYLE PDF GRID ========== */
         .pdf-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 25px;
-            padding: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 32px;
             overflow-y: auto;
             height: 100%;
         }
 
         .pdf-card {
-            background: rgba(28, 27, 46, 0.5);
-            border: var(--border-cyber);
-            border-radius: 18px;
-            padding: 20px;
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: 24px;
             cursor: pointer;
-            transition: all 0.4s;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.2s;
             aspect-ratio: 3/4;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            box-shadow: var(--shadow-sm);
         }
 
         .pdf-card:hover {
-            transform: translateY(-8px) scale(1.03);
-            box-shadow: var(--glow-cyan), var(--glow-purple);
-            border-color: var(--neon-magenta);
-            background: rgba(28, 27, 46, 0.8);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-blue);
         }
 
         .pdf-card::before {
             content: '📄';
-            font-size: 60px;
-            filter: drop-shadow(0 0 10px var(--neon-cyan));
-            margin-bottom: 15px;
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.8;
         }
 
         .pdf-card .name {
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Poppins', sans-serif;
             font-size: 14px;
-            font-weight: 700;
-            color: var(--neon-cyan);
+            font-weight: 600;
+            color: var(--text-primary);
             text-align: center;
-            text-shadow: var(--glow-cyan);
             margin-bottom: 8px;
         }
 
@@ -519,11 +400,11 @@
 
         .pdf-card .actions {
             position: absolute;
-            bottom: 15px;
+            bottom: 16px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.2s;
         }
 
         .pdf-card:hover .actions {
@@ -531,32 +412,31 @@
         }
 
         .action-btn {
-            padding: 8px 12px;
-            background: rgba(0, 243, 255, 0.1);
-            border: 1px solid var(--neon-cyan);
-            border-radius: 8px;
-            color: var(--neon-cyan);
+            padding: 6px 12px;
+            background: var(--bg-lighter);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            color: var(--text-secondary);
             font-size: 11px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
 
         .action-btn:hover {
-            background: var(--neon-cyan);
-            color: var(--bg-primary);
-            box-shadow: var(--glow-cyan);
+            background: var(--accent-red);
+            color: white;
+            border-color: var(--accent-red);
         }
 
-        /* ========== MODAL CYBER UPLOAD ========== */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
             z-index: 3000;
             display: none;
             align-items: center;
@@ -568,46 +448,42 @@
         }
 
         .modal-content {
-            background: var(--bg-secondary);
-            border: var(--border-cyber);
-            border-radius: 24px;
-            padding: 40px;
+            background: var(--bg-white);
+            border-radius: var(--border-radius-lg);
+            padding: 32px;
             width: 90%;
-            max-width: 600px;
-            box-shadow: var(--shadow-deep), var(--glow-cyan);
-            position: relative;
+            max-width: 500px;
+            box-shadow: var(--shadow-xl);
         }
 
         .modal-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 24px;
-            color: var(--neon-cyan);
-            text-shadow: var(--glow-cyan);
-            margin-bottom: 30px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
         }
 
         .upload-zone {
-            border: 3px dashed var(--neon-cyan);
-            border-radius: 18px;
-            padding: 60px 40px;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: 48px 32px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.4s;
-            background: rgba(0, 243, 255, 0.05);
+            transition: all 0.2s;
+            background: var(--bg-lighter);
         }
 
         .upload-zone:hover {
-            border-color: var(--neon-magenta);
-            background: rgba(255, 0, 230, 0.05);
-            box-shadow: var(--glow-magenta);
+            border-color: var(--primary-blue);
+            background: var(--bg-light);
         }
 
         .upload-zone.dragover {
-            background: rgba(0, 243, 255, 0.1);
-            box-shadow: var(--glow-cyan);
+            border-color: var(--primary-blue);
+            background: #eff6ff;
         }
 
-        /* ========== IFRAME PLANTILLAS ========== */
         #plantillaFrame {
             width: 100%;
             height: 100%;
@@ -616,179 +492,195 @@
             background: white;
         }
 
-        /* ========== SCROLLBAR CYBER ========== */
         ::-webkit-scrollbar {
-            width: 10px;
+            width: 8px;
+            height: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(28, 27, 46, 0.5);
-            border-radius: 5px;
+            background: var(--bg-lighter);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--gradient-cyber);
-            border-radius: 5px;
-            box-shadow: var(--glow-cyan);
+            background: var(--secondary-gray-light);
+            border-radius: 4px;
         }
 
-        /* ========== COMPACT MODE ZEN ========== */
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-gray);
+        }
+
         body.compact-mode header,
         body.compact-mode nav,
         body.compact-mode .toggle-nav {
             display: none !important;
         }
 
-        body.compact-mode .view-controls {
-            bottom: 20px;
-            padding: 12px 24px;
+        body.compact-mode .layout {
+            height: 100vh;
         }
 
-        /* ========== INDICATOR ========== */
         .auto-save-indicator {
             position: fixed;
-            bottom: 30px;
+            bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 14px 28px;
-            background: rgba(0, 255, 157, 0.9);
-            color: var(--bg-primary);
-            border-radius: 30px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
+            padding: 12px 24px;
+            background: var(--accent-green);
+            color: white;
+            border-radius: 24px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
             opacity: 0;
             transition: opacity 0.3s;
             z-index: 2000;
-            box-shadow: 0 0 20px rgba(0, 255, 157, 0.5);
+            box-shadow: var(--shadow-lg);
         }
 
         .auto-save-indicator.show {
             opacity: 1;
         }
 
-        /* ========== RESPONSIVE ========== */
+        .section-header {
+            grid-column: 1 / -1;
+            margin-bottom: 8px;
+        }
+
+        .section-header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         @media (max-width: 768px) {
             nav {
-                width: 280px;
+                width: 260px;
             }
 
             .toggle-nav {
-                left: 280px;
+                left: 260px;
             }
 
             .logo h1 {
-                font-size: 24px;
+                font-size: 20px;
             }
 
             .pdf-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-                gap: 15px;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 16px;
                 padding: 20px;
+            }
+
+            .view-controls {
+                padding: 10px 16px;
+                gap: 8px;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- PARTICULAS ANIMADAS -->
-    <div class="particles" id="particles"></div>
-
-    <!-- HEADER CYBER -->
     <header>
         <div class="logo" onclick="toggleDashboard()">
             <div class="logo-icon">🎓</div>
             <div>
                 <h1>ARKAIOS</h1>
-                <span class="version">NEXUS v3.0</span>
+                <span class="version">v3.0 Educativo</span>
             </div>
         </div>
         <div class="header-actions">
             <button class="btn-premium btn-secondary" onclick="window.location.reload()">
                 <span>🔄</span>
-                <span>Reboot</span>
+                <span>Actualizar</span>
             </button>
             <button class="btn-premium btn-primary" id="saveBtn">
                 <span>💾</span>
-                <span>Guardar Estado</span>
+                <span>Guardar</span>
             </button>
         </div>
     </header>
 
-    <!-- LAYOUT PRINCIPAL -->
     <div class="layout">
-        <!-- SIDEBAR CYBER -->
         <nav id="sidebar">
-            <div class="nav-section">
-                <div class="nav-title">
-                    <span>📝</span>
-                    <span>Modulos Texto</span>
+
+            <!-- ===== MENÚ DINÁMICO (AUTO) ===== -->
+            <div id="dynamicMenuRoot"></div>
+
+            <!-- ===== FALLBACK (si NO existe modules.json) ===== -->
+            <div id="staticMenuFallback" style="display:none;">
+                <div class="nav-section">
+                    <div class="nav-title">
+                        <span>📝</span>
+                        <span>Módulos de Texto</span>
+                    </div>
+                    <button class="btn active" data-target="plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html">
+                        <span class="btn-icon">📄</span>
+                        <span>Carta MX - Índice + Texto</span>
+                    </button>
+                    <button class="btn" data-target="hoja_milimetrica_interactiva.html">
+                        <span class="btn-icon">📐</span>
+                        <span>Hoja Milimétrica</span>
+                    </button>
+                    <button class="btn" data-target="biografia_profesional.html">
+                        <span class="btn-icon">👤</span>
+                        <span>Biografía Profesional</span>
+                    </button>
                 </div>
-                <button class="btn active" data-target="plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html">
-                    <span class="btn-icon">📄</span>
-                    <span>Carta MX - Índice + Texto</span>
-                </button>
-                <button class="btn" data-target="hoja_milimetrica_interactiva.html">
-                    <span class="btn-icon">📐</span>
-                    <span>Hoja Milimétrica</span>
-                </button>
-                <button class="btn" data-target="biografia_profesional.html">
-                    <span class="btn-icon">👤</span>
-                    <span>Biografía Profesional</span>
-                </button>
+
+                <div class="nav-section">
+                    <div class="nav-title">
+                        <span>📸</span>
+                        <span>Módulos de Imagen</span>
+                    </div>
+                    <button class="btn" data-target="generador-fotos-infantiles.html">
+                        <span class="btn-icon">👶</span>
+                        <span>Fotos Infantiles 2.5×3 cm</span>
+                    </button>
+                    <button class="btn" data-target="pixabay-descargador-lote.html">
+                        <span class="btn-icon">🌐</span>
+                        <span>Pixabay Descarga Lote</span>
+                    </button>
+                    <button class="btn" data-target="plantilla_circulos_jack.html">
+                        <span class="btn-icon">⭕</span>
+                        <span>Círculos Jack Skellington</span>
+                    </button>
+                    <button class="btn" data-target="plantilla-cuadros-imagenes-v2.html">
+                        <span class="btn-icon">🖼️</span>
+                        <span>Cuadros Imágenes v2</span>
+                    </button>
+                    <button class="btn" data-target="plantilla-imagenes-v2.html">
+                        <span class="btn-icon">🎨</span>
+                        <span>Plantilla Imágenes v2</span>
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-title">
+                        <span>📚</span>
+                        <span>Biblioteca</span>
+                    </div>
+                    <button class="btn" data-target="material-educativo-reutilizable.html">
+                        <span class="btn-icon">📖</span>
+                        <span>Material Reutilizable</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="nav-section">
-                <div class="nav-title">
-                    <span>📸</span>
-                    <span>Modulos Imagen</span>
-                </div>
-                <button class="btn" data-target="generador-fotos-infantiles.html">
-                    <span class="btn-icon">👶</span>
-                    <span>Fotos Infantiles 2.5×3 cm</span>
-                </button>
-                <button class="btn" data-target="plantilla_circulos_jack.html">
-                    <span class="btn-icon">⭕</span>
-                    <span>Círculos Jack Skellington</span>
-                </button>
-                <button class="btn" data-target="plantilla-cuadros-imagenes-v2.html">
-                    <span class="btn-icon">🖼️</span>
-                    <span>Cuadros Imágenes v2</span>
-                </button>
-                <button class="btn" data-target="plantilla-imagenes-v2.html">
-                    <span class="btn-icon">🎨</span>
-                    <span>Plantilla Imágenes v2</span>
-                </button>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-title">
-                    <span>🏗️</span>
-                    <span>Workspace Proyectos</span>
-                </div>
-                <div id="workspace-list"></div>
-                <button class="btn" onclick="addNewWorkspaceItem()">
-                    <span class="btn-icon">➕</span>
-                    <span>Guardar Proyecto</span>
-                </button>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-title">
-                    <span>📁</span>
-                    <span>Base PDFs</span>
-                </div>
-                <div id="works-base-list"></div>
-                <button class="btn" onclick="openUploadModal()">
-                    <span class="btn-icon">📤</span>
-                    <span>Subir PDF / Continuar</span>
-                </button>
-            </div>
+            <!-- ⚠️ NOTA: YA NO EXISTE EN EL SIDEBAR:
+                 🏗️ Proyectos / ➕ Guardar Proyecto
+                 📁 Documentos PDF / 📤 Subir PDF
+                 (Eso queda en tu instancia dedicada)
+            -->
         </nav>
 
         <button class="toggle-nav" id="toggleNav" title="Ocultar/Mostrar menú">‹</button>
 
         <main>
-            <!-- CONTROLES FLOATING -->
             <div class="view-controls">
                 <div class="zoom-controls">
                     <span>🔍</span>
@@ -797,12 +689,12 @@
                     <span class="zoom-value" id="zoomValue">100%</span>
                 </div>
                 <button class="btn-premium btn-secondary" onclick="toggleCompactMode()" id="compactBtn">
-                    <span>🧘</span>
-                    <span>Zen Mode</span>
+                    <span>👁️</span>
+                    <span>Modo Enfoque</span>
                 </button>
                 <button class="btn-premium btn-secondary" onclick="toggleFullscreen()" id="fullscreenBtn">
                     <span>⛶</span>
-                    <span>Fullscreen</span>
+                    <span>Pantalla Completa</span>
                 </button>
                 <button class="btn-premium btn-primary" id="downloadBtn">
                     <span>📥</span>
@@ -810,25 +702,21 @@
                 </button>
             </div>
 
-            <!-- CONTENEDOR PRINCIPAL -->
             <div id="frameWrapper">
-                <!-- DASHBOARD VISUAL -->
                 <div id="dashboardContainer" class="pdf-grid"></div>
-
-                <!-- IFRAME DE PLANTILLAS -->
                 <iframe id="plantillaFrame" src="about:blank"></iframe>
             </div>
         </main>
     </div>
 
-    <!-- MODAL SUBIR PDF -->
+    <!-- MODAL SUBIR PDF (se mantiene porque el dashboard lo usa internamente si lo ocupas) -->
     <div class="modal-overlay" id="uploadModal">
         <div class="modal-content">
-            <h2 class="modal-title">📤 SUBIR PDF PARA CONTINUAR</h2>
+            <h2 class="modal-title">📤 Subir Documento PDF</h2>
             <div class="upload-zone" onclick="document.getElementById('hiddenFileInput').click()">
-                <div style="font-size: 48px; margin-bottom: 20px;">☁️⬆️</div>
-                <p style="font-size: 18px; margin-bottom: 10px;">Arrastra tu PDF aquí o haz clic</p>
-                <p style="color: var(--text-muted);">Los campos se extraerán automáticamente</p>
+                <div style="font-size: 40px; margin-bottom: 16px;">📄</div>
+                <p style="font-size: 16px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">Arrastra tu PDF aquí o haz clic</p>
+                <p style="color: var(--text-muted); font-size: 13px;">Los campos se extraerán automáticamente</p>
             </div>
             <input type="file" id="hiddenFileInput" accept=".pdf" style="display: none;"
                 onchange="handlePDFUpload(event)">
@@ -838,7 +726,6 @@
         </div>
     </div>
 
-    <!-- INDICADOR -->
     <div class="auto-save-indicator" id="autoSaveIndicator">✓ Guardado</div>
 
     <script>
@@ -847,35 +734,97 @@
         let workspaceItems = JSON.parse(localStorage.getItem('arkaios_workspace') || '[]');
         let completedWorks = JSON.parse(localStorage.getItem('arkaios_works') || '[]');
 
-        // ===== INICIAR PARTICULAS =====
-        function initParticles() {
-            const container = document.getElementById('particles');
-            for (let i = 0; i < 30; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 10 + 's';
-                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
-                container.appendChild(particle);
+        // ===== MENÚ DINÁMICO (modules.json) =====
+        async function initDynamicMenu() {
+            const root = document.getElementById('dynamicMenuRoot');
+            const fallback = document.getElementById('staticMenuFallback');
+
+            try {
+                const res = await fetch('modules.json', { cache: 'no-store' });
+                if (!res.ok) throw new Error('modules.json no encontrado');
+                const manifest = await res.json();
+
+                root.innerHTML = '';
+                buildMenuFromManifest(root, manifest);
+                fallback.style.display = 'none';
+
+                // Conecta listeners del menú dinámico
+                wireTemplateButtons();
+            } catch (e) {
+                console.warn('[ARKAIOS] Menú dinámico no disponible -> usando fallback.', e);
+                root.innerHTML = '';
+                fallback.style.display = 'block';
+
+                // Conecta listeners del menú fallback
+                wireTemplateButtons();
             }
         }
 
-        // ===== DASHBOARD PINTEREST-STYLE =====
+        function buildMenuFromManifest(container, manifest) {
+            // manifest esperado:
+            // { sections: [ { title, icon, items:[ { label, icon, target } ] } ] }
+            const sections = Array.isArray(manifest?.sections) ? manifest.sections : [];
+
+            for (const sec of sections) {
+                const section = document.createElement('div');
+                section.className = 'nav-section';
+
+                const title = document.createElement('div');
+                title.className = 'nav-title';
+                title.innerHTML = `<span>${sec.icon || '🧩'}</span><span>${sec.title || 'Módulos'}</span>`;
+                section.appendChild(title);
+
+                const items = Array.isArray(sec.items) ? sec.items : [];
+                items.forEach((it, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn';
+                    btn.dataset.target = it.target;
+                    btn.innerHTML = `
+                        <span class="btn-icon">${it.icon || '📄'}</span>
+                        <span>${it.label || it.target}</span>
+                    `;
+                    section.appendChild(btn);
+
+                    // activa el primero como default (solo UI)
+                    if (sec.makeFirstActive && idx === 0) btn.classList.add('active');
+                });
+
+                container.appendChild(section);
+            }
+
+            // Extra: Biblioteca fija opcional si no viene en manifest
+            if (!sections.some(s => (s.title || '').toLowerCase().includes('biblioteca'))) {
+                const lib = document.createElement('div');
+                lib.className = 'nav-section';
+                lib.innerHTML = `
+                    <div class="nav-title"><span>📚</span><span>Biblioteca</span></div>
+                    <button class="btn" data-target="material-educativo-reutilizable.html">
+                        <span class="btn-icon">📖</span>
+                        <span>Material Reutilizable</span>
+                    </button>`;
+                container.appendChild(lib);
+            }
+        }
+
+        function wireTemplateButtons() {
+            document.querySelectorAll('.btn[data-target]').forEach(btn => {
+                btn.onclick = () => loadTemplate(btn.dataset.target);
+            });
+        }
+
+        // ===== DASHBOARD =====
         function renderDashboard() {
             const container = document.getElementById('dashboardContainer');
             container.innerHTML = '';
 
-            // Sección Proyectos Guardados
+            // Proyectos Guardados
             const wsSection = document.createElement('div');
-            wsSection.innerHTML = `<div style="grid-column: 1 / -1; margin-bottom: 20px;">
-                <h2 style="font-family: Orbitron; color: var(--neon-cyan); text-shadow: var(--glow-cyan);">
-                    🏗️ PROYECTOS GUARDADOS
-                </h2>
+            wsSection.innerHTML = `<div class="section-header">
+                <h2>🏗️ Proyectos Guardados</h2>
             </div>`;
 
             if (workspaceItems.length === 0) {
-                wsSection.innerHTML += `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted);">
+                wsSection.innerHTML += `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 40px;">
                     No hay proyectos guardados
                 </div>`;
             } else {
@@ -886,21 +835,19 @@
             }
             container.appendChild(wsSection);
 
-            // Sección PDFs Finalizados
+            // PDFs Finalizados
             const pdfSection = document.createElement('div');
-            pdfSection.innerHTML = `<div style="grid-column: 1 / -1; margin: 40px 0 20px;">
-                <h2 style="font-family: Orbitron; color: var(--neon-magenta); text-shadow: var(--glow-magenta);">
-                    📚 TRABAJOS FINALIZADOS
-                </h2>
+            pdfSection.innerHTML = `<div class="section-header" style="margin-top: 32px;">
+                <h2>📚 Documentos Finalizados</h2>
             </div>`;
 
             if (completedWorks.length === 0) {
-                pdfSection.innerHTML += `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted);">
-                    No hay PDFs guardados
+                pdfSection.innerHTML += `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 40px;">
+                    No hay documentos guardados
                 </div>`;
             } else {
                 completedWorks.forEach((item, index) => {
-                    const card = createPDFCard(item.name, '📄', 'PDF Finalizado', () => downloadWork(index), () => removeWork(index));
+                    const card = createPDFCard(item.name, '📄', 'PDF', () => downloadWork(index), () => removeWork(index));
                     pdfSection.appendChild(card);
                 });
             }
@@ -912,34 +859,50 @@
             card.className = 'pdf-card';
             card.onclick = onClick;
             card.innerHTML = `
-                <div style="font-size: 60px; margin-bottom: 15px; filter: drop-shadow(0 0 10px var(--neon-cyan));">${icon}</div>
-                <div class="name" style="font-size: 14px;">${name}</div>
-                <div class="info" style="font-size: 12px; color: var(--text-muted);">${type}</div>
-                <div class="actions" onclick="event.stopPropagation();">
-                    <button class="action-btn" onclick="${onDelete.toString().replace(/"/g, '&quot;')}">🗑️</button>
+                <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.8;">${icon}</div>
+                <div class="name">${name}</div>
+                <div class="info">${type}</div>
+                <div class="actions">
+                    <button class="action-btn delete-btn">🗑️ Eliminar</button>
                 </div>
             `;
+
+            const deleteBtn = card.querySelector('.delete-btn');
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                onDelete();
+            });
+
             return card;
         }
 
-        // ===== SUBIR PDF Y CONTINUAR =====
+        function toggleDashboard() {
+            const dashboard = document.getElementById('dashboardContainer');
+            const iframe = document.getElementById('plantillaFrame');
+
+            if (dashboard.style.display === 'none') {
+                dashboard.style.display = 'grid';
+                iframe.style.display = 'none';
+                renderDashboard();
+            }
+        }
+
+        // ===== MODAL PDF =====
         function openUploadModal() {
             document.getElementById('uploadModal').classList.add('active');
         }
-
         function closeUploadModal() {
             document.getElementById('uploadModal').classList.remove('active');
         }
 
         async function handlePDFUpload(event) {
-            const file = event.files[0];
+            const file = event.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
             reader.onload = async function (e) {
                 const pdfData = e.target.result;
 
-                // Guardar en base de trabajos
                 completedWorks.push({
                     name: file.name,
                     data: pdfData,
@@ -948,26 +911,15 @@
                 });
                 localStorage.setItem('arkaios_works', JSON.stringify(completedWorks));
 
-                // Intentar extraer texto (versión simplificada)
                 showIndicator('Extrayendo contenido del PDF...');
-
-                // VER NOTA IMPORTANTE ABAJO
                 await extractPDFContent(pdfData);
 
                 closeUploadModal();
-                showIndicator('¡PDF importado! Puedes continuar editando.');
+                showIndicator('¡PDF importado correctamente!');
                 renderDashboard();
             };
             reader.readAsDataURL(file);
         }
-
-        // ===== NOTA IMPORTANTE SOBRE EXTRACCIÓN DE PDF =====
-        // La extracción completa de PDF a formato editable HTML es extremadamente compleja
-        // y requiere OCR + análisis de layout. Para este proyecto, implementaremos:
-        // 1. Extraer texto básico usando PDF.js
-        // 2. Crear una plantilla genérica con campos editables
-        // 3. Asignar el texto extraído a esos campos
-        // 4. Permitir al usuario reorganizar el contenido
 
         async function extractPDFContent(pdfData) {
             try {
@@ -982,7 +934,6 @@
                     textContent.push(pageText);
                 }
 
-                // GUARDAR COMO NUEVO PROYECTO CON CONTENIDO EXTRAÍDO
                 const projectName = `PDF Importado ${new Date().toLocaleDateString()}`;
                 workspaceItems.push({
                     name: projectName,
@@ -1001,7 +952,7 @@
             }
         }
 
-        // ===== FUNCIONES EXISTENTES (MEJORADAS) =====
+        // ===== PLANTILLAS =====
         function loadTemplate(target) {
             currentTemplate = target;
             const frame = document.getElementById('plantillaFrame');
@@ -1010,11 +961,12 @@
             document.getElementById('dashboardContainer').style.display = 'none';
             frame.style.display = 'block';
 
-            document.querySelectorAll('.btn').forEach(btn => {
+            document.querySelectorAll('.btn[data-target]').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.target === target);
             });
         }
 
+        // ===== WORKSPACE =====
         function addNewWorkspaceItem() {
             const iframe = document.getElementById('plantillaFrame');
             let data = null;
@@ -1027,7 +979,7 @@
                 console.warn('No se pudieron obtener datos del iframe');
             }
 
-            const name = prompt('🤖 Nombre del proyecto:', `Proyecto ${workspaceItems.length + 1}`);
+            const name = prompt('Nombre del proyecto:', `Proyecto ${workspaceItems.length + 1}`);
             if (!name) return;
 
             workspaceItems.push({
@@ -1038,7 +990,7 @@
             });
 
             localStorage.setItem('arkaios_workspace', JSON.stringify(workspaceItems));
-            showIndicator('✓ Proyecto guardado en Workspace');
+            showIndicator('✓ Proyecto guardado');
             renderDashboard();
         }
 
@@ -1056,11 +1008,11 @@
 
             document.getElementById('dashboardContainer').style.display = 'none';
             frame.style.display = 'block';
-            showIndicator('✓ Proyecto cargado desde Workspace');
+            showIndicator('✓ Proyecto cargado');
         }
 
         function removeWorkspaceItem(index) {
-            if (confirm('⚠️ ¿Eliminar este proyecto permanentemente?')) {
+            if (confirm('¿Eliminar este proyecto permanentemente?')) {
                 workspaceItems.splice(index, 1);
                 localStorage.setItem('arkaios_workspace', JSON.stringify(workspaceItems));
                 renderDashboard();
@@ -1078,14 +1030,15 @@
         }
 
         function removeWork(index) {
-            if (confirm('⚠️ ¿Eliminar este PDF?')) {
+            if (confirm('¿Eliminar este documento?')) {
                 completedWorks.splice(index, 1);
                 localStorage.setItem('arkaios_works', JSON.stringify(completedWorks));
                 renderDashboard();
-                showIndicator('✓ PDF eliminado');
+                showIndicator('✓ Documento eliminado');
             }
         }
 
+        // ===== CONTROLES =====
         function updateZoom(value) {
             const iframe = document.getElementById('plantillaFrame');
             const display = document.getElementById('zoomValue');
@@ -1096,23 +1049,15 @@
 
         function toggleCompactMode() {
             document.body.classList.toggle('compact-mode');
-            showIndicator(document.body.classList.contains('compact-mode') ? '✓ Modo Zen activado' : '✓ Modo Zen desactivado');
+            showIndicator(document.body.classList.contains('compact-mode') ? '✓ Modo enfoque activado' : '✓ Modo normal');
         }
 
         function toggleFullscreen() {
             const wrapper = document.getElementById('frameWrapper');
             if (!document.fullscreenElement) {
-                // Try standard fullscreen API first
-                if (wrapper.requestFullscreen) {
-                    wrapper.requestFullscreen();
-                } else {
-                    // Fallback to CSS class for iframe sizing if API not supported/desired
-                    wrapper.classList.toggle('fullscreen');
-                }
+                if (wrapper.requestFullscreen) wrapper.requestFullscreen();
             } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
+                if (document.exitFullscreen) document.exitFullscreen();
             }
         }
 
@@ -1120,19 +1065,22 @@
             const indicator = document.getElementById('autoSaveIndicator');
             indicator.textContent = msg;
             indicator.classList.add('show');
-            setTimeout(() => indicator.classList.remove('show'), 3000);
+            setTimeout(() => indicator.classList.remove('show'), 2500);
         }
 
         // ===== INICIALIZACIÓN =====
-        window.onload = function () {
-            initParticles();
+        window.onload = async function () {
+            // 1) Menú dinámico (si existe modules.json)
+            await initDynamicMenu();
+
+            // 2) Render dashboard
             renderDashboard();
 
-            // Cargar plantilla inicial
+            // 3) Plantilla default precargada (pero oculta)
             const frame = document.getElementById('plantillaFrame');
             frame.src = currentTemplate;
 
-            // Configurar drag & drop para PDF
+            // Drag & drop
             const uploadZone = document.querySelector('.upload-zone');
             if (uploadZone) {
                 uploadZone.addEventListener('dragover', (e) => {
@@ -1145,7 +1093,7 @@
                 uploadZone.addEventListener('drop', (e) => {
                     e.preventDefault();
                     uploadZone.classList.remove('dragover');
-                    handlePDFUpload({ files: e.dataTransfer.files });
+                    handlePDFUpload({ target: { files: e.dataTransfer.files } });
                 });
             }
 
@@ -1159,25 +1107,19 @@
                 });
             }
 
-            // Navegación de botones
-            document.querySelectorAll('.btn[data-target]').forEach(btn => {
-                btn.addEventListener('click', () => loadTemplate(btn.dataset.target));
-            });
-
-            // Botón exportar PDF
+            // Exportar PDF
             const downloadBtn = document.getElementById('downloadBtn');
             if (downloadBtn) {
                 downloadBtn.addEventListener('click', async () => {
-                    showIndicator('🖨️ Generando PDF...');
+                    showIndicator('Generando PDF...');
                     const iframe = document.getElementById('plantillaFrame');
                     try {
-                        // Intentar usar la función de impresión nativa de la plantilla
                         if (iframe.contentWindow && iframe.contentWindow.print) {
                             iframe.contentWindow.print();
-                            showIndicator('✓ Diálogo de impresión abierto');
+                            showIndicator('✓ Listo para imprimir');
                             return;
                         }
-                        // Fallback a captura
+
                         const canvas = await html2canvas(iframe.contentDocument.body, {
                             scale: 2,
                             useCORS: true,
@@ -1196,16 +1138,15 @@
                         const imgHeight = (canvas.height * imgWidth) / canvas.width;
                         pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
                         pdf.save(`ARKAIOS_${Date.now()}.pdf`);
-                        showIndicator('✓ PDF exportado exitosamente');
+                        showIndicator('✓ PDF exportado');
                     } catch (error) {
                         console.error('Error:', error);
-                        // Fallback final: usar window.print()
                         window.print();
                     }
                 });
             }
 
-            // Mostrar dashboard inicialmente
+            // Mostrar dashboard por defecto
             document.getElementById('plantillaFrame').style.display = 'none';
             document.getElementById('dashboardContainer').style.display = 'grid';
         };
