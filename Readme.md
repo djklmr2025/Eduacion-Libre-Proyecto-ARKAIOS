@@ -59,3 +59,6 @@ Este proyecto está bajo la **Licencia MIT**. Siéntete libre de usarlo, modific
 ---
 **Desarrollado con ❤️ para maestros y estudiantes de todo el mundo.**  
 **Proyecto ARKAIOS 2025**
+
+
+<!-- Trigger deployment -->
