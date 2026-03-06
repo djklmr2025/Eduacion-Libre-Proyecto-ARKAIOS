@@ -27,6 +27,13 @@
       "items": [
         { "label": "Material Reutilizable", "icon": "📖", "target": "material-educativo-reutilizable.html" }
       ]
+    },
+    {
+      "title": "Automatización IA",
+      "icon": "🤖",
+      "items": [
+        { "label": "Orquestador HTML+", "icon": "🧠", "target": "orquestador-html-plus.html" }
+      ]
     }
   ]
 }
