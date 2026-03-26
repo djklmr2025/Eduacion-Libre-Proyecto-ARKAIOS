@@ -13,7 +13,7 @@ El **Centro de Plantillas Educativas ARKAIOS** es una plataforma web de código 
 ## ✨ Características Principales
 - **🧩 Suite de Plantillas**: Diversidad de formatos para tareas, biografías, fotos infantiles y esquemas escolares.
 - **🖨️ Optimización de Impresión**: Arquitectura CSS configurada para salida perfecta en formato Carta (MX/US).
-- **📸 Integración de Multimedia**: Conexión directa con la API de Pexels para búsqueda de recursos visuales de alta calidad.
+- **📸 Integración de Multimedia**: Conexión segura con Pexels y Google Custom Search para búsqueda de recursos visuales sin exponer llaves en cliente.
 - **🏗️ Gestión de Proyectos**: Sistema local de guardado y recuperación de versiones de trabajo.
 - **🧘 Modo Zen & Compacto**: Interfaz personalizable para maximizar el área de diseño.
 
@@ -36,14 +36,17 @@ Para garantizar la máxima eficiencia y portabilidad:
 - **Core**: HTML5 Semántico y JS Vanilla.
 - **Estética**: CSS3 Moderno con variables dinámicas y Flexbox/Grid.
 - **Deployment**: Configurado para **Vercel** mediante funciones Serverless.
-- **APIs**: Integración segura con Pexels API (Sin exposición de llaves en cliente).
+- **APIs**: Integración segura con Pexels API y Google Custom Search (sin exposición de llaves en cliente).
 
 ---
 
 ## ⚙️ Configuración y Despliegue
 1. **GitHub**: Clona o haz fork del repositorio.
 2. **Vercel**: Importa el proyecto.
-3. **Seguridad**: Configura la variable de entorno `PEXELS_API_KEY` en el panel de Vercel.
+3. **Seguridad**: Configura estas variables de entorno en Vercel:
+   - `PEXELS_API_KEY`
+   - `GOOGLE_API_KEY`
+   - `GOOGLE_CSE_CX`
 4. **Listo**: El sistema funcionará automáticamente con el proxy de la carpeta `/api`.
 
 ---

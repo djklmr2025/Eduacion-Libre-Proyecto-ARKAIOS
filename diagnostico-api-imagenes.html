@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnóstico Buscador de Imágenes</title>
+<style>
+  body { font-family: monospace; background: #0f1117; color: #eef1f8; padding: 30px; max-width: 900px; margin: 0 auto; }
+  h1 { color: #4fffb0; font-size: 1.2rem; margin-bottom: 6px; }
+  .sub { color: #8892b0; font-size: 0.85rem; margin-bottom: 30px; }
+  .card { background: #1e2336; border: 1px solid #2a3050; border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+  input { width: 100%; background: #0f1117; border: 1px solid #2a3050; border-radius: 6px; padding: 10px; color: #eef1f8; font-family: monospace; font-size: 0.9rem; outline: none; }
+  button { margin-top: 16px; background: #4fffb0; color: #0f1117; border: none; padding: 12px 28px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer; width: 100%; }
+  .entry { padding: 10px 14px; border-radius: 6px; margin-bottom: 8px; font-size: 0.85rem; line-height: 1.5; }
+  .ok { background: rgba(79,255,176,0.1); border-left: 3px solid #4fffb0; color: #4fffb0; }
+  .err { background: rgba(255,107,107,0.1); border-left: 3px solid #ff6b6b; color: #ff6b6b; }
+  .warn { background: rgba(245,158,11,0.1); border-left: 3px solid #f59e0b; color: #f59e0b; }
+  .info { background: rgba(99,179,237,0.1); border-left: 3px solid #63b3ed; color: #63b3ed; }
+  .img-strip { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .img-strip img { width: 100px; height: 75px; object-fit: cover; border-radius: 6px; border: 1px solid #2a3050; }
+</style>
+</head>
+<body>
+<h1>Diagnóstico del Buscador de Imágenes</h1>
+<p class="sub">Esta prueba usa el endpoint interno <code>/api/google-image-search</code>. Los estudiantes no necesitan pegar llaves.</p>
+
+<div class="card">
+  <label>Término de prueba</label>
+  <input type="text" id="query" value="sistema solar primaria" placeholder="sistema solar primaria">
+  <button id="runBtn">Ejecutar Diagnóstico</button>
+</div>
+
+<div id="log"></div>
+
+<script>
+const log = document.getElementById('log');
+
+function entry(type, msg) {
+  const d = document.createElement('div');
+  d.className = `entry ${type}`;
+  d.innerHTML = msg;
+  log.appendChild(d);
+}
+
+function clearLog() {
+  log.innerHTML = '';
+}
+
+async function runDiag() {
+  clearLog();
+  const query = document.getElementById('query').value.trim() || 'sistema solar primaria';
+
+  entry('info', 'Paso 1: consultando el endpoint interno del proyecto...');
+
+  try {
+    const response = await fetch('/api/google-image-search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        q: query,
+        per_page: 5,
+        diagnostic: true
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      entry('err', `Error: ${data.error || 'Fallo del servicio'}`);
+      if (data.missing) {
+        entry('warn', 'Faltan variables del servidor. Configura <code>GOOGLE_API_KEY</code> y <code>GOOGLE_CSE_CX</code> en Vercel.');
+      }
+      return;
+    }
+
+    entry('ok', `Servicio activo. Total devuelto: ${data.count} imágenes.`);
+    entry('ok', `Consulta procesada: <code>${data.query}</code>`);
+
+    if (!data.results || !data.results.length) {
+      entry('warn', 'El endpoint respondió pero no hubo resultados.');
+      return;
+    }
+
+    const strip = document.createElement('div');
+    strip.className = 'img-strip';
+    data.results.forEach(item => {
+      if (item.thumbnail) {
+        const img = document.createElement('img');
+        img.src = item.thumbnail;
+        img.alt = item.title || 'Imagen';
+        strip.appendChild(img);
+      }
+    });
+    log.appendChild(strip);
+    entry('ok', 'Diagnóstico completo: el módulo ya puede usarse sin pegar credenciales.');
+  } catch (error) {
+    entry('err', `Error de red: ${error.message}`);
+  }
+}
+
+document.getElementById('runBtn').addEventListener('click', runDiag);
+</script>
+</body>
+</html>
