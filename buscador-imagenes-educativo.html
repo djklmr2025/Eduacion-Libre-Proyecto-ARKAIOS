@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buscador Visual Educativo</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:     #0f1117;
+    --surface: #181c27;
+    --card:    #1e2336;
+    --line:    #2a3050;
+    --accent:  #4fffb0;
+    --accent2: #ff6b6b;
+    --muted:   #8892b0;
+    --white:   #eef1f8;
+    --radius:  10px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ink);
+    color: var(--white);
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 40px 22px;
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15,17,23,0.92);
+    backdrop-filter: blur(12px);
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--accent);
+  }
+  .logo span { color: var(--white); }
+  .header-badge {
+    font-size: 0.72rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ── HERO SEARCH ── */
+  .hero {
+    padding: 52px 40px 40px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 10px;
+    letter-spacing: -1.5px;
+  }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero p { color: var(--muted); font-size: 0.95rem; margin-bottom: 32px; }
+
+  /* Config colapsable */
+  .config-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--muted);
+    cursor: pointer;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 7px 14px;
+    margin-bottom: 20px;
+    background: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .config-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .config-panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 28px;
+    display: none;
+  }
+  .config-panel.open { display: block; }
+  .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .field input {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field input:focus { border-color: var(--accent); }
+  .field input::placeholder { color: var(--muted); }
+
+  /* Buscador */
+  .search-box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px;
+  }
+  .search-box label {
+    display: block;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .search-box textarea {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px;
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    resize: vertical;
+    min-height: 72px;
+    transition: border-color 0.2s;
+    margin-bottom: 16px;
+  }
+  .search-box textarea:focus { border-color: var(--accent); }
+  .search-box textarea::placeholder { color: var(--muted); }
+
+  .actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .btn:disabled { opacity: 0.38; cursor: not-allowed; }
+  .btn-search {
+    background: var(--accent);
+    color: var(--ink);
+    font-weight: 700;
+    flex: 1;
+    justify-content: center;
+  }
+  .btn-search:hover:not(:disabled) { background: #3de89a; }
+  .btn-zip {
+    background: var(--card);
+    color: var(--white);
+    border: 1px solid var(--line);
+  }
+  .btn-zip:hover:not(:disabled) { border-color: var(--muted); }
+
+  /* ── PROGRESS ── */
+  #loader {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 40px 32px;
+    display: none;
+  }
+  .progress-track {
+    height: 3px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.35s ease;
+  }
+  #loaderText { font-size: 0.82rem; color: var(--muted); }
+
+  /* ── ERROR ── */
+  .error-chip {
+    background: rgba(255,107,107,0.12);
+    border: 1px solid rgba(255,107,107,0.4);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    color: var(--accent2);
+    margin: 0 40px 16px;
+    max-width: 820px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ── RESULTADOS ── */
+  #resultsContainer {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  .topic-section { margin-bottom: 60px; }
+
+  .topic-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .topic-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-transform: capitalize;
+    letter-spacing: -0.5px;
+  }
+  .topic-count {
+    font-size: 0.75rem;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 20px;
+    padding: 2px 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .topic-zip {
+    margin-left: auto;
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .topic-zip:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Grid de imágenes */
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .img-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+  .img-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+  }
+
+  .img-thumb {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: var(--surface);
+    overflow: hidden;
+    cursor: zoom-in;
+    position: relative;
+  }
+  .img-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.3s;
+  }
+  .img-thumb img.loading { opacity: 0; }
+  .img-thumb img.loaded  { opacity: 1; }
+
+  /* Badge de formato en la imagen */
+  .fmt-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(15,17,23,0.8);
+    color: var(--accent);
+    font-size: 0.65rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .img-meta {
+    padding: 10px 12px 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .img-title {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .btn-dl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+    background: rgba(79,255,176,0.1);
+    border: 1px solid rgba(79,255,176,0.3);
+    border-radius: 6px;
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    width: 100%;
+  }
+  .btn-dl:hover { background: rgba(79,255,176,0.2); border-color: var(--accent); }
+
+  /* ── LIGHTBOX ── */
+  #lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    cursor: zoom-out;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img {
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 6px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  }
+  #lbClose {
+    position: absolute;
+    top: 20px;
+    right: 26px;
+    font-size: 1.8rem;
+    color: var(--muted);
+    cursor: pointer;
+    line-height: 1;
+    user-select: none;
+  }
+  #lbClose:hover { color: var(--white); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    header { padding: 18px 20px; }
+    .hero { padding: 36px 20px 28px; }
+    .config-grid { grid-template-columns: 1fr; }
+    #resultsContainer { padding: 0 20px; }
+    .results-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">visual<span>EDU</span></div>
+  <span class="header-badge">Google Custom Search · v2.0</span>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Busca imágenes<br>para tu <em>contenido educativo</em></h1>
+  <p>Escribe uno o varios temas separados por comas — obtén hasta 10 imágenes por tema listas para descargar.</p>
+
+  <!-- Config -->
+  <button class="config-toggle" onclick="toggleConfig()" id="cfgBtn">
+    ⚙ Configurar credenciales API
+  </button>
+  <div class="config-panel" id="configPanel">
+    <div class="config-grid">
+      <div class="field">
+        <label>Google API Key</label>
+        <input type="password" id="apiKey" placeholder="AIzaSy...">
+      </div>
+      <div class="field">
+        <label>CX — Search Engine ID</label>
+        <input type="text" id="cx" placeholder="a1b2c3d4e5f6g...">
+      </div>
+    </div>
+    <p style="font-size:0.75rem;color:var(--muted);margin-top:14px;">
+      Las credenciales se guardan en <strong style="color:var(--accent)">localStorage</strong> — solo en tu navegador, jamás viajan a ningún servidor externo.
+    </p>
+  </div>
+
+  <!-- Buscador -->
+  <div class="search-box">
+    <label>Temas de búsqueda</label>
+    <textarea id="searchInput" placeholder="Ej: Sistema Solar, Célula animal, Volcanes de México"></textarea>
+    <div class="actions">
+      <button class="btn btn-search" id="searchBtn" onclick="startSearch()">
+        🔍 Buscar imágenes
+      </button>
+      <button class="btn btn-zip" id="downloadAllBtn" disabled onclick="downloadAll()">
+        📦 Todo en .zip
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PROGRESO -->
+<div id="loader">
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <span id="loaderText">Iniciando búsqueda...</span>
+</div>
+
+<!-- RESULTADOS -->
+<div id="resultsContainer"></div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <span id="lbClose">✕</span>
+  <img id="lbImg" src="" alt="">
+</div>
+
+<script>
+/* ─────────────────────────────────────────
+   INIT — persistencia localStorage
+───────────────────────────────────────── */
+const $ = id => document.getElementById(id);
+
+window.onload = () => {
+  $('apiKey').value = localStorage.getItem('gcs_api_key') || '';
+  $('cx').value     = localStorage.getItem('gcs_cx')      || '';
+  if (!$('apiKey').value || !$('cx').value) toggleConfig(true);
+};
+
+['apiKey','cx'].forEach(id => {
+  $(id).addEventListener('input', () => {
+    localStorage.setItem('gcs_api_key', $('apiKey').value.trim());
+    localStorage.setItem('gcs_cx',      $('cx').value.trim());
+  });
+});
+
+function toggleConfig(forceOpen) {
+  const p = $('configPanel');
+  const isOpen = p.classList.contains('open');
+  if (forceOpen === true || !isOpen) {
+    p.classList.add('open');
+    $('cfgBtn').textContent = '✕ Cerrar configuración';
+  } else {
+    p.classList.remove('open');
+    $('cfgBtn').textContent = '⚙ Configurar credenciales API';
+  }
+}
+
+/* ─────────────────────────────────────────
+   PARSEO DE TEMAS
+───────────────────────────────────────── */
+function getTopics(raw) {
+  return raw.split(/,|\n| {2,}/).map(t => t.trim()).filter(t => t.length > 0);
+}
+
+/* ─────────────────────────────────────────
+   BÚSQUEDA PRINCIPAL
+───────────────────────────────────────── */
+let allResults = []; // [{ topic, items }]
+
+async function startSearch() {
+  const key    = $('apiKey').value.trim();
+  const cx     = $('cx').value.trim();
+  const raw    = $('searchInput').value.trim();
+  const topics = getTopics(raw);
+
+  if (!topics.length) return alert('Escribe al menos un tema.');
+  if (!key || !cx) {
+    toggleConfig(true);
+    return alert('Primero configura tu API Key y CX.');
+  }
+
+  // Reset
+  $('resultsContainer').innerHTML = '';
+  allResults = [];
+  $('downloadAllBtn').disabled = true;
+  $('searchBtn').disabled = true;
+  $('loader').style.display = 'block';
+  $('progressFill').style.width = '0%';
+
+  for (let i = 0; i < topics.length; i++) {
+    const topic = topics[i];
+    $('loaderText').textContent = `Buscando "${topic}" — ${i + 1} de ${topics.length}`;
+    $('progressFill').style.width = `${(i / topics.length) * 100}%`;
+
+    try {
+      const url = `https://www.googleapis.com/customsearch/v1?key=${key}&cx=${cx}&q=${encodeURIComponent(topic)}&searchType=image&num=10`;
+      const res  = await fetch(url);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message);
+      if (data.items?.length) {
+        allResults.push({ topic, items: data.items });
+        renderSection(topic, data.items);
+      } else {
+        showError(`Sin resultados para "${topic}"`);
+      }
+    } catch (err) {
+      showError(`Error en "${topic}": ${err.message}`);
+    }
+  }
+
+  $('progressFill').style.width = '100%';
+  $('loader').style.display = 'none';
+  $('searchBtn').disabled = false;
+  if (allResults.length) $('downloadAllBtn').disabled = false;
+}
+
+function showError(msg) {
+  const d = document.createElement('div');
+  d.className = 'error-chip';
+  d.textContent = msg;
+  $('resultsContainer').appendChild(d);
+}
+
+/* ─────────────────────────────────────────
+   RENDER DE SECCIÓN POR TEMA
+───────────────────────────────────────── */
+function renderSection(topic, items) {
+  const sec = document.createElement('section');
+  sec.className = 'topic-section';
+
+  const slug = topic.replace(/\s+/g, '_').toLowerCase();
+
+  sec.innerHTML = `
+    <div class="topic-header">
+      <h2 class="topic-title">${topic}</h2>
+      <span class="topic-count">${items.length} imágenes</span>
+      <button class="topic-zip" onclick="downloadTopic('${escapeAttr(topic)}')">📦 .zip este tema</button>
+    </div>
+    <div class="results-grid" id="grid_${slug}"></div>
+  `;
+
+  const grid = sec.querySelector('.results-grid');
+  items.forEach((item, idx) => renderCard(grid, item, topic, idx));
+
+  $('resultsContainer').appendChild(sec);
+}
+
+function escapeAttr(str) {
+  return str.replace(/'/g, "\\'");
+}
+
+function getExt(url) {
+  return (url.split('.').pop().split(/[#?]/)[0] || 'jpg').toLowerCase().substring(0, 4);
+}
+
+function renderCard(grid, item, topic, idx) {
+  const ext  = getExt(item.link);
+  const name = `${topic.replace(/\s+/g,'_')}_${idx+1}.${ext}`;
+
+  const card = document.createElement('div');
+  card.className = 'img-card';
+  card.innerHTML = `
+    <div class="img-thumb" onclick="openLightbox('${escapeAttr(item.link)}')">
+      <img src="${item.link}" alt="${item.title}" class="loading"
+           onload="this.classList.replace('loading','loaded')"
+           onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22150%22><rect fill=%22%231e2336%22 width=%22200%22 height=%22150%22/><text x=%22100%22 y=%2278%22 fill=%22%238892b0%22 text-anchor=%22middle%22 font-size=%2212%22>Sin previsualización</text></svg>'"
+           loading="lazy" crossorigin="anonymous">
+      <span class="fmt-badge">${ext}</span>
+    </div>
+    <div class="img-meta">
+      <div class="img-title">${item.title}</div>
+      <button class="btn-dl" onclick="downloadImage('${escapeAttr(item.link)}', '${escapeAttr(name)}')">
+        ⬇ Descargar
+      </button>
+    </div>
+  `;
+  grid.appendChild(card);
+}
+
+/* ─────────────────────────────────────────
+   DESCARGAS
+───────────────────────────────────────── */
+async function downloadImage(url, filename) {
+  try {
+    const r = await fetch(url, { mode: 'cors' });
+    if (!r.ok) throw new Error('cors');
+    const blob = URL.createObjectURL(await r.blob());
+    triggerDownload(blob, filename, true);
+  } catch {
+    // Fallback: abrir en nueva pestaña (el usuario usa clic derecho → guardar)
+    window.open(url, '_blank');
+  }
+}
+
+function triggerDownload(href, filename, revoke = false) {
+  const a = document.createElement('a');
+  a.href = href;
+  a.download = filename;
+  a.click();
+  if (revoke) setTimeout(() => URL.revokeObjectURL(href), 2000);
+}
+
+async function downloadTopic(topic) {
+  const found = allResults.find(r => r.topic === topic);
+  if (!found) return;
+  await zipAndDownload([found], `${topic.replace(/\s+/g,'_')}.zip`);
+}
+
+async function downloadAll() {
+  $('downloadAllBtn').disabled = true;
+  $('downloadAllBtn').textContent = '⏳ Generando ZIP...';
+  await zipAndDownload(allResults, `imagenes_educativas_${Date.now()}.zip`);
+  $('downloadAllBtn').textContent = '📦 Todo en .zip';
+  $('downloadAllBtn').disabled = false;
+}
+
+async function zipAndDownload(results, zipName) {
+  const zip = new JSZip();
+  for (const { topic, items } of results) {
+    const folder = zip.folder(topic.replace(/\s+/g, '_'));
+    await Promise.all(items.map(async (item, i) => {
+      try {
+        const r = await fetch(item.link, { mode: 'cors' });
+        if (r.ok) {
+          const ext = getExt(item.link);
+          folder.file(`imagen_${i+1}.${ext}`, await r.blob());
+        }
+      } catch { /* imagen bloqueada por CORS — se omite */ }
+    }));
+  }
+  const blob = await zip.generateAsync({ type: 'blob' });
+  triggerDownload(URL.createObjectURL(blob), zipName, true);
+}
+
+/* ─────────────────────────────────────────
+   LIGHTBOX
+───────────────────────────────────────── */
+function openLightbox(src) {
+  $('lbImg').src = src;
+  $('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  $('lightbox').classList.remove('open');
+  $('lbImg').src = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+/* Enter dispara búsqueda desde textarea con Ctrl+Enter */
+$('searchInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.ctrlKey) startSearch();
+});
+</script>
+</body>
+</html>
