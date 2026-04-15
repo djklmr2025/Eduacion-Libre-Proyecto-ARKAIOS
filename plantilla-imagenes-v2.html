@@ -918,6 +918,100 @@
     `;
         document.head.appendChild(toastStyles);
     </script>
+
+    <!-- ============================================================ -->
+    <!-- ARKAIOS EDU-AGENT LOADER                                      -->
+    <!-- Lee parámetros de URL enviados por el agente y auto-llena    -->
+    <!-- la plantilla con imágenes. Lanza PDF si ?autopdf=1           -->
+    <!-- ============================================================ -->
+    <script>
+    (function() {
+        const params = new URLSearchParams(window.location.search);
+
+        // Solo activar si viene del agente
+        if (!params.get('agent')) return;
+
+        const gridParam = params.get('grid') || '3x3';
+        const imagesParam = params.get('images') || '';
+        const topic = params.get('topic') || '';
+        const autoPdf = params.get('autopdf') === '1';
+
+        if (!imagesParam) return;
+
+        // Banner de carga
+        const banner = document.createElement('div');
+        banner.id = 'agent-banner';
+        banner.style.cssText = `
+            position: fixed; top: 0; left: 0; right: 0; z-index: 99999;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            color: white; text-align: center; padding: 10px;
+            font-weight: bold; font-size: 14px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        `;
+        banner.innerHTML = `🎓 ARKAIOS Edu — Cargando plantilla para: <strong>${decodeURIComponent(topic)}</strong> (${gridParam}) <span id="agent-progress">...</span>`;
+        document.body.prepend(banner);
+
+        // Configurar el grid
+        const [rows, cols] = gridParam.split('x').map(Number);
+        if (rows && cols) {
+            gridConfig = { rows, cols };
+            const gridSelect = document.getElementById('gridSize');
+            if (gridSelect) gridSelect.value = gridParam;
+        }
+
+        // Cargar imágenes desde URLs
+        const imageUrls = decodeURIComponent(imagesParam).split('|').filter(Boolean);
+        let loaded = 0;
+
+        function updateProgress() {
+            const p = document.getElementById('agent-progress');
+            if (p) p.textContent = `(${loaded}/${imageUrls.length} imágenes)`;
+        }
+
+        function tryLoadFromUrl(url, name) {
+            return new Promise((resolve) => {
+                // Intentar cargar la imagen directamente como URL (sin convertir a base64)
+                // para evitar problemas CORS
+                resolve({ data: url, name: name });
+            });
+        }
+
+        async function loadAllImages() {
+            updateProgress();
+
+            const promises = imageUrls.map((url, i) =>
+                tryLoadFromUrl(url, `agent-img-${i + 1}.jpg`).then(imgData => {
+                    loaded++;
+                    updateProgress();
+                    return imgData;
+                })
+            );
+
+            const results = await Promise.all(promises);
+            allImages = results;
+
+            renderTemplates();
+            updateStats();
+
+            // Mensaje de listo
+            banner.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+            banner.innerHTML = `✅ Plantilla lista — ${loaded} imágenes de <strong>${decodeURIComponent(topic)}</strong> (${gridParam}) &nbsp;|&nbsp;
+                <button onclick="window.print()" style="background:white;color:#059669;border:none;padding:4px 12px;border-radius:20px;font-weight:bold;cursor:pointer;margin-left:8px;">🖨️ Imprimir / PDF</button>
+                <button onclick="document.getElementById('agent-banner').remove()" style="background:rgba(255,255,255,0.2);color:white;border:none;padding:4px 12px;border-radius:20px;cursor:pointer;margin-left:8px;">✕ Cerrar</button>
+            `;
+
+            // Auto PDF si se solicitó
+            if (autoPdf) {
+                setTimeout(() => window.print(), 1500);
+            }
+        }
+
+        // Esperar a que la app esté inicializada
+        window.addEventListener('load', () => {
+            setTimeout(loadAllImages, 400);
+        });
+    })();
+    </script>
 </body>
 
 </html>
