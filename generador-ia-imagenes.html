@@ -3,554 +3,208 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARKAIOS · Motor IA de Imágenes v2</title>
+<title>ARKAIOS · Generador IA de Imágenes · V3</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-:root{--bg1:#0f0c29;--bg2:#1a1640;--bg3:#24243e;--purple:#a78bfa;--pink:#f472b6;--blue:#60a5fa;--green:#34d399;--red:#f87171;--card:rgba(255,255,255,.06);--border:rgba(255,255,255,.12);}
-body{font-family:Arial,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));min-height:100vh;color:#fff;}
-.hdr{background:rgba(0,0,0,.35);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:100;}
-.hdr h1{font-size:1.25rem;background:linear-gradient(90deg,var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:bold;}
-.badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:bold;color:#fff;}
-.badge.en{background:linear-gradient(135deg,#667eea,#764ba2);}
-.badge.nx{background:linear-gradient(135deg,#f093fb,#f5576c);}
-.badge.ap{background:linear-gradient(135deg,#10b981,#059669);cursor:pointer;}
-.back{margin-left:auto;background:var(--card);border:1px solid var(--border);color:#ccc;padding:7px 14px;border-radius:8px;cursor:pointer;font-size:13px;text-decoration:none;}
-.main{display:grid;grid-template-columns:320px 1fr;gap:16px;padding:16px;max-width:1500px;margin:0 auto;}
-@media(max-width:860px){.main{grid-template-columns:1fr;}}
-.panel{background:var(--card);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:14px;padding:16px;height:fit-content;position:sticky;top:70px;}
-.ptit{font-size:.82rem;color:var(--purple);font-weight:bold;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
-.fg{margin-bottom:12px;}
-.fg label{display:block;font-size:11px;color:#777;margin-bottom:4px;font-weight:bold;text-transform:uppercase;letter-spacing:.4px;}
-textarea,select,input[type=text]{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:8px;color:#fff;padding:9px;font-size:13px;resize:vertical;transition:border .2s;}
-textarea:focus,select:focus{outline:none;border-color:var(--purple);}
-textarea{min-height:78px;}
-select option{background:#1a1640;}
-.rrow{display:flex;align-items:center;gap:8px;}
-input[type=range]{flex:1;accent-color:var(--purple);cursor:pointer;}
-.rv{min-width:28px;text-align:right;color:var(--purple);font-weight:bold;font-size:13px;}
-.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
-.tag{background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.22);color:#c4b5fd;padding:3px 8px;border-radius:20px;font-size:10px;cursor:pointer;transition:all .2s;}
-.tag:hover{background:rgba(167,139,250,.28);}
-.nbox{display:flex;align-items:center;gap:10px;background:rgba(245,87,108,.08);border:1px solid rgba(245,87,108,.22);border-radius:10px;padding:9px 12px;}
-.nbox label{font-size:12px;color:var(--pink);font-weight:bold;cursor:pointer;}
-.sw{position:relative;width:40px;height:22px;flex-shrink:0;}
-.sw input{opacity:0;width:0;height:0;position:absolute;}
-.sw span{position:absolute;inset:0;background:rgba(255,255,255,.15);border-radius:22px;cursor:pointer;transition:.3s;}
-.sw input:checked+span{background:linear-gradient(90deg,#f093fb,#f5576c);}
-.sw span::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.3s;}
-.sw input:checked+span::after{left:21px;}
-.gen-btn{width:100%;padding:12px;background:linear-gradient(135deg,#667eea,#764ba2);border:none;border-radius:12px;color:#fff;font-size:14px;font-weight:bold;cursor:pointer;transition:all .3s;margin-top:5px;}
-.gen-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(102,126,234,.5);}
-.gen-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-.prog{background:rgba(255,255,255,.07);border-radius:10px;height:5px;overflow:hidden;display:none;margin-top:9px;}
-.pf{height:100%;background:linear-gradient(90deg,#667eea,#a78bfa,#f472b6);border-radius:10px;transition:width .4s;}
-.st{text-align:center;font-size:11px;color:#555;margin-top:5px;min-height:15px;}
-.arow{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px;}
-.abtn{padding:8px;border:none;border-radius:8px;font-size:11px;font-weight:bold;cursor:pointer;transition:all .2s;}
-.abtn:hover{transform:translateY(-1px);}
-.bt{background:rgba(52,211,153,.18);color:var(--green);border:1px solid rgba(52,211,153,.28);}
-.bc{background:rgba(248,113,113,.13);color:var(--red);border:1px solid rgba(248,113,113,.18);}
-hr{border:none;border-top:1px solid var(--border);margin:11px 0;}
-.apanel{background:rgba(52,211,153,.04);border:1px solid rgba(52,211,153,.18);border-radius:10px;padding:12px;margin-top:10px;}
-.apt{font-size:10px;color:var(--green);font-weight:bold;text-transform:uppercase;margin-bottom:7px;}
-.krow{display:flex;gap:5px;align-items:center;margin-bottom:5px;}
-.krow input{flex:1;font-size:10px;font-family:monospace;background:rgba(0,0,0,.3);border:1px solid rgba(52,211,153,.18);color:#6ee7b7;border-radius:6px;padding:5px 7px;}
-.kcopy{background:rgba(52,211,153,.18);border:1px solid rgba(52,211,153,.28);color:var(--green);padding:5px 9px;border-radius:6px;cursor:pointer;font-size:10px;white-space:nowrap;}
-.kcopy:hover{background:rgba(52,211,153,.32);}
-.galpanel{display:flex;flex-direction:column;gap:12px;}
-.ghdr{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.ghdr h2{color:var(--purple);font-size:.9rem;}
-.cnt{background:rgba(167,139,250,.13);border:1px solid rgba(167,139,250,.2);color:#c4b5fd;padding:3px 9px;border-radius:20px;font-size:11px;}
-.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:10px;}
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all .3s;position:relative;}
-.card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.4);border-color:rgba(167,139,250,.38);}
-.card img{width:100%;display:block;object-fit:cover;}
-.card.sq img{aspect-ratio:1;}
-.card.pt img{aspect-ratio:9/16;}
-.card.ls img{aspect-ratio:16/9;}
-.cacts{padding:7px;display:flex;gap:4px;}
-.cacts button{flex:1;padding:5px;border:none;border-radius:6px;font-size:10px;cursor:pointer;font-weight:bold;transition:all .2s;}
-.cacts button:hover{transform:translateY(-1px);}
-.cdl{background:rgba(96,165,250,.18);color:#93c5fd;}
-.cadd{background:rgba(52,211,153,.18);color:#6ee7b7;}
-.cdel{background:rgba(248,113,113,.18);color:#fca5a5;}
-.ptag{position:absolute;top:5px;left:5px;background:rgba(0,0,0,.65);color:#e2e8f0;font-size:9px;padding:2px 6px;border-radius:7px;max-width:calc(100% - 10px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.sk{background:rgba(255,255,255,.07);border-radius:12px;animation:pulse 1.4s ease-in-out infinite;}
-.sk.sq{aspect-ratio:1;}.sk.pt{aspect-ratio:9/16;}
-@keyframes pulse{0%,100%{opacity:.45}50%{opacity:.85}}
-.empty{text-align:center;padding:50px 20px;color:#3a3a5c;grid-column:1/-1;}
-.empty .icon{font-size:44px;margin-bottom:12px;}
-.toast{position:fixed;bottom:22px;right:22px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:10px 18px;border-radius:10px;font-weight:bold;z-index:9999;font-size:12px;box-shadow:0 5px 20px rgba(0,0,0,.4);animation:tin .3s ease;}
-@keyframes tin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-.mbg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:none;align-items:center;justify-content:center;}
-.mbg.open{display:flex;}
-.modal{background:#1a1640;border:1px solid var(--border);border-radius:16px;padding:22px;width:min(520px,95vw);max-height:90vh;overflow-y:auto;}
-.modal h3{color:var(--purple);margin-bottom:14px;font-size:1rem;}
-.modal p{font-size:12px;color:#999;line-height:1.6;margin-bottom:10px;}
-.modal code{background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:6px;padding:8px 10px;display:block;font-size:10px;font-family:monospace;color:#6ee7b7;white-space:pre-wrap;margin-bottom:10px;overflow-x:auto;}
-.mclose{background:var(--card);border:1px solid var(--border);color:#ccc;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:12px;margin-top:6px;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);min-height:100vh;color:#fff}
+.header{background:rgba(255,255,255,.05);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.1);padding:15px 20px;display:flex;align-items:center;gap:15px;flex-wrap:wrap}
+.header h1{font-size:1.4rem;background:linear-gradient(90deg,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.badge{background:linear-gradient(135deg,#f093fb,#f5576c);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:bold;color:#fff}
+.back-btn{margin-left:auto;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:8px 15px;border-radius:8px;cursor:pointer;font-size:13px;text-decoration:none}
+.main{display:grid;grid-template-columns:340px 1fr;gap:20px;padding:20px;max-width:1450px;margin:0 auto}
+.panel,.helper-panel{background:rgba(255,255,255,.05);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:20px}
+.panel h2,.helper-panel h3{font-size:1rem;margin-bottom:15px;color:#a78bfa}
+.form-group{margin-bottom:14px}.form-group label{display:block;font-size:12px;color:#a0a0c0;margin-bottom:5px;font-weight:bold;text-transform:uppercase;letter-spacing:.5px}
+textarea,select,input[type=range],input[type=text]{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;padding:10px;font-size:13px;resize:vertical}
+textarea{min-height:90px} select option{background:#302b63} input[type=range]{padding:4px 0;cursor:pointer;accent-color:#a78bfa}
+.range-row{display:flex;align-items:center;gap:10px}.range-val{min-width:32px;text-align:right;color:#a78bfa;font-weight:bold}
+.nsfw-toggle{display:flex;align-items:center;gap:10px;background:rgba(245,87,108,.1);border:1px solid rgba(245,87,108,.3);border-radius:10px;padding:10px 14px}
+.nsfw-toggle label{font-size:13px;color:#f472b6;font-weight:bold;cursor:pointer}.toggle-sw{position:relative;width:40px;height:22px;flex-shrink:0}.toggle-sw input{opacity:0;width:0;height:0}
+.toggle-sw span{position:absolute;inset:0;background:rgba(255,255,255,.2);border-radius:22px;cursor:pointer;transition:.3s}.toggle-sw input:checked+span{background:linear-gradient(90deg,#f093fb,#f5576c)}
+.toggle-sw span::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.3s}.toggle-sw input:checked+span::after{left:21px}
+.gen-btn,.helper-btn{width:100%;padding:14px;background:linear-gradient(135deg,#667eea,#764ba2);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:bold;cursor:pointer;transition:all .3s;margin-top:8px}
+.helper-btn{padding:11px;font-size:13px}.gen-btn:hover,.helper-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(102,126,234,.5)}.gen-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.quick-prompts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.qp{background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:#c4b5fd;padding:4px 10px;border-radius:20px;font-size:11px;cursor:pointer;transition:all .2s}.qp:hover{background:rgba(167,139,250,.3)}
+.gallery-panel{display:flex;flex-direction:column;gap:15px}.gallery-header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.gallery-header h2{color:#a78bfa;font-size:1rem}.count-badge{background:rgba(167,139,250,.2);border:1px solid rgba(167,139,250,.3);color:#c4b5fd;padding:3px 10px;border-radius:20px;font-size:12px}
+.progress-bar{background:rgba(255,255,255,.1);border-radius:10px;height:6px;overflow:hidden;display:none}.progress-fill{height:100%;background:linear-gradient(90deg,#667eea,#a78bfa,#f472b6);border-radius:10px;transition:width .4s;animation:shimmer 1.5s infinite}@keyframes shimmer{0%,100%{opacity:1}50%{opacity:.6}}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}.img-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;overflow:hidden;transition:all .3s;position:relative}.img-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.4);border-color:rgba(167,139,250,.4)}
+.img-card img{width:100%;aspect-ratio:1;object-fit:cover;display:block}.img-card.portrait img{aspect-ratio:9/16}.img-card.landscape img{aspect-ratio:16/9}.img-actions{padding:8px;display:flex;gap:6px}.img-actions button{flex:1;padding:6px;border:none;border-radius:6px;font-size:11px;cursor:pointer;font-weight:bold;transition:all .2s}
+.btn-dl{background:rgba(102,126,234,.3);color:#93c5fd}.btn-dl:hover{background:rgba(102,126,234,.6)}.btn-add{background:rgba(16,185,129,.3);color:#6ee7b7}.btn-add:hover{background:rgba(16,185,129,.6)}.btn-del{background:rgba(239,68,68,.3);color:#fca5a5}.btn-del:hover{background:rgba(239,68,68,.6)}
+.img-prompt-tag{position:absolute;top:6px;left:6px;background:rgba(0,0,0,.6);color:#e2e8f0;font-size:10px;padding:2px 8px;border-radius:10px;max-width:calc(100% - 12px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.skeleton{background:rgba(255,255,255,.08);border-radius:12px;animation:pulse 1.5s ease-in-out infinite}@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+.empty-state{text-align:center;padding:60px 20px;color:#64748b}.empty-state .icon{font-size:48px;margin-bottom:15px}
+.toast{position:fixed;bottom:30px;right:30px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:12px 22px;border-radius:10px;font-weight:bold;z-index:9999;animation:fadeIn .3s ease;box-shadow:0 5px 20px rgba(0,0,0,.4)}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.helper-panel{display:none}.helper-panel p,.helper-panel li{color:#cbd5e1;font-size:13px;line-height:1.5}.helper-panel ol{padding-left:18px;display:grid;gap:8px;margin:12px 0}.helper-row{display:grid;gap:10px;grid-template-columns:1fr 1fr}.helper-note{color:#94a3b8;font-size:12px;margin-top:8px}.import-area{min-height:120px}
+.smart-box{margin-top:12px;padding:12px;border:1px dashed rgba(167,139,250,.35);border-radius:12px;background:rgba(167,139,250,.08)}.smart-box strong{color:#e9d5ff}.smart-list{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px}.smart-pill{font-size:11px;padding:5px 8px;border-radius:999px;background:rgba(255,255,255,.08);color:#ddd;border:1px solid rgba(255,255,255,.1)}
+.preview-list{margin-top:10px;display:grid;gap:8px;max-height:150px;overflow:auto}.preview-item{font-size:12px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#cbd5e1;word-break:break-all}
+@media (max-width:768px){.main{grid-template-columns:1fr}.helper-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
-<div class="hdr">
-  <span style="font-size:1.7rem">🎨</span>
-  <h1>ARKAIOS · Motor IA de Imágenes v2</h1>
-  <span class="badge en">⚡ Perchance FLUX</span>
-  <span class="badge nx" id="nsfwBadge">🔞 NSFW OFF</span>
-  <span class="badge ap" onclick="showModal()">🔑 API &amp; Docs</span>
-  <a href="index.html" class="back">← ARKAIOS</a>
+<div class="header">
+  <span style="font-size:2rem">🎨</span>
+  <h1>ARKAIOS · Generador IA de Imágenes</h1>
+  <span class="badge">🔥 NSFW HABILITADO</span>
+  <span class="badge" style="background:linear-gradient(135deg,#667eea,#764ba2);">Perchance AI + FLUX · V3</span>
+  <a href="index.html" class="back-btn">← Volver a ARKAIOS</a>
 </div>
-
 <div class="main">
   <div class="panel">
-    <div class="ptit">⚙️ Configuración</div>
-
-    <div class="fg">
-      <label>📝 Prompt</label>
-      <textarea id="prompt" placeholder="Ej: beautiful fantasy warrior, glowing armor, epic landscape..."></textarea>
-      <div class="tags">
-        <span class="tag" onclick="ap('ultra detailed')">ultra detailed</span>
-        <span class="tag" onclick="ap('8k resolution')">8k</span>
-        <span class="tag" onclick="ap('cinematic lighting')">cinematic</span>
-        <span class="tag" onclick="ap('masterpiece')">masterpiece</span>
-        <span class="tag" onclick="ap('photorealistic')">photorealistic</span>
-        <span class="tag" onclick="ap('concept art')">concept art</span>
-        <span class="tag" onclick="ap('bokeh background')">bokeh</span>
-        <span class="tag" onclick="ap('trending on artstation')">artstation</span>
-        <span class="tag" onclick="ap('dramatic lighting')">dramatic</span>
-        <span class="tag" onclick="ap('hyperrealistic')">hyperrealistic</span>
+    <h2>⚙️ Configuración</h2>
+    <div class="form-group">
+      <label>Prompt (describe la imagen)</label>
+      <textarea id="prompt" placeholder="Ej: a beautiful sunset over mountains, dramatic lighting, 8k, ultra detailed..."></textarea>
+      <div class="quick-prompts" id="quickPrompts">
+        <span class="qp" onclick="addToPrompt('ultra detailed')">ultra detailed</span>
+        <span class="qp" onclick="addToPrompt('8k resolution')">8k resolution</span>
+        <span class="qp" onclick="addToPrompt('cinematic lighting')">cinematic lighting</span>
+        <span class="qp" onclick="addToPrompt('hyperrealistic')">hyperrealistic</span>
+        <span class="qp" onclick="addToPrompt('anime style')">anime style</span>
+        <span class="qp" onclick="addToPrompt('oil painting')">oil painting</span>
+        <span class="qp" onclick="addToPrompt('concept art')">concept art</span>
+        <span class="qp" onclick="addToPrompt('photorealistic')">photorealistic</span>
       </div>
     </div>
-
-    <div class="fg">
-      <label>🚫 Prompt Negativo</label>
-      <textarea id="negPrompt" style="min-height:55px;">blurry, bad anatomy, watermark, text, ugly, deformed, low quality, jpeg artifacts, extra limbs</textarea>
+    <div class="form-group">
+      <label>Prompt Negativo (qué evitar)</label>
+      <textarea id="negPrompt" style="min-height:60px;" placeholder="blurry, bad anatomy, watermark, text, ugly...">blurry, bad anatomy, watermark, text, ugly, deformed, low quality, jpeg artifacts</textarea>
     </div>
-
-    <div class="fg">
-      <label>🎨 Estilo de Arte</label>
-      <select id="artStyle">
-        <option value="">— Sin estilo —</option>
-        <optgroup label="📷 Realismo">
-          <option value="photorealistic, DSLR, 8k, realistic">Fotorealista</option>
-          <option value="cinematic photography, film grain, anamorphic">Cinematográfico</option>
-          <option value="portrait photography, soft light, bokeh">Retrato fotográfico</option>
-          <option value="hyperrealistic, extremely detailed, lifelike">Hiperrealista</option>
-        </optgroup>
-        <optgroup label="🎌 Anime / Manga">
-          <option value="anime style, vibrant colors, Studio Ghibli">Anime (Ghibli)</option>
-          <option value="anime, 90s cel animation">Anime 90s cel</option>
-          <option value="anime key visual poster, dynamic">Anime Key Visual</option>
-          <option value="manga, ink, black and white, screentones">Manga B&N</option>
-          <option value="chibi, kawaii, cute proportions">Chibi Kawaii</option>
-          <option value="shonen manga, speed lines, intense action">Shonen Acción</option>
-        </optgroup>
-        <optgroup label="🖼️ Arte Clásico">
-          <option value="oil painting, canvas texture, classical">Pintura al óleo</option>
-          <option value="watercolor, soft colors, paper texture">Acuarela</option>
-          <option value="digital art, concept art, artstation trending">Arte digital</option>
-          <option value="impressionistic painting, visible brushstrokes">Impresionismo</option>
-          <option value="baroque, chiaroscuro, Caravaggio style">Barroco</option>
-          <option value="Art Nouveau, flowing lines, Mucha style">Art Nouveau</option>
-          <option value="Pre-Raphaelite, detailed flora">Pre-Raphaelita</option>
-          <option value="Renaissance, sfumato, classical proportions">Renacimiento</option>
-        </optgroup>
-        <optgroup label="🎲 Fantasy / Sci-Fi">
-          <option value="fantasy art, magical, epic, high fantasy">High Fantasy</option>
-          <option value="dark fantasy, grim, brooding, detailed armor">Dark Fantasy</option>
-          <option value="Magic The Gathering card art, epic">MTG Card Art</option>
-          <option value="D&D illustration, fantasy RPG concept art">D&D / RPG</option>
-          <option value="cyberpunk, neon lights, futuristic, sci-fi">Cyberpunk</option>
-          <option value="solarpunk, eco-futurism, green technology">Solarpunk</option>
-          <option value="space opera, cosmic, nebula, alien worlds">Space Opera</option>
-          <option value="steampunk, brass and copper, Victorian">Steampunk</option>
-        </optgroup>
-        <optgroup label="🖥️ Digital / Pixel">
-          <option value="pixel art, 8-bit, retro game style">Pixel Art 8-bit</option>
-          <option value="3d render, blender, octane render, CGI">Render 3D</option>
-          <option value="low poly, stylized 3d, vibrant">Low Poly</option>
-          <option value="isometric pixel art, detailed interior">Isométrico</option>
-        </optgroup>
-        <optgroup label="✏️ Ilustración">
-          <option value="sketch, pencil drawing, hand drawn">Boceto</option>
-          <option value="comic book art, halftone, Jim Lee style">Cómic</option>
-          <option value="children's book illustration, whimsical">Libro infantil</option>
-          <option value="vector illustration, flat design, clean">Vector Flat</option>
-          <option value="sticker design, bold outlines, kawaii">Sticker Kawaii</option>
-        </optgroup>
-        <optgroup label="📸 Efectos">
-          <option value="VHS aesthetic, scanlines, CRT, retro">VHS / CRT Retro</option>
-          <option value="film noir, dramatic shadows, black and white">Film Noir</option>
-          <option value="double exposure, ghostly overlay, dreamlike">Doble exposición</option>
-          <option value="glitch art, datamoshing, pixel sorting">Glitch Art</option>
-          <option value="infrared photography, surreal colors">Infrarrojo</option>
-        </optgroup>
-        <optgroup label="🔞 NSFW (requiere toggle activo)">
-          <option value="nsfw, highly detailed, artistic nude, sensual, beautiful">Artístico adulto</option>
-          <option value="nsfw, anime style, ecchi, detailed, vibrant">Anime adulto</option>
-          <option value="nsfw, fantasy art, detailed, epic scene">Fantasy adulto</option>
-        </optgroup>
+    <div class="form-group">
+      <label>Estilo</label>
+      <select id="style">
+        <option value="">Sin estilo específico</option>
+        <option value="photorealistic">📷 Fotorealista</option>
+        <option value="anime">🎌 Anime / Manga</option>
+        <option value="digital-art">🖥️ Arte Digital</option>
+        <option value="oil-painting">🎨 Pintura al Óleo</option>
+        <option value="watercolor">💧 Acuarela</option>
+        <option value="sketch">✏️ Boceto</option>
+        <option value="3d-render">🎲 Render 3D</option>
+        <option value="pixel-art">👾 Pixel Art</option>
+        <option value="fantasy">🧙 Fantasía</option>
+        <option value="sci-fi">🚀 Sci-Fi</option>
       </select>
     </div>
-
-    <div class="fg">
-      <label>🖼️ Forma / Resolución</label>
+    <div class="form-group">
+      <label>Resolución / Orientación</label>
       <select id="resolution">
-        <option value="768x768">768×768 — Cuadrado HD</option>
-        <option value="512x768">512×768 — Retrato vertical</option>
-        <option value="768x512">768×512 — Paisaje horizontal</option>
-        <option value="512x512">512×512 — Cuadrado estándar</option>
-        <option value="576x1024">576×1024 — Story / Móvil</option>
+        <option value="512x512">512×512 — Cuadrado</option>
+        <option value="512x768">512×768 — Retrato (vertical)</option>
+        <option value="768x512">768×512 — Paisaje (horizontal)</option>
+        <option value="768x768" selected>768×768 — Cuadrado HD</option>
         <option value="1024x576">1024×576 — Widescreen</option>
+        <option value="576x1024">576×1024 — Móvil/Story</option>
       </select>
     </div>
-
-    <div class="fg">
-      <label>🎯 Guidance Scale — precisión del prompt</label>
-      <div class="rrow">
-        <input type="range" id="guidance" min="1" max="20" step="0.5" value="7" oninput="document.getElementById('gv').textContent=this.value">
-        <span class="rv" id="gv">7</span>
+    <div class="form-group">
+      <label>Guidance Scale — <span style="color:#a78bfa">Qué tan literal</span></label>
+      <div class="range-row">
+        <input type="range" id="guidance" min="1" max="20" step="0.5" value="7" oninput="document.getElementById('guidanceVal').textContent=this.value">
+        <span class="range-val" id="guidanceVal">7</span>
       </div>
     </div>
-
-    <div class="fg">
-      <label>🔢 Cantidad de imágenes</label>
-      <div class="rrow">
-        <input type="range" id="count" min="1" max="16" step="1" value="4" oninput="document.getElementById('cv').textContent=this.value">
-        <span class="rv" id="cv">4</span>
+    <div class="form-group">
+      <label>Cantidad a generar</label>
+      <div class="range-row">
+        <input type="range" id="count" min="1" max="12" step="1" value="4" oninput="document.getElementById('countVal').textContent=this.value">
+        <span class="range-val" id="countVal">4</span>
       </div>
     </div>
-
-    <div class="fg">
-      <div class="nbox">
-        <label class="sw"><input type="checkbox" id="nsfwToggle" onchange="toggleNSFW(this.checked)"><span></span></label>
+    <div class="form-group">
+      <div class="nsfw-toggle">
+        <label class="toggle-sw"><input type="checkbox" id="nsfwToggle"><span></span></label>
         <label for="nsfwToggle">🔞 Contenido Adulto (NSFW)</label>
       </div>
     </div>
-
-    <button class="gen-btn" id="genBtn" onclick="generateImages()">✨ Generar con Perchance AI</button>
-    <div class="prog" id="progBar"><div class="pf" id="progFill" style="width:0%"></div></div>
-    <p class="st" id="stxt"></p>
-
-    <hr>
-    <div class="arow">
-      <button class="abtn bt" onclick="sendToTemplate()">📄 → Plantilla PDF</button>
-      <button class="abtn bc" onclick="clearGallery()">🗑️ Limpiar</button>
-    </div>
-
-    <div class="apanel">
-      <div class="apt">🔑 Bridge Keys ARKAIOS</div>
-      <div class="krow">
-        <label style="font-size:9px;color:#666;white-space:nowrap;">Token:</label>
-        <input type="text" id="bridgeKey" readonly>
-        <button class="kcopy" onclick="copyKey('bridgeKey')">Copiar</button>
-      </div>
-      <div class="krow">
-        <label style="font-size:9px;color:#666;white-space:nowrap;">Canal:</label>
-        <input type="text" id="channelKey" readonly value="xnaxg7ceyj">
-        <button class="kcopy" onclick="copyKey('channelKey')">Copiar</button>
-      </div>
-      <p style="font-size:10px;color:#555;margin-top:4px;">
-        <a href="#" onclick="showModal();return false;" style="color:var(--green);">Ver documentación completa →</a>
-      </p>
+    <button class="gen-btn" id="genBtn" onclick="generateImages()">🚀 Generar Imágenes</button>
+    <div id="progressBar" class="progress-bar" style="margin-top:12px;"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <p id="statusText" style="text-align:center;font-size:12px;color:#a0a0c0;margin-top:8px;"></p>
+    <hr style="border-color:rgba(255,255,255,.1);margin:15px 0;">
+    <div class="form-group">
+      <label>📋 Enviar galería a Plantilla</label>
+      <button onclick="sendToTemplate()" style="width:100%;padding:10px;background:linear-gradient(135deg,#10b981,#059669);border:none;border-radius:10px;color:#fff;font-weight:bold;cursor:pointer;font-size:13px;">📄 Abrir en Plantilla ARKAIOS</button>
     </div>
   </div>
-
-  <div class="galpanel">
-    <div class="ghdr">
-      <h2>🖼️ Galería</h2>
-      <span class="cnt" id="galCount">0 imágenes</span>
-      <span style="font-size:11px;color:#444;margin-left:auto;">Motor: <strong style="color:var(--purple)">Perchance FLUX</strong> · Canal: <code style="color:var(--green);font-size:10px;">xnaxg7ceyj</code></span>
+  <div class="gallery-panel">
+    <div class="gallery-header">
+      <h2>🖼️ Galería Generada</h2>
+      <span class="count-badge" id="galleryCount">0 imágenes</span>
+      <button onclick="clearGallery()" style="background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.3);color:#fca5a5;padding:5px 12px;border-radius:8px;cursor:pointer;font-size:12px;margin-left:auto;">🗑️ Limpiar</button>
     </div>
+
+    <div class="helper-panel" id="helperPanel">
+      <h3>🧠 Respaldo inteligente activo</h3>
+      <p>Si la API directa falla, esta versión intenta ayudarte a rescatar resultados desde cualquier texto pegado. Ya no necesitas pegar solo URLs puras: puedes pegar texto mezclado, respuestas, logs o bloques completos, y el sistema extraerá automáticamente enlaces útiles.</p>
+      <ol>
+        <li>Haz clic en <strong>Abrir generador externo</strong>.</li>
+        <li>Genera tus imágenes o copia cualquier salida que contenga enlaces.</li>
+        <li>Pega aquí el contenido completo, aunque venga mezclado con texto.</li>
+        <li>Usa <strong>Analizar contenido</strong> o <strong>Importar detectadas</strong>.</li>
+      </ol>
+      <div class="helper-row">
+        <button class="helper-btn" type="button" onclick="openExternalGenerator()">🌐 Abrir generador externo</button>
+        <button class="helper-btn" type="button" onclick="copyPromptForExternal()" style="background:linear-gradient(135deg,#10b981,#059669);">📋 Copiar prompt actual</button>
+      </div>
+      <div class="form-group" style="margin-top:12px;">
+        <label>Pegar contenido mixto</label>
+        <textarea id="importUrls" class="import-area" placeholder="Aquí puedes pegar texto completo, URLs, respuestas, logs o contenido mezclado. La V3 intentará detectar enlaces reales de imagen automáticamente."></textarea>
+        <div class="helper-row">
+          <button class="helper-btn" type="button" onclick="analyzeMixedContent()">🔎 Analizar contenido</button>
+          <button class="helper-btn" type="button" onclick="importImagesFromTextarea()" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">⬇️ Importar detectadas</button>
+        </div>
+        <div class="helper-row">
+          <button class="helper-btn" type="button" onclick="pasteFromClipboard()" style="background:linear-gradient(135deg,#0ea5e9,#2563eb);">📥 Pegar desde portapapeles</button>
+          <button class="helper-btn" type="button" onclick="document.getElementById('importUrls').value=''; clearDetectedPreview();" style="background:linear-gradient(135deg,#475569,#334155);">🧹 Limpiar</button>
+        </div>
+        <div class="smart-box">
+          <strong>Detección inteligente:</strong>
+          <div class="smart-list">
+            <span class="smart-pill">URLs .png .jpg .jpeg .webp .gif</span>
+            <span class="smart-pill">downloadTemporaryImage?imageId=...</span>
+            <span class="smart-pill">Texto mezclado con enlaces</span>
+            <span class="smart-pill">Quita duplicados automáticamente</span>
+          </div>
+          <div class="preview-list" id="detectedPreview" style="display:none"></div>
+        </div>
+        <p class="helper-note" id="helperNote">Cuando analices el contenido, aquí se mostrará una vista previa de las URLs detectadas.</p>
+      </div>
+    </div>
+
     <div class="gallery" id="gallery">
-      <div class="empty" id="emptyState">
+      <div class="empty-state" id="emptyState" style="grid-column:1/-1;">
         <div class="icon">🎨</div>
-        <p>Las imágenes aparecerán aquí</p>
-        <p style="font-size:11px;margin-top:6px;color:#2a2a4a;">Motor Perchance FLUX · Sin límites · Sin registro</p>
+        <p>Las imágenes generadas aparecerán aquí</p>
+        <p style="font-size:12px;margin-top:8px;color:#475569;">Escribe un prompt y presiona Generar</p>
       </div>
     </div>
   </div>
 </div>
-
-<!-- MODAL DOCS -->
-<div class="mbg" id="apiModal">
-<div class="modal">
-  <h3>🔑 API, Bridge Keys y Documentación</h3>
-  <p>Este módulo puede ser llamado desde EduAgent, ARKAIOS Core, o cualquier sistema externo usando los siguientes métodos:</p>
-
-  <div class="apt" style="font-size:10px;color:var(--green);font-weight:bold;text-transform:uppercase;margin-bottom:5px;">1. URL con parámetros (más simple)</div>
-  <code>https://eduacion-libre-proyecto-arkaios.vercel.app/generador-ia-imagenes.html
-  ?prompt=beautiful+fantasy+warrior,+epic
-  &amp;resolution=768x768
-  &amp;count=4
-  &amp;nsfw=0
-  &amp;autostart=1</code>
-
-  <div class="apt" style="font-size:10px;color:var(--purple);font-weight:bold;text-transform:uppercase;margin-bottom:5px;margin-top:10px;">2. PostMessage Bridge (desde otro iframe/ventana)</div>
-  <code>// Enviar petición:
-window.postMessage({
-  type: 'ARKAIOS_IMG_REQUEST',
-  token: 'TU_BRIDGE_TOKEN',   // del panel izquierdo
-  prompt: 'dragons flying over mountains',
-  style: 'fantasy art, epic, 8k',
-  resolution: '768x768',
-  count: 4,
-  nsfw: false
-}, '*');
-
-// Recibir imágenes generadas:
-window.addEventListener('message', (e) => {
-  if (e.data.type === 'ARKAIOS_IMG_RESPONSE') {
-    const urls = e.data.images; // array de URLs temporales
-    console.log('Imágenes:', urls);
-  }
-});</code>
-
-  <div class="apt" style="font-size:10px;color:var(--blue);font-weight:bold;text-transform:uppercase;margin-bottom:5px;margin-top:10px;">3. API Perchance directa (desde servidor)</div>
-  <code>// Paso 1: Obtener userKey (tu canal personalizado)
-GET https://image-generation.perchance.org/api/verifyUser
-    ?channel=xnaxg7ceyj
-    &amp;__cacheBust=1234567890
-
-// Paso 2: Generar imagen
-POST https://image-generation.perchance.org/api/generate
-Content-Type: application/x-www-form-urlencoded
-
-prompt=beautiful+warrior&amp;negativePrompt=blurry&amp;
-resolution=768x768&amp;guidanceScale=7&amp;seed=42&amp;
-channel=xnaxg7ceyj&amp;userKey=KEY_DEL_PASO1&amp;
-adultContent=0   // 1 = NSFW habilitado
-
-// Paso 3: Descargar imagen
-GET https://image-generation.perchance.org/api/downloadTemporaryImage
-    ?imageId=ID_DEL_RESPONSE</code>
-
-  <div class="apt" style="font-size:10px;color:var(--pink);font-weight:bold;text-transform:uppercase;margin-bottom:5px;margin-top:10px;">4. Integración con EduAgent (api/edu-agent.js)</div>
-  <code>// POST /api/edu-agent con mode:'ai_generate'
-// activa Perchance en vez de Pexels:
-{
-  "request": "9 imágenes de volcanes para 6to grado",
-  "mode": "ai_generate",
-  "bridge_token": "TU_TOKEN"
-}</code>
-
-  <p style="font-size:11px;color:#666;margin-top:8px;">⚠️ Las URLs de imágenes generadas son <strong style="color:var(--red)">temporales (~5 min)</strong>. Para persistirlas descárgalas o súbelas a tu propio storage.</p>
-  <button class="mclose" onclick="closeModal()">✕ Cerrar</button>
-</div>
-</div>
-
 <script>
-const CHANNEL = 'xnaxg7ceyj';
-const VERIFY  = 'https://image-generation.perchance.org/api/verifyUser';
-const GEN     = 'https://image-generation.perchance.org/api/generate';
-const DL      = 'https://image-generation.perchance.org/api/downloadTemporaryImage';
-
-let userKey = null, isGenerating = false, bridgeToken = '';
-
-(function init() {
-  bridgeToken = localStorage.getItem('arkaios_bridge') || genToken();
-  localStorage.setItem('arkaios_bridge', bridgeToken);
-  document.getElementById('bridgeKey').value = bridgeToken;
-
-  const p = new URLSearchParams(location.search);
-  if (p.get('prompt')) document.getElementById('prompt').value = decodeURIComponent(p.get('prompt'));
-  if (p.get('resolution')) document.getElementById('resolution').value = p.get('resolution');
-  if (p.get('count')) { const c = Math.min(parseInt(p.get('count'))||4,16); document.getElementById('count').value=c; document.getElementById('cv').textContent=c; }
-  if (p.get('nsfw')==='1') { document.getElementById('nsfwToggle').checked=true; toggleNSFW(true); }
-
-  getKey();
-  window.addEventListener('message', handleBridge);
-
-  if (p.get('autostart')==='1' && p.get('prompt')) setTimeout(generateImages, 900);
-})();
-
-function genToken() { return 'ark_'+Math.random().toString(36).substring(2,9)+'_'+Date.now().toString(36); }
-
-async function getKey() {
-  try {
-    const r = await fetch(`${VERIFY}?channel=${CHANNEL}&promptBase64=&__cacheBust=${Date.now()}`);
-    const d = await r.json();
-    userKey = d.userKey;
-    console.log('✅ Perchance key OK — canal:', CHANNEL);
-  } catch(e) {
-    userKey = 'fallback_'+Math.random().toString(36).substring(2);
-    console.warn('⚠️ userKey fallback');
-  }
-}
-
-async function generateImages() {
-  if (isGenerating) return;
-  const prompt = document.getElementById('prompt').value.trim();
-  if (!prompt) { toast('⚠️ Escribe un prompt'); return; }
-
-  const style      = document.getElementById('artStyle').value;
-  const nsfw       = document.getElementById('nsfwToggle').checked;
-  const count      = parseInt(document.getElementById('count').value);
-  const resolution = document.getElementById('resolution').value;
-  const guidance   = parseFloat(document.getElementById('guidance').value);
-  let neg = document.getElementById('negPrompt').value.trim();
-  if (!nsfw) neg += ', nude, naked, explicit, nsfw, porn, hentai, genitals';
-  const fullPrompt = style ? `${prompt}, ${style}` : prompt;
-
-  isGenerating = true;
-  const btn = document.getElementById('genBtn');
-  btn.disabled = true; btn.textContent = '⏳ Generando...';
-  document.getElementById('progBar').style.display = 'block';
-  document.getElementById('progFill').style.width = '0%';
-  document.getElementById('emptyState').style.display = 'none';
-
-  if (!userKey) await getKey();
-
-  const results = [];
-  for (let i = 0; i < count; i++) {
-    document.getElementById('stxt').textContent = `🎨 Imagen ${i+1} de ${count}...`;
-    const sk = makeSk(resolution);
-    document.getElementById('gallery').appendChild(sk);
-    try {
-      const url = await genOne(fullPrompt, neg, resolution, guidance, nsfw);
-      sk.remove();
-      addCard(url, prompt, resolution);
-      results.push(url);
-    } catch(e) {
-      sk.remove();
-      console.error('gen error:', e);
-    }
-    document.getElementById('progFill').style.width = ((i+1)/count*100)+'%';
-  }
-
-  const ok = results.length;
-  document.getElementById('stxt').textContent = ok > 0
-    ? `✅ ${ok} imagen${ok>1?'s':''} lista${ok>1?'s':''}`
-    : '❌ Error. Verifica conexión o intenta de nuevo.';
-
-  if (ok > 0) {
-    toast(`🎨 ${ok} imagen${ok>1?'s':''} generada${ok>1?'s':''}!`);
-    window.parent?.postMessage({ type:'ARKAIOS_IMG_RESPONSE', images:results }, '*');
-  } else {
-    toast('⚠️ CORS bloqueado — abriendo Perchance directo...');
-    setTimeout(() => window.open(`https://perchance.org/${CHANNEL}`, '_blank'), 1200);
-  }
-
-  btn.disabled = false; btn.textContent = '✨ Generar con Perchance AI';
-  isGenerating = false;
-}
-
-async function genOne(prompt, neg, resolution, guidanceScale, nsfw) {
-  const body = new URLSearchParams({
-    prompt, negativePrompt: neg, resolution,
-    guidanceScale: String(guidanceScale),
-    seed: String(Math.floor(Math.random()*2147483647)),
-    channel: CHANNEL,
-    userKey: userKey||'',
-    adultContent: nsfw ? '1' : '0',
-    '__cacheBust': String(Date.now())
-  });
-  const r = await fetch(GEN, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: body.toString() });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  const d = await r.json();
-  if (d.status === 'error') throw new Error(d.message || 'Perchance error');
-  return `${DL}?imageId=${d.imageId}`;
-}
-
-function makeSk(res) {
-  const el = document.createElement('div');
-  const [w,h] = res.split('x').map(Number);
-  el.className = 'sk ' + (h>w ? 'pt' : 'sq');
-  return el;
-}
-
-function addCard(url, prompt, res) {
-  const [w,h] = res.split('x').map(Number);
-  const cls = h>w ? 'pt' : w>h ? 'ls' : 'sq';
-  const card = document.createElement('div');
-  card.className = `card ${cls}`;
-  card.dataset.url = url;
-
-  const img = document.createElement('img');
-  img.src = url; img.alt = prompt; img.loading = 'lazy';
-  img.onerror = () => {
-    img.style.display='none';
-    card.style.minHeight='140px';
-    card.innerHTML += '<div style="text-align:center;padding:20px;color:var(--red);font-size:11px;">❌ URL expirada<br><small>Imágenes duran ~5 min</small></div>';
-  };
-
-  const ptag = document.createElement('div');
-  ptag.className = 'ptag';
-  ptag.textContent = prompt.substring(0,44)+(prompt.length>44?'...':'');
-
-  const acts = document.createElement('div');
-  acts.className = 'cacts';
-
-  const dl = document.createElement('button');
-  dl.className='cdl'; dl.textContent='⬇️'; dl.title='Descargar';
-  dl.onclick = () => window.open(url,'_blank');
-
-  const add = document.createElement('button');
-  add.className='cadd'; add.textContent='📄 Plantilla';
-  add.onclick = () => toast(`✅ Lista en cola`);
-
-  const del = document.createElement('button');
-  del.className='cdel'; del.textContent='✕';
-  del.onclick = () => { card.remove(); updateCount(); };
-
-  acts.append(dl, add, del);
-  card.append(img, ptag, acts);
-  document.getElementById('gallery').appendChild(card);
-  updateCount();
-}
-
-function sendToTemplate() {
-  const urls = [...document.querySelectorAll('.card[data-url]')].map(c=>c.dataset.url).filter(Boolean);
-  if (!urls.length) { toast('⚠️ Sin imágenes'); return; }
-  const n = urls.length;
-  const grid = n<=2?'1x2':n<=4?'2x2':n<=9?'3x3':n<=16?'4x4':'5x5';
-  const p = document.getElementById('prompt').value.trim();
-  window.open(`plantilla-imagenes-v2.html?agent=1&grid=${grid}&images=${encodeURIComponent(urls.join('|'))}&topic=${encodeURIComponent(p+' [IA]')}`,'_blank');
-  toast(`🚀 Plantilla ${grid} con ${n} imágenes`);
-}
-
-function clearGallery() {
-  if (!confirm('¿Limpiar galería?')) return;
-  document.getElementById('gallery').innerHTML = '<div class="empty" id="emptyState"><div class="icon">🎨</div><p>Galería limpia</p></div>';
-  updateCount();
-  document.getElementById('progBar').style.display='none';
-  document.getElementById('stxt').textContent='';
-}
-
-function updateCount() {
-  const n = document.querySelectorAll('.card').length;
-  document.getElementById('galCount').textContent = `${n} imagen${n!==1?'es':''}`;
-}
-
-function toggleNSFW(on) {
-  const b = document.getElementById('nsfwBadge');
-  b.textContent = on ? '🔞 NSFW ON' : '🔞 NSFW OFF';
-  b.style.background = on ? 'linear-gradient(135deg,#f5576c,#c0392b)' : 'linear-gradient(135deg,#f093fb,#f5576c)';
-}
-
-function handleBridge(e) {
-  if (!e.data || e.data.type!=='ARKAIOS_IMG_REQUEST') return;
-  if (e.data.token !== bridgeToken) return;
-  const {prompt,style,resolution,count,nsfw} = e.data;
-  if (prompt) document.getElementById('prompt').value = prompt;
-  if (style) document.getElementById('prompt').value += `, ${style}`;
-  if (resolution) document.getElementById('resolution').value = resolution;
-  if (count) { const c=Math.min(count,16); document.getElementById('count').value=c; document.getElementById('cv').textContent=c; }
-  if (nsfw) { document.getElementById('nsfwToggle').checked=true; toggleNSFW(true); }
-  generateImages();
-}
-
-function ap(t) { const ta=document.getElementById('prompt'); ta.value=ta.value?ta.value+', '+t:t; ta.focus(); }
-function copyKey(id) { navigator.clipboard.writeText(document.getElementById(id).value).then(()=>toast('📋 Copiado!')); }
-function showModal() { document.getElementById('apiModal').classList.add('open'); }
-function closeModal() { document.getElementById('apiModal').classList.remove('open'); }
-document.getElementById('apiModal').addEventListener('click', e => { if(e.target.id==='apiModal') closeModal(); });
-function toast(msg) {
-  const t=document.createElement('div'); t.className='toast'; t.textContent=msg;
-  document.body.appendChild(t);
-  setTimeout(()=>{ t.style.animation='tin .3s reverse'; setTimeout(()=>t.remove(),300); },2600);
-}
+let generatedImages=[]; let userKey=null; let isGenerating=false; let templateQueue=[]; let externalPromptUrl=''; let detectedUrls=[];
+async function getPerchanceKey(){try{const resp=await fetch('https://image-generation.perchance.org/api/verifyUser?channel=ai-text-to-image-generator&promptBase64=&__cacheBust='+Date.now());if(!resp.ok)throw new Error('No se pudo verificar');const data=await resp.json();userKey=data.userKey;return userKey;}catch(e){console.warn('userKey fetch failed:',e);userKey=Math.random().toString(36).substring(2,15);return userKey;}}
+function buildPrompt(){const base=document.getElementById('prompt').value.trim();const style=document.getElementById('style').value;const styleMap={'photorealistic':'photorealistic, photo, real photograph, DSLR','anime':'anime style, manga, japanese animation, Studio Ghibli','digital-art':'digital art, concept art, artstation','oil-painting':'oil painting, canvas, brush strokes, fine art','watercolor':'watercolor painting, soft colors, paper texture','sketch':'pencil sketch, hand drawn, black and white sketch','3d-render':'3d render, blender, octane render, CGI','pixel-art':'pixel art, 8-bit, retro game style','fantasy':'fantasy art, magical, epic, dramatic','sci-fi':'sci-fi, futuristic, cyberpunk, neon lights'};return style?`${base}, ${styleMap[style]||style}`:base;}
+function buildExternalGeneratorUrl(promptOverride){const finalPrompt=(promptOverride||buildPrompt()||'').trim();return `https://perchance.org/ai-text-to-image-generator#prompt=${encodeURIComponent(finalPrompt)}`;}
+function showHelperPanel(show=true,note=''){const panel=document.getElementById('helperPanel');const helperNote=document.getElementById('helperNote');panel.style.display=show?'block':'none';if(note)helperNote.textContent=note;}
+function openExternalGenerator(){const url=externalPromptUrl||buildExternalGeneratorUrl();window.open(url,'_blank');}
+async function copyPromptForExternal(){const prompt=buildPrompt();if(!prompt){showToast('⚠️ No hay prompt para copiar');return;}try{await navigator.clipboard.writeText(prompt);showToast('📋 Prompt copiado');}catch{showToast('⚠️ No se pudo copiar, cópialo manualmente');}}
+async function pasteFromClipboard(){try{const txt=await navigator.clipboard.readText();if(!txt){showToast('⚠️ El portapapeles está vacío');return;}document.getElementById('importUrls').value=txt;showToast('📥 Contenido pegado');analyzeMixedContent();}catch(e){showToast('⚠️ Tu navegador no permitió leer el portapapeles');}}
+function isLikelyImageUrl(url){return /(downloadTemporaryImage\?imageId=|\.(png|jpg|jpeg|webp|gif)(\?|$))/i.test(url);} 
+function extractUrlsFromText(text){const raw=text.match(/https?:\/\/[^\s"'<>]+/g)||[];const cleaned=raw.map(u=>u.replace(/[),.;]+$/,'').trim());const unique=[...new Set(cleaned)];return unique.filter(isLikelyImageUrl);} 
+function clearDetectedPreview(){detectedUrls=[];const box=document.getElementById('detectedPreview');box.innerHTML='';box.style.display='none';}
+function analyzeMixedContent(){const raw=document.getElementById('importUrls').value.trim();if(!raw){showToast('⚠️ No hay contenido para analizar');return;}detectedUrls=extractUrlsFromText(raw);const box=document.getElementById('detectedPreview');box.innerHTML='';if(detectedUrls.length===0){box.style.display='none';document.getElementById('helperNote').textContent='No encontré URLs válidas de imagen. Asegúrate de pegar enlaces finales y no solo el prompt.';showToast('⚠️ No se detectaron URLs de imagen');return;}detectedUrls.forEach((url,i)=>{const el=document.createElement('div');el.className='preview-item';el.textContent=`${i+1}. ${url}`;box.appendChild(el);});box.style.display='grid';document.getElementById('helperNote').textContent=`Se detectaron ${detectedUrls.length} URL(s) listas para importar.`;showToast(`🔎 Detectadas ${detectedUrls.length} URL(s)`);} 
+function importImagesFromTextarea(){const raw=document.getElementById('importUrls').value.trim();if(!raw){showToast('⚠️ Pega contenido primero');return;}if(!detectedUrls.length){detectedUrls=extractUrlsFromText(raw);}if(!detectedUrls.length){showToast('⚠️ No encontré URLs válidas para importar');return;}const prompt=document.getElementById('prompt').value.trim()||'Imagen importada';let imported=0;detectedUrls.forEach(url=>{addImageToGallery(url,prompt+' (importada)');imported++;});document.getElementById('importUrls').value='';clearDetectedPreview();showToast(`✅ ${imported} imagen${imported>1?'es':''} importada${imported>1?'s':''}`);} 
+async function generateImages(){if(isGenerating)return;const prompt=document.getElementById('prompt').value.trim();if(!prompt){showToast('⚠️ Escribe un prompt primero');return;}isGenerating=true;const btn=document.getElementById('genBtn');btn.disabled=true;btn.textContent='⏳ Generando...';const count=parseInt(document.getElementById('count').value);const negPrompt=document.getElementById('negPrompt').value.trim();const resolution=document.getElementById('resolution').value;const guidance=parseFloat(document.getElementById('guidance').value);const nsfw=document.getElementById('nsfwToggle').checked;const fullPrompt=buildPrompt();externalPromptUrl=buildExternalGeneratorUrl(fullPrompt);const progressBar=document.getElementById('progressBar');const progressFill=document.getElementById('progressFill');const statusText=document.getElementById('statusText');progressBar.style.display='block';progressFill.style.width='0%';document.getElementById('emptyState').style.display='none';showHelperPanel(false);let generated=0;const errors=[];if(!userKey){statusText.textContent='🔑 Obteniendo acceso a Perchance...';await getPerchanceKey();}for(let i=0;i<count;i++){statusText.textContent=`🎨 Generando imagen ${i+1} de ${count}...`;const skeleton=document.createElement('div');skeleton.className='skeleton';skeleton.style.cssText='height:220px;border-radius:12px;';document.getElementById('gallery').appendChild(skeleton);try{const imageUrl=await generateSingleImage({prompt:fullPrompt,negativePrompt:nsfw?negPrompt.replace(/nude|naked|nsfw/gi,''):negPrompt+', nude, naked, nsfw, explicit',resolution,guidanceScale:guidance,seed:Math.floor(Math.random()*2147483647),adultContent:nsfw?'1':'0',channel:'ai-text-to-image-generator'});skeleton.remove();addImageToGallery(imageUrl,prompt);generated++;}catch(e){skeleton.remove();errors.push(e.message);console.error('Gen error:',e);}progressFill.style.width=((i+1)/count*100)+'%';}
+statusText.textContent=generated>0?`✅ ${generated} imagen${generated>1?'s':''} generada${generated>1?'s':''}${errors.length>0?` (${errors.length} fallaron)`:''}`:`❌ Error al generar. Usa el respaldo inteligente.`;btn.disabled=false;btn.textContent='🚀 Generar Imágenes';isGenerating=false;if(generated>0){showToast(`🎨 ${generated} imagen${generated>1?'s':''} lista${generated>1?'s':''}!`);if(errors.length>0){showHelperPanel(true,'Parte de la generación falló. Puedes abrir el respaldo externo y pegar aquí cualquier salida que contenga enlaces.');}}else if(errors.length>0){showHelperPanel(true,'La API directa fue bloqueada o no respondió. Pega aquí cualquier texto que contenga enlaces y la V3 intentará detectar las URLs reales automáticamente.');showToast('🧠 Activado respaldo inteligente');}}
+async function generateSingleImage(params){const formData=new URLSearchParams();formData.append('prompt',params.prompt);formData.append('negativePrompt',params.negativePrompt);formData.append('resolution',params.resolution);formData.append('guidanceScale',params.guidanceScale);formData.append('seed',params.seed);formData.append('channel',params.channel);formData.append('userKey',userKey||'');formData.append('adultContent',params.adultContent);formData.append('__cacheBust',Date.now());const resp=await fetch('https://image-generation.perchance.org/api/generate',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:formData.toString()});if(!resp.ok)throw new Error(`HTTP ${resp.status}`);const data=await resp.json();if(data.status==='error')throw new Error(data.message||'Error de generación');return `https://image-generation.perchance.org/api/downloadTemporaryImage?imageId=${data.imageId}`;}
+function addImageToGallery(url,promptText){const resolution=document.getElementById('resolution').value;const [w,h]=resolution.split('x').map(Number);const isPortrait=h>w;const isLandscape=w>h;const card=document.createElement('div');card.className=`img-card ${isPortrait?'portrait':''} ${isLandscape?'landscape':''}`;card.dataset.url=url;const img=document.createElement('img');img.src=url;img.alt=promptText;img.loading='lazy';img.onerror=function(){this.style.display='none';card.style.background='rgba(239,68,68,.1)';card.style.display='flex';card.style.alignItems='center';card.style.justifyContent='center';card.style.minHeight='150px';card.innerHTML+='<span style="color:#fca5a5;font-size:12px;padding:20px;text-align:center;">❌ Error al cargar<br><small>La URL detectada no respondió como imagen</small></span>';};const tag=document.createElement('div');tag.className='img-prompt-tag';tag.textContent=promptText.substring(0,50)+(promptText.length>50?'...':'');const actions=document.createElement('div');actions.className='img-actions';const dlBtn=document.createElement('button');dlBtn.className='btn-dl';dlBtn.textContent='⬇️ Guardar';dlBtn.onclick=()=>downloadImage(url,`arkaios-gen-${Date.now()}.png`);const addBtn=document.createElement('button');addBtn.className='btn-add';addBtn.textContent='➕ Plantilla';addBtn.onclick=()=>addToTemplateQueue(url);const delBtn=document.createElement('button');delBtn.className='btn-del';delBtn.textContent='✕';delBtn.onclick=()=>{card.remove();updateCount();};actions.append(dlBtn,addBtn,delBtn);card.append(img,tag,actions);document.getElementById('gallery').appendChild(card);generatedImages.push({url,prompt:promptText});updateCount();}
+function updateCount(){const cards=document.querySelectorAll('.img-card').length;document.getElementById('galleryCount').textContent=`${cards} imagen${cards!==1?'es':''}`;}
+async function downloadImage(url,filename){try{const a=document.createElement('a');a.href=url;a.download=filename;a.target='_blank';document.body.appendChild(a);a.click();document.body.removeChild(a);}catch(e){window.open(url,'_blank');}}
+function addToTemplateQueue(url){if(templateQueue.includes(url)){showToast('⚠️ Esta imagen ya está en la cola');return;}templateQueue.push(url);showToast(`✅ Imagen añadida a la cola (${templateQueue.length})`);}
+function sendToTemplate(){const cards=document.querySelectorAll('.img-card');const urls=[];cards.forEach(c=>{if(c.dataset.url)urls.push(c.dataset.url);});if(urls.length===0){showToast('⚠️ No hay imágenes en la galería');return;}const count=urls.length;let grid='2x2';if(count<=2)grid='1x2';else if(count<=4)grid='2x2';else if(count<=9)grid='3x3';else if(count<=16)grid='4x4';else grid='5x5';const imageParam=encodeURIComponent(urls.join('|'));const prompt=document.getElementById('prompt').value.trim();const templateUrl=`plantilla-imagenes-v2.html?agent=1&grid=${grid}&images=${imageParam}&topic=${encodeURIComponent(prompt+' (IA Generated)')}`;window.open(templateUrl,'_blank');showToast(`🚀 Abriendo plantilla con ${count} imágenes en ${grid}`);}
+function clearGallery(){if(confirm('¿Limpiar toda la galería?')){document.getElementById('gallery').innerHTML='<div class="empty-state" id="emptyState" style="grid-column:1/-1;"><div class="icon">🎨</div><p>Las imágenes generadas aparecerán aquí</p><p style="font-size:12px;margin-top:8px;color:#475569;">Escribe un prompt y presiona Generar</p></div>';generatedImages=[];templateQueue=[];updateCount();document.getElementById('progressBar').style.display='none';document.getElementById('statusText').textContent='';document.getElementById('importUrls').value='';clearDetectedPreview();showHelperPanel(false);}}
+function addToPrompt(text){const ta=document.getElementById('prompt');ta.value=ta.value?ta.value+', '+text:text;ta.focus();}
+function showToast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.style.animation='fadeIn .3s reverse';setTimeout(()=>t.remove(),300);},2500);}
+getPerchanceKey().catch(()=>{});
 </script>
 </body>
 </html>
