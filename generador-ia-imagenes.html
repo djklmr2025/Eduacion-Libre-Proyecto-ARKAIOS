@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARKAIOS · Generador IA de Imágenes · V3</title>
+<title>ARKAIOS · Generador IA de Imágenes · Proxy</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);min-height:100vh;color:#fff}
@@ -34,9 +34,10 @@ textarea{min-height:90px} select option{background:#302b63} input[type=range]{pa
 .skeleton{background:rgba(255,255,255,.08);border-radius:12px;animation:pulse 1.5s ease-in-out infinite}@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
 .empty-state{text-align:center;padding:60px 20px;color:#64748b}.empty-state .icon{font-size:48px;margin-bottom:15px}
 .toast{position:fixed;bottom:30px;right:30px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:12px 22px;border-radius:10px;font-weight:bold;z-index:9999;animation:fadeIn .3s ease;box-shadow:0 5px 20px rgba(0,0,0,.4)}@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.helper-panel{display:none}.helper-panel p,.helper-panel li{color:#cbd5e1;font-size:13px;line-height:1.5}.helper-panel ol{padding-left:18px;display:grid;gap:8px;margin:12px 0}.helper-row{display:grid;gap:10px;grid-template-columns:1fr 1fr}.helper-note{color:#94a3b8;font-size:12px;margin-top:8px}.import-area{min-height:120px}
-.smart-box{margin-top:12px;padding:12px;border:1px dashed rgba(167,139,250,.35);border-radius:12px;background:rgba(167,139,250,.08)}.smart-box strong{color:#e9d5ff}.smart-list{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px}.smart-pill{font-size:11px;padding:5px 8px;border-radius:999px;background:rgba(255,255,255,.08);color:#ddd;border:1px solid rgba(255,255,255,.1)}
+.helper-panel{display:none}.helper-panel p,.helper-panel li{color:#cbd5e1;font-size:13px;line-height:1.5}.helper-panel ol{padding-left:18px;display:grid;gap:8px;margin:12px 0}.helper-row{display:grid;gap:10px;grid-template-columns:1fr 1fr}.helper-note{color:#94a3b8;font-size:12px;margin-top:8px}.import-area{min-height:120px}.smart-box{margin-top:12px;padding:12px;border:1px dashed rgba(167,139,250,.35);border-radius:12px;background:rgba(167,139,250,.08)}.smart-box strong{color:#e9d5ff}.smart-list{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px}.smart-pill{font-size:11px;padding:5px 8px;border-radius:999px;background:rgba(255,255,255,.08);color:#ddd;border:1px solid rgba(255,255,255,.1)}
 .preview-list{margin-top:10px;display:grid;gap:8px;max-height:150px;overflow:auto}.preview-item{font-size:12px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#cbd5e1;word-break:break-all}
+.proxy-config{margin-top:12px;padding:12px;border:1px solid rgba(16,185,129,.28);border-radius:12px;background:rgba(16,185,129,.08)}
+.proxy-config label{color:#86efac}
 @media (max-width:768px){.main{grid-template-columns:1fr}.helper-row{grid-template-columns:1fr}}
 </style>
 </head>
@@ -45,7 +46,7 @@ textarea{min-height:90px} select option{background:#302b63} input[type=range]{pa
   <span style="font-size:2rem">🎨</span>
   <h1>ARKAIOS · Generador IA de Imágenes</h1>
   <span class="badge">🔥 NSFW HABILITADO</span>
-  <span class="badge" style="background:linear-gradient(135deg,#667eea,#764ba2);">Perchance AI + FLUX · V3</span>
+  <span class="badge" style="background:linear-gradient(135deg,#10b981,#059669);">Proxy + Gemini / Mock</span>
   <a href="index.html" class="back-btn">← Volver a ARKAIOS</a>
 </div>
 <div class="main">
@@ -66,7 +67,7 @@ textarea{min-height:90px} select option{background:#302b63} input[type=range]{pa
       </div>
     </div>
     <div class="form-group">
-      <label>Prompt Negativo (qué evitar)</label>
+      <label>Prompt Negativo (solo UI por ahora)</label>
       <textarea id="negPrompt" style="min-height:60px;" placeholder="blurry, bad anatomy, watermark, text, ugly...">blurry, bad anatomy, watermark, text, ugly, deformed, low quality, jpeg artifacts</textarea>
     </div>
     <div class="form-group">
@@ -97,7 +98,7 @@ textarea{min-height:90px} select option{background:#302b63} input[type=range]{pa
       </select>
     </div>
     <div class="form-group">
-      <label>Guidance Scale — <span style="color:#a78bfa">Qué tan literal</span></label>
+      <label>Guidance Scale — <span style="color:#a78bfa">UI futura</span></label>
       <div class="range-row">
         <input type="range" id="guidance" min="1" max="20" step="0.5" value="7" oninput="document.getElementById('guidanceVal').textContent=this.value">
         <span class="range-val" id="guidanceVal">7</span>
@@ -116,6 +117,12 @@ textarea{min-height:90px} select option{background:#302b63} input[type=range]{pa
         <label for="nsfwToggle">🔞 Contenido Adulto (NSFW)</label>
       </div>
     </div>
+    <div class="proxy-config">
+      <div class="form-group" style="margin-bottom:0">
+        <label>URL de tu proxy</label>
+        <input type="text" id="apiUrl" placeholder="https://tu-proxy.up.railway.app">
+      </div>
+    </div>
     <button class="gen-btn" id="genBtn" onclick="generateImages()">🚀 Generar Imágenes</button>
     <div id="progressBar" class="progress-bar" style="margin-top:12px;"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
     <p id="statusText" style="text-align:center;font-size:12px;color:#a0a0c0;margin-top:8px;"></p>
@@ -131,10 +138,9 @@ textarea{min-height:90px} select option{background:#302b63} input[type=range]{pa
       <span class="count-badge" id="galleryCount">0 imágenes</span>
       <button onclick="clearGallery()" style="background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.3);color:#fca5a5;padding:5px 12px;border-radius:8px;cursor:pointer;font-size:12px;margin-left:auto;">🗑️ Limpiar</button>
     </div>
-
     <div class="helper-panel" id="helperPanel">
-      <h3>🧠 Respaldo inteligente activo</h3>
-      <p>Si la API directa falla, esta versión intenta ayudarte a rescatar resultados desde cualquier texto pegado. Ya no necesitas pegar solo URLs puras: puedes pegar texto mezclado, respuestas, logs o bloques completos, y el sistema extraerá automáticamente enlaces útiles.</p>
+      <h3>Respaldo inteligente activo</h3>
+      <p>Si tu proxy falla o aún no está listo, esta versión todavía puede ayudarte a rescatar URLs reales pegadas manualmente desde cualquier texto o respuesta.</p>
       <ol>
         <li>Haz clic en <strong>Abrir generador externo</strong>.</li>
         <li>Genera tus imágenes o copia cualquier salida que contenga enlaces.</li>
@@ -142,34 +148,33 @@ textarea{min-height:90px} select option{background:#302b63} input[type=range]{pa
         <li>Usa <strong>Analizar contenido</strong> o <strong>Importar detectadas</strong>.</li>
       </ol>
       <div class="helper-row">
-        <button class="helper-btn" type="button" onclick="openExternalGenerator()">🌐 Abrir generador externo</button>
-        <button class="helper-btn" type="button" onclick="copyPromptForExternal()" style="background:linear-gradient(135deg,#10b981,#059669);">📋 Copiar prompt actual</button>
+        <button class="helper-btn" type="button" onclick="openExternalGenerator()">Abrir generador externo</button>
+        <button class="helper-btn" type="button" onclick="copyPromptForExternal()" style="background:linear-gradient(135deg,#10b981,#059669)">Copiar prompt actual</button>
       </div>
-      <div class="form-group" style="margin-top:12px;">
+      <div class="form-group" style="margin-top:12px">
         <label>Pegar contenido mixto</label>
-        <textarea id="importUrls" class="import-area" placeholder="Aquí puedes pegar texto completo, URLs, respuestas, logs o contenido mezclado. La V3 intentará detectar enlaces reales de imagen automáticamente."></textarea>
-        <div class="helper-row">
-          <button class="helper-btn" type="button" onclick="analyzeMixedContent()">🔎 Analizar contenido</button>
-          <button class="helper-btn" type="button" onclick="importImagesFromTextarea()" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">⬇️ Importar detectadas</button>
-        </div>
-        <div class="helper-row">
-          <button class="helper-btn" type="button" onclick="pasteFromClipboard()" style="background:linear-gradient(135deg,#0ea5e9,#2563eb);">📥 Pegar desde portapapeles</button>
-          <button class="helper-btn" type="button" onclick="document.getElementById('importUrls').value=''; clearDetectedPreview();" style="background:linear-gradient(135deg,#475569,#334155);">🧹 Limpiar</button>
-        </div>
-        <div class="smart-box">
-          <strong>Detección inteligente:</strong>
-          <div class="smart-list">
-            <span class="smart-pill">URLs .png .jpg .jpeg .webp .gif</span>
-            <span class="smart-pill">downloadTemporaryImage?imageId=...</span>
-            <span class="smart-pill">Texto mezclado con enlaces</span>
-            <span class="smart-pill">Quita duplicados automáticamente</span>
-          </div>
-          <div class="preview-list" id="detectedPreview" style="display:none"></div>
-        </div>
-        <p class="helper-note" id="helperNote">Cuando analices el contenido, aquí se mostrará una vista previa de las URLs detectadas.</p>
+        <textarea id="importUrls" class="import-area" placeholder="Aquí puedes pegar texto completo, URLs, respuestas, logs o contenido mezclado."></textarea>
       </div>
+      <div class="helper-row">
+        <button class="helper-btn" type="button" onclick="analyzeMixedContent()">Analizar contenido</button>
+        <button class="helper-btn" type="button" onclick="importImagesFromTextarea()" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)">Importar detectadas</button>
+      </div>
+      <div class="helper-row">
+        <button class="helper-btn" type="button" onclick="pasteFromClipboard()" style="background:linear-gradient(135deg,#0ea5e9,#2563eb)">Pegar desde portapapeles</button>
+        <button class="helper-btn" type="button" onclick="document.getElementById('importUrls').value=''; clearDetectedPreview();" style="background:linear-gradient(135deg,#475569,#334155)">Limpiar</button>
+      </div>
+      <div class="smart-box">
+        <strong>Detección inteligente</strong>
+        <div class="smart-list">
+          <span class="smart-pill">URLs .png .jpg .jpeg .webp .gif</span>
+          <span class="smart-pill">/v1/image/serve/...</span>
+          <span class="smart-pill">Texto mezclado con enlaces</span>
+          <span class="smart-pill">Quita duplicados automáticamente</span>
+        </div>
+      </div>
+      <div class="preview-list" id="detectedPreview" style="display:none"></div>
+      <p class="helper-note" id="helperNote">Cuando analices el contenido, aquí se mostrará una vista previa de las URLs detectadas.</p>
     </div>
-
     <div class="gallery" id="gallery">
       <div class="empty-state" id="emptyState" style="grid-column:1/-1;">
         <div class="icon">🎨</div>
@@ -180,31 +185,410 @@ textarea{min-height:90px} select option{background:#302b63} input[type=range]{pa
   </div>
 </div>
 <script>
-let generatedImages=[]; let userKey=null; let isGenerating=false; let templateQueue=[]; let externalPromptUrl=''; let detectedUrls=[];
-async function getPerchanceKey(){try{const resp=await fetch('https://image-generation.perchance.org/api/verifyUser?channel=ai-text-to-image-generator&promptBase64=&__cacheBust='+Date.now());if(!resp.ok)throw new Error('No se pudo verificar');const data=await resp.json();userKey=data.userKey;return userKey;}catch(e){console.warn('userKey fetch failed:',e);userKey=Math.random().toString(36).substring(2,15);return userKey;}}
-function buildPrompt(){const base=document.getElementById('prompt').value.trim();const style=document.getElementById('style').value;const styleMap={'photorealistic':'photorealistic, photo, real photograph, DSLR','anime':'anime style, manga, japanese animation, Studio Ghibli','digital-art':'digital art, concept art, artstation','oil-painting':'oil painting, canvas, brush strokes, fine art','watercolor':'watercolor painting, soft colors, paper texture','sketch':'pencil sketch, hand drawn, black and white sketch','3d-render':'3d render, blender, octane render, CGI','pixel-art':'pixel art, 8-bit, retro game style','fantasy':'fantasy art, magical, epic, dramatic','sci-fi':'sci-fi, futuristic, cyberpunk, neon lights'};return style?`${base}, ${styleMap[style]||style}`:base;}
-function buildExternalGeneratorUrl(promptOverride){const finalPrompt=(promptOverride||buildPrompt()||'').trim();return `https://perchance.org/ai-text-to-image-generator#prompt=${encodeURIComponent(finalPrompt)}`;}
-function showHelperPanel(show=true,note=''){const panel=document.getElementById('helperPanel');const helperNote=document.getElementById('helperNote');panel.style.display=show?'block':'none';if(note)helperNote.textContent=note;}
-function openExternalGenerator(){const url=externalPromptUrl||buildExternalGeneratorUrl();window.open(url,'_blank');}
-async function copyPromptForExternal(){const prompt=buildPrompt();if(!prompt){showToast('⚠️ No hay prompt para copiar');return;}try{await navigator.clipboard.writeText(prompt);showToast('📋 Prompt copiado');}catch{showToast('⚠️ No se pudo copiar, cópialo manualmente');}}
-async function pasteFromClipboard(){try{const txt=await navigator.clipboard.readText();if(!txt){showToast('⚠️ El portapapeles está vacío');return;}document.getElementById('importUrls').value=txt;showToast('📥 Contenido pegado');analyzeMixedContent();}catch(e){showToast('⚠️ Tu navegador no permitió leer el portapapeles');}}
-function isLikelyImageUrl(url){return /(downloadTemporaryImage\?imageId=|\.(png|jpg|jpeg|webp|gif)(\?|$))/i.test(url);} 
-function extractUrlsFromText(text){const raw=text.match(/https?:\/\/[^\s"'<>]+/g)||[];const cleaned=raw.map(u=>u.replace(/[),.;]+$/,'').trim());const unique=[...new Set(cleaned)];return unique.filter(isLikelyImageUrl);} 
-function clearDetectedPreview(){detectedUrls=[];const box=document.getElementById('detectedPreview');box.innerHTML='';box.style.display='none';}
-function analyzeMixedContent(){const raw=document.getElementById('importUrls').value.trim();if(!raw){showToast('⚠️ No hay contenido para analizar');return;}detectedUrls=extractUrlsFromText(raw);const box=document.getElementById('detectedPreview');box.innerHTML='';if(detectedUrls.length===0){box.style.display='none';document.getElementById('helperNote').textContent='No encontré URLs válidas de imagen. Asegúrate de pegar enlaces finales y no solo el prompt.';showToast('⚠️ No se detectaron URLs de imagen');return;}detectedUrls.forEach((url,i)=>{const el=document.createElement('div');el.className='preview-item';el.textContent=`${i+1}. ${url}`;box.appendChild(el);});box.style.display='grid';document.getElementById('helperNote').textContent=`Se detectaron ${detectedUrls.length} URL(s) listas para importar.`;showToast(`🔎 Detectadas ${detectedUrls.length} URL(s)`);} 
-function importImagesFromTextarea(){const raw=document.getElementById('importUrls').value.trim();if(!raw){showToast('⚠️ Pega contenido primero');return;}if(!detectedUrls.length){detectedUrls=extractUrlsFromText(raw);}if(!detectedUrls.length){showToast('⚠️ No encontré URLs válidas para importar');return;}const prompt=document.getElementById('prompt').value.trim()||'Imagen importada';let imported=0;detectedUrls.forEach(url=>{addImageToGallery(url,prompt+' (importada)');imported++;});document.getElementById('importUrls').value='';clearDetectedPreview();showToast(`✅ ${imported} imagen${imported>1?'es':''} importada${imported>1?'s':''}`);} 
-async function generateImages(){if(isGenerating)return;const prompt=document.getElementById('prompt').value.trim();if(!prompt){showToast('⚠️ Escribe un prompt primero');return;}isGenerating=true;const btn=document.getElementById('genBtn');btn.disabled=true;btn.textContent='⏳ Generando...';const count=parseInt(document.getElementById('count').value);const negPrompt=document.getElementById('negPrompt').value.trim();const resolution=document.getElementById('resolution').value;const guidance=parseFloat(document.getElementById('guidance').value);const nsfw=document.getElementById('nsfwToggle').checked;const fullPrompt=buildPrompt();externalPromptUrl=buildExternalGeneratorUrl(fullPrompt);const progressBar=document.getElementById('progressBar');const progressFill=document.getElementById('progressFill');const statusText=document.getElementById('statusText');progressBar.style.display='block';progressFill.style.width='0%';document.getElementById('emptyState').style.display='none';showHelperPanel(false);let generated=0;const errors=[];if(!userKey){statusText.textContent='🔑 Obteniendo acceso a Perchance...';await getPerchanceKey();}for(let i=0;i<count;i++){statusText.textContent=`🎨 Generando imagen ${i+1} de ${count}...`;const skeleton=document.createElement('div');skeleton.className='skeleton';skeleton.style.cssText='height:220px;border-radius:12px;';document.getElementById('gallery').appendChild(skeleton);try{const imageUrl=await generateSingleImage({prompt:fullPrompt,negativePrompt:nsfw?negPrompt.replace(/nude|naked|nsfw/gi,''):negPrompt+', nude, naked, nsfw, explicit',resolution,guidanceScale:guidance,seed:Math.floor(Math.random()*2147483647),adultContent:nsfw?'1':'0',channel:'ai-text-to-image-generator'});skeleton.remove();addImageToGallery(imageUrl,prompt);generated++;}catch(e){skeleton.remove();errors.push(e.message);console.error('Gen error:',e);}progressFill.style.width=((i+1)/count*100)+'%';}
-statusText.textContent=generated>0?`✅ ${generated} imagen${generated>1?'s':''} generada${generated>1?'s':''}${errors.length>0?` (${errors.length} fallaron)`:''}`:`❌ Error al generar. Usa el respaldo inteligente.`;btn.disabled=false;btn.textContent='🚀 Generar Imágenes';isGenerating=false;if(generated>0){showToast(`🎨 ${generated} imagen${generated>1?'s':''} lista${generated>1?'s':''}!`);if(errors.length>0){showHelperPanel(true,'Parte de la generación falló. Puedes abrir el respaldo externo y pegar aquí cualquier salida que contenga enlaces.');}}else if(errors.length>0){showHelperPanel(true,'La API directa fue bloqueada o no respondió. Pega aquí cualquier texto que contenga enlaces y la V3 intentará detectar las URLs reales automáticamente.');showToast('🧠 Activado respaldo inteligente');}}
-async function generateSingleImage(params){const formData=new URLSearchParams();formData.append('prompt',params.prompt);formData.append('negativePrompt',params.negativePrompt);formData.append('resolution',params.resolution);formData.append('guidanceScale',params.guidanceScale);formData.append('seed',params.seed);formData.append('channel',params.channel);formData.append('userKey',userKey||'');formData.append('adultContent',params.adultContent);formData.append('__cacheBust',Date.now());const resp=await fetch('https://image-generation.perchance.org/api/generate',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:formData.toString()});if(!resp.ok)throw new Error(`HTTP ${resp.status}`);const data=await resp.json();if(data.status==='error')throw new Error(data.message||'Error de generación');return `https://image-generation.perchance.org/api/downloadTemporaryImage?imageId=${data.imageId}`;}
-function addImageToGallery(url,promptText){const resolution=document.getElementById('resolution').value;const [w,h]=resolution.split('x').map(Number);const isPortrait=h>w;const isLandscape=w>h;const card=document.createElement('div');card.className=`img-card ${isPortrait?'portrait':''} ${isLandscape?'landscape':''}`;card.dataset.url=url;const img=document.createElement('img');img.src=url;img.alt=promptText;img.loading='lazy';img.onerror=function(){this.style.display='none';card.style.background='rgba(239,68,68,.1)';card.style.display='flex';card.style.alignItems='center';card.style.justifyContent='center';card.style.minHeight='150px';card.innerHTML+='<span style="color:#fca5a5;font-size:12px;padding:20px;text-align:center;">❌ Error al cargar<br><small>La URL detectada no respondió como imagen</small></span>';};const tag=document.createElement('div');tag.className='img-prompt-tag';tag.textContent=promptText.substring(0,50)+(promptText.length>50?'...':'');const actions=document.createElement('div');actions.className='img-actions';const dlBtn=document.createElement('button');dlBtn.className='btn-dl';dlBtn.textContent='⬇️ Guardar';dlBtn.onclick=()=>downloadImage(url,`arkaios-gen-${Date.now()}.png`);const addBtn=document.createElement('button');addBtn.className='btn-add';addBtn.textContent='➕ Plantilla';addBtn.onclick=()=>addToTemplateQueue(url);const delBtn=document.createElement('button');delBtn.className='btn-del';delBtn.textContent='✕';delBtn.onclick=()=>{card.remove();updateCount();};actions.append(dlBtn,addBtn,delBtn);card.append(img,tag,actions);document.getElementById('gallery').appendChild(card);generatedImages.push({url,prompt:promptText});updateCount();}
-function updateCount(){const cards=document.querySelectorAll('.img-card').length;document.getElementById('galleryCount').textContent=`${cards} imagen${cards!==1?'es':''}`;}
-async function downloadImage(url,filename){try{const a=document.createElement('a');a.href=url;a.download=filename;a.target='_blank';document.body.appendChild(a);a.click();document.body.removeChild(a);}catch(e){window.open(url,'_blank');}}
-function addToTemplateQueue(url){if(templateQueue.includes(url)){showToast('⚠️ Esta imagen ya está en la cola');return;}templateQueue.push(url);showToast(`✅ Imagen añadida a la cola (${templateQueue.length})`);}
-function sendToTemplate(){const cards=document.querySelectorAll('.img-card');const urls=[];cards.forEach(c=>{if(c.dataset.url)urls.push(c.dataset.url);});if(urls.length===0){showToast('⚠️ No hay imágenes en la galería');return;}const count=urls.length;let grid='2x2';if(count<=2)grid='1x2';else if(count<=4)grid='2x2';else if(count<=9)grid='3x3';else if(count<=16)grid='4x4';else grid='5x5';const imageParam=encodeURIComponent(urls.join('|'));const prompt=document.getElementById('prompt').value.trim();const templateUrl=`plantilla-imagenes-v2.html?agent=1&grid=${grid}&images=${imageParam}&topic=${encodeURIComponent(prompt+' (IA Generated)')}`;window.open(templateUrl,'_blank');showToast(`🚀 Abriendo plantilla con ${count} imágenes en ${grid}`);}
-function clearGallery(){if(confirm('¿Limpiar toda la galería?')){document.getElementById('gallery').innerHTML='<div class="empty-state" id="emptyState" style="grid-column:1/-1;"><div class="icon">🎨</div><p>Las imágenes generadas aparecerán aquí</p><p style="font-size:12px;margin-top:8px;color:#475569;">Escribe un prompt y presiona Generar</p></div>';generatedImages=[];templateQueue=[];updateCount();document.getElementById('progressBar').style.display='none';document.getElementById('statusText').textContent='';document.getElementById('importUrls').value='';clearDetectedPreview();showHelperPanel(false);}}
-function addToPrompt(text){const ta=document.getElementById('prompt');ta.value=ta.value?ta.value+', '+text:text;ta.focus();}
-function showToast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.style.animation='fadeIn .3s reverse';setTimeout(()=>t.remove(),300);},2500);}
-getPerchanceKey().catch(()=>{});
+let generatedImages = [];
+let isGenerating = false;
+let templateQueue = [];
+let externalPromptUrl = '';
+let detectedUrls = [];
+
+function normalizeApiUrl(url){
+  return (url || '').trim().replace(/\/$/, '');
+}
+
+function getApiUrl(){
+  return normalizeApiUrl(document.getElementById('apiUrl').value);
+}
+
+function buildPrompt(){
+  const base = document.getElementById('prompt').value.trim();
+  const style = document.getElementById('style').value;
+  const styleMap = {
+    'photorealistic':'photorealistic, photo, real photograph, DSLR',
+    'anime':'anime style, manga, japanese animation, Studio Ghibli',
+    'digital-art':'digital art, concept art, artstation',
+    'oil-painting':'oil painting, canvas, brush strokes, fine art',
+    'watercolor':'watercolor painting, soft colors, paper texture',
+    'sketch':'pencil sketch, hand drawn, black and white sketch',
+    '3d-render':'3d render, blender, octane render, CGI',
+    'pixel-art':'pixel art, 8-bit, retro game style',
+    'fantasy':'fantasy art, magical, epic, dramatic',
+    'sci-fi':'sci-fi, futuristic, cyberpunk, neon lights'
+  };
+  return style ? `${base}, ${styleMap[style]}` : base;
+}
+
+function buildExternalGeneratorUrl(promptOverride){
+  const finalPrompt = (promptOverride || buildPrompt()).trim();
+  return `https://perchance.org/ai-text-to-image-generator?prompt=${encodeURIComponent(finalPrompt)}`;
+}
+
+function showHelperPanel(show=true, note=''){
+  const panel = document.getElementById('helperPanel');
+  const helperNote = document.getElementById('helperNote');
+  panel.style.display = show ? 'block' : 'none';
+  if (note) helperNote.textContent = note;
+}
+
+function openExternalGenerator(){
+  const url = externalPromptUrl || buildExternalGeneratorUrl();
+  window.open(url, '_blank');
+}
+
+async function copyPromptForExternal(){
+  const prompt = buildPrompt();
+  if (!prompt) {
+    showToast('⚠️ No hay prompt para copiar');
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(prompt);
+    showToast('✅ Prompt copiado');
+  } catch {
+    showToast('⚠️ No se pudo copiar, cópialo manualmente');
+  }
+}
+
+async function pasteFromClipboard(){
+  try {
+    const txt = await navigator.clipboard.readText();
+    if (!txt) {
+      showToast('⚠️ El portapapeles está vacío');
+      return;
+    }
+    document.getElementById('importUrls').value = txt;
+    showToast('✅ Contenido pegado');
+    analyzeMixedContent();
+  } catch {
+    showToast('⚠️ Tu navegador no permitió leer el portapapeles');
+  }
+}
+
+function isLikelyImageUrl(url){
+  return /(\/v1\/image\/serve\/|\.(png|jpg|jpeg|webp|gif))(\?.*)?$/i.test(url);
+}
+
+function extractUrlsFromText(text){
+  const raw = text.match(/https?:\/\/[^\s"'<>]+/g) || [];
+  const cleaned = raw.map(u => u.replace(/[),.;]+$/, '').trim());
+  const unique = [...new Set(cleaned)];
+  return unique.filter(isLikelyImageUrl);
+}
+
+function clearDetectedPreview(){
+  detectedUrls = [];
+  const box = document.getElementById('detectedPreview');
+  box.innerHTML = '';
+  box.style.display = 'none';
+}
+
+function analyzeMixedContent(){
+  const raw = document.getElementById('importUrls').value.trim();
+  if (!raw) {
+    showToast('⚠️ No hay contenido para analizar');
+    return;
+  }
+  detectedUrls = extractUrlsFromText(raw);
+  const box = document.getElementById('detectedPreview');
+  box.innerHTML = '';
+  if (detectedUrls.length === 0) {
+    box.style.display = 'none';
+    document.getElementById('helperNote').textContent = 'No encontré URLs válidas de imagen.';
+    showToast('⚠️ No se detectaron URLs de imagen');
+    return;
+  }
+  detectedUrls.forEach((url, i) => {
+    const el = document.createElement('div');
+    el.className = 'preview-item';
+    el.textContent = `${i + 1}. ${url}`;
+    box.appendChild(el);
+  });
+  box.style.display = 'grid';
+  document.getElementById('helperNote').textContent = `Se detectaron ${detectedUrls.length} URLs listas para importar.`;
+  showToast(`✅ Detectadas ${detectedUrls.length} URLs`);
+}
+
+function importImagesFromTextarea(){
+  const raw = document.getElementById('importUrls').value.trim();
+  if (!raw) {
+    showToast('⚠️ Pega contenido primero');
+    return;
+  }
+  if (!detectedUrls.length) detectedUrls = extractUrlsFromText(raw);
+  if (!detectedUrls.length) {
+    showToast('⚠️ No encontré URLs válidas para importar');
+    return;
+  }
+  const prompt = document.getElementById('prompt').value.trim() || 'Imagen importada';
+  let imported = 0;
+  detectedUrls.forEach(url => {
+    addImageToGallery(url, prompt);
+    imported++;
+  });
+  document.getElementById('importUrls').value = '';
+  clearDetectedPreview();
+  showToast(`✅ ${imported} imagen${imported !== 1 ? 'es importadas' : ' importada'}`);
+}
+
+async function generateImages(){
+  if (isGenerating) return;
+
+  const prompt = document.getElementById('prompt').value.trim();
+  const apiUrl = getApiUrl();
+  const count = parseInt(document.getElementById('count').value, 10);
+
+  if (!prompt) {
+    showToast('⚠️ Escribe un prompt primero');
+    return;
+  }
+
+  if (!apiUrl) {
+    showToast('⚠️ Escribe la URL de tu proxy');
+    return;
+  }
+
+  isGenerating = true;
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Generando...';
+
+  const fullPrompt = buildPrompt();
+  externalPromptUrl = buildExternalGeneratorUrl(fullPrompt);
+
+  const progressBar = document.getElementById('progressBar');
+  const progressFill = document.getElementById('progressFill');
+  const statusText = document.getElementById('statusText');
+  progressBar.style.display = 'block';
+  progressFill.style.width = '0%';
+
+  const emptyState = document.getElementById('emptyState');
+  if (emptyState) emptyState.style.display = 'none';
+  showHelperPanel(false);
+
+  let generated = 0;
+  const errors = [];
+
+  for (let i = 0; i < count; i++) {
+    statusText.textContent = `Generando imagen ${i + 1} de ${count}...`;
+    const skeleton = document.createElement('div');
+    skeleton.className = 'skeleton';
+    skeleton.style.cssText = 'height:220px;border-radius:12px';
+    document.getElementById('gallery').appendChild(skeleton);
+
+    try {
+      const imageUrl = await generateSingleImage({
+        apiUrl,
+        prompt: fullPrompt,
+        resolution: document.getElementById('resolution').value,
+        guidanceScale: parseFloat(document.getElementById('guidance').value),
+        negativePrompt: document.getElementById('negPrompt').value.trim(),
+        adultContent: document.getElementById('nsfwToggle').checked ? 1 : 0
+      });
+      skeleton.remove();
+      addImageToGallery(imageUrl, prompt);
+      generated++;
+    } catch (e) {
+      skeleton.remove();
+      errors.push(e.message || 'Error desconocido');
+      console.error('Gen error', e);
+    }
+
+    progressFill.style.width = `${((i + 1) / count) * 100}%`;
+  }
+
+  statusText.textContent = generated > 0
+    ? `✅ ${generated} imagen${generated !== 1 ? 'es generadas' : ' generada'}${errors.length ? ` · ${errors.length} fallaron` : ''}`
+    : '❌ Error al generar. Usa el respaldo inteligente.';
+
+  btn.disabled = false;
+  btn.textContent = '🚀 Generar Imágenes';
+  isGenerating = false;
+
+  if (generated > 0) showToast(`✅ ${generated} imagen${generated !== 1 ? 'es listas' : ' lista'}`);
+  if (errors.length > 0) {
+    showHelperPanel(true, 'Parte de la generación falló. Puedes abrir el respaldo externo y pegar aquí cualquier salida que contenga enlaces.');
+  }
+}
+
+async function generateSingleImage(params){
+  const { apiUrl, prompt, resolution, guidanceScale, negativePrompt, adultContent } = params;
+
+  if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
+    throw new Error('El prompt es obligatorio');
+  }
+
+  const allowedResolutions = ['512x512','512x768','768x512','768x768','1024x576','576x1024'];
+  if (!allowedResolutions.includes(resolution)) {
+    throw new Error('Resolución no válida');
+  }
+
+  const payload = {
+    prompt: prompt.trim(),
+    resolution,
+    guidanceScale,
+    negativePrompt,
+    adultContent
+  };
+
+  const resp = await fetch(apiUrl + '/v1/image/generate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await resp.json().catch(() => null);
+
+  if (!resp.ok) {
+    throw new Error(data?.error || `HTTP ${resp.status}`);
+  }
+
+  if (!data?.ok) {
+    throw new Error(data?.error || 'El backend respondió sin ok=true');
+  }
+
+  if (!data.url && !data.imageId) {
+    throw new Error('El backend no devolvió url ni imageId');
+  }
+
+  return data.url || (apiUrl + '/v1/image/serve/' + data.imageId);
+}
+
+function addImageToGallery(url,promptText){
+  if (!url) {
+    throw new Error('URL de imagen inválida');
+  }
+  const resolution = document.getElementById('resolution').value;
+  const [w,h] = resolution.split('x').map(Number);
+  const isPortrait = h > w;
+  const isLandscape = w > h;
+  const card = document.createElement('div');
+  card.className = `img-card ${isPortrait ? 'portrait' : ''} ${isLandscape ? 'landscape' : ''}`;
+  card.dataset.url = url;
+
+  const img = document.createElement('img');
+  img.src = url;
+  img.alt = promptText;
+  img.loading = 'lazy';
+  img.onerror = function(){
+    this.style.display = 'none';
+    card.style.background = 'rgba(239,68,68,.1)';
+    card.style.display = 'flex';
+    card.style.alignItems = 'center';
+    card.style.justifyContent = 'center';
+    card.style.minHeight = '150px';
+    card.innerHTML += '<span style="color:#fca5a5;font-size:12px;padding:20px;text-align:center;">❌ Error al cargar<br><small>La URL detectada no respondió como imagen</small></span>';
+  };
+
+  const tag = document.createElement('div');
+  tag.className = 'img-prompt-tag';
+  tag.textContent = promptText.substring(0,50) + (promptText.length > 50 ? '...' : '');
+
+  const actions = document.createElement('div');
+  actions.className = 'img-actions';
+
+  const dlBtn = document.createElement('button');
+  dlBtn.className = 'btn-dl';
+  dlBtn.textContent = '⬇️ Guardar';
+  dlBtn.onclick = () => downloadImage(url, `arkaios-gen-${Date.now()}.png`);
+
+  const addBtn = document.createElement('button');
+  addBtn.className = 'btn-add';
+  addBtn.textContent = '➕ Plantilla';
+  addBtn.onclick = () => addToTemplateQueue(url);
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'btn-del';
+  delBtn.textContent = '✕';
+  delBtn.onclick = () => { card.remove(); updateCount(); };
+
+  actions.append(dlBtn, addBtn, delBtn);
+  card.append(img, tag, actions);
+  document.getElementById('gallery').appendChild(card);
+  generatedImages.push({ url, prompt: promptText });
+  updateCount();
+}
+
+function updateCount(){
+  const cards = document.querySelectorAll('.img-card').length;
+  document.getElementById('galleryCount').textContent = `${cards} imagen${cards !== 1 ? 'es' : ''}`;
+}
+
+async function downloadImage(url, filename){
+  try {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  } catch {
+    window.open(url, '_blank');
+  }
+}
+
+function addToTemplateQueue(url){
+  if (templateQueue.includes(url)) {
+    showToast('⚠️ Esta imagen ya está en la cola');
+    return;
+  }
+  templateQueue.push(url);
+  showToast(`✅ Imagen añadida a la cola (${templateQueue.length})`);
+}
+
+function sendToTemplate(){
+  const cards = document.querySelectorAll('.img-card');
+  const urls = [];
+  cards.forEach(c => { if (c.dataset.url) urls.push(c.dataset.url); });
+  if (urls.length === 0) {
+    showToast('⚠️ No hay imágenes en la galería');
+    return;
+  }
+  const count = urls.length;
+  let grid = '2x2';
+  if (count <= 2) grid = '1x2';
+  else if (count <= 4) grid = '2x2';
+  else if (count <= 9) grid = '3x3';
+  else if (count <= 16) grid = '4x4';
+  else grid = '5x5';
+  const imageParam = encodeURIComponent(urls.join('|'));
+  const prompt = document.getElementById('prompt').value.trim();
+  const templateUrl = `plantilla-imagenes-v2.html?agent=1&grid=${grid}&images=${imageParam}&topic=${encodeURIComponent(prompt + ' (IA Generated)')}`;
+  window.open(templateUrl, '_blank');
+  showToast(`🚀 Abriendo plantilla con ${count} imágenes en ${grid}`);
+}
+
+function clearGallery(){
+  if (confirm('¿Limpiar toda la galería?')) {
+    document.getElementById('gallery').innerHTML = '<div class="empty-state" id="emptyState" style="grid-column:1/-1;"><div class="icon">🎨</div><p>Las imágenes generadas aparecerán aquí</p><p style="font-size:12px;margin-top:8px;color:#475569;">Escribe un prompt y presiona Generar</p></div>';
+    generatedImages = [];
+    templateQueue = [];
+    updateCount();
+    document.getElementById('progressBar').style.display = 'none';
+    document.getElementById('statusText').textContent = '';
+    document.getElementById('importUrls').value = '';
+    clearDetectedPreview();
+    showHelperPanel(false);
+  }
+}
+
+function addToPrompt(text){
+  const ta = document.getElementById('prompt');
+  ta.value = ta.value ? ta.value + ', ' + text : text;
+  ta.focus();
+}
+
+function showToast(msg){
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => {
+    t.style.animation = 'fadeIn .3s reverse';
+    setTimeout(() => t.remove(), 300);
+  }, 2500);
+}
 </script>
 </body>
 </html>
