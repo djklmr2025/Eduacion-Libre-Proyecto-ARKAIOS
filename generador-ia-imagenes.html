@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARKAIOS · Generador IA de Imágenes</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: Arial, sans-serif; background: linear-gradient(135deg,#0f0c29,#302b63,#24243e); min-height:100vh; color:#fff; }
+
+.header { background: rgba(255,255,255,.05); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,.1); padding: 15px 20px; display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+.header h1 { font-size: 1.4rem; background: linear-gradient(90deg,#a78bfa,#f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.badge { background: linear-gradient(135deg,#f093fb,#f5576c); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; color: #fff; }
+.back-btn { margin-left: auto; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; text-decoration: none; }
+
+.main { display: grid; grid-template-columns: 340px 1fr; gap: 20px; padding: 20px; max-width: 1400px; margin: 0 auto; }
+
+/* Panel izquierdo - controles */
+.panel { background: rgba(255,255,255,.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: 16px; padding: 20px; height: fit-content; }
+.panel h2 { font-size: 1rem; margin-bottom: 15px; color: #a78bfa; }
+
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 12px; color: #a0a0c0; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; letter-spacing: .5px; }
+textarea, select, input[type=range], input[type=number], input[type=text] {
+    width: 100%; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15);
+    border-radius: 8px; color: #fff; padding: 10px; font-size: 13px; resize: vertical;
+}
+textarea { min-height: 90px; }
+select option { background: #302b63; }
+input[type=range] { padding: 4px 0; cursor: pointer; accent-color: #a78bfa; }
+.range-row { display: flex; align-items: center; gap: 10px; }
+.range-val { min-width: 32px; text-align: right; color: #a78bfa; font-weight: bold; }
+
+.nsfw-toggle { display: flex; align-items: center; gap: 10px; background: rgba(245,87,108,.1); border: 1px solid rgba(245,87,108,.3); border-radius: 10px; padding: 10px 14px; }
+.nsfw-toggle label { font-size: 13px; color: #f472b6; font-weight: bold; cursor: pointer; }
+.toggle-sw { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+.toggle-sw input { opacity: 0; width: 0; height: 0; }
+.toggle-sw span { position: absolute; inset: 0; background: rgba(255,255,255,.2); border-radius: 22px; cursor: pointer; transition: .3s; }
+.toggle-sw input:checked + span { background: linear-gradient(90deg,#f093fb,#f5576c); }
+.toggle-sw span::after { content:''; position: absolute; width: 16px; height: 16px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: .3s; }
+.toggle-sw input:checked + span::after { left: 21px; }
+
+.gen-btn { width: 100%; padding: 14px; background: linear-gradient(135deg,#667eea,#764ba2); border: none; border-radius: 12px; color: #fff; font-size: 15px; font-weight: bold; cursor: pointer; transition: all .3s; margin-top: 8px; }
+.gen-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102,126,234,.5); }
+.gen-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+.quick-prompts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.qp { background: rgba(167,139,250,.15); border: 1px solid rgba(167,139,250,.3); color: #c4b5fd; padding: 4px 10px; border-radius: 20px; font-size: 11px; cursor: pointer; transition: all .2s; }
+.qp:hover { background: rgba(167,139,250,.3); }
+
+/* Panel derecho - galería */
+.gallery-panel { display: flex; flex-direction: column; gap: 15px; }
+.gallery-header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.gallery-header h2 { color: #a78bfa; font-size: 1rem; }
+.count-badge { background: rgba(167,139,250,.2); border: 1px solid rgba(167,139,250,.3); color: #c4b5fd; padding: 3px 10px; border-radius: 20px; font-size: 12px; }
+
+.progress-bar { background: rgba(255,255,255,.1); border-radius: 10px; height: 6px; overflow: hidden; display: none; }
+.progress-fill { height: 100%; background: linear-gradient(90deg,#667eea,#a78bfa,#f472b6); border-radius: 10px; transition: width .4s; animation: shimmer 1.5s infinite; }
+@keyframes shimmer { 0%,100%{opacity:1} 50%{opacity:.6} }
+
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.img-card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: 12px; overflow: hidden; transition: all .3s; position: relative; }
+.img-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,.4); border-color: rgba(167,139,250,.4); }
+.img-card img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+.img-card.portrait img { aspect-ratio: 9/16; }
+.img-card.landscape img { aspect-ratio: 16/9; }
+.img-actions { padding: 8px; display: flex; gap: 6px; }
+.img-actions button { flex: 1; padding: 6px; border: none; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: bold; transition: all .2s; }
+.btn-dl { background: rgba(102,126,234,.3); color: #93c5fd; }
+.btn-dl:hover { background: rgba(102,126,234,.6); }
+.btn-add { background: rgba(16,185,129,.3); color: #6ee7b7; }
+.btn-add:hover { background: rgba(16,185,129,.6); }
+.btn-del { background: rgba(239,68,68,.3); color: #fca5a5; }
+.btn-del:hover { background: rgba(239,68,68,.6); }
+.img-prompt-tag { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,.6); color: #e2e8f0; font-size: 10px; padding: 2px 8px; border-radius: 10px; max-width: calc(100% - 12px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Loading skeleton */
+.skeleton { background: rgba(255,255,255,.08); border-radius: 12px; animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:.6} 50%{opacity:1} }
+
+/* Empty state */
+.empty-state { text-align: center; padding: 60px 20px; color: #64748b; }
+.empty-state .icon { font-size: 48px; margin-bottom: 15px; }
+
+/* Toast */
+.toast { position: fixed; bottom: 30px; right: 30px; background: linear-gradient(135deg,#667eea,#764ba2); color: #fff; padding: 12px 22px; border-radius: 10px; font-weight: bold; z-index: 9999; animation: fadeIn .3s ease; box-shadow: 0 5px 20px rgba(0,0,0,.4); }
+@keyframes fadeIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+/* Pantalla de carga con iframe oculto */
+#perchance-frame { display: none; width: 1px; height: 1px; position: fixed; top:-9999px; left:-9999px; border: none; }
+
+@media (max-width: 768px) { .main { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <span style="font-size:2rem">🎨</span>
+    <h1>ARKAIOS · Generador IA de Imágenes</h1>
+    <span class="badge">🔥 NSFW HABILITADO</span>
+    <span class="badge" style="background:linear-gradient(135deg,#667eea,#764ba2);">Perchance AI + FLUX</span>
+    <a href="index.html" class="back-btn">← Volver a ARKAIOS</a>
+</div>
+
+<div class="main">
+
+    <!-- Panel de controles -->
+    <div class="panel">
+        <h2>⚙️ Configuración</h2>
+
+        <div class="form-group">
+            <label>Prompt (describe la imagen)</label>
+            <textarea id="prompt" placeholder="Ej: a beautiful sunset over mountains, dramatic lighting, 8k, ultra detailed..."></textarea>
+            <div class="quick-prompts" id="quickPrompts">
+                <span class="qp" onclick="addToPrompt('ultra detailed')">ultra detailed</span>
+                <span class="qp" onclick="addToPrompt('8k resolution')">8k resolution</span>
+                <span class="qp" onclick="addToPrompt('cinematic lighting')">cinematic lighting</span>
+                <span class="qp" onclick="addToPrompt('hyperrealistic')">hyperrealistic</span>
+                <span class="qp" onclick="addToPrompt('anime style')">anime style</span>
+                <span class="qp" onclick="addToPrompt('oil painting')">oil painting</span>
+                <span class="qp" onclick="addToPrompt('concept art')">concept art</span>
+                <span class="qp" onclick="addToPrompt('photorealistic')">photorealistic</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Prompt Negativo (qué evitar)</label>
+            <textarea id="negPrompt" style="min-height:60px;" placeholder="blurry, bad anatomy, watermark, text, ugly...">blurry, bad anatomy, watermark, text, ugly, deformed, low quality, jpeg artifacts</textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Estilo</label>
+            <select id="style">
+                <option value="">Sin estilo específico</option>
+                <option value="photorealistic">📷 Fotorealista</option>
+                <option value="anime">🎌 Anime / Manga</option>
+                <option value="digital-art">🖥️ Arte Digital</option>
+                <option value="oil-painting">🎨 Pintura al Óleo</option>
+                <option value="watercolor">💧 Acuarela</option>
+                <option value="sketch">✏️ Boceto</option>
+                <option value="3d-render">🎲 Render 3D</option>
+                <option value="pixel-art">👾 Pixel Art</option>
+                <option value="fantasy">🧙 Fantasía</option>
+                <option value="sci-fi">🚀 Sci-Fi</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Resolución / Orientación</label>
+            <select id="resolution">
+                <option value="512x512">512×512 — Cuadrado</option>
+                <option value="512x768">512×768 — Retrato (vertical)</option>
+                <option value="768x512">768×512 — Paisaje (horizontal)</option>
+                <option value="768x768" selected>768×768 — Cuadrado HD</option>
+                <option value="1024x576">1024×576 — Widescreen</option>
+                <option value="576x1024">576×1024 — Móvil/Story</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Guidance Scale — <span style="color:#a78bfa">Qué tan literal</span></label>
+            <div class="range-row">
+                <input type="range" id="guidance" min="1" max="20" step="0.5" value="7" oninput="document.getElementById('guidanceVal').textContent=this.value">
+                <span class="range-val" id="guidanceVal">7</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Cantidad a generar</label>
+            <div class="range-row">
+                <input type="range" id="count" min="1" max="12" step="1" value="4" oninput="document.getElementById('countVal').textContent=this.value">
+                <span class="range-val" id="countVal">4</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="nsfw-toggle">
+                <label class="toggle-sw">
+                    <input type="checkbox" id="nsfwToggle">
+                    <span></span>
+                </label>
+                <label for="nsfwToggle">🔞 Contenido Adulto (NSFW)</label>
+            </div>
+        </div>
+
+        <button class="gen-btn" id="genBtn" onclick="generateImages()">
+            🚀 Generar Imágenes
+        </button>
+
+        <div id="progressBar" class="progress-bar" style="margin-top:12px;">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+        <p id="statusText" style="text-align:center;font-size:12px;color:#a0a0c0;margin-top:8px;"></p>
+
+        <hr style="border-color:rgba(255,255,255,.1);margin:15px 0;">
+
+        <div class="form-group">
+            <label>📋 Enviar galería a Plantilla</label>
+            <button onclick="sendToTemplate()" style="width:100%;padding:10px;background:linear-gradient(135deg,#10b981,#059669);border:none;border-radius:10px;color:#fff;font-weight:bold;cursor:pointer;font-size:13px;">
+                📄 Abrir en Plantilla ARKAIOS
+            </button>
+        </div>
+    </div>
+
+    <!-- Galería -->
+    <div class="gallery-panel">
+        <div class="gallery-header">
+            <h2>🖼️ Galería Generada</h2>
+            <span class="count-badge" id="galleryCount">0 imágenes</span>
+            <button onclick="clearGallery()" style="background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.3);color:#fca5a5;padding:5px 12px;border-radius:8px;cursor:pointer;font-size:12px;margin-left:auto;">🗑️ Limpiar</button>
+        </div>
+
+        <div class="gallery" id="gallery">
+            <div class="empty-state" id="emptyState" style="grid-column:1/-1;">
+                <div class="icon">🎨</div>
+                <p>Las imágenes generadas aparecerán aquí</p>
+                <p style="font-size:12px;margin-top:8px;color:#475569;">Escribe un prompt y presiona Generar</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- iframe oculto para cargar Perchance (obtener userKey) -->
+<iframe id="perchance-frame" src="https://perchance.org/ai-text-to-image-generator" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+
+<script>
+// ============================================================
+// ARKAIOS Image Gen — Perchance AI Integration
+// Usa la API interna de Perchance (misma que usa su web)
+// Endpoint: https://image-generation.perchance.org/api/generate
+// ============================================================
+
+let generatedImages = [];
+let userKey = null;
+let isGenerating = false;
+
+// Obtener userKey de Perchance (necesario para llamar su API)
+async function getPerchanceKey() {
+    try {
+        const resp = await fetch('https://image-generation.perchance.org/api/verifyUser?channel=ai-text-to-image-generator&promptBase64=&__cacheBust=' + Date.now());
+        if (!resp.ok) throw new Error('No se pudo verificar');
+        const data = await resp.json();
+        userKey = data.userKey;
+        return userKey;
+    } catch(e) {
+        console.warn('userKey fetch failed:', e);
+        // Generar un key de respaldo (para pruebas)
+        userKey = Math.random().toString(36).substring(2,15);
+        return userKey;
+    }
+}
+
+// Construir prompt final con estilo
+function buildPrompt() {
+    const base = document.getElementById('prompt').value.trim();
+    const style = document.getElementById('style').value;
+    const styleMap = {
+        'photorealistic': 'photorealistic, photo, real photograph, DSLR',
+        'anime': 'anime style, manga, japanese animation, Studio Ghibli',
+        'digital-art': 'digital art, concept art, artstation',
+        'oil-painting': 'oil painting, canvas, brush strokes, fine art',
+        'watercolor': 'watercolor painting, soft colors, paper texture',
+        'sketch': 'pencil sketch, hand drawn, black and white sketch',
+        '3d-render': '3d render, blender, octane render, CGI',
+        'pixel-art': 'pixel art, 8-bit, retro game style',
+        'fantasy': 'fantasy art, magical, epic, dramatic',
+        'sci-fi': 'sci-fi, futuristic, cyberpunk, neon lights'
+    };
+    return style ? `${base}, ${styleMap[style] || style}` : base;
+}
+
+async function generateImages() {
+    if (isGenerating) return;
+    const prompt = document.getElementById('prompt').value.trim();
+    if (!prompt) { showToast('⚠️ Escribe un prompt primero'); return; }
+
+    isGenerating = true;
+    const btn = document.getElementById('genBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Generando...';
+
+    const count = parseInt(document.getElementById('count').value);
+    const negPrompt = document.getElementById('negPrompt').value.trim();
+    const resolution = document.getElementById('resolution').value;
+    const guidance = parseFloat(document.getElementById('guidance').value);
+    const nsfw = document.getElementById('nsfwToggle').checked;
+    const fullPrompt = buildPrompt();
+
+    // Mostrar barra de progreso
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+    const statusText = document.getElementById('statusText');
+    progressBar.style.display = 'block';
+    progressFill.style.width = '0%';
+
+    // Ocultar estado vacío
+    document.getElementById('emptyState').style.display = 'none';
+
+    // Obtener key si no tenemos
+    if (!userKey) {
+        statusText.textContent = '🔑 Obteniendo acceso a Perchance...';
+        await getPerchanceKey();
+    }
+
+    // Generar imágenes una por una
+    let generated = 0;
+    const errors = [];
+
+    for (let i = 0; i < count; i++) {
+        statusText.textContent = `🎨 Generando imagen ${i+1} de ${count}...`;
+
+        // Mostrar skeleton mientras carga
+        const skeletonId = `sk-${Date.now()}-${i}`;
+        const skeleton = document.createElement('div');
+        skeleton.id = skeletonId;
+        skeleton.className = 'skeleton';
+        skeleton.style.cssText = 'height:220px;border-radius:12px;';
+        document.getElementById('gallery').appendChild(skeleton);
+
+        try {
+            const imageUrl = await generateSingleImage({
+                prompt: fullPrompt,
+                negativePrompt: nsfw ? negPrompt.replace(/nude|naked|nsfw/gi,'') : negPrompt + ', nude, naked, nsfw, explicit',
+                resolution,
+                guidanceScale: guidance,
+                seed: Math.floor(Math.random() * 2147483647),
+                adultContent: nsfw ? '1' : '0',
+                channel: 'ai-text-to-image-generator'
+            });
+
+            // Reemplazar skeleton con imagen real
+            skeleton.remove();
+            addImageToGallery(imageUrl, prompt);
+            generated++;
+
+        } catch(e) {
+            skeleton.remove();
+            errors.push(e.message);
+            console.error('Gen error:', e);
+        }
+
+        progressFill.style.width = ((i+1)/count*100) + '%';
+    }
+
+    statusText.textContent = generated > 0
+        ? `✅ ${generated} imagen${generated>1?'s':''} generada${generated>1?'s':''}${errors.length > 0 ? ` (${errors.length} fallaron)` : ''}`
+        : `❌ Error al generar. Intenta de nuevo.`;
+
+    btn.disabled = false;
+    btn.textContent = '🚀 Generar Imágenes';
+    isGenerating = false;
+
+    if (generated > 0) showToast(`🎨 ${generated} imagen${generated>1?'s':''} lista${generated>1?'s':''}!`);
+    else if (errors.length > 0) {
+        // Si falla la API directa, abrir Perchance en ventana nueva con el prompt listo
+        statusText.textContent = '🌐 Redirigiendo a Perchance con tu prompt...';
+        setTimeout(() => {
+            window.open(`https://perchance.org/ai-text-to-image-generator#prompt=${encodeURIComponent(fullPrompt)}`, '_blank');
+        }, 1000);
+    }
+}
+
+async function generateSingleImage(params) {
+    // Método 1: API directa de Perchance
+    const formData = new URLSearchParams();
+    formData.append('prompt', params.prompt);
+    formData.append('negativePrompt', params.negativePrompt);
+    formData.append('resolution', params.resolution);
+    formData.append('guidanceScale', params.guidanceScale);
+    formData.append('seed', params.seed);
+    formData.append('channel', params.channel);
+    formData.append('userKey', userKey || '');
+    formData.append('adultContent', params.adultContent);
+    formData.append('__cacheBust', Date.now());
+
+    const resp = await fetch('https://image-generation.perchance.org/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData.toString()
+    });
+
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+    const data = await resp.json();
+    if (data.status === 'error') throw new Error(data.message || 'Error de generación');
+
+    // Construir URL de la imagen generada
+    const imageUrl = `https://image-generation.perchance.org/api/downloadTemporaryImage?imageId=${data.imageId}`;
+    return imageUrl;
+}
+
+function addImageToGallery(url, promptText) {
+    const resolution = document.getElementById('resolution').value;
+    const [w,h] = resolution.split('x').map(Number);
+    const isPortrait = h > w;
+    const isLandscape = w > h;
+
+    const card = document.createElement('div');
+    card.className = `img-card ${isPortrait?'portrait':''} ${isLandscape?'landscape':''}`;
+    card.dataset.url = url;
+
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = promptText;
+    img.loading = 'lazy';
+    img.onerror = function() {
+        // Fallback: mostrar error visual
+        this.style.display='none';
+        card.style.background='rgba(239,68,68,.1)';
+        card.style.display='flex';
+        card.style.alignItems='center';
+        card.style.justifyContent='center';
+        card.style.minHeight='150px';
+        card.innerHTML += '<span style="color:#fca5a5;font-size:12px;padding:20px;text-align:center;">❌ Error al cargar<br><small>API temporal no disponible</small></span>';
+    };
+
+    const tag = document.createElement('div');
+    tag.className = 'img-prompt-tag';
+    tag.textContent = promptText.substring(0,50) + (promptText.length>50?'...':'');
+
+    const actions = document.createElement('div');
+    actions.className = 'img-actions';
+
+    const dlBtn = document.createElement('button');
+    dlBtn.className = 'btn-dl';
+    dlBtn.textContent = '⬇️ Guardar';
+    dlBtn.onclick = () => downloadImage(url, `arkaios-gen-${Date.now()}.png`);
+
+    const addBtn = document.createElement('button');
+    addBtn.className = 'btn-add';
+    addBtn.textContent = '➕ Plantilla';
+    addBtn.onclick = () => addToTemplateQueue(url);
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn-del';
+    delBtn.textContent = '✕';
+    delBtn.onclick = () => { card.remove(); updateCount(); };
+
+    actions.append(dlBtn, addBtn, delBtn);
+    card.append(img, tag, actions);
+    document.getElementById('gallery').appendChild(card);
+
+    generatedImages.push({ url, prompt: promptText });
+    updateCount();
+}
+
+function updateCount() {
+    const cards = document.querySelectorAll('.img-card').length;
+    document.getElementById('galleryCount').textContent = `${cards} imagen${cards!==1?'es':''}`;
+}
+
+async function downloadImage(url, filename) {
+    try {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    } catch(e) {
+        window.open(url, '_blank');
+    }
+}
+
+// Cola de imágenes para enviar a la plantilla
+let templateQueue = [];
+function addToTemplateQueue(url) {
+    if (templateQueue.includes(url)) {
+        showToast('⚠️ Esta imagen ya está en la cola');
+        return;
+    }
+    templateQueue.push(url);
+    showToast(`✅ Imagen añadida a la cola (${templateQueue.length})`);
+}
+
+function sendToTemplate() {
+    const cards = document.querySelectorAll('.img-card');
+    const urls = [];
+    cards.forEach(c => { if(c.dataset.url) urls.push(c.dataset.url); });
+
+    if (urls.length === 0) { showToast('⚠️ No hay imágenes en la galería'); return; }
+
+    const count = urls.length;
+    let grid = '2x2';
+    if (count <= 2) grid = '1x2';
+    else if (count <= 4) grid = '2x2';
+    else if (count <= 9) grid = '3x3';
+    else if (count <= 16) grid = '4x4';
+    else grid = '5x5';
+
+    const imageParam = encodeURIComponent(urls.join('|'));
+    const prompt = document.getElementById('prompt').value.trim();
+    const templateUrl = `plantilla-imagenes-v2.html?agent=1&grid=${grid}&images=${imageParam}&topic=${encodeURIComponent(prompt + ' (IA Generated)')}`;
+
+    window.open(templateUrl, '_blank');
+    showToast(`🚀 Abriendo plantilla con ${count} imágenes en ${grid}`);
+}
+
+function clearGallery() {
+    if (confirm('¿Limpiar toda la galería?')) {
+        document.getElementById('gallery').innerHTML = '';
+        document.getElementById('gallery').innerHTML = '<div class="empty-state" id="emptyState" style="grid-column:1/-1;"><div class="icon">🎨</div><p>Las imágenes generadas aparecerán aquí</p></div>';
+        generatedImages = [];
+        templateQueue = [];
+        updateCount();
+        document.getElementById('progressBar').style.display = 'none';
+        document.getElementById('statusText').textContent = '';
+    }
+}
+
+function addToPrompt(text) {
+    const ta = document.getElementById('prompt');
+    ta.value = ta.value ? ta.value + ', ' + text : text;
+    ta.focus();
+}
+
+function showToast(msg) {
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.animation='fadeIn .3s reverse'; setTimeout(()=>t.remove(),300); }, 2500);
+}
+
+// Obtener key al cargar
+getPerchanceKey().then(() => {
+    console.log('✅ Perchance key obtenida');
+}).catch(()=>{});
+</script>
+</body>
+</html>

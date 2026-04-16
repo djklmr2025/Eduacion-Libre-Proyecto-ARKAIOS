@@ -365,15 +365,18 @@
         <div class="controls-row">
             <div class="control-group">
                 <label for="gridSize">Configuración:</label>
-                <select id="gridSize">
-                    <option value="1x2">1x2 (2 imágenes)</option>
-                    <option value="2x2">2x2 (4 imágenes)</option>
-                    <option value="3x3">3x3 (9 imágenes)</option>
-                    <option value="4x4" selected>4x4 (16 imágenes)</option>
-                    <option value="5x5">5x5 (25 imágenes)</option>
-                    <option value="6x6">6x6 (36 imágenes)</option>
-                    <option value="8x8">8x8 (64 imágenes)</option>
-                </select>
+                <div style="display:flex;gap:6px;align-items:center;">
+                    <select id="gridSize">
+                        <option value="1x2">1x2 (2 imágenes)</option>
+                        <option value="2x2">2x2 (4 imágenes)</option>
+                        <option value="3x3">3x3 (9 imágenes)</option>
+                        <option value="4x4" selected>4x4 (16 imágenes)</option>
+                        <option value="5x5">5x5 (25 imágenes)</option>
+                        <option value="6x6">6x6 (36 imágenes)</option>
+                        <option value="8x8">8x8 (64 imágenes)</option>
+                    </select>
+                    <button id="orientBtn" onclick="toggleOrientation()" title="Cambiar orientación: Vertical ↕ / Horizontal ↔" style="display:none;padding:8px 12px;font-size:16px;background:#764ba2;border:none;border-radius:8px;color:white;cursor:pointer;transition:all .3s;">↕️ Vertical</button>
+                </div>
             </div>
             <div class="control-group">
                 <label for="sortOrder">Ordenar:</label>
@@ -477,8 +480,18 @@
             });
 
             document.getElementById('gridSize').addEventListener('change', (e) => {
-                const [rows, cols] = e.target.value.split('x').map(Number);
+                const val = e.target.value;
+                const [rows, cols] = val.split('x').map(Number);
                 gridConfig = { rows, cols };
+                // Mostrar/ocultar botón de orientación solo en 1x2 o 2x1
+                const btn = document.getElementById('orientBtn');
+                if (val === '1x2' || val === '2x1') {
+                    btn.style.display = 'block';
+                    btn.textContent = gridConfig.rows === 1 ? '↔️ Horizontal' : '↕️ Vertical';
+                    btn.title = gridConfig.rows === 1 ? 'Cambiar a Vertical (2x1)' : 'Cambiar a Horizontal (1x2)';
+                } else {
+                    btn.style.display = 'none';
+                }
                 renderTemplates();
             });
 
@@ -837,6 +850,25 @@
             }
             const cleanTopic = topic || 'Pixabay';
             credit.textContent = `Imágenes de Pixabay (${count}) · Tema: ${cleanTopic}`;
+        }
+
+        function toggleOrientation() {
+            const btn = document.getElementById('orientBtn');
+            if (gridConfig.rows === 1 && gridConfig.cols === 2) {
+                // Cambiar a vertical: 2 filas, 1 col
+                gridConfig = { rows: 2, cols: 1 };
+                btn.textContent = '↕️ Vertical';
+                btn.title = 'Cambiar a Horizontal (1x2)';
+                document.getElementById('gridSize').value = '1x2'; // keep select in sync
+            } else {
+                // Cambiar a horizontal: 1 fila, 2 cols
+                gridConfig = { rows: 1, cols: 2 };
+                btn.textContent = '↔️ Horizontal';
+                btn.title = 'Cambiar a Vertical (2x1)';
+                document.getElementById('gridSize').value = '1x2';
+            }
+            renderTemplates();
+            showToast(gridConfig.rows === 2 ? '↕️ Orientación Vertical (2x1)' : '↔️ Orientación Horizontal (1x2)');
         }
 
         initializeApp();
