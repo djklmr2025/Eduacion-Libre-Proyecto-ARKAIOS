@@ -249,21 +249,20 @@ input[type=range]{flex:1;accent-color:var(--azul);cursor:pointer;height:6px;}
       <button class="abtn bc" onclick="clearGallery()">🗑️ Limpiar</button>
     </div>
 
-    <!-- ZONA PRO — reemplaza NSFW toggle -->
+    <!-- ESTADO DEL MOTOR -->
     <div class="pro-box">
-      <div class="pay-badge">🔐 ARKAIOS PRO</div>
+      <div class="pay-badge">ARKAIOS BRIDGE</div>
       <div class="lock">🔓</div>
-      <h4>Contenido Sin Restricciones</h4>
-      <p>Desbloquea el modo avanzado con acceso a generación sin filtros, mayor resolución y lotes ilimitados.</p>
+      <h4>Generación Activada</h4>
+      <p>El botón genera imágenes usando el puente local de ARKAIOS y el canal educativo configurado.</p>
       <ul>
-        <li>✅ Bypass de filtros de contenido</li>
-        <li>✅ Resolución hasta 1024×1024</li>
-        <li>✅ Hasta 32 imágenes por lote</li>
-        <li>✅ Acceso a todos los canales</li>
-        <li>✅ Guardar en la nube ARKAIOS</li>
+        <li>✅ Endpoint local /api/v1/image/generate</li>
+        <li>✅ Canal xnaxg7ceyj</li>
+        <li>✅ Lotes de hasta 8 imagenes</li>
+        <li>✅ Envio a plantilla PDF</li>
       </ul>
-      <button class="pay-btn" onclick="showPayModal()">
-        ⭐ Activar ARKAIOS Pro
+      <button class="pay-btn" onclick="testBridge(event)">
+        Probar Conexion
       </button>
     </div>
   </div>
@@ -295,48 +294,17 @@ input[type=range]{flex:1;accent-color:var(--azul);cursor:pointer;height:6px;}
   </div>
 </div>
 
-<!-- MODAL CONFIRMACIÓN PAGO PRO -->
-<div class="mbg" id="payModal">
-  <div class="modal">
-    <div class="micon">⭐</div>
-    <h3>Activar ARKAIOS Pro</h3>
-    <p>Serás redirigido al portal de ARKAIOS donde podrás activar tu cuenta Pro para desbloquear la generación de contenido sin restricciones y todas las funciones avanzadas.</p>
-    <div class="mbtns">
-      <a href="https://arkaios2025.base44.app/RepoView?id=69df28917701debb5ce71c79" target="_blank" class="mbtns a mbtn-pay" onclick="closePayModal()" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;text-align:center;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;display:block;">
-        🚀 Ir al Portal Pro
-      </a>
-      <button onclick="closePayModal()" class="mbtn-cancel" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;background:#f9fafb;color:#6b7280;border:1px solid #e5e7eb;">
-        Cancelar
-      </button>
-    </div>
-  </div>
-</div>
-
 <script>
 // ============================================================
-// ARKAIOS Generador IA — Modo Educativo
-// Motor: Perchance FLUX canal xnaxg7ceyj
-// NSFW deshabilitado en modo estudiante — requiere Pro
+// ARKAIOS Generador IA
+// Motor: puente local /api/v1/image/generate
 // ============================================================
 const CHANNEL = 'xnaxg7ceyj';
-const VERIFY  = 'https://image-generation.perchance.org/api/verifyUser';
-const GEN     = 'https://image-generation.perchance.org/api/generate';
-const DL      = 'https://image-generation.perchance.org/api/downloadTemporaryImage';
+const IMAGE_API = '/api/v1/image/generate';
 
-let userKey = null, isGenerating = false;
+let isGenerating = false;
 
-// Obtener key al cargar
 (async function init() {
-  try {
-    const r = await fetch(`${VERIFY}?channel=${CHANNEL}&promptBase64=&__cacheBust=${Date.now()}`);
-    const d = await r.json();
-    userKey = d.userKey;
-    console.log('✅ Perchance key OK — canal:', CHANNEL);
-  } catch(e) {
-    userKey = 'edu_' + Math.random().toString(36).substring(2);
-    console.warn('⚠️ Usando key de respaldo');
-  }
-
   // Parámetros de URL (desde EduAgent)
   const p = new URLSearchParams(location.search);
   if (p.get('prompt')) document.getElementById('prompt').value = decodeURIComponent(p.get('prompt'));
@@ -357,10 +325,7 @@ async function generateImages() {
   const style      = document.getElementById('artStyle').value;
   const count      = parseInt(document.getElementById('count').value);
   const resolution = document.getElementById('resolution').value;
-  // Modo estudiante: NSFW siempre desactivado
-  let neg = document.getElementById('negPrompt').value.trim();
-  neg += ', nude, naked, explicit, nsfw, adult content, sexual, violence, gore';
-  const full = style ? `${prompt}, ${style}` : prompt;
+  const neg = document.getElementById('negPrompt').value.trim();
 
   isGenerating = true;
   const btn = document.getElementById('genBtn');
@@ -376,14 +341,6 @@ async function generateImages() {
     document.getElementById('gallery').appendChild(s);
   }
 
-  if (!userKey) {
-    try {
-      const r = await fetch(`${VERIFY}?channel=${CHANNEL}&promptBase64=&__cacheBust=${Date.now()}`);
-      const d = await r.json();
-      userKey = d.userKey;
-    } catch(e) { userKey = 'fallback'; }
-  }
-
   const results = [];
   for (let i = 0; i < count; i++) {
     document.getElementById('stxt').textContent = `Generando imagen ${i+1} de ${count}...`;
@@ -391,7 +348,7 @@ async function generateImages() {
     document.getElementById('gallery').appendChild(sk);
 
     try {
-      const url = await genOne(full, neg, resolution);
+      const url = await genOne(prompt, style, neg, resolution);
       sk.remove();
       addCard(url, prompt, resolution);
       results.push(url);
@@ -409,8 +366,7 @@ async function generateImages() {
 
   if (ok > 0) toast(`🎉 ${ok} imagen${ok>1?'s':''} generada${ok>1?'s':''}!`);
   else {
-    toast('⚠️ Sin conexión al motor — abriendo Perchance...');
-    setTimeout(() => window.open(`https://perchance.org/${CHANNEL}`, '_blank'), 1200);
+    toast('⚠️ Sin respuesta del motor. Intenta de nuevo.');
   }
 
   btn.disabled = false;
@@ -418,25 +374,30 @@ async function generateImages() {
   isGenerating = false;
 }
 
-async function genOne(prompt, neg, resolution) {
-  const body = new URLSearchParams({
-    prompt, negativePrompt: neg, resolution,
-    guidanceScale: '7',
-    seed: String(Math.floor(Math.random() * 2147483647)),
-    channel: CHANNEL,
-    userKey: userKey || '',
-    adultContent: '0', // siempre 0 en modo estudiante
-    '__cacheBust': String(Date.now())
-  });
-  const r = await fetch(GEN, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: body.toString()
-  });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  const d = await r.json();
-  if (d.status === 'error') throw new Error(d.message || 'Error Perchance');
-  return `${DL}?imageId=${d.imageId}`;
+async function genOne(prompt, style, neg, resolution) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 130000);
+  try {
+    const r = await fetch(IMAGE_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt,
+        style,
+        negativePrompt: neg,
+        resolution,
+        channel: CHANNEL,
+        adultContent: 0
+      }),
+      signal: controller.signal
+    });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const d = await r.json();
+    if (!d.ok || !d.url) throw new Error(d.error || d.details || 'Error del motor');
+    return d.url;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 function makeSk(res) {
@@ -520,11 +481,25 @@ function setExample(text) {
   document.getElementById('emptyState').style.display = 'none';
 }
 
-function showPayModal() { document.getElementById('payModal').classList.add('open'); }
-function closePayModal() { document.getElementById('payModal').classList.remove('open'); }
-document.getElementById('payModal').addEventListener('click', e => {
-  if (e.target.id === 'payModal') closePayModal();
-});
+async function testBridge(e) {
+  const btn = e?.currentTarget;
+  const old = btn ? btn.textContent : '';
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Probando...';
+  }
+  try {
+    await genOne('lapiz escolar sobre una libreta, foto realista', '', 'borroso, mala calidad, texto', '512x512');
+    toast('✅ Puente de imagenes activo');
+  } catch (err) {
+    toast('⚠️ Puente sin respuesta: ' + err.message);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = old;
+    }
+  }
+}
 
 function toast(msg) {
   const t = document.createElement('div');
