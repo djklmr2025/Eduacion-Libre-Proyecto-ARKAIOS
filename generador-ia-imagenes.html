@@ -3,348 +3,534 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARKAIOS BRIDGE · Canal xnaxg7ceyj · Generador Proxy</title>
+<title>ARKAIOS · Generador de Imágenes IA</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter', system-ui, -apple-system, sans-serif;background:linear-gradient(135deg,#0a0a0a,#1a1a1a);min-height:100vh;color:#ededed; overflow-x: hidden;}
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --azul:#2563eb;--azul-claro:#eff6ff;--azul-med:#dbeafe;
+  --morado:#7c3aed;--morado-claro:#f5f3ff;
+  --verde:#059669;--verde-claro:#ecfdf5;
+  --naranja:#d97706;--naranja-claro:#fffbeb;
+  --rojo:#dc2626;--rojo-claro:#fef2f2;
+  --gris:#6b7280;--gris-claro:#f9fafb;--gris-borde:#e5e7eb;
+  --blanco:#ffffff;--texto:#111827;--texto-sec:#4b5563;
+  --sombra:0 4px 16px rgba(0,0,0,.08);
+  --sombra-lg:0 8px 32px rgba(0,0,0,.12);
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris-claro);min-height:100vh;color:var(--texto);}
 
-/* Custom Scrollbar */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: #0a0a0a; }
-::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: #444; }
+/* HEADER EDUCATIVO */
+.hdr{background:var(--blanco);border-bottom:3px solid var(--azul);padding:0 24px;display:flex;align-items:center;gap:14px;height:64px;box-shadow:var(--sombra);position:sticky;top:0;z-index:100;}
+.hdr-logo{display:flex;align-items:center;gap:10px;}
+.hdr-logo span{font-size:1.8rem;}
+.hdr-logo h1{font-size:1.1rem;font-weight:800;color:var(--azul);}
+.hdr-logo small{display:block;font-size:10px;font-weight:500;color:var(--gris);letter-spacing:.4px;}
+.hdr-chips{display:flex;gap:8px;align-items:center;}
+.chip{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px;}
+.chip-azul{background:var(--azul-med);color:var(--azul);}
+.chip-verde{background:var(--verde-claro);color:var(--verde);}
+.back{margin-left:auto;background:var(--gris-claro);border:1px solid var(--gris-borde);color:var(--texto-sec);padding:7px 16px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;text-decoration:none;transition:all .2s;}
+.back:hover{background:var(--azul-med);color:var(--azul);border-color:var(--azul);}
 
-.header{background:rgba(255,255,255,.02);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.05);padding:20px 30px;display:flex;align-items:center;gap:15px;flex-wrap:wrap; sticky top-0 z-50}
-.header h1{font-size:1.6rem; font-weight: 800; letter-spacing: -0.02em; background:linear-gradient(90deg,#ff8a00,#ff2d00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.badge{background:rgba(255,45,0,0.1); border: 1px solid rgba(255,45,0,0.2); padding:4px 12px;border-radius:20px;font-size:11px;font-weight:bold;color:#ff5e3a; text-transform: uppercase; letter-spacing: 0.05em;}
-.bridge-status{background:rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2); color:#818cf8; padding:4px 12px;border-radius:20px;font-size:11px;font-weight:bold; text-transform: uppercase;}
+/* BANNER EDUCATIVO */
+.edu-banner{background:linear-gradient(135deg,var(--azul) 0%,var(--morado) 100%);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.edu-banner p{font-size:13px;font-weight:600;}
+.edu-banner small{font-size:11px;opacity:.85;}
+.edu-banner .icon{font-size:1.6rem;flex-shrink:0;}
 
-.back-btn{margin-left:auto;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;padding:10px 20px;border-radius:12px;cursor:pointer;font-size:13px;text-decoration:none; transition: all 0.2s;}
-.back-btn:hover{background: rgba(255,255,255,.1); transform: translateY(-1px);}
+/* LAYOUT */
+.main{display:grid;grid-template-columns:320px 1fr;gap:20px;padding:20px;max-width:1400px;margin:0 auto;}
+@media(max-width:900px){.main{grid-template-columns:1fr;}}
 
-.main{display:grid;grid-template-columns:380px 1fr;gap:30px;padding:30px;max-width:1600px;margin:0 auto}
-.panel,.helper-panel{background:rgba(255,255,255,.03);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:25px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);}
-.panel h2,.helper-panel h3{font-size:1.1rem;margin-bottom:20px;color:#ff8a00; font-weight: 700; letter-spacing: -0.01em;}
+/* PANEL IZQUIERDO */
+.panel{background:var(--blanco);border:1px solid var(--gris-borde);border-radius:16px;padding:20px;height:fit-content;box-shadow:var(--sombra);position:sticky;top:80px;}
+.sec-title{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--azul);margin-bottom:12px;display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:2px solid var(--azul-med);}
+.fg{margin-bottom:14px;}
+.fg>label{display:block;font-size:11px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
+textarea,select,input[type=text]{width:100%;background:var(--gris-claro);border:1.5px solid var(--gris-borde);border-radius:10px;color:var(--texto);padding:9px 12px;font-size:13px;resize:vertical;transition:border .2s;font-family:inherit;}
+textarea:focus,select:focus{outline:none;border-color:var(--azul);background:var(--blanco);}
+textarea{min-height:80px;}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+.tag{background:var(--azul-med);border:1px solid #bfdbfe;color:var(--azul);padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;}
+.tag:hover{background:var(--azul);color:#fff;}
+.rrow{display:flex;align-items:center;gap:8px;margin-top:4px;}
+input[type=range]{flex:1;accent-color:var(--azul);cursor:pointer;height:6px;}
+.rv{min-width:28px;text-align:right;color:var(--azul);font-weight:800;font-size:14px;}
 
-.form-group{margin-bottom:20px}
-.form-group label{display:block;font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+/* BOTÓN PRINCIPAL */
+.gen-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--azul),var(--morado));border:none;border-radius:12px;color:#fff;font-size:14px;font-weight:800;cursor:pointer;transition:all .3s;margin-top:6px;box-shadow:0 4px 16px rgba(37,99,235,.3);display:flex;align-items:center;justify-content:center;gap:8px;}
+.gen-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,99,235,.4);}
+.gen-btn:disabled{opacity:.55;cursor:not-allowed;transform:none;}
 
-textarea,select,input[type=range],input[type=text]{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;color:#fff;padding:12px 15px;font-size:14px;resize:vertical; transition: all 0.2s;}
-textarea:focus, select:focus, input:focus{outline: none; border-color: #ff8a00; background: rgba(255,255,255,.06);}
+/* BARRA DE PROGRESO */
+.prog{background:var(--gris-borde);border-radius:10px;height:6px;overflow:hidden;display:none;margin-top:10px;}
+.pf{height:100%;background:linear-gradient(90deg,var(--azul),var(--morado));border-radius:10px;transition:width .4s;}
+.st{text-align:center;font-size:11px;color:var(--gris);margin-top:5px;min-height:15px;}
 
-textarea{min-height:110px} 
-select option{background:#111} 
-input[type=range]{padding:4px 0;cursor:pointer;accent-color:#ff8a00}
+/* ACCIONES */
+.arow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.abtn{padding:9px;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;border:1.5px solid;}
+.abtn:hover{transform:translateY(-1px);}
+.bt{background:var(--verde-claro);color:var(--verde);border-color:#a7f3d0;}
+.bc{background:var(--rojo-claro);color:var(--rojo);border-color:#fecaca;}
 
-.range-row{display:flex;align-items:center;gap:15px}.range-val{min-width:40px;text-align:right;color:#ff8a00;font-family: monospace; font-size: 16px; font-weight:bold}
+/* CAJA PRO/PAGO — reemplaza NSFW */
+.pro-box{background:linear-gradient(135deg,#1e1b4b,#312e81);border-radius:14px;padding:16px;margin-top:14px;text-align:center;position:relative;overflow:hidden;}
+.pro-box::before{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:rgba(255,255,255,.06);border-radius:50%;}
+.pro-box::after{content:'';position:absolute;bottom:-15px;left:-15px;width:60px;height:60px;background:rgba(255,255,255,.04);border-radius:50%;}
+.pro-box .lock{font-size:2rem;margin-bottom:8px;}
+.pro-box h4{font-size:.9rem;font-weight:800;color:#fff;margin-bottom:4px;}
+.pro-box p{font-size:11px;color:rgba(255,255,255,.65);line-height:1.5;margin-bottom:12px;}
+.pro-box ul{text-align:left;margin:8px 0 12px;padding-left:4px;}
+.pro-box ul li{font-size:11px;color:rgba(255,255,255,.75);margin-bottom:4px;list-style:none;display:flex;align-items:center;gap:5px;}
+.pay-btn{display:block;width:100%;padding:11px;background:linear-gradient(135deg,#f59e0b,#d97706);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:800;cursor:pointer;transition:all .3s;text-decoration:none;box-shadow:0 4px 12px rgba(245,158,11,.35);position:relative;z-index:1;}
+.pay-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(245,158,11,.5);}
+.pay-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;margin-bottom:10px;font-weight:700;letter-spacing:.5px;}
 
-.nsfw-toggle{display:flex;align-items:center;gap:15px;background:rgba(255,45,0,.05);border:1px solid rgba(255,45,0,.15);border-radius:14px;padding:15px}
-.nsfw-toggle label{font-size:14px;color:#ff5e3a;font-weight:bold;cursor:pointer; margin: 0;}
+/* GALERÍA */
+.galpanel{display:flex;flex-direction:column;gap:16px;}
+.ghdr{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--blanco);padding:14px 18px;border-radius:14px;border:1px solid var(--gris-borde);box-shadow:var(--sombra);}
+.ghdr h2{color:var(--texto);font-size:.95rem;font-weight:800;}
+.cnt{background:var(--azul-med);border:1px solid #bfdbfe;color:var(--azul);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;}
+.motor-info{margin-left:auto;font-size:10px;color:var(--gris);display:flex;align-items:center;gap:5px;}
+.motor-dot{width:8px;height:8px;border-radius:50%;background:var(--verde);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;}
+.card{background:var(--blanco);border:1.5px solid var(--gris-borde);border-radius:14px;overflow:hidden;transition:all .3s;position:relative;box-shadow:var(--sombra);}
+.card:hover{transform:translateY(-4px);box-shadow:var(--sombra-lg);border-color:#bfdbfe;}
+.card img{width:100%;display:block;object-fit:cover;}
+.card.sq img{aspect-ratio:1;}.card.pt img{aspect-ratio:9/16;}.card.ls img{aspect-ratio:16/9;}
+.cacts{padding:8px;display:flex;gap:5px;border-top:1px solid var(--gris-borde);}
+.cacts button{flex:1;padding:6px;border:none;border-radius:7px;font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;}
+.cacts button:hover{transform:translateY(-1px);}
+.cdl{background:var(--azul-med);color:var(--azul);}
+.cadd{background:var(--verde-claro);color:var(--verde);}
+.cdel{background:var(--rojo-claro);color:var(--rojo);}
+.ptag{position:absolute;top:6px;left:6px;background:rgba(0,0,0,.6);color:#fff;font-size:9px;padding:3px 8px;border-radius:8px;max-width:calc(100% - 12px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;backdrop-filter:blur(4px);}
+.sk{background:linear-gradient(90deg,#f3f4f6 25%,#e5e7eb 50%,#f3f4f6 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:14px;}
+.sk.sq{aspect-ratio:1;}.sk.pt{aspect-ratio:9/16;}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+.empty{text-align:center;padding:60px 20px;color:var(--gris);grid-column:1/-1;background:var(--blanco);border-radius:14px;border:2px dashed var(--gris-borde);}
+.empty .icon{font-size:3rem;margin-bottom:12px;}
 
-.toggle-sw{position:relative;width:44px;height:24px;flex-shrink:0}.toggle-sw input{opacity:0;width:0;height:0}
-.toggle-sw span{position:absolute;inset:0;background:rgba(255,255,255,.1);border-radius:24px;cursor:pointer;transition:.3s}
-.toggle-sw input:checked+span{background:#ff2d00}
-.toggle-sw span::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:.3s}
-.toggle-sw input:checked+span::after{left:23px}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--texto);color:#fff;padding:11px 20px;border-radius:12px;font-weight:700;z-index:9999;font-size:12px;box-shadow:var(--sombra-lg);animation:tin .3s ease;}
+@keyframes tin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-.gen-btn,.helper-btn{width:100%;padding:16px;background:linear-gradient(135deg,#ff8a00,#ff2d00); border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:800;cursor:pointer;transition:all .3s;margin-top:10px; box-shadow: 0 10px 20px rgba(255,45,0,0.2);}
-.helper-btn{padding:12px;font-size:13px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); margin-top: 0;}
-.gen-btn:hover{transform:translateY(-2px); filter: brightness(1.1); box-shadow: 0 15px 30px rgba(255,45,0,0.3);}
-.gen-btn:active{transform:translateY(0);}
-.gen-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-
-.quick-prompts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.qp{background:rgba(255,138,0,.1);border:1px solid rgba(255,138,0,.2);color:#ffb366;padding:6px 12px;border-radius:20px;font-size:11px;cursor:pointer;transition:all .2s}.qp:hover{background:rgba(255,138,0,0.2); transform: scale(1.05);}
-
-.gallery-panel{display:flex;flex-direction:column;gap:20px}.gallery-header{display:flex;align-items:center;gap:15px;flex-wrap:wrap}.gallery-header h2{color:#ff8a00;font-size:1.2rem; font-weight: 800;}
-.count-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,0.6);padding:4px 12px;border-radius:20px;font-size:12px; font-weight: 600;}
-
-.progress-bar{background:rgba(255,255,255,.05);border-radius:10px;height:8px;overflow:hidden;display:none; margin: 15px 0;}.progress-fill{height:100%;background:linear-gradient(90deg,#ff8a00,#ff2d00);border-radius:10px;transition:width .4s;}
-
-.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
-.img-card{background:#111;border:1px solid rgba(255,255,255,.05);border-radius:20px;overflow:hidden;transition:all .4s;position:relative}
-.img-card:hover{transform:translateY(-8px);box-shadow:0 30px 60px rgba(0,0,0,0.6);border-color:rgba(255,138,0,.4)}
-.img-card img{width:100%;aspect-ratio:1;object-fit:cover;display:block; transition: transform 0.6s;}
-.img-card:hover img{transform: scale(1.05);}
-.img-card.portrait img{aspect-ratio:9/16}.img-card.landscape img{aspect-ratio:16/9}
-
-.img-actions{padding:12px;display:flex;gap:10px; background: #111; border-top: 1px solid rgba(255,255,255,.05);}
-.img-actions button{flex:1;padding:8px;border:none;border-radius:10px;font-size:12px;cursor:pointer;font-weight:700;transition:all .2s; height: 36px; display: flex; align-items: center; justify-content: center;}
-.btn-dl{background:rgba(255,255,255,.05);color:#fff}.btn-dl:hover{background:rgba(255,255,255,.1)}
-.btn-del{background:rgba(255,45,0,.15);color:#ff5e3a; max-width: 40px;}.btn-del:hover{background:rgba(255,45,0,.3)}
-
-.img-prompt-tag{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.7);backdrop-filter: blur(10px); color:#fff;font-size:10px;padding:4px 10px;border-radius:10px;max-width:calc(100% - 20px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; border: 1px solid rgba(255,255,255,0.1); z-index: 10;}
-.fallback-tag{position:absolute; bottom: 60px; right: 10px; background: #6366f1; color: #fff; font-size: 8px; font-weight: 900; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; z-index: 10;}
-
-.skeleton{background:linear-gradient(90deg, #111 25%, #1a1a1a 50%, #111 75%); background-size: 200% 100%; animation: shimmerLoad 1.5s infinite; border-radius: 20px;}
-@keyframes shimmerLoad { from { background-position: 200% 0; } to { background-position: -200% 0; } }
-
-.empty-state{text-align:center;padding:100px 20px;color:rgba(255,255,255,0.2)}.empty-state .icon{font-size:64px;margin-bottom:20px; opacity: 0.5;}
-
-.toast{position:fixed;bottom:30px;right:30px;background:#ff8a00;color:#fff;padding:15px 25px;border-radius:16px;font-weight:bold;z-index:9999;animation:toastIn .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);box-shadow: 0 20px 40px rgba(255,138,0,0.3);}
-@keyframes toastIn{from{opacity:0;transform:translateY(50px) scale(0.9)}to{opacity:1;transform:translateY(0) scale(1)}}
-
-.helper-panel{display:none}
-.proxy-config{margin-top:20px;padding:20px;border:1px solid rgba(99,102,241,.2);border-radius:18px;background:rgba(99,102,241,.03)}
-.proxy-config label{color:#818cf8}
-
-@media (max-width:1024px){.main{grid-template-columns:1fr}}
+/* MODAL CONFIRMACIÓN SALIDA */
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:center;justify-content:center;}
+.mbg.open{display:flex;}
+.modal{background:#fff;border-radius:18px;padding:28px;width:min(420px,93vw);text-align:center;}
+.modal .micon{font-size:2.5rem;margin-bottom:12px;}
+.modal h3{font-size:1.1rem;font-weight:800;color:var(--texto);margin-bottom:8px;}
+.modal p{font-size:13px;color:var(--texto-sec);line-height:1.6;margin-bottom:18px;}
+.mbtns{display:flex;gap:10px;}
+.mbtns a{flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;text-align:center;transition:all .2s;}
+.mbtn-pay{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;box-shadow:0 4px 12px rgba(245,158,11,.3);}
+.mbtn-cancel{background:var(--gris-claro);color:var(--gris);border:1px solid var(--gris-borde);}
 </style>
 </head>
 <body>
-<div class="header">
-  <span style="font-size:2.4rem">🧡</span>
-  <h1>ARKAIOS BRIDGE</h1>
-  <span class="bridge-status">● CANAL: xnaxg7ceyj</span>
-  <span class="badge">🔥 NSFW UNLOCKED</span>
-  <a href="/" class="back-btn">Regresar al Generador Principal</a>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-logo">
+    <span>🎨</span>
+    <div>
+      <h1>Generador de Imágenes IA</h1>
+      <small>ARKAIOS Sistema Educativo — Motor Perchance FLUX</small>
+    </div>
+  </div>
+  <div class="hdr-chips">
+    <span class="chip chip-azul">🔵 Canal: xnaxg7ceyj</span>
+    <span class="chip chip-verde">✅ Modo Estudiante</span>
+  </div>
+  <a href="index.html" class="back">← Volver a ARKAIOS</a>
 </div>
+
+<!-- BANNER -->
+<div class="edu-banner">
+  <span class="icon">📚</span>
+  <div>
+    <p>Generador educativo de imágenes con Inteligencia Artificial</p>
+    <small>Escribe una descripción en español o inglés y genera imágenes para tus proyectos escolares, presentaciones y materiales educativos.</small>
+  </div>
+</div>
+
 <div class="main">
+
+  <!-- PANEL IZQUIERDO -->
   <div class="panel">
-    <h2>⚙️ Orquestador de Señal</h2>
-    <div class="form-group">
-      <label>Prompt Creativo (Arkaios Engine)</label>
-      <textarea id="prompt" placeholder="Escribe tu prompt artístico aquí..."></textarea>
-      <div class="quick-prompts" id="quickPrompts">
-        <span class="qp" onclick="addToPrompt('ultra-detailed oil painting')">Oil Painting</span>
-        <span class="qp" onclick="addToPrompt('cinematic WLOP lighting')">WLOP Style</span>
-        <span class="qp" onclick="addToPrompt('8k hyper-realistic')">8K Ultra</span>
-        <span class="qp" onclick="addToPrompt('ethereal brushwork')">Ethereal</span>
+    <div class="sec-title">✏️ Configurar Imagen</div>
+
+    <div class="fg">
+      <label>Descripción de la imagen</label>
+      <textarea id="prompt" placeholder="Ej: volcán en erupción durante el atardecer, fotografía realista, cielo dramático..."></textarea>
+      <div class="tags">
+        <span class="tag" onclick="ap('fotografía realista')">Foto real</span>
+        <span class="tag" onclick="ap('ilustración digital')">Ilustración</span>
+        <span class="tag" onclick="ap('dibujo animado')">Dibujo animado</span>
+        <span class="tag" onclick="ap('acuarela')">Acuarela</span>
+        <span class="tag" onclick="ap('ultra detallado')">Ultra detalle</span>
+        <span class="tag" onclick="ap('fondo blanco')">Fondo blanco</span>
+        <span class="tag" onclick="ap('estilo anime')">Anime</span>
+        <span class="tag" onclick="ap('infografía educativa')">Infografía</span>
       </div>
     </div>
 
-    <div class="form-group">
-      <div class="flex items-center justify-between mb-2">
-        <label>Escudo Anatómico (Grok Fix)</label>
-        <button onclick="fixAnatomy()" id="grokBtn" style="background:none; border:none; color:#818cf8; font-size:10px; font-weight:700; cursor:pointer; text-transform:uppercase; letter-spacing:1px; margin-left: auto; display: block;">⚡ Optimizar con Grok</button>
-      </div>
-      <textarea id="negPrompt" style="min-height:70px; font-size:11px; color:rgba(255,255,255,0.5);" placeholder="Parámetros de exclusión anatómica...">mutated hands, extra limbs, missing nipples, distorted anatomy, low quality</textarea>
-    </div>
-
-    <div class="form-group">
-      <label>Resolución de Canal</label>
-      <select id="resolution">
-        <option value="512x512">512×512 — Cuadrado</option>
-        <option value="512x768">512×768 — Retrato</option>
-        <option value="768x512">768×512 — Paisaje</option>
-        <option value="768x768" selected>768×768 — Cuadrado Bridge HD</option>
-        <option value="1024x1024">1024×1024 — Ultra Channel</option>
+    <div class="fg">
+      <label>Estilo de Arte</label>
+      <select id="artStyle">
+        <option value="">— Sin estilo adicional —</option>
+        <optgroup label="📚 Educativo / Escolar">
+          <option value="educational illustration, textbook style, clean">Ilustración de libro</option>
+          <option value="infographic, flat design, educational, colorful">Infografía</option>
+          <option value="scientific diagram, labeled, clean background">Diagrama científico</option>
+          <option value="children's book illustration, friendly, colorful">Libro infantil</option>
+          <option value="hand drawn, sketch, educational">Boceto educativo</option>
+        </optgroup>
+        <optgroup label="📷 Fotografía">
+          <option value="photorealistic, DSLR, 8k, sharp">Fotorealista</option>
+          <option value="nature photography, wildlife, detailed">Fotografía de naturaleza</option>
+          <option value="aerial photography, bird's eye view">Vista aérea / drone</option>
+          <option value="macro photography, extreme detail">Macro (primer plano)</option>
+        </optgroup>
+        <optgroup label="🎨 Arte / Ilustración">
+          <option value="watercolor painting, soft colors, artistic">Acuarela</option>
+          <option value="oil painting, classical, museum quality">Pintura al óleo</option>
+          <option value="digital art, concept art, vibrant">Arte digital</option>
+          <option value="pixel art, 8-bit, retro">Pixel Art</option>
+          <option value="3d render, CGI, realistic materials">Render 3D</option>
+          <option value="cartoon, animated, friendly">Caricatura</option>
+          <option value="anime style, manga, Studio Ghibli">Anime / Ghibli</option>
+          <option value="flat vector illustration, minimal, clean">Vector Flat</option>
+        </optgroup>
+        <optgroup label="🌎 Temática">
+          <option value="fantasy art, magical, epic landscape">Fantasía épica</option>
+          <option value="sci-fi, futuristic, space">Ciencia ficción</option>
+          <option value="historical, vintage, period accurate">Histórico</option>
+          <option value="architecture, building, modern design">Arquitectura</option>
+        </optgroup>
       </select>
     </div>
 
-    <div class="form-group">
-      <label>Ráfaga de Generación</label>
-      <div class="range-row">
-        <input type="range" id="count" min="1" max="8" step="1" value="4" oninput="document.getElementById('countVal').textContent=this.value">
-        <span class="range-val" id="countVal">4</span>
+    <div class="fg">
+      <label>🚫 Qué evitar en la imagen</label>
+      <textarea id="negPrompt" style="min-height:52px;font-size:12px;">borroso, mala calidad, deformado, texto, marca de agua, anatomía incorrecta</textarea>
+    </div>
+
+    <div class="fg">
+      <label>📐 Tamaño / Forma</label>
+      <select id="resolution">
+        <option value="768x768" selected>Cuadrado (768×768) — ideal para la mayoría</option>
+        <option value="512x768">Vertical / Retrato (512×768)</option>
+        <option value="768x512">Horizontal / Paisaje (768×512)</option>
+        <option value="512x512">Pequeño cuadrado (512×512)</option>
+        <option value="576x1024">Story / Pantalla celular (576×1024)</option>
+      </select>
+    </div>
+
+    <div class="fg">
+      <label>🔢 Cantidad de imágenes a generar</label>
+      <div class="rrow">
+        <input type="range" id="count" min="1" max="8" step="1" value="4" oninput="document.getElementById('cv').textContent=this.value">
+        <span class="rv" id="cv">4</span>
       </div>
     </div>
 
-    <div class="form-group">
-      <div class="nsfw-toggle">
-        <label class="toggle-sw"><input type="checkbox" id="nsfwToggle" checked><span></span></label>
-        <label for="nsfwToggle">🔞 Bypass NSFW Bridge</label>
-      </div>
+    <button class="gen-btn" id="genBtn" onclick="generateImages()">
+      ✨ Generar Imágenes
+    </button>
+    <div class="prog" id="progBar"><div class="pf" id="progFill" style="width:0%"></div></div>
+    <p class="st" id="stxt"></p>
+
+    <div class="arow" style="margin-top:10px;">
+      <button class="abtn bt" onclick="sendToTemplate()">📄 → Plantilla PDF</button>
+      <button class="abtn bc" onclick="clearGallery()">🗑️ Limpiar</button>
     </div>
 
-    <div class="proxy-config">
-       <label style="font-size: 10px; font-weight: 800; text-transform: uppercase;">Connection Endpoint</label>
-       <input type="text" id="apiUrl" style="margin-top: 8px; border-color: rgba(99,102,241, 0.3); font-family: monospace; font-size: 11px;" placeholder="Cargando señal del servidor...">
+    <!-- ZONA PRO — reemplaza NSFW toggle -->
+    <div class="pro-box">
+      <div class="pay-badge">🔐 ARKAIOS PRO</div>
+      <div class="lock">🔓</div>
+      <h4>Contenido Sin Restricciones</h4>
+      <p>Desbloquea el modo avanzado con acceso a generación sin filtros, mayor resolución y lotes ilimitados.</p>
+      <ul>
+        <li>✅ Bypass de filtros de contenido</li>
+        <li>✅ Resolución hasta 1024×1024</li>
+        <li>✅ Hasta 32 imágenes por lote</li>
+        <li>✅ Acceso a todos los canales</li>
+        <li>✅ Guardar en la nube ARKAIOS</li>
+      </ul>
+      <button class="pay-btn" onclick="showPayModal()">
+        ⭐ Activar ARKAIOS Pro
+      </button>
     </div>
-
-    <button class="gen-btn" id="genBtn" onclick="generateBatch()">🚀 DISPARAR GENERACIÓN</button>
-    <div id="progressBar" class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-    <p id="statusText" style="text-align:center;font-size:11px;color:rgba(255,255,255,0.3);margin-top:10px;"></p>
   </div>
 
-  <div class="gallery-panel">
-    <div class="gallery-header">
-      <h2>🖼️ Flujo de Imágenes Arkaios</h2>
-      <span class="count-badge" id="galleryCount">0 capturas</span>
-      <button onclick="clearGallery()" style="margin-left:auto; background:none; border:none; color:rgba(255,255,255,0.2); font-size:11px; font-weight:700; cursor:pointer; text-transform:uppercase;">Limpiar Feed</button>
-    </div>
-    
-    <div class="gallery" id="gallery">
-      <div class="empty-state" id="emptyState" style="grid-column:1/-1;">
-        <div class="icon">🛰️</div>
-        <p>Esperando señal del orquestador...</p>
-        <p style="font-size:12px;margin-top:10px;color:rgba(255,255,255,0.15);">Define tu prompt y abre el canal de puente</p>
+  <!-- GALERÍA -->
+  <div class="galpanel">
+    <div class="ghdr">
+      <h2>🖼️ Imágenes Generadas</h2>
+      <span class="cnt" id="galCount">0 imágenes</span>
+      <div class="motor-info">
+        <span class="motor-dot"></span>
+        Motor Perchance FLUX · Canal xnaxg7ceyj
       </div>
+    </div>
+
+    <div class="gallery" id="gallery">
+      <div class="empty" id="emptyState">
+        <div class="icon">🎨</div>
+        <p style="font-weight:700;color:#374151;margin-bottom:6px;">¡Listo para crear!</p>
+        <p style="font-size:12px;">Escribe una descripción a la izquierda y presiona <strong>Generar Imágenes</strong></p>
+        <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
+          <span style="background:#eff6ff;color:#1d4ed8;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;" onclick="setExample('un jaguar corriendo en la selva tropical, fotografía realista, alta definición')">🐆 Jaguar en la selva</span>
+          <span style="background:#f0fdf4;color:#166534;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;" onclick="setExample('sistema solar con todos los planetas, ilustración educativa, colores vibrantes')">🪐 Sistema solar</span>
+          <span style="background:#faf5ff;color:#6b21a8;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;" onclick="setExample('volcán en erupción al atardecer, fotografía dramática, cielo anaranjado')">🌋 Volcán</span>
+          <span style="background:#fff7ed;color:#c2410c;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;" onclick="setExample('ciudad futurista con edificios altos, arte digital, ciencia ficción, luces de neón')">🌆 Ciudad futurista</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMACIÓN PAGO PRO -->
+<div class="mbg" id="payModal">
+  <div class="modal">
+    <div class="micon">⭐</div>
+    <h3>Activar ARKAIOS Pro</h3>
+    <p>Serás redirigido al portal de ARKAIOS donde podrás activar tu cuenta Pro para desbloquear la generación de contenido sin restricciones y todas las funciones avanzadas.</p>
+    <div class="mbtns">
+      <a href="https://arkaios2025.base44.app/RepoView?id=69df28917701debb5ce71c79" target="_blank" class="mbtns a mbtn-pay" onclick="closePayModal()" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;text-align:center;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;display:block;">
+        🚀 Ir al Portal Pro
+      </a>
+      <button onclick="closePayModal()" class="mbtn-cancel" style="flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;background:#f9fafb;color:#6b7280;border:1px solid #e5e7eb;">
+        Cancelar
+      </button>
     </div>
   </div>
 </div>
 
 <script>
-// Auto-detect current API endpoint
-document.getElementById('apiUrl').value = window.location.origin;
+// ============================================================
+// ARKAIOS Generador IA — Modo Educativo
+// Motor: Perchance FLUX canal xnaxg7ceyj
+// NSFW deshabilitado en modo estudiante — requiere Pro
+// ============================================================
+const CHANNEL = 'xnaxg7ceyj';
+const VERIFY  = 'https://image-generation.perchance.org/api/verifyUser';
+const GEN     = 'https://image-generation.perchance.org/api/generate';
+const DL      = 'https://image-generation.perchance.org/api/downloadTemporaryImage';
 
-let isGenerating = false;
-let imagesHistory = [];
+let userKey = null, isGenerating = false;
 
-function addToPrompt(text){
-  const ta = document.getElementById('prompt');
-  ta.value = ta.value ? ta.value + ', ' + text : text;
-  ta.focus();
-}
-
-async function fixAnatomy(){
-  const promptText = document.getElementById('prompt').value.trim();
-  if(!promptText) return showToast("⚠️ Escribe un prompt para que Grok lo analice.");
-  
-  const grokBtn = document.getElementById('grokBtn');
-  grokBtn.textContent = "⚡ PENSANDO...";
-  grokBtn.disabled = true;
-
+// Obtener key al cargar
+(async function init() {
   try {
-    const resp = await fetch("/api/v1/optimize/negative-prompt", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: promptText }),
-    });
-    const data = await resp.json();
-    if(data.ok) {
-      document.getElementById('negPrompt').value = data.negativePrompt;
-      showToast("✅ Grok Fix Aplicado");
-    }
+    const r = await fetch(`${VERIFY}?channel=${CHANNEL}&promptBase64=&__cacheBust=${Date.now()}`);
+    const d = await r.json();
+    userKey = d.userKey;
+    console.log('✅ Perchance key OK — canal:', CHANNEL);
   } catch(e) {
-    showToast("❌ Grok Offline");
-  } finally {
-    grokBtn.textContent = "⚡ Optimizar con Grok";
-    grokBtn.disabled = false;
+    userKey = 'edu_' + Math.random().toString(36).substring(2);
+    console.warn('⚠️ Usando key de respaldo');
   }
-}
 
-async function generateBatch(){
-  if(isGenerating) return;
+  // Parámetros de URL (desde EduAgent)
+  const p = new URLSearchParams(location.search);
+  if (p.get('prompt')) document.getElementById('prompt').value = decodeURIComponent(p.get('prompt'));
+  if (p.get('resolution')) document.getElementById('resolution').value = p.get('resolution');
+  if (p.get('count')) {
+    const c = Math.min(parseInt(p.get('count'))||4, 8);
+    document.getElementById('count').value = c;
+    document.getElementById('cv').textContent = c;
+  }
+  if (p.get('autostart') === '1' && p.get('prompt')) setTimeout(generateImages, 800);
+})();
+
+async function generateImages() {
+  if (isGenerating) return;
   const prompt = document.getElementById('prompt').value.trim();
-  if(!prompt) return showToast("⚠️ Define el prompt de la señal.");
+  if (!prompt) { toast('⚠️ Escribe una descripción primero'); return; }
 
-  // AUTO-FIX ANATOMY with Grok before batch if NSFW enabled and negative prompt is weak
-  if (document.getElementById('nsfwToggle').checked && document.getElementById('negPrompt').value.length < 50) {
-    showToast("🧠 Grok: Optimizando anatomía automáticamente...");
-    await fixAnatomy();
-  }
+  const style      = document.getElementById('artStyle').value;
+  const count      = parseInt(document.getElementById('count').value);
+  const resolution = document.getElementById('resolution').value;
+  // Modo estudiante: NSFW siempre desactivado
+  let neg = document.getElementById('negPrompt').value.trim();
+  neg += ', nude, naked, explicit, nsfw, adult content, sexual, violence, gore';
+  const full = style ? `${prompt}, ${style}` : prompt;
 
   isGenerating = true;
   const btn = document.getElementById('genBtn');
-  const progressBar = document.getElementById('progressBar');
-  const progressFill = document.getElementById('progressFill');
-  const statusText = document.getElementById('statusText');
-  
   btn.disabled = true;
-  btn.textContent = "📡 ESTABLECIENDO PUENTE...";
-  progressBar.style.display = 'block';
+  btn.innerHTML = '<span style="display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;"></span> Generando...';
+  document.getElementById('progBar').style.display = 'block';
+  document.getElementById('progFill').style.width = '0%';
   document.getElementById('emptyState').style.display = 'none';
 
-  const count = parseInt(document.getElementById('count').value);
-  let successCount = 0;
+  if (!document.querySelector('#gallery style')) {
+    const s = document.createElement('style');
+    s.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+    document.getElementById('gallery').appendChild(s);
+  }
 
-  for(let i = 0; i < count; i++) {
-    statusText.textContent = `Sincronizando señal ${i+1}/${count}...`;
-    
-    const skeleton = document.createElement('div');
-    skeleton.className = 'skeleton';
-    skeleton.style.height = '300px';
-    document.getElementById('gallery').prepend(skeleton);
+  if (!userKey) {
+    try {
+      const r = await fetch(`${VERIFY}?channel=${CHANNEL}&promptBase64=&__cacheBust=${Date.now()}`);
+      const d = await r.json();
+      userKey = d.userKey;
+    } catch(e) { userKey = 'fallback'; }
+  }
+
+  const results = [];
+  for (let i = 0; i < count; i++) {
+    document.getElementById('stxt').textContent = `Generando imagen ${i+1} de ${count}...`;
+    const sk = makeSk(resolution);
+    document.getElementById('gallery').appendChild(sk);
 
     try {
-      const imgUrl = await requestImageFromBridge();
-      skeleton.remove();
-      renderImage(imgUrl, prompt);
-      successCount++;
+      const url = await genOne(full, neg, resolution);
+      sk.remove();
+      addCard(url, prompt, resolution);
+      results.push(url);
     } catch(e) {
-      skeleton.remove();
-      console.error(e);
-      statusText.textContent = `⚠️ Error: ${e.message}`;
-      showToast(`❌ Error: ${e.message}`);
+      sk.remove();
+      console.error('Error gen:', e);
     }
-    
-    progressFill.style.width = `${((i+1)/count)*100}%`;
+    document.getElementById('progFill').style.width = ((i+1)/count*100) + '%';
+  }
+
+  const ok = results.length;
+  document.getElementById('stxt').textContent = ok > 0
+    ? `✅ ${ok} imagen${ok>1?'s':''} lista${ok>1?'s':''}`
+    : '❌ Error. Intenta de nuevo.';
+
+  if (ok > 0) toast(`🎉 ${ok} imagen${ok>1?'s':''} generada${ok>1?'s':''}!`);
+  else {
+    toast('⚠️ Sin conexión al motor — abriendo Perchance...');
+    setTimeout(() => window.open(`https://perchance.org/${CHANNEL}`, '_blank'), 1200);
   }
 
   btn.disabled = false;
-  btn.textContent = "🚀 DISPARAR GENERACIÓN";
-  statusText.textContent = `Canal estable. ${successCount} imágenes recibidas.`;
+  btn.innerHTML = '✨ Generar Imágenes';
   isGenerating = false;
-  showToast(`✅ ${successCount} Señales capturadas`);
 }
 
-async function requestImageFromBridge(){
-  const apiUrl = document.getElementById('apiUrl').value;
-  const payload = {
-    prompt: document.getElementById('prompt').value,
-    negativePrompt: document.getElementById('negPrompt').value,
-    resolution: document.getElementById('resolution').value,
-    adultContent: document.getElementById('nsfwToggle').checked ? 1 : 0,
-    channel: "xnaxg7ceyj", 
-    provider: "mock" 
+async function genOne(prompt, neg, resolution) {
+  const body = new URLSearchParams({
+    prompt, negativePrompt: neg, resolution,
+    guidanceScale: '7',
+    seed: String(Math.floor(Math.random() * 2147483647)),
+    channel: CHANNEL,
+    userKey: userKey || '',
+    adultContent: '0', // siempre 0 en modo estudiante
+    '__cacheBust': String(Date.now())
+  });
+  const r = await fetch(GEN, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: body.toString()
+  });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const d = await r.json();
+  if (d.status === 'error') throw new Error(d.message || 'Error Perchance');
+  return `${DL}?imageId=${d.imageId}`;
+}
+
+function makeSk(res) {
+  const el = document.createElement('div');
+  const [w,h] = res.split('x').map(Number);
+  el.className = 'sk ' + (h>w ? 'pt' : 'sq');
+  return el;
+}
+
+function addCard(url, prompt, res) {
+  const [w,h] = res.split('x').map(Number);
+  const cls = h>w ? 'pt' : w>h ? 'ls' : 'sq';
+  const card = document.createElement('div');
+  card.className = `card ${cls}`;
+  card.dataset.url = url;
+
+  const img = document.createElement('img');
+  img.src = url; img.alt = prompt; img.loading = 'lazy';
+  img.onerror = () => {
+    img.style.display = 'none';
+    card.style.minHeight = '140px';
+    card.innerHTML += '<div style="padding:20px;text-align:center;color:#dc2626;font-size:11px;">⏱️ URL expirada<br><small>Las imágenes duran ~5 min — descárgalas</small></div>';
   };
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 130000); // 130s browser timeout
+  const ptag = document.createElement('div');
+  ptag.className = 'ptag';
+  ptag.textContent = prompt.substring(0,50) + (prompt.length>50?'...':'');
 
-  try {
-    const resp = await fetch(apiUrl + "/api/v1/image/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-      signal: controller.signal
-    });
-    clearTimeout(timeoutId);
+  const acts = document.createElement('div');
+  acts.className = 'cacts';
 
-    const data = await resp.json();
-    if(!data.ok) throw new Error(data.error || "Error en Bridge");
-    return data.url;
-  } catch (err) {
-    clearTimeout(timeoutId);
-    if (err.name === 'AbortError') {
-      throw new Error("Tiempo de espera agotado (Proxy Busy)");
-    }
-    throw err;
-  }
+  const dl = document.createElement('button');
+  dl.className = 'cdl'; dl.textContent = '⬇️ Guardar'; dl.title = 'Abrir en nueva pestaña para guardar';
+  dl.onclick = () => window.open(url, '_blank');
+
+  const add = document.createElement('button');
+  add.className = 'cadd'; add.textContent = '📄 Plantilla';
+  add.onclick = () => toast('✅ Usa "→ Plantilla PDF" para enviar todas');
+
+  const del = document.createElement('button');
+  del.className = 'cdel'; del.textContent = '✕';
+  del.onclick = () => { card.remove(); updateCount(); };
+
+  acts.append(dl, add, del);
+  card.append(img, ptag, acts);
+  document.getElementById('gallery').appendChild(card);
+  updateCount();
 }
 
-function renderImage(url, promptText){
-  const resolution = document.getElementById('resolution').value;
-  const [w,h] = resolution.split('x').map(Number);
-  const typeClass = h > w ? 'portrait' : (w > h ? 'landscape' : '');
-  
-  const card = document.createElement('div');
-  card.className = `img-card ${typeClass}`;
-  
-  card.innerHTML = `
-    <div class="img-prompt-tag">${promptText}</div>
-    <div class="fallback-tag">Arkaios Bridge Generation</div>
-    <img src="${url}" loading="lazy" referrerPolicy="no-referrer">
-    <div class="img-actions">
-      <button class="btn-dl" onclick="window.open('${url}', '_blank')">Visualizar HD</button>
-      <button class="btn-del" onclick="this.closest('.img-card').remove(); updateCounter();">✕</button>
-    </div>
-  `;
-  
-  document.getElementById('gallery').prepend(card);
-  updateCounter();
+function sendToTemplate() {
+  const urls = [...document.querySelectorAll('.card[data-url]')].map(c => c.dataset.url).filter(Boolean);
+  if (!urls.length) { toast('⚠️ No hay imágenes en la galería'); return; }
+  const n = urls.length;
+  const grid = n<=2?'1x2':n<=4?'2x2':n<=9?'3x3':n<=16?'4x4':'5x5';
+  const p = document.getElementById('prompt').value.trim();
+  window.open(`plantilla-imagenes-v2.html?agent=1&grid=${grid}&images=${encodeURIComponent(urls.join('|'))}&topic=${encodeURIComponent(p+' [IA]')}`, '_blank');
+  toast(`🚀 Plantilla ${grid} con ${n} imágenes`);
 }
 
-function updateCounter(){
-  const count = document.querySelectorAll('.img-card').length;
-  document.getElementById('galleryCount').textContent = `${count} captura${count!==1?'s':''}`;
+function clearGallery() {
+  if (!confirm('¿Limpiar todas las imágenes?')) return;
+  document.getElementById('gallery').innerHTML = '<div class="empty" id="emptyState"><div class="icon">🎨</div><p style="font-weight:700;color:#374151;">Galería limpia</p><p style="font-size:12px;margin-top:6px;">Genera nuevas imágenes cuando quieras</p></div>';
+  updateCount();
+  document.getElementById('progBar').style.display = 'none';
+  document.getElementById('stxt').textContent = '';
 }
 
-function clearGallery(){
-  if(!confirm("¿Limpiar el feed de señales?")) return;
-  document.getElementById('gallery').innerHTML = `<div class="empty-state" id="emptyState" style="grid-column:1/-1;"><div class="icon">🛰️</div><p>Esperando señal del orquestador...</p></div>`;
-  updateCounter();
+function updateCount() {
+  const n = document.querySelectorAll('.card').length;
+  document.getElementById('galCount').textContent = `${n} imagen${n!==1?'es':''}`;
 }
 
-function showToast(msg){
+function ap(t) {
+  const ta = document.getElementById('prompt');
+  ta.value = ta.value ? ta.value + ', ' + t : t;
+  ta.focus();
+}
+
+function setExample(text) {
+  document.getElementById('prompt').value = text;
+  document.getElementById('emptyState').style.display = 'none';
+}
+
+function showPayModal() { document.getElementById('payModal').classList.add('open'); }
+function closePayModal() { document.getElementById('payModal').classList.remove('open'); }
+document.getElementById('payModal').addEventListener('click', e => {
+  if (e.target.id === 'payModal') closePayModal();
+});
+
+function toast(msg) {
   const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
+  t.className = 'toast'; t.textContent = msg;
   document.body.appendChild(t);
-  setTimeout(() => {
-    t.style.opacity = '0';
-    setTimeout(() => t.remove(), 500);
-  }, 3000);
+  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 400); }, 2800);
 }
 </script>
 </body>
