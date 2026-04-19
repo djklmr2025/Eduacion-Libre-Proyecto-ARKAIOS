@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELEMIA Panel ARKAIOS</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0a14;color:#e2e8f0;min-height:100vh;}
+.hdr{background:linear-gradient(90deg,#1e1b4b,#312e81);padding:18px 24px;display:flex;align-items:center;gap:14px;border-bottom:2px solid #4f46e5;}
+.hdr h1{font-size:1.3rem;font-weight:800;background:linear-gradient(90deg,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hdr small{font-size:11px;color:#818cf8;}
+.dot{width:10px;height:10px;border-radius:50%;background:#374151;flex-shrink:0;transition:background .5s;}
+.dot.g{background:#10b981;box-shadow:0 0 8px #10b981;}
+.dot.r{background:#ef4444;}
+.dot.y{background:#f59e0b;animation:p 1s infinite;}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.4}}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:20px;max-width:1200px;margin:0 auto;}
+@media(max-width:700px){.grid{grid-template-columns:1fr;}}
+.card{background:#111827;border:1px solid #1f2937;border-radius:14px;padding:18px;}
+.card.full{grid-column:1/-1;}
+.ct{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#6b7280;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.svc{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#1f2937;border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all .2s;}
+.svc:hover{background:#374151;}
+textarea,input[type=text]{width:100%;background:#1f2937;border:1px solid #374151;border-radius:8px;color:#e2e8f0;padding:9px 12px;font-size:13px;font-family:inherit;resize:vertical;transition:border .2s;}
+textarea:focus,input:focus{outline:none;border-color:#7c3aed;}
+textarea{min-height:72px;}
+.btn{padding:9px 18px;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
+.btn:hover{transform:translateY(-1px);}
+.bp{background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;}
+.bg{background:linear-gradient(135deg,#059669,#047857);color:#fff;}
+.brow{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.out{background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:12px;font-family:monospace;font-size:12px;min-height:60px;max-height:280px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;line-height:1.5;margin-top:10px;color:#94a3b8;}
+.out.ok{border-color:#059669;color:#6ee7b7;}
+.out.er{border-color:#dc2626;color:#fca5a5;}
+.mi{background:#1e293b;border-left:3px solid #7c3aed;padding:8px 12px;border-radius:0 6px 6px 0;margin-bottom:6px;font-size:12px;line-height:1.5;}
+.cfg{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
+.cfg label{font-size:11px;color:#6b7280;min-width:80px;}
+.toast{position:fixed;bottom:20px;right:20px;background:#7c3aed;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 4px 20px rgba(124,58,237,.5);}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <span class="dot" id="md"></span>
+  <div><h1>🧠 ELEMIA — Panel ARKAIOS</h1><small id="ms">Verificando...</small></div>
+</div>
+<div class="grid">
+  <div class="card full">
+    <div class="ct">📡 Servicios</div>
+    <div class="svc" onclick="ts('v')"><span class="dot" id="dv"></span><div><b style="font-size:13px">Vercel</b><br><small style="color:#6b7280;font-family:monospace">elemia-v4-arkaios.vercel.app</small></div><span id="sv" style="color:#f59e0b;font-size:11px;font-weight:700;margin-left:auto">...</span></div>
+    <div class="svc" onclick="ts('r')"><span class="dot" id="dr"></span><div><b style="font-size:13px">Render</b><br><small style="color:#6b7280;font-family:monospace">elemia-v4-arkaios.onrender.com</small></div><span id="sr" style="color:#f59e0b;font-size:11px;font-weight:700;margin-left:auto">...</span></div>
+  </div>
+  <div class="card">
+    <div class="ct">⚙️ Config</div>
+    <div class="cfg"><label>URL:</label><input type="text" id="cu" value="https://elemia-v4-arkaios.vercel.app"></div>
+    <div class="cfg"><label>Token:</label><input type="text" id="ct" value="ARKAIOS-SECURE-2025-ELEMIA-V4" style="font-size:10px"></div>
+    <div class="brow">
+      <button class="btn bp" onclick="ping()">🔄 Ping</button>
+      <button class="btn" style="background:#1f2937;color:#9ca3af" onclick="document.getElementById('cu').value='https://elemia-v4-arkaios.onrender.com';ping()">🔀 Render</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">🪪 Identidad</div>
+    <div class="brow" style="margin-top:0;margin-bottom:10px"><button class="btn bp" onclick="identity()">📋 Ver</button></div>
+    <div class="out" id="oi">Click en Ver...</div>
+  </div>
+  <div class="card">
+    <div class="ct">💾 Guardar Memoria</div>
+    <textarea id="ir" placeholder="Escribe lo que quieres guardar..."></textarea>
+    <input type="text" id="it" placeholder="etiqueta (ej: proyecto, decisión)" style="margin-top:8px">
+    <div class="brow"><button class="btn bg" onclick="rem()">💾 Guardar</button></div>
+    <div class="out" id="or" style="min-height:36px"></div>
+  </div>
+  <div class="card">
+    <div class="ct">🔍 Buscar en Memoria</div>
+    <textarea id="iq" style="min-height:60px" placeholder="¿Qué quieres recordar?"></textarea>
+    <div class="brow"><button class="btn bp" onclick="recall()">🔍 Buscar</button></div>
+    <div id="orl"></div>
+  </div>
+  <div class="card">
+    <div class="ct">📸 Estado de Proyecto</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+      <div><label style="font-size:11px;color:#6b7280;display:block;margin-bottom:3px">Proyecto:</label><input type="text" id="ip" value="ARKAIOS Sistema Educativo"></div>
+      <div><label style="font-size:11px;color:#6b7280;display:block;margin-bottom:3px">Estado:</label><input type="text" id="is" value="ELEMIA v4 activa"></div>
+    </div>
+    <input type="text" id="in" placeholder="Siguientes pasos..." style="margin-bottom:8px">
+    <input type="text" id="ino" placeholder="Notas...">
+    <div class="brow"><button class="btn bg" onclick="saveState()">📸 Guardar</button></div>
+    <div class="out" id="ost" style="min-height:36px"></div>
+  </div>
+  <div class="card full">
+    <div class="ct">📚 Memorias Recientes</div>
+    <div class="brow" style="margin-top:0;margin-bottom:12px"><button class="btn bp" onclick="list()">📚 Cargar</button></div>
+    <div id="ol"><span style="color:#374151;font-size:13px">Presiona Cargar para ver el historial.</span></div>
+  </div>
+</div>
+<script>
+const B=()=>document.getElementById('cu').value.replace(/\/$/,'');
+const T=()=>document.getElementById('ct').value;
+const H=()=>({"Content-Type":"application/json","x-elemia-token":T()});
+const U={"v":"https://elemia-v4-arkaios.vercel.app","r":"https://elemia-v4-arkaios.onrender.com"};
+async function ts(id){const d=document.getElementById('d'+id),s=document.getElementById('s'+id);d.className='dot y';s.style.color='#f59e0b';s.textContent='...';try{const r=await fetch(U[id]+'/elemia/ping',{signal:AbortSignal.timeout(20000)});const j=await r.json();d.className='dot g';s.style.color='#10b981';s.textContent='✅'+j.version;}catch(e){d.className='dot r';s.style.color='#ef4444';s.textContent=e.name==='TimeoutError'?'⏱ Timeout':'❌';}}
+async function ping(){const d=document.getElementById('md'),s=document.getElementById('ms');d.className='dot y';s.textContent='Verificando...';try{const r=await fetch(B()+'/elemia/ping',{signal:AbortSignal.timeout(15000)});const j=await r.json();d.className='dot g';s.textContent='✅ ELEMIA '+j.version+' — Memoria: '+(j.memory?'🟢 Activa':'🔴 Sin clave');}catch(e){d.className='dot r';s.textContent='❌ '+(e.name==='TimeoutError'?'Timeout (Render dormido ~30s)':e.message);}}
+async function identity(){const o=document.getElementById('oi');o.textContent='Cargando...';o.className='out';try{const r=await fetch(B()+'/elemia/identity',{headers:H(),signal:AbortSignal.timeout(15000)});const j=await r.json();o.textContent=JSON.stringify(j.identity,null,2);o.className='out ok';}catch(e){o.textContent='Error: '+e.message;o.className='out er';}}
+async function rem(){const c=document.getElementById('ir').value.trim(),t=document.getElementById('it').value.trim(),o=document.getElementById('or');if(!c){toast('⚠️ Escribe algo');return;}o.textContent='Guardando...';o.className='out';try{const r=await fetch(B()+'/elemia/remember',{method:'POST',headers:H(),body:JSON.stringify({content:c,tag:t||'manual'}),signal:AbortSignal.timeout(15000)});const j=await r.json();if(j.ok){o.textContent='✅ Guardado';o.className='out ok';document.getElementById('ir').value='';document.getElementById('it').value='';toast('💾 Memoria guardada!');}else throw new Error(j.error);}catch(e){o.textContent='Error: '+e.message;o.className='out er';}}
+async function recall(){const q=document.getElementById('iq').value.trim(),l=document.getElementById('orl');if(!q){toast('⚠️ Escribe qué buscar');return;}l.innerHTML='<div style="color:#6b7280;font-size:12px;padding:8px">Buscando...</div>';try{const r=await fetch(B()+'/elemia/recall',{method:'POST',headers:H(),body:JSON.stringify({query:q,limit:5}),signal:AbortSignal.timeout(15000)});const j=await r.json();if(!j.ok)throw new Error(j.error);l.innerHTML=j.results?.length?j.results.map((r,i)=>'<div class="mi"><b style="color:#7c3aed">'+(i+1)+'.</b> '+r+'</div>').join(''):'<div style="color:#6b7280;font-size:12px;padding:8px">Sin resultados para: "'+q+'"</div>';toast('🔍 '+(j.results?.length||0)+' resultados');}catch(e){l.innerHTML='<div style="color:#ef4444;font-size:12px;padding:8px">Error: '+e.message+'</div>';}}
+async function saveState(){const p=document.getElementById('ip').value.trim(),s=document.getElementById('is').value.trim(),o=document.getElementById('ost');if(!p||!s){toast('⚠️ Proyecto y Estado requeridos');return;}o.textContent='Guardando...';o.className='out';try{const r=await fetch(B()+'/elemia/save_state',{method:'POST',headers:H(),body:JSON.stringify({project:p,status:s,next_steps:document.getElementById('in').value,notes:document.getElementById('ino').value}),signal:AbortSignal.timeout(15000)});const j=await r.json();if(j.ok){o.textContent='✅ Estado guardado:\n'+j.saved;o.className='out ok';toast('📸 Estado guardado!');}else throw new Error(j.error);}catch(e){o.textContent='Error: '+e.message;o.className='out er';}}
+async function list(){const el=document.getElementById('ol');el.innerHTML='<div style="color:#6b7280;font-size:12px;padding:8px">Cargando...</div>';try{const r=await fetch(B()+'/elemia/list?limit=15',{headers:H(),signal:AbortSignal.timeout(15000)});const j=await r.json();if(!j.ok)throw new Error(j.error);el.innerHTML=j.memories?.length?j.memories.map((m,i)=>'<div class="mi"><small style="color:#4b5563">'+(m.id||i+1)+' · '+(m.created||'?')+'</small><br>'+(m.content||m.error||'')+'</div>').join(''):'<div style="color:#6b7280;font-size:12px;padding:8px">Sin memorias aún.</div>';toast('📚 '+j.memories?.length+' memorias');}catch(e){el.innerHTML='<div style="color:#ef4444;font-size:12px;padding:8px">Error: '+e.message+'</div>';}}
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .4s';setTimeout(()=>t.remove(),400);},2800);}
+window.addEventListener('load',()=>{ping();ts('v');ts('r');});
+</script>
+</body>
+</html>
