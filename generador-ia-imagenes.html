@@ -19,7 +19,6 @@
 }
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris-claro);min-height:100vh;color:var(--texto);}
 
-/* HEADER EDUCATIVO */
 .hdr{background:var(--blanco);border-bottom:3px solid var(--azul);padding:0 24px;display:flex;align-items:center;gap:14px;height:64px;box-shadow:var(--sombra);position:sticky;top:0;z-index:100;}
 .hdr-logo{display:flex;align-items:center;gap:10px;}
 .hdr-logo span{font-size:1.8rem;}
@@ -32,17 +31,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--gris-claro);mi
 .back{margin-left:auto;background:var(--gris-claro);border:1px solid var(--gris-borde);color:var(--texto-sec);padding:7px 16px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;text-decoration:none;transition:all .2s;}
 .back:hover{background:var(--azul-med);color:var(--azul);border-color:var(--azul);}
 
-/* BANNER EDUCATIVO */
 .edu-banner{background:linear-gradient(135deg,var(--azul) 0%,var(--morado) 100%);color:#fff;padding:14px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
 .edu-banner p{font-size:13px;font-weight:600;}
 .edu-banner small{font-size:11px;opacity:.85;}
 .edu-banner .icon{font-size:1.6rem;flex-shrink:0;}
 
-/* LAYOUT */
 .main{display:grid;grid-template-columns:320px 1fr;gap:20px;padding:20px;max-width:1400px;margin:0 auto;}
 @media(max-width:900px){.main{grid-template-columns:1fr;}}
 
-/* PANEL IZQUIERDO */
 .panel{background:var(--blanco);border:1px solid var(--gris-borde);border-radius:16px;padding:20px;height:fit-content;box-shadow:var(--sombra);position:sticky;top:80px;}
 .sec-title{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--azul);margin-bottom:12px;display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:2px solid var(--azul-med);}
 .fg{margin-bottom:14px;}
@@ -57,24 +53,20 @@ textarea{min-height:80px;}
 input[type=range]{flex:1;accent-color:var(--azul);cursor:pointer;height:6px;}
 .rv{min-width:28px;text-align:right;color:var(--azul);font-weight:800;font-size:14px;}
 
-/* BOTÓN PRINCIPAL */
 .gen-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--azul),var(--morado));border:none;border-radius:12px;color:#fff;font-size:14px;font-weight:800;cursor:pointer;transition:all .3s;margin-top:6px;box-shadow:0 4px 16px rgba(37,99,235,.3);display:flex;align-items:center;justify-content:center;gap:8px;}
 .gen-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,99,235,.4);}
 .gen-btn:disabled{opacity:.55;cursor:not-allowed;transform:none;}
 
-/* BARRA DE PROGRESO */
 .prog{background:var(--gris-borde);border-radius:10px;height:6px;overflow:hidden;display:none;margin-top:10px;}
 .pf{height:100%;background:linear-gradient(90deg,var(--azul),var(--morado));border-radius:10px;transition:width .4s;}
 .st{text-align:center;font-size:11px;color:var(--gris);margin-top:5px;min-height:15px;}
 
-/* ACCIONES */
 .arow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
 .abtn{padding:9px;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;border:1.5px solid;}
 .abtn:hover{transform:translateY(-1px);}
 .bt{background:var(--verde-claro);color:var(--verde);border-color:#a7f3d0;}
 .bc{background:var(--rojo-claro);color:var(--rojo);border-color:#fecaca;}
 
-/* CAJA PRO/PAGO — reemplaza NSFW */
 .pro-box{background:linear-gradient(135deg,#1e1b4b,#312e81);border-radius:14px;padding:16px;margin-top:14px;text-align:center;position:relative;overflow:hidden;}
 .pro-box::before{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:rgba(255,255,255,.06);border-radius:50%;}
 .pro-box::after{content:'';position:absolute;bottom:-15px;left:-15px;width:60px;height:60px;background:rgba(255,255,255,.04);border-radius:50%;}
@@ -87,7 +79,6 @@ input[type=range]{flex:1;accent-color:var(--azul);cursor:pointer;height:6px;}
 .pay-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(245,158,11,.5);}
 .pay-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;margin-bottom:10px;font-weight:700;letter-spacing:.5px;}
 
-/* GALERÍA */
 .galpanel{display:flex;flex-direction:column;gap:16px;}
 .ghdr{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--blanco);padding:14px 18px;border-radius:14px;border:1px solid var(--gris-borde);box-shadow:var(--sombra);}
 .ghdr h2{color:var(--texto);font-size:.95rem;font-weight:800;}
@@ -108,47 +99,33 @@ input[type=range]{flex:1;accent-color:var(--azul);cursor:pointer;height:6px;}
 .cdel{background:var(--rojo-claro);color:var(--rojo);}
 .ptag{position:absolute;top:6px;left:6px;background:rgba(0,0,0,.6);color:#fff;font-size:9px;padding:3px 8px;border-radius:8px;max-width:calc(100% - 12px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;backdrop-filter:blur(4px);}
 .sk{background:linear-gradient(90deg,#f3f4f6 25%,#e5e7eb 50%,#f3f4f6 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:14px;}
-.sk.sq{aspect-ratio:1;}.sk.pt{aspect-ratio:9/16;}
+.sk.sq{aspect-ratio:1;}.sk.pt{aspect-ratio:9/16;}.sk.ls{aspect-ratio:16/9;}
 @keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
 .empty{text-align:center;padding:60px 20px;color:var(--gris);grid-column:1/-1;background:var(--blanco);border-radius:14px;border:2px dashed var(--gris-borde);}
 .empty .icon{font-size:3rem;margin-bottom:12px;}
 
-/* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--texto);color:#fff;padding:11px 20px;border-radius:12px;font-weight:700;z-index:9999;font-size:12px;box-shadow:var(--sombra-lg);animation:tin .3s ease;}
 @keyframes tin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-
-/* MODAL CONFIRMACIÓN SALIDA */
-.mbg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:none;align-items:center;justify-content:center;}
-.mbg.open{display:flex;}
-.modal{background:#fff;border-radius:18px;padding:28px;width:min(420px,93vw);text-align:center;}
-.modal .micon{font-size:2.5rem;margin-bottom:12px;}
-.modal h3{font-size:1.1rem;font-weight:800;color:var(--texto);margin-bottom:8px;}
-.modal p{font-size:13px;color:var(--texto-sec);line-height:1.6;margin-bottom:18px;}
-.mbtns{display:flex;gap:10px;}
-.mbtns a{flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;text-align:center;transition:all .2s;}
-.mbtn-pay{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;box-shadow:0 4px 12px rgba(245,158,11,.3);}
-.mbtn-cancel{background:var(--gris-claro);color:var(--gris);border:1px solid var(--gris-borde);}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="hdr">
   <div class="hdr-logo">
     <span>🎨</span>
     <div>
       <h1>Generador de Imágenes IA</h1>
-      <small>ARKAIOS Sistema Educativo — Motor Perchance FLUX</small>
+      <small>ARKAIOS Sistema Educativo — Motor Pollinations FLUX</small>
     </div>
   </div>
   <div class="hdr-chips">
-    <span class="chip chip-azul">🔵 Canal: xnaxg7ceyj</span>
+    <span class="chip chip-azul">🔵 Motor: Pollinations.ai</span>
     <span class="chip chip-verde">✅ Modo Estudiante</span>
   </div>
   <a href="index.html" class="back">← Volver a ARKAIOS</a>
 </div>
 
-<!-- BANNER -->
 <div class="edu-banner">
   <span class="icon">📚</span>
   <div>
@@ -159,7 +136,6 @@ input[type=range]{flex:1;accent-color:var(--azul);cursor:pointer;height:6px;}
 
 <div class="main">
 
-  <!-- PANEL IZQUIERDO -->
   <div class="panel">
     <div class="sec-title">✏️ Configurar Imagen</div>
 
@@ -216,7 +192,7 @@ input[type=range]{flex:1;accent-color:var(--azul);cursor:pointer;height:6px;}
 
     <div class="fg">
       <label>🚫 Qué evitar en la imagen</label>
-      <textarea id="negPrompt" style="min-height:52px;font-size:12px;">borroso, mala calidad, deformado, texto, marca de agua, anatomía incorrecta</textarea>
+      <textarea id="negPrompt" style="min-height:52px;font-size:12px;">blurry, bad quality, deformed, text, watermark, bad anatomy</textarea>
     </div>
 
     <div class="fg">
@@ -249,32 +225,30 @@ input[type=range]{flex:1;accent-color:var(--azul);cursor:pointer;height:6px;}
       <button class="abtn bc" onclick="clearGallery()">🗑️ Limpiar</button>
     </div>
 
-    <!-- ESTADO DEL MOTOR -->
     <div class="pro-box">
-      <div class="pay-badge">ARKAIOS BRIDGE</div>
+      <div class="pay-badge">ARKAIOS · POLLINATIONS.AI</div>
       <div class="lock">🔓</div>
       <h4>Generación Activada</h4>
-      <p>El botón genera imágenes usando el puente local de ARKAIOS y el canal educativo configurado.</p>
+      <p>Motor Pollinations FLUX — gratuito, sin límite de uso educativo.</p>
       <ul>
-        <li>✅ Generacion directa sin funciones serverless</li>
-        <li>✅ Canal xnaxg7ceyj</li>
-        <li>✅ Lotes de hasta 8 imagenes</li>
-        <li>✅ Envio a plantilla PDF</li>
+        <li>✅ Modelo FLUX de alta calidad</li>
+        <li>✅ Sin registro ni API key</li>
+        <li>✅ Lotes de hasta 8 imágenes</li>
+        <li>✅ Envío a plantilla PDF</li>
       </ul>
       <button class="pay-btn" onclick="testBridge(event)">
-        Probar Conexion
+        🔌 Probar Conexión
       </button>
     </div>
   </div>
 
-  <!-- GALERÍA -->
   <div class="galpanel">
     <div class="ghdr">
       <h2>🖼️ Imágenes Generadas</h2>
       <span class="cnt" id="galCount">0 imágenes</span>
       <div class="motor-info">
         <span class="motor-dot"></span>
-        Motor Perchance FLUX · Canal xnaxg7ceyj
+        Motor Pollinations FLUX · Activo
       </div>
     </div>
 
@@ -296,53 +270,118 @@ input[type=range]{flex:1;accent-color:var(--azul);cursor:pointer;height:6px;}
 
 <script>
 // ============================================================
-// ARKAIOS Generador IA
-// Motor: puente directo de imagenes
+// ARKAIOS Generador IA — Motor Pollinations FLUX
+// v2 — fixes: referrerPolicy removido, delays anti-ratelimit,
+//      modelo explícito, negativos en inglés, mejor manejo errores
 // ============================================================
-const CHANNEL = 'xnaxg7ceyj';
+
+const POLLINATIONS_BASE = 'https://image.pollinations.ai/prompt/';
+const MODEL             = 'flux';     // FLUX = mejor calidad disponible
+const DELAY_BETWEEN_MS  = 1800;       // pausa entre requests → evita 429
+const LOAD_TIMEOUT_MS   = 90000;      // 90s timeout por imagen
+const MAX_RETRIES       = 3;
 
 let isGenerating = false;
 
-(async function init() {
-  // Parámetros de URL (desde EduAgent)
+(function init() {
   const p = new URLSearchParams(location.search);
-  if (p.get('prompt')) document.getElementById('prompt').value = decodeURIComponent(p.get('prompt'));
+  if (p.get('prompt'))     document.getElementById('prompt').value = decodeURIComponent(p.get('prompt'));
   if (p.get('resolution')) document.getElementById('resolution').value = p.get('resolution');
   if (p.get('count')) {
-    const c = Math.min(parseInt(p.get('count'))||4, 8);
+    const c = Math.min(parseInt(p.get('count')) || 4, 8);
     document.getElementById('count').value = c;
     document.getElementById('cv').textContent = c;
   }
   if (p.get('autostart') === '1' && p.get('prompt')) setTimeout(generateImages, 800);
 })();
 
+// ── URL builder ───────────────────────────────────────────
+function buildImageUrl(prompt, style, neg, resolution) {
+  const [w, h] = resolution.split('x').map(Number);
+  const width  = Math.min(Math.max(w || 768, 256), 1536);
+  const height = Math.min(Math.max(h || 768, 256), 1536);
+  const seed   = Math.floor(Math.random() * 2147483647);
+
+  let fullPrompt = style ? `${prompt}, ${style}` : prompt;
+  if (neg && neg.trim()) fullPrompt += `. Avoid: ${neg.trim()}`;
+
+  const params = new URLSearchParams({
+    width:   String(width),
+    height:  String(height),
+    seed:    String(seed),
+    model:   MODEL,        // ← FIX: modelo explícito
+    nologo:  'true',
+    enhance: 'false',      // ← FIX: más rápido y predecible
+    safe:    'false'
+  });
+
+  return `${POLLINATIONS_BASE}${encodeURIComponent(fullPrompt)}?${params}`;
+}
+
+// ── Preloader de imagen ───────────────────────────────────
+function waitForImage(url) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    // ← FIX CRÍTICO: sin referrerPolicy — era lo que bloqueaba las peticiones
+    // No usar crossOrigin tampoco para evitar problemas CORS en descarga
+
+    const timer = setTimeout(() => {
+      img.onload = img.onerror = null;
+      reject(new Error('Timeout: el motor tardó demasiado'));
+    }, LOAD_TIMEOUT_MS);
+
+    img.onload  = () => { clearTimeout(timer); resolve(url); };
+    img.onerror = () => { clearTimeout(timer); reject(new Error('El motor rechazó la imagen')); };
+    img.src = url;
+  });
+}
+
+// ── Generar 1 imagen con reintentos ──────────────────────
+async function genOne(prompt, style, neg, resolution, attempt = 1) {
+  const url = buildImageUrl(prompt, style, neg, resolution);
+  try {
+    return { displayUrl: await waitForImage(url), sourceUrl: url };
+  } catch (err) {
+    if (attempt < MAX_RETRIES) {
+      const wait = 3000 * attempt;
+      document.getElementById('stxt').textContent =
+        `⚠️ Reintentando (${attempt}/${MAX_RETRIES - 1})... ${wait/1000}s`;
+      await sleep(wait);
+      return genOne(prompt, style, neg, resolution, attempt + 1);
+    }
+    throw err;
+  }
+}
+
+// ── Función principal ─────────────────────────────────────
 async function generateImages() {
   if (isGenerating) return;
+
   const prompt = document.getElementById('prompt').value.trim();
   if (!prompt) { toast('⚠️ Escribe una descripción primero'); return; }
 
   const style      = document.getElementById('artStyle').value;
   const count      = parseInt(document.getElementById('count').value);
   const resolution = document.getElementById('resolution').value;
-  const neg = document.getElementById('negPrompt').value.trim();
+  const neg        = document.getElementById('negPrompt').value.trim();
 
   isGenerating = true;
   const btn = document.getElementById('genBtn');
   btn.disabled = true;
   btn.innerHTML = '<span style="display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;"></span> Generando...';
+
   document.getElementById('progBar').style.display = 'block';
-  document.getElementById('progFill').style.width = '0%';
-  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('progFill').style.width  = '0%';
+  const stxt = document.getElementById('stxt');
 
-  if (!document.querySelector('#gallery style')) {
-    const s = document.createElement('style');
-    s.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
-    document.getElementById('gallery').appendChild(s);
-  }
+  const emptyState = document.getElementById('emptyState');
+  if (emptyState) emptyState.style.display = 'none';
 
-  const results = [];
+  let okCount = 0;
+
   for (let i = 0; i < count; i++) {
-    document.getElementById('stxt').textContent = `Generando imagen ${i+1} de ${count}... espera a que cargue antes de la siguiente`;
+    stxt.textContent = `Generando imagen ${i + 1} de ${count}...`;
+
     const sk = makeSk(resolution);
     document.getElementById('gallery').appendChild(sk);
 
@@ -350,125 +389,87 @@ async function generateImages() {
       const image = await genOne(prompt, style, neg, resolution);
       sk.remove();
       addCard(image, prompt, resolution);
-      results.push(image.displayUrl);
-    } catch(e) {
+      okCount++;
+    } catch (e) {
       sk.remove();
-      console.error('Error gen:', e);
+      console.error(`[ARKAIOS] Error imagen ${i + 1}:`, e.message);
+      addErrorCard(resolution, e.message);
     }
-    document.getElementById('progFill').style.width = ((i+1)/count*100) + '%';
+
+    document.getElementById('progFill').style.width = `${((i + 1) / count) * 100}%`;
+
+    // ← FIX: delay entre requests para no saturar el API
+    if (i < count - 1) {
+      stxt.textContent = `✅ Imagen ${i + 1} lista · preparando siguiente...`;
+      await sleep(DELAY_BETWEEN_MS);
+    }
   }
 
-  const ok = results.length;
-  document.getElementById('stxt').textContent = ok > 0
-    ? `✅ ${ok} imagen${ok>1?'s':''} lista${ok>1?'s':''}`
-    : '❌ Error. Intenta de nuevo.';
+  stxt.textContent = okCount > 0
+    ? `✅ ${okCount} imagen${okCount > 1 ? 'es' : ''} lista${okCount > 1 ? 's' : ''}`
+    : '❌ Sin respuesta del motor. Intenta de nuevo.';
 
-  if (ok > 0) toast(`🎉 ${ok} imagen${ok>1?'s':''} generada${ok>1?'s':''}!`);
-  else {
-    toast('⚠️ Sin respuesta del motor. Intenta de nuevo.');
-  }
+  if (okCount > 0) toast(`🎉 ${okCount} imagen${okCount > 1 ? 'es' : ''} generada${okCount > 1 ? 's' : ''}!`);
+  else             toast('⚠️ Motor sin respuesta. Revisa tu conexión.');
 
   btn.disabled = false;
   btn.innerHTML = '✨ Generar Imágenes';
   isGenerating = false;
 }
 
-async function genOne(prompt, style, neg, resolution) {
-  const imageUrl = buildImageUrl(prompt, style, neg, resolution);
-  const displayUrl = await waitForImage(imageUrl);
-  return { displayUrl, sourceUrl: imageUrl };
-}
-
-function buildImageUrl(prompt, style, neg, resolution) {
-  const [width, height] = resolution.split('x').map(Number);
-  const seed = Math.floor(Math.random() * 2147483647);
-  const fullPrompt = style ? `${prompt}, ${style}` : prompt;
-  const cleanNegative = neg ? `. Evitar: ${neg}` : '';
-  const params = new URLSearchParams({
-    width: String(Math.min(Math.max(width || 768, 256), 1536)),
-    height: String(Math.min(Math.max(height || 768, 256), 1536)),
-    seed: String(seed),
-    nologo: 'true'
-  });
-
-  return `https://image.pollinations.ai/prompt/${encodeURIComponent(fullPrompt + cleanNegative)}?${params.toString()}`;
-}
-
-async function waitForImage(url, attempt = 1) {
-  try {
-    await new Promise((resolve, reject) => {
-      const img = new Image();
-      const timeoutId = setTimeout(() => {
-        img.onload = null;
-        img.onerror = null;
-        reject(new Error('Tiempo agotado esperando imagen'));
-      }, 120000);
-
-      img.onload = () => {
-        clearTimeout(timeoutId);
-        resolve();
-      };
-      img.onerror = () => {
-        clearTimeout(timeoutId);
-        reject(new Error('El motor rechazo la imagen'));
-      };
-      img.referrerPolicy = 'no-referrer';
-      img.src = url;
-    });
-    return url;
-  } catch (err) {
-    if (attempt < 4) {
-      await new Promise(resolve => setTimeout(resolve, 12000 * attempt));
-      return waitForImage(url.replace(/seed=\d+/, 'seed=' + Math.floor(Math.random() * 2147483647)), attempt + 1);
-    }
-    throw err;
-  }
-}
-
+// ── Skeleton placeholder ──────────────────────────────────
 function makeSk(res) {
+  const [w, h] = res.split('x').map(Number);
   const el = document.createElement('div');
-  const [w,h] = res.split('x').map(Number);
-  el.className = 'sk ' + (h>w ? 'pt' : 'sq');
+  el.className = 'sk ' + (h > w ? 'pt' : w > h ? 'ls' : 'sq');
   return el;
 }
 
+// ── Añadir tarjeta ────────────────────────────────────────
 function addCard(image, prompt, res) {
   const url = typeof image === 'string' ? image : image.displayUrl;
-  const sourceUrl = typeof image === 'string' ? image : image.sourceUrl;
-  const [w,h] = res.split('x').map(Number);
-  const cls = h>w ? 'pt' : w>h ? 'ls' : 'sq';
+  const [w, h] = res.split('x').map(Number);
+  const cls = h > w ? 'pt' : w > h ? 'ls' : 'sq';
+
   const card = document.createElement('div');
-  card.className = `card ${cls}`;
+  card.className   = `card ${cls}`;
   card.dataset.url = url;
-  card.dataset.sourceUrl = sourceUrl || url;
 
   const img = document.createElement('img');
-  img.referrerPolicy = 'no-referrer';
-  img.src = url; img.alt = prompt; img.loading = 'eager';
+  // ← FIX: sin crossOrigin ni referrerPolicy en la img visible → máxima compatibilidad
+  img.src     = url;
+  img.alt     = prompt;
+  img.loading = 'lazy';
   img.onerror = () => {
     img.style.display = 'none';
-    card.style.minHeight = '140px';
-    card.innerHTML += '<div style="padding:20px;text-align:center;color:#dc2626;font-size:11px;">⚠️ No se pudo mostrar<br><small>Intenta generar de nuevo</small></div>';
+    const errDiv = document.createElement('div');
+    errDiv.style.cssText = 'padding:20px;text-align:center;color:#dc2626;font-size:11px;';
+    errDiv.innerHTML = '⚠️ No se pudo mostrar<br><small>Intenta generar de nuevo</small>';
+    card.insertBefore(errDiv, card.firstChild);
   };
 
   const ptag = document.createElement('div');
-  ptag.className = 'ptag';
-  ptag.textContent = prompt.substring(0,50) + (prompt.length>50?'...':'');
+  ptag.className   = 'ptag';
+  ptag.textContent = prompt.substring(0, 50) + (prompt.length > 50 ? '...' : '');
 
   const acts = document.createElement('div');
   acts.className = 'cacts';
 
   const dl = document.createElement('button');
-  dl.className = 'cdl'; dl.textContent = '⬇️ Guardar'; dl.title = 'Abrir en nueva pestaña para guardar';
-  dl.onclick = () => window.open(url, '_blank');
+  dl.className   = 'cdl';
+  dl.textContent = '⬇️ Guardar';
+  dl.title       = 'Abrir en nueva pestaña para guardar';
+  dl.onclick     = () => window.open(url, '_blank');
 
   const add = document.createElement('button');
-  add.className = 'cadd'; add.textContent = '📄 Plantilla';
-  add.onclick = () => toast('✅ Usa "→ Plantilla PDF" para enviar todas');
+  add.className   = 'cadd';
+  add.textContent = '📄 Plantilla';
+  add.onclick     = () => toast('✅ Usa "→ Plantilla PDF" para enviar todas');
 
   const del = document.createElement('button');
-  del.className = 'cdel'; del.textContent = '✕';
-  del.onclick = () => { card.remove(); updateCount(); };
+  del.className   = 'cdel';
+  del.textContent = '✕';
+  del.onclick     = () => { card.remove(); updateCount(); };
 
   acts.append(dl, add, del);
   card.append(img, ptag, acts);
@@ -476,27 +477,74 @@ function addCard(image, prompt, res) {
   updateCount();
 }
 
+// ── Tarjeta de error ──────────────────────────────────────
+function addErrorCard(res, msg) {
+  const [w, h] = res.split('x').map(Number);
+  const cls = h > w ? 'pt' : w > h ? 'ls' : 'sq';
+  const card = document.createElement('div');
+  card.className = `card ${cls}`;
+  card.style.cssText = 'display:flex;align-items:center;justify-content:center;min-height:120px;';
+  card.innerHTML = `
+    <div style="padding:16px;text-align:center;">
+      <div style="font-size:1.8rem;margin-bottom:6px;">❌</div>
+      <div style="font-size:11px;color:#dc2626;font-weight:700;">Error al generar</div>
+      <div style="font-size:10px;color:#6b7280;margin-top:4px;max-width:160px;">${msg}</div>
+      <button onclick="this.closest('.card').remove();updateCount();"
+        style="margin-top:10px;background:#fee2e2;color:#dc2626;border:none;border-radius:6px;
+               padding:5px 12px;font-size:10px;font-weight:700;cursor:pointer;">
+        Quitar
+      </button>
+    </div>`;
+  document.getElementById('gallery').appendChild(card);
+}
+
+// ── Enviar a plantilla ────────────────────────────────────
 function sendToTemplate() {
   const urls = [...document.querySelectorAll('.card[data-url]')].map(c => c.dataset.url).filter(Boolean);
   if (!urls.length) { toast('⚠️ No hay imágenes en la galería'); return; }
-  const n = urls.length;
-  const grid = n<=2?'1x2':n<=4?'2x2':n<=9?'3x3':n<=16?'4x4':'5x5';
-  const p = document.getElementById('prompt').value.trim();
-  window.open(`plantilla-imagenes-v2.html?agent=1&grid=${grid}&images=${encodeURIComponent(urls.join('|'))}&topic=${encodeURIComponent(p+' [IA]')}`, '_blank');
+  const n    = urls.length;
+  const grid = n <= 2 ? '1x2' : n <= 4 ? '2x2' : n <= 9 ? '3x3' : n <= 16 ? '4x4' : '5x5';
+  const p    = document.getElementById('prompt').value.trim();
+  window.open(
+    `plantilla-imagenes-v2.html?agent=1&grid=${grid}&images=${encodeURIComponent(urls.join('|'))}&topic=${encodeURIComponent(p + ' [IA]')}`,
+    '_blank'
+  );
   toast(`🚀 Plantilla ${grid} con ${n} imágenes`);
 }
 
+// ── Limpiar ───────────────────────────────────────────────
 function clearGallery() {
   if (!confirm('¿Limpiar todas las imágenes?')) return;
-  document.getElementById('gallery').innerHTML = '<div class="empty" id="emptyState"><div class="icon">🎨</div><p style="font-weight:700;color:#374151;">Galería limpia</p><p style="font-size:12px;margin-top:6px;">Genera nuevas imágenes cuando quieras</p></div>';
+  document.getElementById('gallery').innerHTML = `
+    <div class="empty" id="emptyState">
+      <div class="icon">🎨</div>
+      <p style="font-weight:700;color:#374151;">Galería limpia</p>
+      <p style="font-size:12px;margin-top:6px;">Genera nuevas imágenes cuando quieras</p>
+    </div>`;
   updateCount();
   document.getElementById('progBar').style.display = 'none';
   document.getElementById('stxt').textContent = '';
 }
 
+// ── Test de conexión ──────────────────────────────────────
+async function testBridge(e) {
+  const btn = e?.currentTarget;
+  const old = btn?.textContent || '';
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Probando...'; }
+  try {
+    await genOne('school pencil on a notebook, realistic photo', '', 'blurry, bad quality', '512x512');
+    toast('✅ Motor Pollinations activo y funcionando');
+  } catch (err) {
+    toast('⚠️ Sin respuesta: ' + err.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = old; }
+  }
+}
+
+// ── Utils ─────────────────────────────────────────────────
 function updateCount() {
   const n = document.querySelectorAll('.card').length;
-  document.getElementById('galCount').textContent = `${n} imagen${n!==1?'es':''}`;
+  document.getElementById('galCount').textContent = `${n} imagen${n !== 1 ? 'es' : ''}`;
 }
 
 function ap(t) {
@@ -507,32 +555,16 @@ function ap(t) {
 
 function setExample(text) {
   document.getElementById('prompt').value = text;
-  document.getElementById('emptyState').style.display = 'none';
+  const es = document.getElementById('emptyState');
+  if (es) es.style.display = 'none';
 }
 
-async function testBridge(e) {
-  const btn = e?.currentTarget;
-  const old = btn ? btn.textContent : '';
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = 'Probando...';
-  }
-  try {
-    await genOne('lapiz escolar sobre una libreta, foto realista', '', 'borroso, mala calidad, texto', '512x512');
-    toast('✅ Puente de imagenes activo');
-  } catch (err) {
-    toast('⚠️ Puente sin respuesta: ' + err.message);
-  } finally {
-    if (btn) {
-      btn.disabled = false;
-      btn.textContent = old;
-    }
-  }
-}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 function toast(msg) {
   const t = document.createElement('div');
-  t.className = 'toast'; t.textContent = msg;
+  t.className = 'toast';
+  t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 400); }, 2800);
 }
