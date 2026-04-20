@@ -109,5 +109,6 @@ async function list(){const el=document.getElementById('ol');el.innerHTML='<div 
 function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .4s';setTimeout(()=>t.remove(),400);},2800);}
 window.addEventListener('load',()=>{ping();ts('v');ts('r');});
 </script>
+    <script src="/js/gemini-widget.js"></script>
 </body>
 </html>

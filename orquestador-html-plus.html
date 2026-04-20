@@ -193,7 +193,8 @@
     function ensureScript(src, scriptName) {
       const re = new RegExp(`src=["']${scriptName.replace('.', '\\.')}["']`, 'i');
       if (re.test(src)) return src;
-      return src.replace(/<\/body>/i, `  <script src="${scriptName}"></script>\n</body>`);
+      return src.replace(/<\/body>/i, `  <script src="${scriptName}"></script>\n    <script src="/js/gemini-widget.js"></script>
+</body>`);
     }
 
     function convertHtmlContent(filename, content) {
@@ -332,7 +333,8 @@
       for (const f of files) {
         try {
           const content = await fileToText(f);
-          if (!/<\/body>/i.test(content)) throw new Error('No contiene </body>');
+          if (!/<\/body>/i.test(content)) throw new Error('No contiene     <script src="/js/gemini-widget.js"></script>
+</body>');
           const { templateId, output } = convertHtmlContent(f.name, content);
           converted.push({ filename: f.name, templateId, output, repoStatus: 'listo' });
         } catch (err) {
@@ -379,5 +381,6 @@
     renderConvertedRows();
     loadRegistry();
   </script>
+    <script src="/js/gemini-widget.js"></script>
 </body>
 </html>
