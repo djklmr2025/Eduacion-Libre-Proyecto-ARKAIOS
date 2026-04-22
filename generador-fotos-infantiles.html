@@ -980,6 +980,69 @@
     </script>
     <script src="arkaios-biblioteca.js"></script>
     <script src="arkaios-orquestador.js"></script>
+    <script>
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        if (!params.get('agent')) return;
+
+        const imagesParam = params.get('images') || '';
+        const topic = params.get('topic') || '';
+        const autoPdf = params.get('autopdf') === '1';
+
+        if (!imagesParam) return;
+
+        const banner = document.createElement('div');
+        banner.id = 'agent-banner';
+        banner.style.cssText = `
+          position: fixed; top: 0; left: 0; right: 0; z-index: 99999;
+          background: linear-gradient(90deg, #667eea, #764ba2);
+          color: white; text-align: center; padding: 10px;
+          font-weight: bold; font-size: 14px;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        `;
+        banner.innerHTML = `🎓 ARKAIOS Edu — Cargando fotos para: <strong>${decodeURIComponent(topic)}</strong> <span id="agent-progress">...</span>`;
+        document.body.prepend(banner);
+
+        const imageUrls = decodeURIComponent(imagesParam).split('|').filter(Boolean);
+        let loaded = 0;
+
+        function updateProgress() {
+          const progress = document.getElementById('agent-progress');
+          if (progress) progress.textContent = `(${loaded}/${imageUrls.length} imágenes)`;
+        }
+
+        function fillRows() {
+          updateProgress();
+
+          for (let row = 1; row <= TOTAL_ROWS; row++) {
+            const url = imageUrls[row - 1];
+            if (!url) break;
+            rowImages[row].image = url;
+            rowImages[row].quantity = PHOTOS_PER_ROW;
+            loaded += 1;
+            updateProgress();
+          }
+
+          createRowSelectors();
+          renderTemplate();
+          updateStats();
+
+          banner.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+          banner.innerHTML = `✅ Fotos listas — ${loaded} renglones cargados de <strong>${decodeURIComponent(topic)}</strong> &nbsp;|&nbsp;
+            <button onclick="window.print()" style="background:white;color:#059669;border:none;padding:4px 12px;border-radius:20px;font-weight:bold;cursor:pointer;margin-left:8px;">🖨️ Imprimir / PDF</button>
+            <button onclick="document.getElementById('agent-banner').remove()" style="background:rgba(255,255,255,0.2);color:white;border:none;padding:4px 12px;border-radius:20px;cursor:pointer;margin-left:8px;">✕ Cerrar</button>
+          `;
+
+          if (autoPdf) {
+            setTimeout(() => window.print(), 1500);
+          }
+        }
+
+        window.addEventListener('load', () => {
+          setTimeout(fillRows, 400);
+        });
+      })();
+    </script>
     <script src="/js/gemini-widget.js"></script>
 </body>
 
