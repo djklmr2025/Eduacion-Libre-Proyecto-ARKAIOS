@@ -1,6 +1,15 @@
 // api/arkaios-tools.js
-// Herramientas avanzadas para que ARKAIOS ejecute acciones en el sistema
-// Permite editar plantillas, crear nuevas, analizar PDFs, etc.
+// Herramientas avanzadas para que ARKAIOS inspeccione y describa plantillas reales del proyecto.
+
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PROJECT_ROOT = path.resolve(__dirname, '..');
+const MODULES_FILE = path.join(PROJECT_ROOT, 'modules.json');
+const HIDDEN_HTML = new Set(['index.html', 'CODIGO_PARA_INDEX.html']);
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -55,45 +64,8 @@ export default async function handler(req, res) {
     }
 }
 
-// Listar todas las plantillas disponibles
 async function listTemplates(req, res) {
-    const templates = [
-        {
-            id: 'plantilla_escolar_carta_mx',
-            name: 'Carta MX · Índice + Texto',
-            file: 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html',
-            description: 'Plantilla para documentos escolares en formato carta México',
-            category: 'texto'
-        },
-        {
-            id: 'generador_fotos',
-            name: 'Fotos infantiles 2.5×3 cm',
-            file: 'generador-fotos-infantiles.html',
-            description: 'Generador de fotos infantiles en tamaño estándar',
-            category: 'fotografias'
-        },
-        {
-            id: 'plantilla_imagenes_v2',
-            name: 'Plantilla escolar imágenes v2',
-            file: 'plantilla-imagenes-v2.html',
-            description: 'Plantilla para organizar imágenes en formato escolar',
-            category: 'fotografias'
-        },
-        {
-            id: 'plantilla_cuadros',
-            name: 'Plantilla cuadros imágenes',
-            file: 'plantilla-cuadros-imagenes.html',
-            description: 'Plantilla con cuadros para organizar imágenes',
-            category: 'fotografias'
-        },
-        {
-            id: 'plantilla_circulos_jack',
-            name: 'Círculos Jack Skellington',
-            file: 'plantilla_circulos_jack.html',
-            description: 'Plantilla especial con círculos temáticos',
-            category: 'especiales'
-        }
-    ];
+    const templates = await buildTemplateCatalog();
 
     return res.status(200).json({
         success: true,
@@ -102,25 +74,27 @@ async function listTemplates(req, res) {
     });
 }
 
-// Obtener información de una plantilla específica
 async function getTemplate(req, res, params) {
-    const { template_id } = params || {};
+    const { template_id, file } = params || {};
+    const templates = await buildTemplateCatalog();
 
-    if (!template_id) {
-        return res.status(400).json({ error: 'Missing template_id parameter' });
+    const template = templates.find((item) => {
+        return item.id === template_id || item.file === file;
+    });
+
+    if (!template) {
+        return res.status(404).json({
+            error: 'Template not found',
+            requested: { template_id, file }
+        });
     }
 
-    // En una implementación real, esto leería el archivo HTML
-    // Por ahora retornamos metadata
     return res.status(200).json({
         success: true,
-        template_id,
-        message: 'Template info retrieved (placeholder)',
-        hint: 'En producción, esto retornaría el contenido HTML del archivo'
+        template
     });
 }
 
-// Editar una plantilla existente
 async function editTemplate(req, res, params) {
     const { template_id, changes, section } = params || {};
 
@@ -131,29 +105,22 @@ async function editTemplate(req, res, params) {
         });
     }
 
-    // En una implementación real, esto modificaría el archivo HTML
-    // Opciones:
-    // 1. Guardar en base de datos (Supabase, MongoDB, etc.)
-    // 2. Usar GitHub API para commit directo
-    // 3. Retornar el código modificado para que el usuario lo copie
-
     return res.status(200).json({
         success: true,
         template_id,
         section,
         message: 'Template edited successfully (placeholder)',
         modified_code: changes,
-        hint: 'El usuario puede copiar este código y aplicarlo manualmente',
+        hint: 'El usuario puede copiar este codigo y aplicarlo manualmente',
         next_steps: [
-            '1. Copiar el código generado',
+            '1. Copiar el codigo generado',
             '2. Abrir la plantilla en un editor',
-            '3. Reemplazar la sección indicada',
+            '3. Reemplazar la seccion indicada',
             '4. Guardar y recargar'
         ]
     });
 }
 
-// Crear una nueva plantilla desde cero
 async function createTemplate(req, res, params) {
     const { name, description, type, specifications } = params || {};
 
@@ -164,7 +131,6 @@ async function createTemplate(req, res, params) {
         });
     }
 
-    // Generar código HTML base según el tipo
     const templateCode = generateTemplateCode(type, specifications);
 
     return res.status(200).json({
@@ -177,15 +143,14 @@ async function createTemplate(req, res, params) {
         },
         message: 'New template created successfully',
         instructions: [
-            '1. Copiar el código HTML generado',
+            '1. Copiar el codigo HTML generado',
             '2. Crear un nuevo archivo .html en el proyecto',
-            '3. Pegar el código',
-            '4. Agregar el botón correspondiente en index.html'
+            '3. Pegar el codigo',
+            '4. Agregar el boton correspondiente en modules.json'
         ]
     });
 }
 
-// Analizar un PDF
 async function analyzePDF(req, res, params) {
     const { pdf_url, pdf_base64 } = params || {};
 
@@ -196,27 +161,19 @@ async function analyzePDF(req, res, params) {
         });
     }
 
-    // En una implementación real, esto usaría un servicio de OCR/análisis
-    // Opciones:
-    // 1. Google Cloud Vision API
-    // 2. AWS Textract
-    // 3. pdf.js para análisis en el cliente
-    // 4. Servicio personalizado de ARKAIOS
-
     return res.status(200).json({
         success: true,
         message: 'PDF analysis in progress (placeholder)',
         analysis: {
             pages: 1,
             detected_structure: 'educational_document',
-            suggested_template: 'plantilla_escolar_carta_mx',
+            suggested_template: 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html',
             extractable_fields: ['title', 'content', 'images']
         },
-        hint: 'Implementar integración con servicio de OCR para análisis real'
+        hint: 'Implementar integracion con servicio de OCR para analisis real'
     });
 }
 
-// Optimizar una plantilla existente
 async function optimizeTemplate(req, res, params) {
     const { template_id, optimization_type = 'all' } = params || {};
 
@@ -227,11 +184,11 @@ async function optimizeTemplate(req, res, params) {
     const optimizations = {
         performance: [
             'Minificar CSS',
-            'Optimizar imágenes',
-            'Eliminar código no utilizado'
+            'Optimizar imagenes',
+            'Eliminar codigo no utilizado'
         ],
         accessibility: [
-            'Agregar atributos alt a imágenes',
+            'Agregar atributos alt a imagenes',
             'Mejorar contraste de colores',
             'Agregar roles ARIA'
         ],
@@ -253,7 +210,115 @@ async function optimizeTemplate(req, res, params) {
     });
 }
 
-// Función auxiliar para generar código de plantilla
+async function buildTemplateCatalog() {
+    const catalog = [];
+    const seenFiles = new Set();
+    const modulesData = await readModulesCatalog();
+
+    for (const section of modulesData.sections) {
+        for (const item of section.items) {
+            const file = String(item.target || '').trim();
+            if (!file || seenFiles.has(file)) continue;
+
+            catalog.push({
+                id: slugify(file.replace(/\.html$/i, '')),
+                name: String(item.label || prettifyName(file)).trim(),
+                file,
+                description: buildDescription(item.label, section.title),
+                category: slugify(section.title || 'general'),
+                section: section.title || 'General',
+                icon: item.icon || null,
+                url: `/${file}`,
+                source: 'modules.json',
+                listed: true
+            });
+
+            seenFiles.add(file);
+        }
+    }
+
+    const htmlFiles = await scanHtmlFiles();
+    for (const file of htmlFiles) {
+        if (seenFiles.has(file)) continue;
+
+        catalog.push({
+            id: slugify(file.replace(/\.html$/i, '')),
+            name: prettifyName(file),
+            file,
+            description: `Pagina disponible detectada en el repositorio: ${prettifyName(file)}.`,
+            category: inferCategory(file),
+            section: 'Detectadas',
+            icon: null,
+            url: `/${file}`,
+            source: 'filesystem',
+            listed: false
+        });
+
+        seenFiles.add(file);
+    }
+
+    return catalog.sort((a, b) => {
+        if (a.listed !== b.listed) return a.listed ? -1 : 1;
+        return a.name.localeCompare(b.name, 'es', { sensitivity: 'base' });
+    });
+}
+
+async function readModulesCatalog() {
+    try {
+        const raw = await fs.readFile(MODULES_FILE, 'utf8');
+        const data = JSON.parse(raw);
+        return {
+            sections: Array.isArray(data.sections) ? data.sections : []
+        };
+    } catch (error) {
+        console.warn('[ARKAIOS] No se pudo leer modules.json:', error.message);
+        return { sections: [] };
+    }
+}
+
+async function scanHtmlFiles() {
+    const entries = await fs.readdir(PROJECT_ROOT, { withFileTypes: true });
+    return entries
+        .filter((entry) => entry.isFile())
+        .map((entry) => entry.name)
+        .filter((name) => name.toLowerCase().endsWith('.html'))
+        .filter((name) => !HIDDEN_HTML.has(name))
+        .sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+}
+
+function slugify(value = '') {
+    return String(value)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+}
+
+function prettifyName(file) {
+    return String(file)
+        .replace(/\.html$/i, '')
+        .replace(/[-_]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function inferCategory(file) {
+    const lower = String(file).toLowerCase();
+
+    if (lower.includes('foto') || lower.includes('imagen') || lower.includes('pixabay')) return 'imagenes';
+    if (lower.includes('bio') || lower.includes('carta') || lower.includes('hoja')) return 'texto';
+    if (lower.includes('panel') || lower.includes('portal') || lower.includes('orquestador')) return 'sistema';
+    return 'general';
+}
+
+function buildDescription(label, section) {
+    const safeLabel = String(label || 'Plantilla');
+    const safeSection = String(section || 'General');
+    return `Recurso del modulo ${safeSection}: ${safeLabel}.`;
+}
+
 function generateTemplateCode(type, specifications = {}) {
     const baseTemplate = `<!DOCTYPE html>
 <html lang="es">
@@ -290,7 +355,8 @@ function generateTemplateCode(type, specifications = {}) {
   <div class="container">
     <h1>${specifications.title || 'Nueva Plantilla'}</h1>
     <div class="content">
-      <p>Contenido de la plantilla aquí...</p>
+      <p>Contenido de la plantilla aqui...</p>
+      <p>Tipo sugerido: ${type}</p>
     </div>
   </div>
 </body>
