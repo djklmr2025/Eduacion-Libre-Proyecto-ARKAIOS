@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brecha Digital | ARKAIOS Educación Libre</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #1565c0 100%);
+  min-height: 100vh;
+  padding: 20px;
+}
+.container { max-width: 1400px; margin: 0 auto; }
+
+/* HEADER TEMÁTICO */
+.hero {
+  background: rgba(255,255,255,0.97);
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 28px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+  text-align: center;
+  border-top: 6px solid #1565c0;
+}
+.hero-icon { font-size: 64px; margin-bottom: 12px; display: block; }
+.hero h1 { color: #1565c0; font-size: 36px; font-weight: 800; margin-bottom: 10px; }
+.hero .subtitulo { color: #555; font-size: 16px; max-width: 700px; margin: 0 auto 20px; line-height: 1.6; }
+
+.tags {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 16px;
+}
+.tag {
+  background: #e3f2fd; color: #1565c0; padding: 6px 16px;
+  border-radius: 20px; font-size: 13px; font-weight: 600;
+}
+
+/* PANEL CONTROL */
+.panel-control {
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 28px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+.panel-control h2 { color: #1565c0; margin-bottom: 16px; font-size: 18px; }
+
+.controles-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px;
+}
+.control-group { display: flex; flex-direction: column; gap: 8px; }
+.control-group label { font-weight: 600; color: #333; font-size: 14px; }
+.control-group select, .control-group input[type="number"] {
+  padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px;
+  transition: all 0.3s; background: white;
+}
+.control-group select:focus { outline: none; border-color: #1565c0; }
+
+.botones-accion { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.btn {
+  padding: 12px 24px; border: none; border-radius: 8px; font-weight: 700;
+  font-size: 14px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px;
+}
+.btn-primary { background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%); color: white; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(21,101,192,0.4); }
+.btn-secondary { background: #48bb78; color: white; }
+.btn-secondary:hover { background: #38a169; transform: translateY(-2px); }
+.btn-danger { background: #f56565; color: white; }
+
+.stats {
+  display: flex; gap: 20px; padding: 16px; background: #e3f2fd; border-radius: 10px; margin-top: 16px;
+}
+.stat-item { flex: 1; text-align: center; }
+.stat-value { font-size: 28px; font-weight: 800; color: #1565c0; }
+.stat-label { font-size: 12px; color: #555; margin-top: 4px; font-weight: 600; }
+
+/* CONTENIDO EDUCATIVO */
+.seccion-info {
+  background: rgba(255,255,255,0.97);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 28px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+.seccion-info h2 { color: #1565c0; font-size: 22px; margin-bottom: 16px; }
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.info-card {
+  background: #f0f7ff; border-radius: 12px; padding: 20px;
+  border-left: 4px solid #1565c0;
+}
+.info-card h3 { color: #1565c0; font-size: 16px; margin-bottom: 10px; }
+.info-card p { color: #444; font-size: 14px; line-height: 1.6; }
+
+/* GRID DE IMÁGENES */
+.hojas-container { display: flex; flex-direction: column; gap: 30px; }
+.page-wrapper {
+  background: white; border-radius: 16px; padding: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+.page-title {
+  text-align: center; margin-bottom: 16px; font-weight: 700; color: #1565c0;
+  font-size: 16px; padding: 10px; background: #e3f2fd; border-radius: 8px;
+}
+.page-container {
+  width: 21.59cm; height: 27.94cm; background: white;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15); border-radius: 8px;
+  position: relative; overflow: hidden; margin: 0 auto;
+  display: flex; align-items: center; justify-content: center;
+}
+.cuadricula { display: grid; gap: 0; }
+.celda-imagen {
+  border: 1px dashed #90caf9; background: #fafafa; position: relative;
+  overflow: hidden; cursor: pointer; transition: all 0.3s;
+  display: flex; align-items: center; justify-content: center;
+}
+.celda-imagen:hover { border-color: #1565c0; background: #e3f2fd; }
+.num-celda {
+  position: absolute; top: 6px; left: 6px;
+  background: rgba(21,101,192,0.9); color: white;
+  padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 11px; z-index: 2;
+}
+.img-container { width: 100%; height: 100%; position: relative; overflow: hidden; }
+.img-preview { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+.celda-caption {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(21,101,192,0.85); color: white;
+  padding: 6px 10px; font-size: 10px; font-weight: 600;
+  text-align: center;
+}
+.botones-celda {
+  position: absolute; bottom: 8px; right: 8px; display: flex; gap: 4px;
+  opacity: 0; transition: opacity 0.3s; z-index: 3;
+}
+.celda-imagen:hover .botones-celda { opacity: 1; }
+.btn-celda {
+  padding: 5px 9px; border: none; border-radius: 6px; font-size: 11px;
+  font-weight: 700; cursor: pointer; color: white;
+}
+.btn-eliminar { background: #f56565; }
+.celda-vacia { color: #90caf9; font-size: 28px; }
+.loading-indicator {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  color: #1565c0; font-size: 12px; font-weight: 600; text-align: center;
+}
+.loading-spinner {
+  width: 30px; height: 30px; border: 3px solid #e3f2fd;
+  border-top: 3px solid #1565c0; border-radius: 50%;
+  animation: spin 1s linear infinite; margin: 0 auto 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* NAVEGACIÓN */
+.nav-temas {
+  background: rgba(255,255,255,0.97); border-radius: 12px; padding: 16px;
+  margin-bottom: 20px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+}
+.nav-temas a {
+  background: #1565c0; color: white; padding: 10px 20px; border-radius: 8px;
+  text-decoration: none; font-weight: 600; font-size: 14px; transition: all 0.3s;
+}
+.nav-temas a:hover { background: #0d47a1; transform: translateY(-2px); }
+.nav-temas a.activo { background: #0d47a1; box-shadow: 0 4px 12px rgba(21,101,192,0.4); }
+
+@media print {
+  @page { margin: 0; size: auto; }
+  body { background: white; }
+  .hero, .panel-control, .seccion-info, .nav-temas, .no-print,
+  .page-title, .botones-celda, .btn-celda, .num-celda { display: none !important; }
+  .hojas-container { display: block; margin: 0; padding: 0; }
+  .page-wrapper { box-shadow: none; padding: 0; margin: 0; page-break-after: always; }
+  .page-container { box-shadow: none; margin: 0; }
+  .celda-imagen { border: 1px solid #1565c0 !important; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- NAVEGACIÓN -->
+  <div class="nav-temas no-print">
+    <a href="index.html">🏠 Inicio ARKAIOS</a>
+    <a href="brecha-digital.html" class="activo">📡 Brecha Digital</a>
+    <a href="cultura-de-paz.html">☮️ Cultura de Paz</a>
+    <a href="plantilla-cuadros-imagenes-v2.html">🖼️ Plantilla General</a>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <span class="hero-icon">📡</span>
+    <h1>Brecha Digital</h1>
+    <p class="subtitulo">
+      La brecha digital es la desigualdad en el acceso, uso y aprovechamiento de las tecnologías de la información
+      y comunicación (TIC). Comprender sus causas y consecuencias es fundamental para construir una sociedad
+      más justa e inclusiva.
+    </p>
+    <div class="tags">
+      <span class="tag">🌐 Tecnología e Inclusión</span>
+      <span class="tag">📚 Educación Digital</span>
+      <span class="tag">🤝 Equidad Social</span>
+      <span class="tag">💻 Acceso a Internet</span>
+      <span class="tag">🏫 Comunidades Rurales</span>
+    </div>
+  </div>
+
+  <!-- INFO EDUCATIVA -->
+  <div class="seccion-info no-print">
+    <h2>📖 Conceptos Clave</h2>
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>¿Qué es la Brecha Digital?</h3>
+        <p>Es la diferencia existente entre personas que tienen acceso a las tecnologías digitales y quienes no lo tienen, creando desigualdades educativas, económicas y sociales.</p>
+      </div>
+      <div class="info-card">
+        <h3>Causas Principales</h3>
+        <p>Falta de infraestructura, pobreza económica, analfabetismo digital, género, edad, ubicación geográfica (zonas rurales vs urbanas).</p>
+      </div>
+      <div class="info-card">
+        <h3>Consecuencias</h3>
+        <p>Exclusión del mercado laboral digital, desigualdad educativa, dificultad para acceder a servicios gubernamentales y de salud en línea.</p>
+      </div>
+      <div class="info-card">
+        <h3>Soluciones Posibles</h3>
+        <p>Políticas públicas de conectividad, programas de alfabetización digital, reducción de costos de dispositivos y acceso a internet en escuelas.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL CONTROL -->
+  <div class="panel-control no-print">
+    <h2>🖼️ Galería de Imágenes - Brecha Digital</h2>
+    <div class="controles-grid">
+      <div class="control-group">
+        <label>📏 Tamaño de cuadros:</label>
+        <select id="selector-tamano">
+          <option value="5" selected>5 cm (Credencial)</option>
+          <option value="6">6 cm</option>
+          <option value="7">7 cm</option>
+          <option value="8">8 cm</option>
+          <option value="9">9 cm</option>
+          <option value="10">10 cm</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>📂 Agregar mis imágenes:</label>
+        <input type="file" id="input-imagenes" multiple accept="image/*" style="display:none">
+        <button class="btn btn-primary" onclick="document.getElementById('input-imagenes').click()">
+          📎 Seleccionar archivos
+        </button>
+      </div>
+      <div class="control-group">
+        <label>🔍 Buscar más imágenes:</label>
+        <button class="btn btn-primary" onclick="buscarEnPexels()">📸 Buscar en Pexels</button>
+      </div>
+    </div>
+    <div class="botones-accion">
+      <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir / PDF</button>
+      <button class="btn btn-danger" onclick="limpiarTodo()">🗑️ Limpiar todo</button>
+      <button class="btn btn-primary" onclick="recargarImagenes()">🔄 Recargar imágenes del tema</button>
+    </div>
+    <div class="stats">
+      <div class="stat-item"><div class="stat-value" id="stat-imagenes">0</div><div class="stat-label">Imágenes cargadas</div></div>
+      <div class="stat-item"><div class="stat-value" id="stat-hojas">0</div><div class="stat-label">Hojas</div></div>
+      <div class="stat-item"><div class="stat-value" id="stat-cuadros">0</div><div class="stat-label">Cuadros / Hoja</div></div>
+    </div>
+  </div>
+
+  <!-- GALERÍA -->
+  <div id="hojas-container" class="hojas-container"></div>
+
+</div>
+
+<input type="file" id="input-individual" accept="image/*" style="display:none">
+
+<script>
+const PEXELS_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
+
+// Imágenes temáticas pre-configuradas para Brecha Digital
+const QUERIES_TEMA = [
+  'digital divide technology access',
+  'rural internet connectivity',
+  'children computer education',
+  'digital literacy school',
+  'technology inequality community',
+  'online learning kids tablet',
+  'internet access poverty',
+  'digital inclusion education'
+];
+
+const CAPTIONS_TEMA = [
+  'Acceso desigual a tecnología',
+  'Conectividad en zonas rurales',
+  'Educación digital para niños',
+  'Alfabetización digital',
+  'Inclusión tecnológica',
+  'Aprendizaje en línea',
+  'Acceso a internet',
+  'Inclusión digital comunitaria'
+];
+
+let imagenes = [];
+let captions = [];
+let estadosImagen = [];
+
+const selectorTamano = document.getElementById('selector-tamano');
+const hojasContainer = document.getElementById('hojas-container');
+
+selectorTamano.addEventListener('change', generarPlantilla);
+
+document.getElementById('input-imagenes').addEventListener('change', function(e) {
+  Array.from(e.target.files).forEach(archivo => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      imagenes.push(ev.target.result);
+      captions.push(archivo.name.split('.')[0]);
+      estadosImagen.push({ zoom: 100, fijada: false });
+      generarPlantilla();
+    };
+    reader.readAsDataURL(archivo);
+  });
+  e.target.value = '';
+});
+
+async function cargarImagenesTema(count = 8) {
+  const promises = QUERIES_TEMA.slice(0, count).map((query, i) =>
+    fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=1&orientation=square`, {
+      headers: { Authorization: PEXELS_KEY }
+    })
+    .then(r => r.json())
+    .then(data => ({
+      url: data.photos?.[0]?.src?.medium || null,
+      caption: CAPTIONS_TEMA[i] || query
+    }))
+    .catch(() => ({ url: null, caption: CAPTIONS_TEMA[i] }))
+  );
+
+  const results = await Promise.all(promises);
+  results.forEach(({ url, caption }) => {
+    if (url) {
+      imagenes.push(url);
+      captions.push(caption);
+      estadosImagen.push({ zoom: 100, fijada: false });
+    }
+  });
+  generarPlantilla();
+}
+
+async function buscarEnPexels() {
+  const query = prompt('¿Qué imágenes sobre Brecha Digital buscas?', 'digital divide education');
+  if (!query) return;
+  const count = parseInt(prompt('¿Cuántas imágenes?', '4')) || 4;
+  try {
+    const r = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=${count}`, {
+      headers: { Authorization: PEXELS_KEY }
+    });
+    const data = await r.json();
+    data.photos.forEach((p, i) => {
+      imagenes.push(p.src.medium);
+      captions.push(`${query} ${i+1}`);
+      estadosImagen.push({ zoom: 100, fijada: false });
+    });
+    generarPlantilla();
+  } catch { alert('Error al buscar en Pexels'); }
+}
+
+function recargarImagenes() {
+  imagenes = []; captions = []; estadosImagen = [];
+  cargarImagenesTema(8);
+}
+
+function limpiarTodo() {
+  if (confirm('¿Limpiar todas las imágenes?')) {
+    imagenes = []; captions = []; estadosImagen = [];
+    generarPlantilla();
+  }
+}
+
+function eliminarImagen(idx) {
+  imagenes.splice(idx, 1);
+  captions.splice(idx, 1);
+  estadosImagen.splice(idx, 1);
+  generarPlantilla();
+}
+
+function generarPlantilla() {
+  hojasContainer.innerHTML = '';
+  const tamano = parseInt(selectorTamano.value);
+  const filas = Math.floor(27.94 / tamano);
+  const cols = Math.floor(21.59 / tamano);
+  const cuadrosPorHoja = filas * cols;
+  const hojasNecesarias = Math.max(1, Math.ceil(imagenes.length / cuadrosPorHoja));
+
+  document.getElementById('stat-imagenes').textContent = imagenes.length;
+  document.getElementById('stat-hojas').textContent = hojasNecesarias;
+  document.getElementById('stat-cuadros').textContent = cuadrosPorHoja;
+
+  for (let h = 0; h < hojasNecesarias; h++) {
+    const pageWrapper = document.createElement('div');
+    pageWrapper.className = 'page-wrapper';
+
+    const title = document.createElement('div');
+    title.className = 'page-title no-print';
+    title.textContent = `📡 Brecha Digital — Hoja ${h+1} de ${hojasNecesarias}`;
+    pageWrapper.appendChild(title);
+
+    const pageContainer = document.createElement('div');
+    pageContainer.className = 'page-container';
+
+    const grid = document.createElement('div');
+    grid.className = 'cuadricula';
+    grid.style.gridTemplateColumns = `repeat(${cols}, ${tamano}cm)`;
+    grid.style.gridTemplateRows = `repeat(${filas}, ${tamano}cm)`;
+
+    for (let i = 0; i < cuadrosPorHoja; i++) {
+      const idx = h * cuadrosPorHoja + i;
+      const celda = document.createElement('div');
+      celda.className = 'celda-imagen';
+      celda.style.width = `${tamano}cm`;
+      celda.style.height = `${tamano}cm`;
+
+      const num = document.createElement('span');
+      num.className = 'num-celda';
+      num.textContent = idx + 1;
+      celda.appendChild(num);
+
+      if (imagenes[idx]) {
+        const cont = document.createElement('div');
+        cont.className = 'img-container';
+        const img = document.createElement('img');
+        img.src = imagenes[idx];
+        img.className = 'img-preview';
+        img.onerror = () => { celda.innerHTML = '<div class="celda-vacia">⚠️</div>'; };
+        cont.appendChild(img);
+        celda.appendChild(cont);
+
+        if (captions[idx]) {
+          const cap = document.createElement('div');
+          cap.className = 'celda-caption';
+          cap.textContent = captions[idx];
+          celda.appendChild(cap);
+        }
+
+        const btns = document.createElement('div');
+        btns.className = 'botones-celda';
+        const btnDel = document.createElement('button');
+        btnDel.className = 'btn-celda btn-eliminar';
+        btnDel.textContent = '🗑️';
+        btnDel.onclick = e => { e.stopPropagation(); eliminarImagen(idx); };
+        btns.appendChild(btnDel);
+        celda.appendChild(btns);
+      } else {
+        celda.innerHTML += '<div class="celda-vacia">📡</div>';
+      }
+      grid.appendChild(celda);
+    }
+    pageContainer.appendChild(grid);
+    pageWrapper.appendChild(pageContainer);
+    hojasContainer.appendChild(pageWrapper);
+  }
+}
+
+// Auto-cargar imágenes al iniciar
+cargarImagenesTema(8);
+</script>
+</body>
+</html>
