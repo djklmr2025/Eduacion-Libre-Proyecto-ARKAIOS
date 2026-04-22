@@ -992,7 +992,72 @@
   </script>
   <script src="arkaios-biblioteca.js"></script>
   <script src="arkaios-orquestador.js"></script>
-    <script src="/js/gemini-widget.js"></script>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      if (!params.get('agent')) return;
+
+      const payloadParam = params.get('payload') || '';
+      const topic = params.get('topic') || '';
+      const autoPrint = params.get('autopdf') === '1';
+      if (!payloadParam) return;
+
+      const banner = document.createElement('div');
+      banner.id = 'agent-banner';
+      banner.style.cssText = `
+        position: fixed; top: 0; left: 0; right: 0; z-index: 99999;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        color: white; text-align: center; padding: 10px;
+        font-weight: bold; font-size: 14px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      `;
+      banner.innerHTML = `🎓 ARKAIOS Edu — Cargando material para: <strong>${decodeURIComponent(topic)}</strong> <span id="agent-progress">...</span>`;
+      document.body.prepend(banner);
+
+      function decodePayload(raw) {
+        try {
+          return JSON.parse(atob(decodeURIComponent(raw)));
+        } catch (error) {
+          console.error('No se pudo decodificar payload de ARKAIOS Edu:', error);
+          return null;
+        }
+      }
+
+      function applyPayload() {
+        const payload = decodePayload(payloadParam);
+        if (!payload) {
+          banner.style.background = 'linear-gradient(90deg, #ef4444, #dc2626)';
+          banner.textContent = 'No se pudo cargar el material generado por ARKAIOS Edu.';
+          return;
+        }
+
+        document.getElementById('agent-progress').textContent = '(aplicando contenido)';
+
+        if (typeof window.ARKAIOS_setData === 'function') {
+          window.ARKAIOS_setData(payload);
+        }
+
+        updateTopic();
+        changeImageLayout();
+
+        banner.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+        banner.innerHTML = `✅ Material listo — plantilla escolar cargada para <strong>${decodeURIComponent(topic)}</strong> &nbsp;|&nbsp;
+          <button onclick="window.print()" style="background:white;color:#059669;border:none;padding:4px 12px;border-radius:20px;font-weight:bold;cursor:pointer;margin-left:8px;">🖨️ Imprimir / PDF</button>
+          <button onclick="document.getElementById('agent-banner').remove()" style="background:rgba(255,255,255,0.2);color:white;border:none;padding:4px 12px;border-radius:20px;cursor:pointer;margin-left:8px;">✕ Cerrar</button>
+        `;
+
+        if (autoPrint) {
+          setTimeout(() => window.print(), 1500);
+        }
+      }
+
+      window.addEventListener('load', () => {
+        setTimeout(applyPayload, 450);
+      });
+    })();
+  </script>
+  <script src="/js/gemini-widget.js"></script>
 </body>
 
 </html>
+", "encoding": "utf-8", "sha": "7f2f9b39a36f8587c8630ba4d828933860bba273", "display_url": "https://github.com/djklmr2025/Eduacion-Libre-Proyecto-ARKAIOS/blob/MAIN/plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html", "display_title": "plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html"}
