@@ -1,68 +1,50 @@
 /**
- * GEMINI-LAB FLOATING WIDGET — ARKAIOS Educativo
- * Chat IA embebido con conocimiento total del ecosistema ARKAIOS.
+ * GEMINI-LAB FLOATING WIDGET - ARKAIOS Educativo
+ * Chat IA embebido con catalogo dinamico de plantillas.
  */
 (function () {
   'use strict';
 
-  const GEMINI_URL   = 'https://gemini-lab-nine.vercel.app/';
+  const GEMINI_URL = 'https://gemini-lab-nine.vercel.app/';
   const GEMINI_MODEL = 'gemini-2.0-flash';
-  const GEMINI_KEY   = 'AIzaSyDZTeHXVp4Rzd8tKerTMpbG_sND14xUHyY';
-  const API_EP       = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_KEY}`;
+  const GEMINI_KEY = 'AIzaSyDZTeHXVp4Rzd8tKerTMpbG_sND14xUHyY';
+  const API_EP = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_KEY}`;
+  const TOOLS_EP = '/api/arkaios-tools';
 
-  const SYS = `Eres la IA asistente oficial de ARKAIOS — Sistema Educativo Profesional v3.0.
-Tu nombre es Gemini ARKAIOS. Hablas en español, eres amigable, eficiente y muy preciso.
+  const FALLBACK_TEMPLATES = [
+    { name: 'Carta MX - Indice + Texto', file: 'plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html', section: 'Texto' },
+    { name: 'Hoja Milimetrica', file: 'hoja_milimetrica_interactiva.html', section: 'Texto' },
+    { name: 'Biografia Profesional', file: 'biografia_profesional.html', section: 'Texto' },
+    { name: 'Fotos Infantiles 2.5x3 cm', file: 'generador-fotos-infantiles.html', section: 'Imagen' },
+    { name: 'Buscador Google Imagenes', file: 'buscador-imagenes-educativo.html', section: 'Imagen' },
+    { name: 'Pixabay Descarga Lote', file: 'pixabay-descargador-lote.html', section: 'Imagen' },
+    { name: 'Circulos Jack Skellington', file: 'plantilla_circulos_jack.html', section: 'Imagen' },
+    { name: 'Cuadros Imagenes v2', file: 'plantilla-cuadros-imagenes-v2.html', section: 'Imagen' },
+    { name: 'Plantilla Imagenes v2', file: 'plantilla-imagenes-v2.html', section: 'Imagen' },
+    { name: 'Generador IA Imagenes', file: 'generador-ia-imagenes.html', section: 'Imagen' },
+    { name: 'Material Educativo Reutilizable', file: 'material-educativo-reutilizable.html', section: 'Biblioteca' },
+    { name: 'Orquestador HTML+', file: 'orquestador-html-plus.html', section: 'Automatizacion IA' },
+    { name: 'ELEMIA Panel', file: 'elemia-panel.html', section: 'Sistema' },
+    { name: 'Portal Empresarial', file: 'portal-empresarial.html', section: 'Sistema' }
+  ];
 
-## MÓDULOS DISPONIBLES EN ARKAIOS
+  const SYS_BASE = `Eres la IA asistente oficial de ARKAIOS - Sistema Educativo Profesional v3.0.
+Tu nombre es Gemini ARKAIOS. Hablas en espanol, eres eficiente y muy preciso.
 
-### 📝 Texto
-- Carta MX – Índice + Texto → /plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html
-  Plantilla profesional tamaño carta MX con áreas editables, índice automático y autoajuste de texto.
-- Hoja Milimétrica Interactiva → /hoja_milimetrica_interactiva.html
-  Generador de hojas milimétricas configurables para impresión precisa.
-- Biografía Profesional → /biografia_profesional.html
-  Plantilla para crear biografías curriculares y documentos de presentación personal.
-
-### 📸 Imagen
-- Fotos Infantiles 2.5×3 cm → /generador-fotos-infantiles.html
-  Organiza y exporta fotos de tamaño escolar estándar en lote para impresión.
-- Buscador Google Imágenes Educativo → /buscador-imagenes-educativo.html
-  Buscador filtrado de imágenes para uso educativo y sin copyright.
-- Pixabay Descarga Lote → /pixabay-descargador-lote.html
-  Descarga masiva de imágenes libres de derechos desde Pixabay.
-- Círculos Jack Skellington → /plantilla_circulos_jack.html
-  Plantilla especial de círculos recortables con diseño temático.
-- Cuadros Imágenes v2 → /plantilla-cuadros-imagenes-v2.html
-  Cuadrículas configurables para organizar imágenes en formato imprimible.
-- Plantilla Imágenes v2 → /plantilla-imagenes-v2.html
-  Plantilla flexible para composición de imágenes.
-- Generador IA Imágenes → /generador-ia-imagenes.html
-  Genera imágenes con IA usando Gemini/Imagen. Soporta prompts en español.
-
-### 🧠 Inteligencia y Memoria
-- ELEMIA — Memoria → /elemia-panel.html
-  Sistema de memoria persistente del ecosistema. Guarda notas, contextos y aprendizajes entre sesiones.
-- Material Reutilizable → /material-educativo-reutilizable.html
-  Biblioteca de recursos: plantillas, documentos y materiales catalogados.
-- Orquestador HTML+ → /orquestador-html-plus.html
-  Herramienta para orquestar y combinar módulos HTML del sistema.
-
-### 🏢 Portal
-- Portal Empresarial → /portal-empresarial.html
-  Panel de administración y acceso a funcionalidades empresariales.
-
-## CAPACIDADES TÉCNICAS
-- Todos los módulos exportan a PDF con un clic
-- Soporte para subida de PDFs y extracción automática de campos
-- Funciona offline con localStorage
-- APIs integradas: Gemini, Pixabay, Pexels, Freepik, Perplexity
-- ELEMIA para persistencia de memoria educativa entre sesiones
+## CAPACIDADES TECNICAS
+- Orientas al usuario hacia la plantilla correcta usando enlaces del proyecto.
+- Explicas para que sirve cada plantilla y sugieres la mas adecuada segun la tarea.
+- Todos los modulos pueden abrirse como paginas internas del proyecto.
+- Si no puedes resolver algo aqui, sugiere abrir Gemini Lab completo: ${GEMINI_URL}
 
 ## INSTRUCCIONES DE COMPORTAMIENTO
-- Orienta al módulo correcto con el enlace cuando aplique.
-- Para exportar PDF: todos los módulos tienen botón "Exportar PDF" en la barra superior.
-- Respuestas cortas y directas. Usa emojis con moderación.
-- Si no puedes hacer algo aquí, sugiere abrir Gemini Lab completo: ${GEMINI_URL}`;
+- Respuestas cortas, directas y utiles.
+- Si el usuario pide una plantilla, cita el nombre y la ruta.
+- Si varias plantillas sirven, compara en una sola respuesta compacta.
+- No inventes plantillas que no existan en el catalogo.
+- Si detectas una pagina "detectada" pero no listada, aclara que existe en el repo aunque no este en el menu principal.`;
+
+  let systemPrompt = `${SYS_BASE}\n\n## CATALOGO ACTUAL\n${renderCatalog(FALLBACK_TEMPLATES)}`;
 
   const CSS = `
 #gw-orb{position:fixed;bottom:68px;right:16px;width:54px;height:54px;border-radius:50%;
@@ -135,12 +117,19 @@ Tu nombre es Gemini ARKAIOS. Hablas en español, eres amigable, eficiente y muy 
   white-space:nowrap;z-index:99996;border:1px solid rgba(124,58,237,.3);}
 `;
 
+  function renderCatalog(items) {
+    return items.map((item) => {
+      const listed = item.listed === false ? ' [detectada]' : '';
+      return `- ${item.name} -> /${item.file} (${item.section || item.category || 'General'})${listed}`;
+    }).join('\n');
+  }
+
   function fmt(t) {
     return t
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-      .replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')
-      .replace(/`([^`]+)`/g,'<code>$1</code>')
-      .replace(/\n/g,'<br>');
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/\n/g, '<br>');
   }
 
   function bubble(text, role) {
@@ -150,23 +139,46 @@ Tu nombre es Gemini ARKAIOS. Hablas en español, eres amigable, eficiente y muy 
     return d;
   }
 
-  function build() {
-    const s = document.createElement('style'); s.textContent = CSS; document.head.appendChild(s);
+  async function refreshSystemPrompt() {
+    try {
+      const response = await fetch(TOOLS_EP, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tool: 'list_templates' })
+      });
+      if (!response.ok) throw new Error('No se pudo cargar el catalogo');
+      const data = await response.json();
+      const templates = Array.isArray(data.templates) && data.templates.length
+        ? data.templates
+        : FALLBACK_TEMPLATES;
+      systemPrompt = `${SYS_BASE}\n\n## CATALOGO ACTUAL\n${renderCatalog(templates)}`;
+    } catch (error) {
+      console.warn('[ARKAIOS] Widget usando catalogo fallback:', error.message);
+    }
+  }
 
-    // ORB
-    const orb = document.createElement('div'); orb.id = 'gw-orb'; orb.title = 'Gemini IA — ARKAIOS';
+  function build() {
+    const s = document.createElement('style');
+    s.textContent = CSS;
+    document.head.appendChild(s);
+
+    const orb = document.createElement('div');
+    orb.id = 'gw-orb';
+    orb.title = 'Gemini IA - ARKAIOS';
     orb.innerHTML = `<svg width="26" height="26" viewBox="0 0 28 28" fill="none">
       <circle cx="14" cy="14" r="12" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.22)" stroke-width="1.5"/>
       <path d="M14 5.5l2.4 7.2H22l-5.5 4 2.1 6.5L14 19.5l-4.6 3.7 2.1-6.5L6 12.7h5.6L14 5.5z" fill="white"/>
     </svg>`;
     document.body.appendChild(orb);
 
-    const tip = document.createElement('div'); tip.id = 'gw-tip';
-    tip.textContent = '✨ Gemini IA — ARKAIOS Educativo';
+    const tip = document.createElement('div');
+    tip.id = 'gw-tip';
+    tip.textContent = 'Gemini IA - ARKAIOS Educativo';
     document.body.appendChild(tip);
 
-    // PANEL
-    const panel = document.createElement('div'); panel.id = 'gw-panel'; panel.classList.add('gwH');
+    const panel = document.createElement('div');
+    panel.id = 'gw-panel';
+    panel.classList.add('gwH');
     panel.innerHTML = `
       <div id="gw-hd">
         <div class="gwHL">
@@ -183,73 +195,101 @@ Tu nombre es Gemini ARKAIOS. Hablas en español, eres amigable, eficiente y muy 
             </svg>
             Gemini Lab
           </button>
-          <button class="gwBt" id="gw-cls">✕</button>
+          <button class="gwBt" id="gw-cls">×</button>
         </div>
       </div>
       <div id="gw-msgs"></div>
       <div id="gw-ir">
-        <textarea id="gw-in" rows="1" placeholder="Pregunta sobre ARKAIOS…"></textarea>
+        <textarea id="gw-in" rows="1" placeholder="Pregunta sobre ARKAIOS..."></textarea>
         <button id="gw-sd">➤</button>
       </div>`;
     document.body.appendChild(panel);
 
     const msgs = panel.querySelector('#gw-msgs');
-    const inp  = panel.querySelector('#gw-in');
-    const btn  = panel.querySelector('#gw-sd');
-    let history = [], busy = false, opened = false;
+    const inp = panel.querySelector('#gw-in');
+    const btn = panel.querySelector('#gw-sd');
+    let history = [];
+    let busy = false;
+    let opened = false;
 
     function welcome() {
       if (msgs.childElementCount) return;
-      msgs.appendChild(bubble('¡Hola! 👋 Soy **Gemini ARKAIOS**, tu asistente IA.\n\nPuedo orientarte en cualquier módulo del sistema, ayudarte a crear materiales educativos o responder preguntas. ¿En qué trabajamos?', 'bot'));
+      msgs.appendChild(bubble('Hola. Soy **Gemini ARKAIOS**.\n\nConozco las plantillas activas del repo educativo y puedo orientarte al modulo correcto. ¿Que necesitas crear?', 'bot'));
     }
 
     async function send(text) {
       if (busy || !text.trim()) return;
-      busy = true; btn.disabled = true;
+      busy = true;
+      btn.disabled = true;
       msgs.appendChild(bubble(text, 'usr'));
-      const dot = document.createElement('div'); dot.className = 'gwDot';
+      const dot = document.createElement('div');
+      dot.className = 'gwDot';
       dot.innerHTML = '<span></span><span></span><span></span>';
-      msgs.appendChild(dot); msgs.scrollTop = msgs.scrollHeight;
+      msgs.appendChild(dot);
+      msgs.scrollTop = msgs.scrollHeight;
       history.push({ role: 'user', parts: [{ text }] });
       try {
         const r = await fetch(API_EP, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            system_instruction: { parts: [{ text: SYS }] },
+            system_instruction: { parts: [{ text: systemPrompt }] },
             contents: history,
             generationConfig: { maxOutputTokens: 600, temperature: 0.7 }
           })
         });
         const d = await r.json();
-        if (!r.ok) throw new Error(d?.error?.message || 'Error API');
-        const reply = d.candidates?.[0]?.content?.parts?.[0]?.text || '(sin respuesta)';
+        if (!r.ok) throw new Error(d && d.error && d.error.message ? d.error.message : 'Error API');
+        const reply = d && d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts && d.candidates[0].content.parts[0]
+          ? d.candidates[0].content.parts[0].text
+          : '(sin respuesta)';
         history.push({ role: 'model', parts: [{ text: reply }] });
-        dot.remove(); msgs.appendChild(bubble(reply, 'bot'));
-      } catch(e) {
         dot.remove();
-        msgs.appendChild(bubble(`⚠️ ${e.message}\n\nAbre **Gemini Lab** con el botón de arriba para continuar.`, 'bot'));
+        msgs.appendChild(bubble(reply, 'bot'));
+      } catch (e) {
+        dot.remove();
+        msgs.appendChild(bubble(`Error: ${e.message}\n\nAbre **Gemini Lab** con el boton de arriba para continuar.`, 'bot'));
       }
       msgs.scrollTop = msgs.scrollHeight;
-      busy = false; btn.disabled = false; inp.focus();
+      busy = false;
+      btn.disabled = false;
+      inp.focus();
     }
 
     orb.addEventListener('click', () => {
       opened = !opened;
       panel.classList.toggle('gwH', !opened);
-      if (opened) { welcome(); setTimeout(() => inp.focus(), 120); }
-    });
-    panel.querySelector('#gw-cls').addEventListener('click', () => { opened = false; panel.classList.add('gwH'); });
-    panel.querySelector('#gw-ext').addEventListener('click', () => window.open(GEMINI_URL, '_blank', 'noopener'));
-    btn.addEventListener('click', () => { const t = inp.value.trim(); if (t) { inp.value = ''; send(t); } });
-    inp.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        const t = inp.value.trim(); if (t) { inp.value = ''; send(t); }
+      if (opened) {
+        welcome();
+        setTimeout(() => inp.focus(), 120);
       }
     });
-    orb.addEventListener('mouseenter', () => tip.style.opacity = '1');
-    orb.addEventListener('mouseleave', () => tip.style.opacity = '0');
+    panel.querySelector('#gw-cls').addEventListener('click', () => {
+      opened = false;
+      panel.classList.add('gwH');
+    });
+    panel.querySelector('#gw-ext').addEventListener('click', () => window.open(GEMINI_URL, '_blank', 'noopener'));
+    btn.addEventListener('click', () => {
+      const t = inp.value.trim();
+      if (t) {
+        inp.value = '';
+        send(t);
+      }
+    });
+    inp.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        const t = inp.value.trim();
+        if (t) {
+          inp.value = '';
+          send(t);
+        }
+      }
+    });
+    orb.addEventListener('mouseenter', () => { tip.style.opacity = '1'; });
+    orb.addEventListener('mouseleave', () => { tip.style.opacity = '0'; });
+
+    refreshSystemPrompt();
   }
 
   document.readyState === 'loading'
