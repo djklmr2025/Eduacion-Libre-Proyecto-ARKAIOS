@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Plantilla de Impresión de Imágenes | ARKAIOS</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -14,866 +19,1050 @@
       padding: 20px;
     }
 
-    .container { max-width: 1400px; margin: 0 auto; }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
 
     .panel-control {
-      background: rgba(255,255,255,0.95);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
       border-radius: 16px;
       padding: 24px;
       margin-bottom: 30px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
 
-    .header { text-align: center; margin-bottom: 24px; }
-    .header h1 { color: #667eea; font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-    .header p { color: #666; font-size: 14px; }
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      color: #667eea;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: #666;
+      font-size: 14px;
+    }
 
     .controles-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 16px;
       margin-bottom: 20px;
     }
 
-    .control-group { display: flex; flex-direction: column; gap: 8px; }
-    .control-group label { font-weight: 600; color: #333; font-size: 14px; }
-    .control-group select, .control-group input[type="number"] {
-      padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px;
-      font-size: 14px; transition: all 0.3s; background: white;
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
-    .control-group select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+
+    .control-group label {
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .control-group select,
+    .control-group input[type="number"] {
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s;
+      background: white;
+    }
+
+    .control-group select:focus,
+    .control-group input[type="number"]:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
 
     .botones-accion {
-      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     .btn {
-      padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600;
-      font-size: 14px; cursor: pointer; transition: all 0.3s;
-      display: flex; align-items: center; gap: 8px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
-    .btn-secondary { background: #48bb78; color: white; }
-    .btn-secondary:hover { background: #38a169; transform: translateY(-2px); }
-    .btn-danger { background: #f56565; color: white; }
-    .btn-danger:hover { background: #e53e3e; transform: translateY(-2px); }
-    .btn-ai {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      color: white; font-weight: 700;
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
     }
-    .btn-ai:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(245,87,108,0.5); }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: #48bb78;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #38a169;
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background: #f56565;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #e53e3e;
+      transform: translateY(-2px);
+    }
 
     .stats {
-      display: flex; gap: 20px; padding: 16px; background: #f7fafc;
-      border-radius: 8px; margin-top: 4px;
-    }
-    .stat-item { flex: 1; text-align: center; }
-    .stat-value { font-size: 24px; font-weight: 700; color: #667eea; }
-    .stat-label { font-size: 12px; color: #666; margin-top: 4px; }
-
-    /* Drag hint */
-    .drag-hint {
-      text-align: center; color: #999; font-size: 12px; margin-top: 8px;
-      padding: 6px; background: #fafafa; border-radius: 6px;
+      display: flex;
+      gap: 20px;
+      padding: 16px;
+      background: #f7fafc;
+      border-radius: 8px;
+      margin-top: 16px;
     }
 
-    .hojas-container { display: flex; flex-direction: column; gap: 30px; }
+    .stat-item {
+      flex: 1;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #667eea;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .hojas-container {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
 
     .page-wrapper {
-      background: white; border-radius: 16px; padding: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
 
     .page-info {
-      text-align: center; margin-bottom: 16px; font-weight: 600;
-      color: #667eea; font-size: 14px;
+      text-align: center;
+      margin-bottom: 16px;
+      font-weight: 600;
+      color: #667eea;
+      font-size: 14px;
     }
 
     .page-container {
-      width: 21.59cm; height: 27.94cm; background: white;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.15); border-radius: 8px;
-      position: relative; overflow: hidden; margin: 0 auto;
-      display: flex; align-items: center; justify-content: center;
+      width: 21.59cm;
+      height: 27.94cm;
+      background: white;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .cuadricula { display: grid; gap: 0; }
+    .cuadricula {
+      display: grid;
+      gap: 0;
+    }
 
     .celda-imagen {
-      border: 1px dashed #cbd5e0; background: #fafafa;
-      position: relative; overflow: hidden; cursor: pointer;
-      transition: all 0.25s; display: flex; align-items: center; justify-content: center;
+      border: 1px dashed #cbd5e0;
+      background: #fafafa;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .celda-imagen:hover { border-color: #667eea; background: #f0f4ff; }
 
-    /* DRAG STYLES */
-    .celda-imagen.drag-source {
-      opacity: 0.45;
-      border: 2px dashed #667eea !important;
-      background: #eef0ff !important;
+    .celda-imagen:hover {
+      border-color: #667eea;
+      background: #f7fafc;
     }
+
+    .celda-imagen.dragging {
+      opacity: 0.5;
+      border: 2px solid #667eea;
+    }
+
     .celda-imagen.drag-over {
-      background: #e6f0ff !important;
-      border: 2px solid #667eea !important;
-      box-shadow: inset 0 0 0 3px rgba(102,126,234,0.3);
-      transform: scale(0.97);
+      background: #e6f2ff;
+      border: 2px solid #667eea;
     }
 
     .num-celda {
-      position: absolute; top: 6px; left: 6px;
-      background: rgba(102,126,234,0.9); color: white;
-      padding: 4px 8px; border-radius: 6px; font-weight: 600;
-      font-size: 11px; z-index: 2; pointer-events: none;
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: rgba(102, 126, 234, 0.9);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      z-index: 2;
     }
 
-    .img-container { width: 100%; height: 100%; position: relative; overflow: hidden; }
+    .img-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
     .img-preview {
-      width: 100%; height: 100%; object-fit: cover;
-      transition: transform 0.3s; user-select: none; pointer-events: none;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s;
+      user-select: none;
+    }
+
+    .img-preview.moviendo {
+      cursor: move;
     }
 
     .botones-celda {
-      position: absolute; bottom: 8px; right: 8px;
-      display: flex; gap: 4px; opacity: 0; transition: opacity 0.3s; z-index: 3;
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 3;
     }
-    .celda-imagen:hover .botones-celda { opacity: 1; }
+
+    .celda-imagen:hover .botones-celda {
+      opacity: 1;
+    }
 
     .btn-celda {
-      padding: 6px 10px; border: none; border-radius: 6px;
-      font-size: 11px; font-weight: 600; cursor: pointer; color: white;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: white;
     }
-    .btn-editar { background: #48bb78; }
-    .btn-editar:hover { background: #38a169; }
-    .btn-fijar { background: #4299e1; }
-    .btn-fijar:hover { background: #3182ce; }
-    .btn-eliminar { background: #f56565; }
-    .btn-eliminar:hover { background: #e53e3e; }
 
-    .celda-vacia { color: #cbd5e0; font-size: 32px; font-weight: 300; flex-direction: column; gap: 8px; }
-    .celda-vacia-texto { color: #cbd5e0; font-size: 11px; }
+    .btn-editar {
+      background: #48bb78;
+    }
 
-    /* MODAL IA */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.75); z-index: 1000;
-      align-items: center; justify-content: center;
+    .btn-editar:hover {
+      background: #38a169;
     }
-    .modal-overlay.activo { display: flex; }
 
-    .modal-contenido {
-      background: white; border-radius: 20px; padding: 32px;
-      width: 90%; max-width: 500px;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+    .btn-fijar {
+      background: #4299e1;
     }
-    .modal-contenido h2 {
-      color: #667eea; font-size: 22px; margin-bottom: 6px;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .modal-contenido p { color: #666; font-size: 13px; margin-bottom: 24px; }
 
-    .modal-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
-    .modal-field label { font-weight: 600; color: #333; font-size: 14px; }
-    .modal-field input, .modal-field select {
-      padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px;
-      font-size: 15px; transition: border-color 0.3s; outline: none;
+    .btn-fijar:hover {
+      background: #3182ce;
     }
-    .modal-field input:focus, .modal-field select:focus { border-color: #667eea; }
 
-    .fuentes-rapidas {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;
+    .btn-eliminar {
+      background: #f56565;
     }
-    .fuente-tag {
-      background: #f0f4ff; color: #667eea; border: 1px solid #c7d2fe;
-      padding: 6px 14px; border-radius: 20px; font-size: 12px;
-      cursor: pointer; font-weight: 600; transition: all 0.2s;
-    }
-    .fuente-tag:hover { background: #667eea; color: white; }
 
-    .modal-acciones { display: flex; gap: 12px; }
-    .modal-acciones .btn { flex: 1; justify-content: center; font-size: 15px; padding: 14px; }
+    .btn-eliminar:hover {
+      background: #e53e3e;
+      transform: translateY(-2px);
+    }
 
-    .progress-bar-wrap {
-      display: none; background: #f0f4ff; border-radius: 8px;
-      overflow: hidden; height: 8px; margin-top: 16px;
-    }
-    .progress-bar-wrap.visible { display: block; }
-    .progress-bar {
-      height: 100%; background: linear-gradient(90deg, #667eea, #f093fb);
-      border-radius: 8px; transition: width 0.4s ease;
-      width: 0%;
-    }
-    .progress-label { font-size: 12px; color: #888; margin-top: 6px; text-align: center; }
-
-    /* MODAL EDITOR */
-    .modal-editor {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.8); z-index: 1001;
-      align-items: center; justify-content: center;
-    }
-    .modal-editor.activo { display: flex; }
-    .modal-editor-contenido {
-      background: white; border-radius: 16px; padding: 24px;
-      max-width: 800px; width: 90%; max-height: 90vh; overflow: auto;
-    }
-    .modal-header {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
-    }
-    .modal-header h3 { color: #667eea; font-size: 20px; }
-    .btn-cerrar {
-      background: #f56565; color: white; border: none;
-      padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;
-    }
-    .editor-preview {
-      width: 100%; max-height: 400px; border: 2px solid #e0e0e0; border-radius: 8px;
-      margin-bottom: 20px; display: flex; align-items: center; justify-content: center;
-      overflow: hidden; background: #fafafa;
-    }
-    .editor-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    .controles-editor { display: flex; flex-direction: column; gap: 16px; }
-    .control-zoom { display: flex; align-items: center; gap: 12px; }
-    .control-zoom input[type="range"] {
-      flex: 1; height: 6px; border-radius: 3px; background: #e0e0e0; outline: none;
-    }
-    .control-zoom input[type="range"]::-webkit-slider-thumb {
-      appearance: none; width: 18px; height: 18px; border-radius: 50%;
-      background: #667eea; cursor: pointer;
+    .celda-vacia {
+      color: #cbd5e0;
+      font-size: 32px;
+      font-weight: 300;
     }
 
     #pixabay-credit {
-      margin: 12px auto; background: #f8fafc; border: 1px solid #d1d5db;
-      padding: 10px 14px; border-radius: 10px; color: #1f2937; font-weight: 600;
-      max-width: 960px; text-align: center;
+      margin: 12px auto;
+      background: #f8fafc;
+      border: 1px solid #d1d5db;
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: #1f2937;
+      font-weight: 600;
+      max-width: 960px;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    }
+
+    .modal-editor {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-editor.activo {
+      display: flex;
+    }
+
+    .modal-contenido {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 90vh;
+      overflow: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      color: #667eea;
+      font-size: 20px;
+    }
+
+    .btn-cerrar {
+      background: #f56565;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .editor-preview {
+      width: 100%;
+      max-height: 400px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #fafafa;
+    }
+
+    .editor-preview img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .controles-editor {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .control-zoom {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .control-zoom input[type="range"] {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: #e0e0e0;
+      outline: none;
+    }
+
+    .control-zoom input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #667eea;
+      cursor: pointer;
     }
 
     @media print {
-      @page { margin: 0; size: auto; }
-      html, body { background: white; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .panel-control, .modal-overlay, .modal-editor, #pixabay-credit, .no-print,
-      .page-info, .botones-celda, .btn-celda, .num-celda, .celda-vacia,
-      .drag-hint { display: none !important; }
-      .hojas-container { display: block; margin: 0; padding: 0; gap: 0; }
-      .page-wrapper {
-        box-shadow: none; padding: 0; margin: 0; border: none;
-        background: transparent; width: 100%;
-        page-break-after: always; break-after: page;
-        display: flex; justify-content: center; align-items: start;
+      @page {
+        margin: 0;
+        size: auto;
       }
-      .page-wrapper:last-child { page-break-after: auto; break-after: auto; }
-      .page-container { box-shadow: none; margin: 0; border: none; overflow: hidden; max-width: 100%; }
-      .celda-imagen { border: 1px solid #000 !important; print-color-adjust: exact; }
-      .img-preview { object-fit: cover; }
+
+      html,
+      body {
+        background: white;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      /* Ocultar elementos de interfaz y textos no deseados */
+      .panel-control,
+      .modal-editor,
+      #pixabay-credit,
+      .no-print,
+      #aiModal,
+      .page-info,
+      .botones-celda,
+      .btn-celda,
+      .num-celda,
+      .celda-vacia {
+        display: none !important;
+      }
+
+      .hojas-container {
+        display: block;
+        margin: 0;
+        padding: 0;
+        gap: 0;
+        gap: 0;
+      }
+
+      .page-wrapper {
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+        border: none;
+        background: transparent;
+        width: 100%;
+        /* Forzar salto de página excepto en el último */
+        page-break-after: always;
+        break-after: page;
+        display: flex;
+        justify-content: center;
+        align-items: start;
+      }
+
+      .page-wrapper:last-child {
+        page-break-after: auto;
+        break-after: auto;
+      }
+
+      .page-container {
+        box-shadow: none;
+        margin: 0;
+        border: none;
+        overflow: hidden;
+        /* Asegurar que no exceda las dimensiones */
+        max-width: 100%;
+        page-break-inside: avoid;
+      }
+
+      .celda-imagen {
+        border: 1px solid #000 !important;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .img-preview {
+        max-width: 100%;
+        max-height: 100%;
+      }
     }
   </style>
 </head>
 
 <body data-arkaios-template="cuadros-v2-inteligente">
-<div class="container">
 
-  <!-- PANEL CONTROL -->
-  <div class="panel-control">
-    <div class="header">
-      <h1>🖼️ Plantilla de Impresión de Imágenes</h1>
-      <p>Sube, arrastra para intercambiar, o genera imágenes por tema automáticamente</p>
-    </div>
+  <div class="container">
+    <div class="panel-control">
+      <div class="header">
+        <h1>🖼️ Plantilla de Impresión de Imágenes</h1>
+        <p>Sube tus imágenes, ajusta el tamaño y genera tu PDF listo para imprimir</p>
+      </div>
 
-    <div class="controles-grid">
-      <div class="control-group">
-        <label>📏 Tamaño de cuadros:</label>
-        <select id="selector-tamano">
-          <option value="3">3 cm (Pasaporte)</option>
-          <option value="4">4 cm</option>
-          <option value="5" selected>5 cm (Credencial)</option>
-          <option value="6">6 cm</option>
-          <option value="7">7 cm</option>
-          <option value="8">8 cm</option>
-          <option value="9">9 cm</option>
-          <option value="10">10 cm</option>
-        </select>
-      </div>
-      <div class="control-group">
-        <label>📂 Subir desde dispositivo:</label>
-        <input type="file" id="input-imagenes" multiple accept="image/*" style="display:none">
-        <button class="btn btn-primary" onclick="document.getElementById('input-imagenes').click()">
-          📎 Seleccionar archivos
-        </button>
-      </div>
-      <div class="control-group">
-        <label>🔍 Buscar manual en Pexels:</label>
-        <button class="btn btn-primary" onclick="searchPexels()" style="background:#05a081;">
-          📸 Buscar en Pexels
-        </button>
-      </div>
-    </div>
+      <div class="controles-grid">
+        <div class="control-group">
+          <label>📏 Tamaño de cuadros:</label>
+          <select id="selector-tamano">
+            <option value="3">3 cm (Pasaporte/Infantil)</option>
+            <option value="4">4 cm</option>
+            <option value="5" selected>5 cm (Credencial)</option>
+            <option value="6">6 cm</option>
+            <option value="7">7 cm</option>
+            <option value="8">8 cm</option>
+            <option value="9">9 cm</option>
+            <option value="10">10 cm</option>
+          </select>
+        </div>
 
-    <div class="botones-accion">
-      <!-- 🌟 BOTÓN PRINCIPAL: AUTO-GENERACIÓN IA -->
-      <button class="btn btn-ai" onclick="abrirModalIA()">
-        ✨ Generar con IA por Tema
-      </button>
-      <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir</button>
-      <button class="btn btn-danger" onclick="limpiarTodo()">🗑️ Limpiar todo</button>
-    </div>
+        <div class="control-group">
+          <label>📂 Agregar imágenes:</label>
+          <input type="file" id="input-imagenes" multiple accept="image/*" style="display: none;">
+          <button class="btn btn-primary" onclick="document.getElementById('input-imagenes').click()">
+            Seleccionar archivos
+          </button>
+        </div>
+      </div>
 
-    <div class="stats">
-      <div class="stat-item">
-        <div class="stat-value" id="stat-imagenes">0</div>
-        <div class="stat-label">Imágenes</div>
+      <div class="botones-accion">
+        <button class="btn btn-primary" onclick="searchPexels()" style="background: #05a081;">📸 Buscar en
+          Pexels</button>
+        <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir hojas</button>
+        <button class="btn btn-danger" onclick="limpiarTodo()">🗑️ Limpiar todo</button>
       </div>
-      <div class="stat-item">
-        <div class="stat-value" id="stat-hojas">0</div>
-        <div class="stat-label">Hojas</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value" id="stat-cuadros">0</div>
-        <div class="stat-label">Cuadros/Hoja</div>
+
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-value" id="stat-imagenes">0</div>
+          <div class="stat-label">Imágenes</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-hojas">0</div>
+          <div class="stat-label">Hojas</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-cuadros">0</div>
+          <div class="stat-label">Cuadros/Hoja</div>
+        </div>
       </div>
     </div>
 
-    <div class="drag-hint">
-      💡 Arrastra las imágenes para intercambiar su posición entre celdas
+    <div id="hojas-container" class="hojas-container">
+      <!-- Las hojas se generarán aquí -->
     </div>
   </div>
 
-  <div id="hojas-container" class="hojas-container"></div>
-</div>
+  <!-- Input oculto para cambios individuales -->
+  <input type="file" id="input-individual" accept="image/*" style="display: none;">
 
-<!-- INPUT individual oculto -->
-<input type="file" id="input-individual" accept="image/*" style="display:none">
-
-<!-- ═══════════ MODAL IA ═══════════ -->
-<div id="modal-ia" class="modal-overlay">
-  <div class="modal-contenido">
-    <h2>✨ Generar imágenes por Tema</h2>
-    <p>Escribe el tema educativo y la cantidad de fotos. Se buscan automáticamente en Pexels.</p>
-
-    <div class="modal-field">
-      <label>📚 Tema o palabras clave</label>
-      <input id="ia-tema" type="text" placeholder="ej: brecha digital, cultura de paz, animales, naturaleza..." />
-    </div>
-
-    <div class="fuentes-rapidas" id="fuentes-rapidas">
-      <!-- se llenan dinámicamente -->
-    </div>
-
-    <div class="modal-field">
-      <label>🔢 Cantidad de imágenes</label>
-      <select id="ia-cantidad">
-        <option value="4">4 imágenes (1 hoja 10cm)</option>
-        <option value="8" selected>8 imágenes</option>
-        <option value="12">12 imágenes</option>
-        <option value="16">16 imágenes (2 hojas 8cm)</option>
-        <option value="20">20 imágenes</option>
-        <option value="25">25 imágenes (máximo)</option>
-      </select>
-    </div>
-
-    <div class="modal-field">
-      <label>🎨 Orientación preferida</label>
-      <select id="ia-orientacion">
-        <option value="square">Cuadrada (mejor para cuadros)</option>
-        <option value="landscape">Horizontal</option>
-        <option value="portrait">Vertical</option>
-      </select>
-    </div>
-
-    <div class="modal-acciones">
-      <button class="btn btn-ai" onclick="generarImagenesIA()">✨ Generar ahora</button>
-      <button class="btn btn-danger" onclick="cerrarModalIA()">✕ Cancelar</button>
-    </div>
-
-    <div class="progress-bar-wrap" id="progress-wrap">
-      <div class="progress-bar" id="progress-bar"></div>
-    </div>
-    <div class="progress-label" id="progress-label"></div>
-  </div>
-</div>
-
-<!-- ═══════════ MODAL EDITOR ═══════════ -->
-<div id="modal-editor" class="modal-editor">
-  <div class="modal-editor-contenido">
-    <div class="modal-header">
-      <h3>✏️ Editar Imagen</h3>
-      <button class="btn-cerrar" onclick="cerrarEditor()">✕ Cerrar</button>
-    </div>
-    <div class="editor-preview" id="editor-preview">
-      <img id="editor-img" src="" alt="">
-    </div>
-    <div class="controles-editor">
-      <div class="control-zoom">
-        <label>🔍 Zoom:</label>
-        <input type="range" id="zoom-slider" min="50" max="300" value="100" step="1">
-        <span id="zoom-valor">100%</span>
+  <!-- Modal Editor -->
+  <div id="modal-editor" class="modal-editor">
+    <div class="modal-contenido">
+      <div class="modal-header">
+        <h3>✏️ Editar Imagen</h3>
+        <button class="btn-cerrar" onclick="cerrarEditor()">✕ Cerrar</button>
       </div>
-      <button class="btn btn-primary" onclick="aplicarEdicion()">✓ Aplicar cambios</button>
+      <div class="editor-preview" id="editor-preview">
+        <img id="editor-img" src="" alt="">
+      </div>
+      <div class="controles-editor">
+        <div class="control-zoom">
+          <label>🔍 Zoom:</label>
+          <input type="range" id="zoom-slider" min="100" max="200" value="100" step="1">
+          <span class="zoom-valor" id="zoom-valor">100%</span>
+        </div>
+        <button class="btn btn-primary" onclick="aplicarEdicion()">✓ Aplicar cambios</button>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-  // ═══════ STATE ═══════
-  const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
+  <!-- MODAL DE IA REMOVIDO -->
 
-  let imagenes = [];         // string | null
-  let estadosImagen = [];    // { zoom, fijada }
-  let indiceEditando = -1;
-  let dragSrcIdx = -1;       // ← índice global del drag source (fix principal)
+  <script>
+    const inputImagenes = document.getElementById('input-imagenes');
+    const inputIndividual = document.getElementById('input-individual');
+    const hojasContainer = document.getElementById('hojas-container');
+    const selectorTamano = document.getElementById('selector-tamano');
 
-  const TEMAS_RAPIDOS = [
-    '🌿 Naturaleza', '🐾 Animales', '📡 Brecha Digital', '☮️ Cultura de Paz',
-    '🏙️ Ciudad', '🎒 Escuela', '👨‍👩‍👧 Familia', '🌍 Medio Ambiente',
-    '🚀 Ciencia', '🎨 Arte', '⚽ Deportes', '🍎 Alimentación'
-  ];
+    // Editor
+    const modalEditor = document.getElementById('modal-editor');
+    const editorImg = document.getElementById('editor-img');
+    const zoomSlider = document.getElementById('zoom-slider');
+    const zoomValor = document.getElementById('zoom-valor');
 
-  // ═══════ INIT ═══════
-  window.addEventListener('DOMContentLoaded', () => {
-    // Llenar tags de temas rápidos
-    const wrap = document.getElementById('fuentes-rapidas');
-    TEMAS_RAPIDOS.forEach(t => {
-      const tag = document.createElement('span');
-      tag.className = 'fuente-tag';
-      tag.textContent = t;
-      tag.onclick = () => {
-        document.getElementById('ia-tema').value = t.replace(/^[\p{Emoji}\s]+/u, '').trim();
-      };
-      wrap.appendChild(tag);
-    });
-    generarPlantilla();
-  });
+    let imagenes = [];
+    let estadosImagen = []; // { zoom: 100, x: 0, y: 0, fijada: false }
+    let indiceEditando = -1;
+    let indiceDragInicio = -1;
+    let indiceGenerando = -1;
 
-  // ═══════ PEXELS MANUAL ═══════
-  async function searchPexels() {
-    const query = prompt('¿Qué imágenes buscas en Pexels?');
-    if (!query) return;
-    const countStr = prompt('¿Cuántas imágenes quieres?', '4');
-    const count = Math.min(parseInt(countStr) || 4, 25);
-    await fetchPexels(query, count, 'square');
-  }
-
-  async function fetchPexels(query, count, orientation = 'square') {
-    try {
-      const r = await fetch(
-        `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=${count}&orientation=${orientation}`,
-        { headers: { Authorization: PEXELS_API_KEY } }
-      );
-      const data = await r.json();
-      if (!data.photos || data.photos.length === 0) {
-        alert(`No se encontraron imágenes para "${query}"`);
-        return 0;
-      }
-      data.photos.forEach(photo => {
-        const src = photo.src.large || photo.src.medium;
-        const slot = imagenes.findIndex(i => i === null);
-        if (slot !== -1) {
-          imagenes[slot] = src;
-          estadosImagen[slot] = { zoom: 100, fijada: false };
-        } else {
-          imagenes.push(src);
-          estadosImagen.push({ zoom: 100, fijada: false });
+    // Helper para convertir imagen a Base64 (evita problemas de CORS al imprimir/guardar)
+    function toDataURL(url, callback) {
+      var xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        var reader = new FileReader();
+        reader.onloadend = function () {
+          callback(reader.result);
         }
+        reader.readAsDataURL(xhr.response);
+      };
+      xhr.onerror = function () {
+        // Fallback si falla CORS
+        callback(url);
+      };
+      xhr.open('GET', url);
+      xhr.responseType = 'blob';
+      xhr.send();
+    }
+
+    // ===== API KEYS & INTEGRATION =====
+    const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
+    const FREEPIK_API_KEY = 'FPSX890e70b7164ab7a1b05182a68d64ad06';
+
+    function applyExternalImages(urls, sourceName) {
+      rellenarConPixabay(urls, sourceName);
+    }
+
+    async function searchPexels() {
+      const query = prompt("¿Qué imágenes buscas en Pexels?");
+      if (!query) return;
+
+      const countStr = prompt("¿Cuántas imágenes quieres?", "1");
+      const count = parseInt(countStr) || 1;
+
+      try {
+        const response = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=${count}`, {
+          headers: { Authorization: PEXELS_API_KEY }
+        });
+        const data = await response.json();
+        const images = data.photos.map(photo => photo.src.large);
+        applyExternalImages(images, `Pexels: ${query}`);
+      } catch (error) {
+        console.error(error);
+        alert('Error al buscar en Pexels');
+      }
+    }
+
+
+
+    // Las funciones de generación con IA local han sido removidas.
+    // Ahora el sistema se comunica globalmente a través de ARKAIOS Principal.
+
+
+    // Event Listeners
+    selectorTamano.addEventListener('change', generarPlantilla);
+
+    inputImagenes.addEventListener('change', function (e) {
+      const archivos = Array.from(e.target.files);
+      let cargados = 0;
+
+      archivos.forEach(archivo => {
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          const imageData = ev.target.result;
+          const defaultState = { zoom: 100, x: 0, y: 0, fijada: false };
+
+          // Try to find the first empty slot (null) to fill
+          const emptyIndex = imagenes.findIndex(img => img === null);
+          if (emptyIndex !== -1) {
+            imagenes[emptyIndex] = imageData;
+            estadosImagen[emptyIndex] = defaultState;
+          } else {
+            imagenes.push(imageData);
+            estadosImagen.push(defaultState);
+          }
+
+          cargados++;
+          if (cargados === archivos.length) {
+            generarPlantilla();
+          }
+        };
+        reader.readAsDataURL(archivo);
       });
-      generarPlantilla();
-      return data.photos.length;
-    } catch (err) {
-      console.error(err);
-      alert('Error al buscar en Pexels. Revisa tu conexión.');
-      return 0;
+      e.target.value = '';
+    });
+
+    inputIndividual.addEventListener('change', function (e) {
+      const archivo = e.target.files[0];
+      if (!archivo) return;
+
+      const reader = new FileReader();
+      reader.onload = function (ev) {
+        if (indiceEditando >= 0) {
+          imagenes[indiceEditando] = ev.target.result;
+          estadosImagen[indiceEditando] = { zoom: 100, x: 0, y: 0, fijada: false };
+          generarPlantilla();
+        }
+      };
+      reader.readAsDataURL(archivo);
+      e.target.value = '';
+    });
+
+    function generarPlantilla() {
+      hojasContainer.innerHTML = '';
+      const tamano = parseInt(selectorTamano.value);
+      const filas = Math.floor(27.94 / tamano);
+      const cols = Math.floor(21.59 / tamano);
+      const cuadrosPorHoja = filas * cols;
+      const hojasNecesarias = Math.max(1, Math.ceil(imagenes.length / cuadrosPorHoja));
+      const validImagesCount = imagenes.filter(img => img !== null).length;
+
+      actualizarEstadisticas(validImagesCount, hojasNecesarias, cuadrosPorHoja);
+
+      for (let h = 0; h < hojasNecesarias; h++) {
+        const pageWrapper = document.createElement('div');
+        pageWrapper.className = 'page-wrapper';
+
+        const pageInfo = document.createElement('div');
+        pageInfo.className = 'page-info';
+        pageInfo.textContent = `Hoja ${h + 1} de ${hojasNecesarias}`;
+        pageWrapper.appendChild(pageInfo);
+
+        const pageContainer = document.createElement('div');
+        pageContainer.className = 'page-container';
+
+        const cuadricula = document.createElement('div');
+        cuadricula.className = 'cuadricula';
+        cuadricula.style.gridTemplateColumns = `repeat(${cols}, ${tamano}cm)`;
+        cuadricula.style.gridTemplateRows = `repeat(${filas}, ${tamano}cm)`;
+
+        const inicio = h * cuadrosPorHoja;
+        const fin = Math.min(inicio + cuadrosPorHoja, imagenes.length);
+
+        for (let i = 0; i < cuadrosPorHoja; i++) {
+          const idx = inicio + i;
+          const celda = crearCelda(idx, tamano);
+          cuadricula.appendChild(celda);
+        }
+
+        pageContainer.appendChild(cuadricula);
+        pageWrapper.appendChild(pageContainer);
+        hojasContainer.appendChild(pageWrapper);
+      }
     }
-  }
 
-  // ═══════ MODAL IA ═══════
-  function abrirModalIA() {
-    document.getElementById('modal-ia').classList.add('activo');
-    document.getElementById('ia-tema').focus();
-    document.getElementById('progress-wrap').classList.remove('visible');
-    document.getElementById('progress-label').textContent = '';
-  }
+    function crearCelda(idx, tamano) {
+      const celda = document.createElement('div');
+      celda.className = 'celda-imagen arkaios-image-slot';
+      celda.style.width = `${tamano}cm`;
+      celda.style.height = `${tamano}cm`;
+      celda.draggable = imagenes[idx] ? true : false;
+      celda.dataset.idx = idx;
 
-  function cerrarModalIA() {
-    document.getElementById('modal-ia').classList.remove('activo');
-  }
+      const numCelda = document.createElement('span');
+      numCelda.className = 'num-celda';
+      numCelda.textContent = idx + 1;
+      celda.appendChild(numCelda);
 
-  async function generarImagenesIA() {
-    const tema = document.getElementById('ia-tema').value.trim();
-    const cantidad = parseInt(document.getElementById('ia-cantidad').value);
-    const orientacion = document.getElementById('ia-orientacion').value;
+      if (imagenes[idx]) {
+        const imgContainer = document.createElement('div');
+        imgContainer.className = 'img-container';
 
-    if (!tema) {
-      document.getElementById('ia-tema').focus();
-      return;
+        const img = document.createElement('img');
+        img.src = imagenes[idx];
+        img.className = 'img-preview';
+
+        const estado = estadosImagen[idx] || { zoom: 100, x: 0, y: 0, fijada: false };
+        img.style.transform = `scale(${estado.zoom / 100})`;
+
+        imgContainer.appendChild(img);
+        celda.appendChild(imgContainer);
+
+        const botones = document.createElement('div');
+        botones.className = 'botones-celda';
+
+        const btnEditar = document.createElement('button');
+        btnEditar.className = 'btn-celda btn-editar';
+        btnEditar.textContent = '✏️';
+        btnEditar.onclick = (e) => {
+          e.stopPropagation();
+          abrirEditor(idx);
+        };
+
+        const btnFijar = document.createElement('button');
+        btnFijar.className = 'btn-celda btn-fijar';
+        btnFijar.textContent = estado.fijada ? '🔒' : '📌';
+        btnFijar.onclick = (e) => {
+          e.stopPropagation();
+          toggleFijar(idx);
+        };
+
+        const btnEliminar = document.createElement('button');
+        btnEliminar.className = 'btn-celda btn-eliminar';
+        btnEliminar.textContent = '🗑️';
+        btnEliminar.onclick = (e) => {
+          e.stopPropagation();
+          eliminarImagen(idx);
+        };
+
+        botones.appendChild(btnEditar);
+        botones.appendChild(btnFijar);
+        botones.appendChild(btnEliminar);
+        celda.appendChild(botones);
+
+        celda.addEventListener('dragstart', handleDragStart);
+        celda.addEventListener('dragover', handleDragOver);
+        celda.addEventListener('drop', handleDrop);
+        celda.addEventListener('dragend', handleDragEnd);
+      } else {
+        const container = document.createElement('div');
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+        container.style.alignItems = 'center';
+        container.style.justifyContent = 'center';
+        container.style.height = '100%';
+        container.style.gap = '8px';
+
+        const btnGen = document.createElement('button');
+        btnGen.textContent = '✨ Generar';
+        btnGen.className = 'btn-celda btn-generar';
+        btnGen.onclick = (e) => {
+          e.stopPropagation();
+          openArkaiosAI(idx);
+        };
+        container.appendChild(btnGen);
+        celda.appendChild(container);
+      }
+
+      return celda;
     }
 
-    // Mostrar progreso
-    const progressWrap = document.getElementById('progress-wrap');
-    const progressBar = document.getElementById('progress-bar');
-    const progressLabel = document.getElementById('progress-label');
-    progressWrap.classList.add('visible');
-    progressBar.style.width = '20%';
-    progressLabel.textContent = `🔍 Buscando "${tema}" en Pexels...`;
-
-    // Pexels solo permite max 80 por petición, pero limitamos a 25
-    const perPage = Math.min(cantidad, 25);
-
-    try {
-      const r = await fetch(
-        `https://api.pexels.com/v1/search?query=${encodeURIComponent(tema)}&per_page=${perPage}&orientation=${orientacion}`,
-        { headers: { Authorization: PEXELS_API_KEY } }
-      );
-      const data = await r.json();
-
-      if (!data.photos || data.photos.length === 0) {
-        progressLabel.textContent = `⚠️ Sin resultados para "${tema}". Intenta con otra palabra.`;
-        progressBar.style.width = '100%';
+    function handleDragStart(e) {
+      const idx = parseInt(e.currentTarget.dataset.idx);
+      if (estadosImagen[idx]?.fijada) {
+        e.preventDefault();
         return;
       }
+      indiceDragInicio = idx;
+      e.currentTarget.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
 
-      progressBar.style.width = '60%';
-      progressLabel.textContent = `✅ ${data.photos.length} imágenes encontradas. Cargando...`;
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('drag-over');
+      e.dataTransfer.dropEffect = 'move';
+    }
 
-      // Si el usuario quiere más de lo disponible, buscar páginas adicionales
-      let todasFotos = data.photos;
-      if (data.total_results > perPage && cantidad > data.photos.length) {
-        try {
-          const r2 = await fetch(
-            `https://api.pexels.com/v1/search?query=${encodeURIComponent(tema)}&per_page=${Math.min(cantidad - perPage, 25)}&page=2&orientation=${orientacion}`,
-            { headers: { Authorization: PEXELS_API_KEY } }
-          );
-          const data2 = await r2.json();
-          if (data2.photos) todasFotos = [...todasFotos, ...data2.photos];
-        } catch {}
+    function handleDrop(e) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+      const idxDestino = parseInt(e.currentTarget.dataset.idx);
+
+      if (indiceDragInicio !== -1 && indiceDragInicio !== idxDestino) {
+        const temp = imagenes[indiceDragInicio];
+        const tempEstado = estadosImagen[indiceDragInicio];
+        imagenes[indiceDragInicio] = imagenes[idxDestino];
+        estadosImagen[indiceDragInicio] = estadosImagen[idxDestino];
+        imagenes[idxDestino] = temp;
+        estadosImagen[idxDestino] = tempEstado;
+        generarPlantilla();
       }
+    }
 
-      // Inyectar en la plantilla
-      todasFotos.slice(0, cantidad).forEach(photo => {
-        const src = photo.src.large || photo.src.medium;
-        const slot = imagenes.findIndex(i => i === null);
-        if (slot !== -1) {
-          imagenes[slot] = src;
-          estadosImagen[slot] = { zoom: 100, fijada: false };
+    function handleDragEnd(e) {
+      e.currentTarget.classList.remove('dragging');
+      document.querySelectorAll('.drag-over').forEach(el => {
+        el.classList.remove('drag-over');
+      });
+      indiceDragInicio = -1;
+    }
+
+    function abrirEditor(idx) {
+      indiceEditando = idx;
+      editorImg.src = imagenes[idx];
+      const estado = estadosImagen[idx] || { zoom: 100 };
+      zoomSlider.value = estado.zoom;
+      zoomValor.textContent = estado.zoom + '%';
+      editorImg.style.transform = `scale(${estado.zoom / 100})`;
+      modalEditor.classList.add('activo');
+    }
+
+    function cerrarEditor() {
+      modalEditor.classList.remove('activo');
+      indiceEditando = -1;
+    }
+
+    zoomSlider.addEventListener('input', function () {
+      const zoom = parseInt(this.value);
+      zoomValor.textContent = zoom + '%';
+      editorImg.style.transform = `scale(${zoom / 100})`;
+    });
+
+    function aplicarEdicion() {
+      if (indiceEditando >= 0) {
+        estadosImagen[indiceEditando].zoom = parseInt(zoomSlider.value);
+        generarPlantilla();
+        cerrarEditor();
+      }
+    }
+
+    function toggleFijar(idx) {
+      if (!estadosImagen[idx]) {
+        estadosImagen[idx] = { zoom: 100, x: 0, y: 0, fijada: false };
+      }
+      estadosImagen[idx].fijada = !estadosImagen[idx].fijada;
+      generarPlantilla();
+    }
+
+    function eliminarImagen(idx) {
+      if (confirm('¿Eliminar esta imagen?')) {
+        imagenes[idx] = null;
+        estadosImagen[idx] = null;
+
+        // Trim trailing nulls to avoid infinite growth
+        while (imagenes.length > 0 && imagenes[imagenes.length - 1] === null) {
+          imagenes.pop();
+          estadosImagen.pop();
+        }
+
+        generarPlantilla();
+      }
+    }
+
+    function limpiarTodo() {
+      if (confirm('¿Eliminar todas las imágenes?')) {
+        imagenes = [];
+        estadosImagen = [];
+        generarPlantilla();
+      }
+    }
+
+    function actualizarEstadisticas(numImagenes, numHojas, cuadrosPorHoja) {
+      document.getElementById('stat-imagenes').textContent = numImagenes;
+      document.getElementById('stat-hojas').textContent = numHojas;
+      document.getElementById('stat-cuadros').textContent = cuadrosPorHoja;
+    }
+
+    function mostrarCreditoPixabay(topic, count) {
+      let credit = document.getElementById('pixabay-credit');
+      if (!credit) {
+        credit = document.createElement('div');
+        credit.id = 'pixabay-credit';
+        credit.classList.add('no-print');
+        const container = document.querySelector('.container');
+        container?.insertBefore(credit, container.firstChild);
+      }
+      const cleanTopic = topic || 'Pixabay';
+      credit.textContent = `Imágenes de Pixabay (${count}) · Tema: ${cleanTopic}`;
+    }
+
+    function rellenarConPixabay(urls, sourceName) {
+      urls.forEach(url => {
+        const defaultState = { zoom: 100, x: 0, y: 0, fijada: false };
+        const emptyIndex = imagenes.findIndex(img => img === null);
+        if (emptyIndex !== -1) {
+          imagenes[emptyIndex] = url;
+          estadosImagen[emptyIndex] = defaultState;
         } else {
-          imagenes.push(src);
-          estadosImagen.push({ zoom: 100, fijada: false });
+          imagenes.push(url);
+          estadosImagen.push(defaultState);
         }
       });
-
-      progressBar.style.width = '100%';
-      progressLabel.textContent = `🎉 ${Math.min(todasFotos.length, cantidad)} imágenes de "${tema}" cargadas ✓`;
-
       generarPlantilla();
-
-      setTimeout(() => {
-        cerrarModalIA();
-        progressWrap.classList.remove('visible');
-      }, 1500);
-
-    } catch (err) {
-      progressBar.style.width = '100%';
-      progressBar.style.background = '#f56565';
-      progressLabel.textContent = '❌ Error de conexión. Intenta de nuevo.';
-      console.error(err);
     }
-  }
 
-  // ═══════ PLANTILLA ═══════
-  function generarPlantilla() {
-    const container = document.getElementById('hojas-container');
-    container.innerHTML = '';
+    // Nuclear fix for printing
+    window.onbeforeprint = function () {
+      const credit = document.getElementById('pixabay-credit');
+      if (credit) credit.style.setProperty('display', 'none', 'important');
+    };
+    window.onafterprint = function () {
+      const credit = document.getElementById('pixabay-credit');
+      if (credit) credit.style.display = 'block';
+    };
 
-    const tamano = parseInt(document.getElementById('selector-tamano').value);
-    const filas = Math.floor(27.94 / tamano);
-    const cols = Math.floor(21.59 / tamano);
-    const cuadrosPorHoja = filas * cols;
-    const hojasNecesarias = Math.max(1, Math.ceil(imagenes.length / cuadrosPorHoja));
-    const validCount = imagenes.filter(i => i !== null).length;
 
-    document.getElementById('stat-imagenes').textContent = validCount;
-    document.getElementById('stat-hojas').textContent = hojasNecesarias;
-    document.getElementById('stat-cuadros').textContent = cuadrosPorHoja;
+    // Iniciar
+    generarPlantilla();
+  </script>
+  <script src="arkaios-biblioteca.js"></script>
+  <script src="arkaios-orquestador.js"></script>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      if (!params.get('agent')) return;
 
-    for (let h = 0; h < hojasNecesarias; h++) {
-      const pageWrapper = document.createElement('div');
-      pageWrapper.className = 'page-wrapper';
+      const imagesParam = params.get('images') || '';
+      const topic = params.get('topic') || '';
+      const autoPdf = params.get('autopdf') === '1';
 
-      const pageInfo = document.createElement('div');
-      pageInfo.className = 'page-info';
-      pageInfo.textContent = `Hoja ${h + 1} de ${hojasNecesarias} · Tamaño ${tamano}cm · ${cols}×${filas} cuadros`;
-      pageWrapper.appendChild(pageInfo);
+      if (!imagesParam) return;
 
-      const pageContainer = document.createElement('div');
-      pageContainer.className = 'page-container';
+      const banner = document.createElement('div');
+      banner.id = 'agent-banner';
+      banner.style.cssText = `
+        position: fixed; top: 0; left: 0; right: 0; z-index: 99999;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        color: white; text-align: center; padding: 10px;
+        font-weight: bold; font-size: 14px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      `;
+      banner.innerHTML = `🎓 ARKAIOS Edu — Cargando cuadros para: <strong>${decodeURIComponent(topic)}</strong> <span id="agent-progress">...</span>`;
+      document.body.prepend(banner);
 
-      const grid = document.createElement('div');
-      grid.className = 'cuadricula';
-      grid.style.gridTemplateColumns = `repeat(${cols}, ${tamano}cm)`;
-      grid.style.gridTemplateRows = `repeat(${filas}, ${tamano}cm)`;
+      const imageUrls = decodeURIComponent(imagesParam).split('|').filter(Boolean);
+      let loaded = 0;
 
-      for (let i = 0; i < cuadrosPorHoja; i++) {
-        const idx = h * cuadrosPorHoja + i;
-        grid.appendChild(crearCelda(idx, tamano));
+      function updateProgress() {
+        const progress = document.getElementById('agent-progress');
+        if (progress) progress.textContent = `(${loaded}/${imageUrls.length} imágenes)`;
       }
 
-      pageContainer.appendChild(grid);
-      pageWrapper.appendChild(pageContainer);
-      container.appendChild(pageWrapper);
-    }
-  }
+      function fillImages() {
+        updateProgress();
+        imageUrls.forEach((url) => {
+          const defaultState = { zoom: 100, x: 0, y: 0, fijada: false };
+          const emptyIndex = imagenes.findIndex((img) => img === null);
+          if (emptyIndex !== -1) {
+            imagenes[emptyIndex] = url;
+            estadosImagen[emptyIndex] = defaultState;
+          } else {
+            imagenes.push(url);
+            estadosImagen.push(defaultState);
+          }
+          loaded += 1;
+          updateProgress();
+        });
 
-  // ═══════ CELDA ═══════
-  function crearCelda(idx, tamano) {
-    const celda = document.createElement('div');
-    celda.className = 'celda-imagen';
-    celda.style.width = `${tamano}cm`;
-    celda.style.height = `${tamano}cm`;
-    celda.dataset.idx = idx;
+        generarPlantilla();
 
-    // Número
-    const num = document.createElement('span');
-    num.className = 'num-celda';
-    num.textContent = idx + 1;
-    celda.appendChild(num);
+        banner.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+        banner.innerHTML = `✅ Cuadros listos — ${loaded} imágenes de <strong>${decodeURIComponent(topic)}</strong> &nbsp;|&nbsp;
+          <button onclick="window.print()" style="background:white;color:#059669;border:none;padding:4px 12px;border-radius:20px;font-weight:bold;cursor:pointer;margin-left:8px;">🖨️ Imprimir / PDF</button>
+          <button onclick="document.getElementById('agent-banner').remove()" style="background:rgba(255,255,255,0.2);color:white;border:none;padding:4px 12px;border-radius:20px;cursor:pointer;margin-left:8px;">✕ Cerrar</button>
+        `;
 
-    if (imagenes[idx]) {
-      // ─── Celda CON imagen ───
-      const estado = estadosImagen[idx] || { zoom: 100, fijada: false };
-
-      celda.draggable = !estado.fijada;
-
-      const cont = document.createElement('div');
-      cont.className = 'img-container';
-      const img = document.createElement('img');
-      img.src = imagenes[idx];
-      img.className = 'img-preview';
-      img.style.transform = `scale(${estado.zoom / 100})`;
-      img.draggable = false; // evitar que el browser arrastre la imagen, no el div
-      cont.appendChild(img);
-      celda.appendChild(cont);
-
-      // Botones hover
-      const btns = document.createElement('div');
-      btns.className = 'botones-celda';
-
-      const btnEdit = document.createElement('button');
-      btnEdit.className = 'btn-celda btn-editar';
-      btnEdit.textContent = '✏️ Zoom';
-      btnEdit.onclick = e => { e.stopPropagation(); abrirEditor(idx); };
-
-      const btnPin = document.createElement('button');
-      btnPin.className = 'btn-celda btn-fijar';
-      btnPin.textContent = estado.fijada ? '🔓' : '📌';
-      btnPin.onclick = e => { e.stopPropagation(); toggleFijar(idx); };
-
-      const btnDel = document.createElement('button');
-      btnDel.className = 'btn-celda btn-eliminar';
-      btnDel.textContent = '🗑️';
-      btnDel.onclick = e => { e.stopPropagation(); eliminarImagen(idx); };
-
-      btns.append(btnEdit, btnPin, btnDel);
-      celda.appendChild(btns);
-
-    } else {
-      // ─── Celda VACÍA ───
-      celda.draggable = false;
-      const icon = document.createElement('div');
-      icon.className = 'celda-vacia';
-      icon.style.display = 'flex';
-      icon.style.flexDirection = 'column';
-      icon.style.alignItems = 'center';
-      icon.style.gap = '6px';
-      icon.innerHTML = '<span style="font-size:28px">🖼️</span><span style="font-size:11px;color:#cbd5e0">vacía</span>';
-      celda.appendChild(icon);
-    }
-
-    // ═══ DRAG & DROP — ahora en TODAS las celdas ═══
-    celda.addEventListener('dragstart', handleDragStart);
-    celda.addEventListener('dragenter', handleDragEnter);
-    celda.addEventListener('dragover', handleDragOver);
-    celda.addEventListener('dragleave', handleDragLeave);
-    celda.addEventListener('drop', handleDrop);
-    celda.addEventListener('dragend', handleDragEnd);
-
-    return celda;
-  }
-
-  // ═══════ DRAG HANDLERS (fix: idx global, eventos en todas las celdas) ═══════
-  function handleDragStart(e) {
-    const idx = parseInt(e.currentTarget.dataset.idx);
-    if (!imagenes[idx] || estadosImagen[idx]?.fijada) {
-      e.preventDefault();
-      return;
-    }
-    dragSrcIdx = idx;
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', String(idx)); // compatibilidad Firefox
-    // Slight delay para que el estilo se aplique después del snapshot del drag
-    requestAnimationFrame(() => {
-      e.currentTarget.classList.add('drag-source');
-    });
-  }
-
-  function handleDragEnter(e) {
-    e.preventDefault();
-    const idx = parseInt(e.currentTarget.dataset.idx);
-    if (dragSrcIdx !== -1 && idx !== dragSrcIdx) {
-      e.currentTarget.classList.add('drag-over');
-    }
-  }
-
-  function handleDragOver(e) {
-    e.preventDefault(); // necesario para permitir el drop
-    e.dataTransfer.dropEffect = 'move';
-  }
-
-  function handleDragLeave(e) {
-    // Solo quitar si realmente salimos del elemento (no de un hijo)
-    if (!e.currentTarget.contains(e.relatedTarget)) {
-      e.currentTarget.classList.remove('drag-over');
-    }
-  }
-
-  function handleDrop(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    const destIdx = parseInt(e.currentTarget.dataset.idx);
-    e.currentTarget.classList.remove('drag-over');
-
-    if (dragSrcIdx === -1 || dragSrcIdx === destIdx) return;
-
-    // ─── SWAP ───
-    [imagenes[dragSrcIdx], imagenes[destIdx]] = [imagenes[destIdx], imagenes[dragSrcIdx]];
-    [estadosImagen[dragSrcIdx], estadosImagen[destIdx]] = [estadosImagen[destIdx], estadosImagen[dragSrcIdx]];
-
-    dragSrcIdx = -1;
-    generarPlantilla();
-  }
-
-  function handleDragEnd(e) {
-    // Limpiar todos los estilos de drag aunque no se haya hecho drop válido
-    document.querySelectorAll('.celda-imagen').forEach(c => {
-      c.classList.remove('drag-source', 'drag-over');
-    });
-    dragSrcIdx = -1;
-  }
-
-  // ═══════ EDITOR ZOOM ═══════
-  function abrirEditor(idx) {
-    indiceEditando = idx;
-    const img = document.getElementById('editor-img');
-    img.src = imagenes[idx];
-    const estado = estadosImagen[idx] || { zoom: 100 };
-    const slider = document.getElementById('zoom-slider');
-    slider.value = estado.zoom;
-    document.getElementById('zoom-valor').textContent = estado.zoom + '%';
-    img.style.transform = `scale(${estado.zoom / 100})`;
-    document.getElementById('modal-editor').classList.add('activo');
-  }
-
-  function cerrarEditor() {
-    document.getElementById('modal-editor').classList.remove('activo');
-    indiceEditando = -1;
-  }
-
-  document.getElementById('zoom-slider').addEventListener('input', function() {
-    const z = parseInt(this.value);
-    document.getElementById('zoom-valor').textContent = z + '%';
-    document.getElementById('editor-img').style.transform = `scale(${z / 100})`;
-  });
-
-  function aplicarEdicion() {
-    if (indiceEditando >= 0) {
-      estadosImagen[indiceEditando].zoom = parseInt(document.getElementById('zoom-slider').value);
-      generarPlantilla();
-      cerrarEditor();
-    }
-  }
-
-  // ═══════ ACCIONES ═══════
-  function toggleFijar(idx) {
-    if (!estadosImagen[idx]) estadosImagen[idx] = { zoom: 100, fijada: false };
-    estadosImagen[idx].fijada = !estadosImagen[idx].fijada;
-    generarPlantilla();
-  }
-
-  function eliminarImagen(idx) {
-    if (!confirm('¿Eliminar esta imagen?')) return;
-    imagenes[idx] = null;
-    estadosImagen[idx] = null;
-    while (imagenes.length > 0 && imagenes[imagenes.length - 1] === null) {
-      imagenes.pop(); estadosImagen.pop();
-    }
-    generarPlantilla();
-  }
-
-  function limpiarTodo() {
-    if (!confirm('¿Eliminar todas las imágenes?')) return;
-    imagenes = []; estadosImagen = [];
-    generarPlantilla();
-  }
-
-  // ═══════ INPUT ARCHIVOS ═══════
-  document.getElementById('input-imagenes').addEventListener('change', function(e) {
-    const files = Array.from(e.target.files);
-    let loaded = 0;
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = ev => {
-        const slot = imagenes.findIndex(i => i === null);
-        if (slot !== -1) {
-          imagenes[slot] = ev.target.result;
-          estadosImagen[slot] = { zoom: 100, fijada: false };
-        } else {
-          imagenes.push(ev.target.result);
-          estadosImagen.push({ zoom: 100, fijada: false });
+        if (autoPdf) {
+          setTimeout(() => window.print(), 1500);
         }
-        if (++loaded === files.length) generarPlantilla();
-      };
-      reader.readAsDataURL(file);
-    });
-    e.target.value = '';
-  });
+      }
 
-  document.getElementById('input-individual').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file || indiceEditando < 0) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      imagenes[indiceEditando] = ev.target.result;
-      estadosImagen[indiceEditando] = { zoom: 100, fijada: false };
-      generarPlantilla();
-    };
-    reader.readAsDataURL(file);
-    e.target.value = '';
-  });
-
-  // ═══════ TECLA ESCAPE ═══════
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      cerrarModalIA();
-      cerrarEditor();
-    }
-  });
-
-  // ═══════ CERRAR MODAL IA CON CLICK FUERA ═══════
-  document.getElementById('modal-ia').addEventListener('click', function(e) {
-    if (e.target === this) cerrarModalIA();
-  });
-
-  // Enter en campo tema para generar
-  document.getElementById('ia-tema').addEventListener('keydown', e => {
-    if (e.key === 'Enter') generarImagenesIA();
-  });
-
-  window.onbeforeprint = () => {
-    const c = document.getElementById('pixabay-credit');
-    if (c) c.style.setProperty('display','none','important');
-  };
-  window.onafterprint = () => {
-    const c = document.getElementById('pixabay-credit');
-    if (c) c.style.display = 'block';
-  };
-</script>
-
-<script src="arkaios-biblioteca.js" onerror="console.log('arkaios-biblioteca no disponible')"></script>
-<script src="arkaios-orquestador.js" onerror="console.log('arkaios-orquestador no disponible')"></script>
-<script src="/js/gemini-widget.js" onerror="console.log('gemini-widget no disponible')"></script>
+      window.addEventListener('load', () => {
+        setTimeout(fillImages, 400);
+      });
+    })();
+  </script>
+  <script src="/js/gemini-widget.js"></script>
 </body>
+
 </html>
