@@ -7,7 +7,7 @@
 
   const GEMINI_URL = 'https://gemini-lab-nine.vercel.app/';
   const GEMINI_MODEL = 'gemini-2.0-flash';
-  const GEMINI_KEY = 'AIzaSyDZTeHXVp4Rzd8tKerTMpbG_sND14xUHyY';
+  const GEMINI_KEY = 'AIzaSyAcs1E8yOIqhh3FjNdCEwBmArDLLMCS-1Q';
   const API_EP = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_KEY}`;
   const TOOLS_EP = '/api/arkaios-tools';
 
@@ -25,7 +25,9 @@
     { name: 'Material Educativo Reutilizable', file: 'material-educativo-reutilizable.html', section: 'Biblioteca' },
     { name: 'Orquestador HTML+', file: 'orquestador-html-plus.html', section: 'Automatizacion IA' },
     { name: 'ELEMIA Panel', file: 'elemia-panel.html', section: 'Sistema' },
-    { name: 'Portal Empresarial', file: 'portal-empresarial.html', section: 'Sistema' }
+    { name: 'Portal Empresarial', file: 'portal-empresarial.html', section: 'Sistema' },
+    { name: 'Brecha Digital', file: 'brecha-digital.html', section: 'Modulo Educativo' },
+    { name: 'Cultura de Paz', file: 'cultura-de-paz.html', section: 'Modulo Educativo' }
   ];
 
   const SYS_BASE = `Eres la IA asistente oficial de ARKAIOS - Sistema Educativo Profesional v3.0.
@@ -42,7 +44,8 @@ Tu nombre es Gemini ARKAIOS. Hablas en espanol, eres eficiente y muy preciso.
 - Si el usuario pide una plantilla, cita el nombre y la ruta.
 - Si varias plantillas sirven, compara en una sola respuesta compacta.
 - No inventes plantillas que no existan en el catalogo.
-- Si detectas una pagina "detectada" pero no listada, aclara que existe en el repo aunque no este en el menu principal.`;
+- Si detectas una pagina "detectada" pero no listada, aclara que existe en el repo aunque no este en el menu principal.
+- Los modulos educativos Brecha Digital y Cultura de Paz tienen galeria de imagenes Pexels automatica, seccion educativa y boton de impresion directa.`;
 
   let systemPrompt = `${SYS_BASE}\n\n## CATALOGO ACTUAL\n${renderCatalog(FALLBACK_TEMPLATES)}`;
 
