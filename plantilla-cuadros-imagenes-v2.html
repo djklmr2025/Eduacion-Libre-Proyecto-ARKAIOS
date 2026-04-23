@@ -1,1 +1,802 @@
-PLACEHOLDER_CUADROS
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plantilla de Impresión de Imágenes | ARKAIOS</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .panel-control {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      color: #667eea;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .controles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-group label {
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .control-group select,
+    .control-group input[type="number"] {
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s;
+      background: white;
+    }
+
+    .control-group select:focus,
+    .control-group input[type="number"]:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .botones-accion {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: #48bb78;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #38a169;
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background: #f56565;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #e53e3e;
+      transform: translateY(-2px);
+    }
+
+    .stats {
+      display: flex;
+      gap: 20px;
+      padding: 16px;
+      background: #f7fafc;
+      border-radius: 8px;
+      margin-top: 16px;
+    }
+
+    .stat-item {
+      flex: 1;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #667eea;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .hojas-container {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .page-wrapper {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-info {
+      text-align: center;
+      margin-bottom: 16px;
+      font-weight: 600;
+      color: #667eea;
+      font-size: 14px;
+    }
+
+    .page-container {
+      width: 21.59cm;
+      height: 27.94cm;
+      background: white;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cuadricula {
+      display: grid;
+      gap: 0;
+    }
+
+    .celda-imagen {
+      border: 1px dashed #cbd5e0;
+      background: #fafafa;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .celda-imagen:hover {
+      border-color: #667eea;
+      background: #f7fafc;
+    }
+
+    .celda-imagen.dragging {
+      opacity: 0.5;
+      border: 2px solid #667eea;
+    }
+
+    .celda-imagen.drag-over {
+      background: #e6f2ff;
+      border: 2px solid #667eea;
+    }
+
+    .num-celda {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: rgba(102, 126, 234, 0.9);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      z-index: 2;
+    }
+
+    .img-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .img-preview {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s;
+      user-select: none;
+    }
+
+    .img-preview.moviendo {
+      cursor: move;
+    }
+
+    .botones-celda {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 3;
+    }
+
+    .celda-imagen:hover .botones-celda {
+      opacity: 1;
+    }
+
+    .btn-celda {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: white;
+    }
+
+    .btn-editar {
+      background: #48bb78;
+    }
+
+    .btn-editar:hover {
+      background: #38a169;
+    }
+
+    .btn-fijar {
+      background: #4299e1;
+    }
+
+    .btn-fijar:hover {
+      background: #3182ce;
+    }
+
+    .btn-eliminar {
+      background: #f56565;
+    }
+
+    .btn-eliminar:hover {
+      background: #e53e3e;
+      transform: translateY(-2px);
+    }
+
+    .celda-vacia {
+      color: #cbd5e0;
+      font-size: 32px;
+      font-weight: 300;
+    }
+
+    #pixabay-credit {
+      margin: 12px auto;
+      background: #f8fafc;
+      border: 1px solid #d1d5db;
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: #1f2937;
+      font-weight: 600;
+      max-width: 960px;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    }
+
+    .modal-editor {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-editor.activo {
+      display: flex;
+    }
+
+    .modal-contenido {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 90vh;
+      overflow: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      color: #667eea;
+      font-size: 20px;
+    }
+
+    .btn-cerrar {
+      background: #f56565;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .editor-preview {
+      width: 100%;
+      max-height: 400px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #fafafa;
+    }
+
+    .editor-preview img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .controles-editor {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .control-zoom {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .control-zoom input[type="range"] {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: #e0e0e0;
+      outline: none;
+    }
+
+    .control-zoom input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #667eea;
+      cursor: pointer;
+    }
+
+    @media print {
+      @page {
+        margin: 0;
+        size: auto;
+      }
+
+      html,
+      body {
+        background: white;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .panel-control,
+      .modal-editor,
+      #pixabay-credit,
+      #agent-banner,
+      .no-print,
+      #aiModal,
+      .page-info,
+      .botones-celda,
+      .btn-celda,
+      .num-celda,
+      .celda-vacia {
+        display: none !important;
+      }
+
+      .hojas-container {
+        display: block;
+        margin: 0;
+        padding: 0;
+        gap: 0;
+        gap: 0;
+      }
+
+      .page-wrapper {
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+        border: none;
+        background: transparent;
+        width: 100%;
+        page-break-after: always;
+        break-after: page;
+        display: flex;
+        justify-content: center;
+        align-items: start;
+      }
+
+      .page-wrapper:last-child {
+        page-break-after: auto;
+        break-after: auto;
+      }
+
+      .page-container {
+        box-shadow: none;
+        margin: 0;
+        border: none;
+        overflow: hidden;
+        max-width: 100%;
+        page-break-inside: avoid;
+      }
+
+      .celda-imagen {
+        border: 1px solid #000 !important;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .img-preview {
+        max-width: 100%;
+        max-height: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body data-arkaios-template="cuadros-v2-inteligente">
+
+  <div class="container">
+    <div class="panel-control">
+      <div class="header">
+        <h1>🖼️ Plantilla de Impresión de Imágenes</h1>
+        <p>Sube tus imágenes, ajusta el tamaño y genera tu PDF listo para imprimir</p>
+      </div>
+
+      <div class="controles-grid">
+        <div class="control-group">
+          <label>📏 Tamaño de cuadros:</label>
+          <select id="selector-tamano">
+            <option value="3">3 cm (Pasaporte/Infantil)</option>
+            <option value="4">4 cm</option>
+            <option value="5" selected>5 cm (Credencial)</option>
+            <option value="6">6 cm</option>
+            <option value="7">7 cm</option>
+            <option value="8">8 cm</option>
+            <option value="9">9 cm</option>
+            <option value="10">10 cm</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label>📂 Agregar imágenes:</label>
+          <input type="file" id="input-imagenes" multiple accept="image/*" style="display: none;">
+          <button class="btn btn-primary" onclick="document.getElementById('input-imagenes').click()">
+            Seleccionar archivos
+          </button>
+        </div>
+      </div>
+
+      <div class="botones-accion">
+        <button class="btn btn-primary" onclick="searchPexels()" style="background: #05a081;">📸 Buscar en Pexels</button>
+        <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir hojas</button>
+        <button class="btn btn-danger" onclick="limpiarTodo()">🗑️ Limpiar todo</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-value" id="stat-imagenes">0</div>
+          <div class="stat-label">Imágenes</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-hojas">0</div>
+          <div class="stat-label">Hojas</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-cuadros">0</div>
+          <div class="stat-label">Cuadros/Hoja</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="hojas-container" class="hojas-container"></div>
+  </div>
+
+  <input type="file" id="input-individual" accept="image/*" style="display: none;">
+
+  <div id="modal-editor" class="modal-editor">
+    <div class="modal-contenido">
+      <div class="modal-header">
+        <h3>✏️ Editar Imagen</h3>
+        <button class="btn-cerrar" onclick="cerrarEditor()">✕ Cerrar</button>
+      </div>
+      <div class="editor-preview" id="editor-preview">
+        <img id="editor-img" src="" alt="">
+      </div>
+      <div class="controles-editor">
+        <div class="control-zoom">
+          <label>🔍 Zoom:</label>
+          <input type="range" id="zoom-slider" min="100" max="200" value="100" step="1">
+          <span class="zoom-valor" id="zoom-valor">100%</span>
+        </div>
+        <button class="btn btn-primary" onclick="aplicarEdicion()">✓ Aplicar cambios</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const inputImagenes = document.getElementById('input-imagenes');
+    const inputIndividual = document.getElementById('input-individual');
+    const hojasContainer = document.getElementById('hojas-container');
+    const selectorTamano = document.getElementById('selector-tamano');
+
+    const modalEditor = document.getElementById('modal-editor');
+    const editorImg = document.getElementById('editor-img');
+    const zoomSlider = document.getElementById('zoom-slider');
+    const zoomValor = document.getElementById('zoom-valor');
+
+    let imagenes = [];
+    let estadosImagen = [];
+    let indiceEditando = -1;
+    let indiceDragInicio = -1;
+
+    const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
+
+    selectorTamano.addEventListener('change', generarPlantilla);
+
+    inputImagenes.addEventListener('change', function (e) {
+      const archivos = Array.from(e.target.files);
+      let cargados = 0;
+
+      archivos.forEach(archivo => {
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          const imageData = ev.target.result;
+          const defaultState = { zoom: 100, x: 0, y: 0, fijada: false };
+          const emptyIndex = imagenes.findIndex(img => img === null);
+          if (emptyIndex !== -1) {
+            imagenes[emptyIndex] = imageData;
+            estadosImagen[emptyIndex] = defaultState;
+          } else {
+            imagenes.push(imageData);
+            estadosImagen.push(defaultState);
+          }
+
+          cargados++;
+          if (cargados === archivos.length) {
+            generarPlantilla();
+          }
+        };
+        reader.readAsDataURL(archivo);
+      });
+      e.target.value = '';
+    });
+
+    function generarPlantilla() {
+      hojasContainer.innerHTML = '';
+      const tamano = parseInt(selectorTamano.value);
+      const filas = Math.floor(27.94 / tamano);
+      const cols = Math.floor(21.59 / tamano);
+      const cuadrosPorHoja = filas * cols;
+      const hojasNecesarias = Math.max(1, Math.ceil(imagenes.length / cuadrosPorHoja));
+      const validImagesCount = imagenes.filter(img => img !== null).length;
+
+      actualizarEstadisticas(validImagesCount, hojasNecesarias, cuadrosPorHoja);
+
+      for (let h = 0; h < hojasNecesarias; h++) {
+        const pageWrapper = document.createElement('div');
+        pageWrapper.className = 'page-wrapper';
+
+        const pageInfo = document.createElement('div');
+        pageInfo.className = 'page-info';
+        pageInfo.textContent = `Hoja ${h + 1} de ${hojasNecesarias}`;
+        pageWrapper.appendChild(pageInfo);
+
+        const pageContainer = document.createElement('div');
+        pageContainer.className = 'page-container';
+
+        const cuadricula = document.createElement('div');
+        cuadricula.className = 'cuadricula';
+        cuadricula.style.gridTemplateColumns = `repeat(${cols}, ${tamano}cm)`;
+        cuadricula.style.gridTemplateRows = `repeat(${filas}, ${tamano}cm)`;
+
+        for (let i = 0; i < cuadrosPorHoja; i++) {
+          const idx = h * cuadrosPorHoja + i;
+          const celda = document.createElement('div');
+          celda.className = 'celda-imagen';
+          celda.style.width = `${tamano}cm`;
+          celda.style.height = `${tamano}cm`;
+
+          const numCelda = document.createElement('span');
+          numCelda.className = 'num-celda';
+          numCelda.textContent = idx + 1;
+          celda.appendChild(numCelda);
+
+          if (imagenes[idx]) {
+            const imgContainer = document.createElement('div');
+            imgContainer.className = 'img-container';
+
+            const img = document.createElement('img');
+            img.src = imagenes[idx];
+            img.className = 'img-preview';
+            imgContainer.appendChild(img);
+            celda.appendChild(imgContainer);
+          } else {
+            const empty = document.createElement('div');
+            empty.className = 'celda-vacia';
+            empty.textContent = '🖼️';
+            celda.appendChild(empty);
+          }
+
+          cuadricula.appendChild(celda);
+        }
+
+        pageContainer.appendChild(cuadricula);
+        pageWrapper.appendChild(pageContainer);
+        hojasContainer.appendChild(pageWrapper);
+      }
+    }
+
+    function actualizarEstadisticas(numImagenes, numHojas, cuadrosPorHoja) {
+      document.getElementById('stat-imagenes').textContent = numImagenes;
+      document.getElementById('stat-hojas').textContent = numHojas;
+      document.getElementById('stat-cuadros').textContent = cuadrosPorHoja;
+    }
+
+    function limpiarTodo() {
+      if (confirm('¿Eliminar todas las imágenes?')) {
+        imagenes = [];
+        estadosImagen = [];
+        generarPlantilla();
+      }
+    }
+
+    async function searchPexels() {
+      const query = prompt("¿Qué imágenes buscas en Pexels?");
+      if (!query) return;
+
+      const countStr = prompt("¿Cuántas imágenes quieres?", "1");
+      const count = parseInt(countStr) || 1;
+
+      try {
+        const response = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=${count}`, {
+          headers: { Authorization: PEXELS_API_KEY }
+        });
+        const data = await response.json();
+        const images = data.photos.map(photo => photo.src.large);
+        images.forEach(url => imagenes.push(url));
+        generarPlantilla();
+      } catch (error) {
+        console.error(error);
+        alert('Error al buscar en Pexels');
+      }
+    }
+
+    generarPlantilla();
+  </script>
+  <script src="arkaios-biblioteca.js"></script>
+  <script src="arkaios-orquestador.js"></script>
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      if (!params.get('agent')) return;
+
+      const imagesParam = params.get('images') || '';
+      const topic = params.get('topic') || '';
+      const autoPdf = params.get('autopdf') === '1';
+      if (!imagesParam) return;
+
+      const banner = document.createElement('div');
+      banner.id = 'agent-banner';
+      banner.style.cssText = `
+        position: fixed; top: 0; left: 0; right: 0; z-index: 99999;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        color: white; text-align: center; padding: 10px;
+        font-weight: bold; font-size: 14px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      `;
+      banner.innerHTML = `🎓 ARKAIOS Edu — Cargando cuadros para: <strong>${decodeURIComponent(topic)}</strong> <span id="agent-progress">...</span>`;
+      document.body.prepend(banner);
+
+      const imageUrls = decodeURIComponent(imagesParam).split('|').filter(Boolean);
+      let loaded = 0;
+
+      function updateProgress() {
+        const progress = document.getElementById('agent-progress');
+        if (progress) progress.textContent = `(${loaded}/${imageUrls.length} imágenes)`;
+      }
+
+      function fillImages() {
+        updateProgress();
+        imageUrls.forEach((url) => {
+          imagenes.push(url);
+          loaded += 1;
+          updateProgress();
+        });
+
+        generarPlantilla();
+
+        banner.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+        banner.innerHTML = `✅ Cuadros listos — ${loaded} imágenes de <strong>${decodeURIComponent(topic)}</strong> &nbsp;|&nbsp;
+          <button onclick="window.print()" style="background:white;color:#059669;border:none;padding:4px 12px;border-radius:20px;font-weight:bold;cursor:pointer;margin-left:8px;">🖨️ Imprimir / PDF</button>
+          <button onclick="document.getElementById('agent-banner').remove()" style="background:rgba(255,255,255,0.2);color:white;border:none;padding:4px 12px;border-radius:20px;cursor:pointer;margin-left:8px;">✕ Cerrar</button>
+        `;
+
+        if (autoPdf) {
+          setTimeout(() => window.print(), 1500);
+        }
+      }
+
+      window.addEventListener('load', () => {
+        setTimeout(fillImages, 400);
+      });
+    })();
+  </script>
+  <script src="/js/gemini-widget.js"></script>
+</body>
+
+</html>
