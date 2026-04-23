@@ -4,16 +4,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Plantilla para Tareas Escolares â€“ Carta MX</title>
+  <title>Plantilla para Tareas Escolares – Carta MX</title>
   <style>
-    /* Reset bÃ¡sico */
+    /* Reset básico */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
-    /* Hoja Carta Mexicana explÃ­cita (21.59 x 27.94 cm) */
+    /* Hoja Carta Mexicana explícita (21.59 x 27.94 cm) */
     @page {
       size: 21.59cm 27.94cm;
       margin: 1.9cm;
@@ -42,7 +42,6 @@
 
       header,
       footer,
-      #agent-banner,
       .toolbar,
       .instructions,
       .btn-gen-slot {
@@ -64,7 +63,7 @@
         page-break-after: auto;
       }
 
-      /* Quitar contornos visuales en impresiÃ³n */
+      /* Quitar contornos visuales en impresión */
       .field-input,
       .references-input,
       .text-block,
@@ -73,7 +72,7 @@
         background: white !important;
       }
 
-      /* Evitar recortes de contenido en impresiÃ³n */
+      /* Evitar recortes de contenido en impresión */
       .references-wrap,
       .text-block {
         height: auto !important;
@@ -174,7 +173,7 @@
       overflow: hidden;
     }
 
-    /* ÃNDICE */
+    /* ÍNDICE */
     .index-title {
       text-align: center;
       padding: 20px 0;
@@ -229,7 +228,7 @@
       border-color: #27ae60;
     }
 
-    /* PÃGINA DE DESARROLLO */
+    /* PÁGINA DE DESARROLLO */
     .dev-header {
       text-align: center;
       padding-bottom: 15px;
@@ -278,7 +277,7 @@
     }
 
     .text-block .content:empty:before {
-      content: "Escribe aquÃ­ tu contenido...";
+      content: "Escribe aquí tu contenido...";
       color: #95a5a6;
       font-style: italic;
     }
@@ -311,12 +310,12 @@
     }
 
     #referencesInput:empty:before {
-      content: "Agrega tus fuentes y referencias aquÃ­...";
+      content: "Agrega tus fuentes y referencias aquí...";
       color: #b8860b;
       font-style: italic;
     }
 
-    /* IMÃGENES */
+    /* IMÁGENES */
     .image-page {
       display: grid;
       gap: 15px;
@@ -537,7 +536,7 @@
       font-size: 0.9rem;
     }
 
-    /* CrÃ©ditos de fuente */
+    /* Créditos de fuente */
     .source-credit {
       margin: 15px;
       padding: 12px;
@@ -563,38 +562,38 @@
 <body data-arkaios-template="carta-mx-inteligente">
   <!-- BARRA DE HERRAMIENTAS -->
   <div class="toolbar">
-    <!-- BotÃ³n Imprimir -->
-    <button class="success" onclick="window.print()">ðŸ–¨ï¸ Imprimir</button>
+    <!-- Botón Imprimir -->
+    <button class="success" onclick="window.print()">🖨️ Imprimir</button>
 
     <!-- Selector de Layout -->
-    <span>ImÃ¡genes por hoja:</span>
+    <span>Imágenes por hoja:</span>
     <select id="imageLayout" onchange="changeImageLayout()">
-      <option value="3">3 imÃ¡genes</option>
-      <option value="6">6 imÃ¡genes</option>
-      <option value="9">9 imÃ¡genes</option>
-      <option value="12">12 imÃ¡genes</option>
+      <option value="3">3 imágenes</option>
+      <option value="6">6 imágenes</option>
+      <option value="9">9 imágenes</option>
+      <option value="12">12 imágenes</option>
     </select>
 
-    <!-- BotÃ³n Cargar ImÃ¡genes -->
-    <button onclick="document.getElementById('bulkFileInput').click()">ðŸ“ Cargar ImÃ¡genes</button>
+    <!-- Botón Cargar Imágenes -->
+    <button onclick="document.getElementById('bulkFileInput').click()">📁 Cargar Imágenes</button>
     <input type="file" id="bulkFileInput" multiple accept="image/*" style="display:none"
       onchange="loadBulkImages(event)">
 
-    <!-- BotÃ³n Limpiar -->
-    <button class="danger" onclick="clearAllImages()">ðŸ—‘ï¸ Limpiar ImÃ¡genes</button>
+    <!-- Botón Limpiar -->
+    <button class="danger" onclick="clearAllImages()">🗑️ Limpiar Imágenes</button>
 
-    <button class="pexels" onclick="searchPexels()">ðŸ“¸ Buscar en Pexels</button>
+    <button class="pexels" onclick="searchPexels()">📸 Buscar en Pexels</button>
 
-    <!-- BotÃ³n IA Removido (Se usa integraciÃ³n global) -->
+    <!-- Botón IA Removido (Se usa integración global) -->
   </div>
 
-  <!-- CrÃ©dito de fuente (se muestra cuando se usan APIs) -->
+  <!-- Crédito de fuente (se muestra cuando se usan APIs) -->
   <div id="sourceCredit" class="source-credit no-print" style="display: none;"></div>
 
-  <!-- HOJA 1: ÃNDICE -->
+  <!-- HOJA 1: ÍNDICE -->
   <div class="page-container" id="page1">
     <div class="index-title">
-      <h1>ÃNDICE</h1>
+      <h1>ÍNDICE</h1>
     </div>
 
     <div class="index-fields">
@@ -624,9 +623,9 @@
   <!-- HOJA 2: DESARROLLO -->
   <div class="page-container" id="page2">
     <div class="dev-header">
-      <h1 id="mainTitle" contenteditable="true" oninput="updateTopic()" onblur="checkTopicFilled()">ImÃ¡genes
+      <h1 id="mainTitle" contenteditable="true" oninput="updateTopic()" onblur="checkTopicFilled()">Imágenes
         Representativas</h1>
-      <div class="subtitle" contenteditable="true">Tradiciones del DÃ­a de Muertos</div>
+      <div class="subtitle" contenteditable="true">Tradiciones del Día de Muertos</div>
     </div>
 
     <!-- Bloques de texto editables -->
@@ -649,7 +648,7 @@
     </div>
   </div>
 
-  <!-- HOJA 3: IMÃGENES -->
+  <!-- HOJA 3: IMÁGENES -->
   <div class="page-container" id="page3">
     <div class="image-page grid-3" id="imagePage"></div>
   </div>
@@ -657,7 +656,7 @@
   <!-- MODAL DE IA REMOVIDO -->
 
   <script>
-    // ===== CONFIGURACIÃ“N DE API KEYS =====
+    // ===== CONFIGURACIÓN DE API KEYS =====
     const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
     const FREEPIK_API_KEY = 'FPSX890e70b7164ab7a1b05182a68d64ad06';
     const PIXABAY_API_KEY = '53456758-e7788c27d5c820739d362581f';
@@ -713,8 +712,8 @@
       const el = document.getElementById('mainTitle');
       if (!el) return;
       const t = el.innerText.trim();
-      if (!t || t === 'ImÃ¡genes Representativas') {
-        el.innerText = 'ImÃ¡genes Representativas';
+      if (!t || t === 'Imágenes Representativas') {
+        el.innerText = 'Imágenes Representativas';
       }
     }
 
@@ -746,7 +745,7 @@
       sel.addRange(range);
     }
 
-    // ===== GESTIÃ“N DE IMÃGENES =====
+    // ===== GESTIÓN DE IMÁGENES =====
     function changeImageLayout() {
       const layout = parseInt(document.getElementById('imageLayout').value, 10);
       const imagePage = document.getElementById('imagePage');
@@ -764,7 +763,7 @@
         slot.className = 'image-slot';
         slot.dataset.index = i;
 
-        // Preservar imagen si existÃ­a
+        // Preservar imagen si existía
         if (oldSlots[i]) {
           const img = document.createElement('img');
           img.src = oldSlots[i];
@@ -774,10 +773,10 @@
         } else {
           const placeholder = document.createElement('div');
           placeholder.className = 'placeholder';
-          placeholder.textContent = 'ðŸ–¼ï¸';
+          placeholder.textContent = '🖼️';
 
           const btnGen = document.createElement('button');
-          btnGen.textContent = 'âœ¨ Generar';
+          btnGen.textContent = '✨ Generar';
           btnGen.className = 'btn-gen-slot';
           btnGen.onclick = (e) => {
             e.stopPropagation();
@@ -794,11 +793,11 @@
           slot.appendChild(addBtn);
         }
 
-        // BotÃ³n de eliminar
+        // Botón de eliminar
         if (imageSlots[i]) {
           const removeBtn = document.createElement('button');
           removeBtn.className = 'remove-btn';
-          removeBtn.textContent = 'âœ•';
+          removeBtn.textContent = '✕';
           removeBtn.onclick = (e) => {
             e.stopPropagation();
             removeImage(i);
@@ -862,7 +861,7 @@
     }
 
     function clearAllImages() {
-      if (confirm('Â¿EstÃ¡s seguro de que quieres eliminar todas las imÃ¡genes?')) {
+      if (confirm('¿Estás seguro de que quieres eliminar todas las imágenes?')) {
         imageSlots = [];
         changeImageLayout();
         hideSourceCredit();
@@ -872,7 +871,7 @@
     // ===== FUNCIONES DE APIs EXTERNAS =====
     function showSourceCredit(sourceName, count) {
       const credit = document.getElementById('sourceCredit');
-      credit.textContent = `ImÃ¡genes de ${sourceName} (${count})`;
+      credit.textContent = `Imágenes de ${sourceName} (${count})`;
       credit.style.display = 'block';
     }
 
@@ -898,10 +897,10 @@
 
     // ===== PEXELS API =====
     async function searchPexels() {
-      const query = prompt("Â¿QuÃ© imÃ¡genes buscas en Pexels?");
+      const query = prompt("¿Qué imágenes buscas en Pexels?");
       if (!query) return;
 
-      const countStr = prompt("Â¿CuÃ¡ntas imÃ¡genes quieres?", "1");
+      const countStr = prompt("¿Cuántas imágenes quieres?", "1");
       const count = parseInt(countStr) || 1;
 
       try {
@@ -914,7 +913,7 @@
         const data = await response.json();
 
         if (!data.photos || data.photos.length === 0) {
-          alert('No se encontraron imÃ¡genes en Pexels');
+          alert('No se encontraron imágenes en Pexels');
           return;
         }
 
@@ -928,7 +927,7 @@
 
 
 
-    // ===== INICIALIZACIÃ“N =====
+    // ===== INICIALIZACIÓN =====
     window.onload = () => {
       changeImageLayout();
       updateTopic();
@@ -988,76 +987,11 @@
         changeImageLayout();
       }
     };
-    // Proporcionar funciÃ³n de impresiÃ³n para el padre
+    // Proporcionar función de impresión para el padre
     window.printTemplate = () => window.print();
   </script>
   <script src="arkaios-biblioteca.js"></script>
   <script src="arkaios-orquestador.js"></script>
-  <script>
-    (function () {
-      const params = new URLSearchParams(window.location.search);
-      if (!params.get('agent')) return;
-
-      const payloadParam = params.get('payload') || '';
-      const topic = params.get('topic') || '';
-      const autoPrint = params.get('autopdf') === '1';
-      if (!payloadParam) return;
-
-      const banner = document.createElement('div');
-      banner.id = 'agent-banner';
-      banner.style.cssText = `
-        position: fixed; top: 0; left: 0; right: 0; z-index: 99999;
-        background: linear-gradient(90deg, #667eea, #764ba2);
-        color: white; text-align: center; padding: 10px;
-        font-weight: bold; font-size: 14px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-      `;
-      banner.innerHTML = `ðŸŽ“ ARKAIOS Edu â€” Cargando material para: <strong>${decodeURIComponent(topic)}</strong> <span id="agent-progress">...</span>`;
-      document.body.prepend(banner);
-
-      function decodePayload(raw) {
-        try {
-          return JSON.parse(atob(decodeURIComponent(raw)));
-        } catch (error) {
-          console.error('No se pudo decodificar payload de ARKAIOS Edu:', error);
-          return null;
-        }
-      }
-
-      function applyPayload() {
-        const payload = decodePayload(payloadParam);
-        if (!payload) {
-          banner.style.background = 'linear-gradient(90deg, #ef4444, #dc2626)';
-          banner.textContent = 'No se pudo cargar el material generado por ARKAIOS Edu.';
-          return;
-        }
-
-        document.getElementById('agent-progress').textContent = '(aplicando contenido)';
-
-        if (typeof window.ARKAIOS_setData === 'function') {
-          window.ARKAIOS_setData(payload);
-        }
-
-        updateTopic();
-        changeImageLayout();
-
-        banner.style.background = 'linear-gradient(90deg, #10b981, #059669)';
-        banner.innerHTML = `âœ… Material listo â€” plantilla escolar cargada para <strong>${decodeURIComponent(topic)}</strong> &nbsp;|&nbsp;
-          <button onclick="window.print()" style="background:white;color:#059669;border:none;padding:4px 12px;border-radius:20px;font-weight:bold;cursor:pointer;margin-left:8px;">ðŸ–¨ï¸ Imprimir / PDF</button>
-          <button onclick="document.getElementById('agent-banner').remove()" style="background:rgba(255,255,255,0.2);color:white;border:none;padding:4px 12px;border-radius:20px;cursor:pointer;margin-left:8px;">âœ• Cerrar</button>
-        `;
-
-        if (autoPrint) {
-          setTimeout(() => window.print(), 1500);
-        }
-      }
-
-      window.addEventListener('load', () => {
-        setTimeout(applyPayload, 450);
-      });
-    })();
-  </script>
-  <script src="/js/gemini-widget.js"></script>
 </body>
 
 </html>

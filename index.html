@@ -848,10 +848,6 @@
                         <span class="btn-icon">🤖</span>
                         <span>Generador IA Imágenes</span>
                     </button>
-                    <button class="btn" data-target="elemia-panel.html">
-                        <span class="btn-icon">🧠</span>
-                        <span>ELEMIA — Memoria</span>
-                    </button>
                 </div>
 
                 <div class="nav-section">
@@ -964,66 +960,30 @@
         let workspaceItems = JSON.parse(localStorage.getItem('arkaios_workspace') || '[]');
         let completedWorks = JSON.parse(localStorage.getItem('arkaios_works') || '[]');
 
-        // ===== MENÚ AUTO-DETECTOR =====
-        // 1. /api/html-manifest → escanea disco, lee <title> de cada .html
-        // 2. modules.json       → fallback estático  
-        // 3. staticMenuFallback → HTML hardcoded último recurso
+        // ===== MENÚ DINÁMICO (modules.json) =====
         async function initDynamicMenu() {
             const root = document.getElementById('dynamicMenuRoot');
             const fallback = document.getElementById('staticMenuFallback');
 
-            root.innerHTML = `<div style="padding:16px 12px;color:#94a3b8;font-size:13px;">
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <span style="display:inline-block;width:14px;height:14px;border:2px solid #e2e8f0;
-                    border-top-color:#2563eb;border-radius:50%;animation:spin .7s linear infinite;"></span>
-                    Detectando módulos...
-                </div>
-            </div>
-            <style>@keyframes spin{to{transform:rotate(360deg)}}</style>`;
-
-            // Intento 1: API auto-detector
-            try {
-                const res = await fetch('/api/html-manifest', { cache: 'no-store' });
-                if (!res.ok) throw new Error('no disponible');
-                const manifest = await res.json();
-                if (!manifest.sections || manifest.sections.length === 0) throw new Error('vacío');
-                root.innerHTML = '';
-                buildMenuFromManifest(root, manifest);
-                fallback.style.display = 'none';
-                wireTemplateButtons();
-                addMenuBadge(root, manifest.total);
-                console.log('[ARKAIOS] Auto-detector: ' + manifest.total + ' módulos');
-                return;
-            } catch (e1) {
-                console.warn('[ARKAIOS] API no disponible:', e1.message);
-            }
-
-            // Intento 2: modules.json
             try {
                 const res = await fetch('modules.json', { cache: 'no-store' });
-                if (!res.ok) throw new Error('no encontrado');
+                if (!res.ok) throw new Error('modules.json no encontrado');
                 const manifest = await res.json();
+
                 root.innerHTML = '';
                 buildMenuFromManifest(root, manifest);
                 fallback.style.display = 'none';
+
+                // Conecta listeners del menú dinámico
                 wireTemplateButtons();
-                console.log('[ARKAIOS] modules.json cargado');
-                return;
-            } catch (e2) {
-                console.warn('[ARKAIOS] modules.json no disponible:', e2.message);
+            } catch (e) {
+                console.warn('[ARKAIOS] Menú dinámico no disponible -> usando fallback.', e);
+                root.innerHTML = '';
+                fallback.style.display = 'block';
+
+                // Conecta listeners del menú fallback
+                wireTemplateButtons();
             }
-
-            // Intento 3: fallback estático
-            root.innerHTML = '';
-            fallback.style.display = 'block';
-            wireTemplateButtons();
-        }
-
-        function addMenuBadge(root, total) {
-            const badge = document.createElement('div');
-            badge.style.cssText = 'margin:4px 12px 16px;padding:6px 10px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;font-size:11px;font-weight:700;color:#1d4ed8;display:flex;align-items:center;gap:6px;';
-            badge.innerHTML = '🔍 ' + total + ' módulos detectados';
-            root.insertBefore(badge, root.firstChild);
         }
 
         function buildMenuFromManifest(container, manifest) {
@@ -1843,7 +1803,6 @@ if (saveBtn) {
     <a href="/portal-empresarial.html" style="position:fixed;right:16px;bottom:16px;background:#166534;color:#fff;text-decoration:none;padding:10px 14px;border-radius:999px;font-weight:700;z-index:9999;">
       Portal Empresarial
     </a>
-    <script src="/js/gemini-widget.js"></script>
 </body>
 
 </html>
