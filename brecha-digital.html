@@ -139,7 +139,27 @@ body {
   font-weight: 700; cursor: pointer; color: white;
 }
 .btn-eliminar { background: #f56565; }
-.celda-vacia { color: #90caf9; font-size: 28px; }
+
+/* BOTONES CELDA VACÍA */
+.celda-vacia-inner {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; width: 100%; height: 100%; padding: 8px;
+}
+.celda-vacia-icon { color: #90caf9; font-size: 24px; }
+.btns-vacia {
+  display: flex; gap: 5px; flex-wrap: wrap; justify-content: center;
+  opacity: 0; transition: opacity 0.25s;
+}
+.celda-imagen:hover .btns-vacia { opacity: 1; }
+.btn-vacia {
+  padding: 4px 8px; border: none; border-radius: 6px; font-size: 10px;
+  font-weight: 700; cursor: pointer; color: white; white-space: nowrap;
+  transition: transform 0.15s;
+}
+.btn-vacia:hover { transform: scale(1.08); }
+.btn-ia { background: linear-gradient(135deg, #7c3aed, #2563eb); }
+.btn-pexels { background: linear-gradient(135deg, #059669, #0d9488); }
+
 .loading-indicator {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
   color: #1565c0; font-size: 12px; font-weight: 600; text-align: center;
@@ -163,15 +183,19 @@ body {
 .nav-temas a:hover { background: #0d47a1; transform: translateY(-2px); }
 .nav-temas a.activo { background: #0d47a1; box-shadow: 0 4px 12px rgba(21,101,192,0.4); }
 
+/* PRINT — limpio, sin botones ni marcos */
 @media print {
   @page { margin: 0; size: auto; }
-  body { background: white; }
+  body { background: white !important; }
   .hero, .panel-control, .seccion-info, .nav-temas, .no-print,
-  .page-title, .botones-celda, .btn-celda, .num-celda { display: none !important; }
+  .page-title, .botones-celda, .btn-celda, .num-celda,
+  .btns-vacia, .btn-vacia, .celda-vacia-icon,
+  #agent-banner { display: none !important; }
   .hojas-container { display: block; margin: 0; padding: 0; }
   .page-wrapper { box-shadow: none; padding: 0; margin: 0; page-break-after: always; }
   .page-container { box-shadow: none; margin: 0; }
   .celda-imagen { border: 1px solid #1565c0 !important; }
+  .celda-caption { display: block !important; }
 }
 </style>
 </head>
@@ -450,7 +474,33 @@ function generarPlantilla() {
         btns.appendChild(btnDel);
         celda.appendChild(btns);
       } else {
-        celda.innerHTML += '<div class="celda-vacia">📡</div>';
+        // Celda vacía con botones de llenado inteligente
+        const inner = document.createElement('div');
+        inner.className = 'celda-vacia-inner';
+
+        const icon = document.createElement('div');
+        icon.className = 'celda-vacia-icon';
+        icon.textContent = '📡';
+        inner.appendChild(icon);
+
+        const bvacia = document.createElement('div');
+        bvacia.className = 'btns-vacia';
+
+        const btnIA = document.createElement('button');
+        btnIA.className = 'btn-vacia btn-ia';
+        btnIA.textContent = '🤖 Generar IA';
+        btnIA.title = 'Abrir generador de imágenes IA para esta celda';
+        btnIA.onclick = e => { e.stopPropagation(); abrirGeneradorIA(idx); };
+
+        const btnPex = document.createElement('button');
+        btnPex.className = 'btn-vacia btn-pexels';
+        btnPex.textContent = '🔍 Pexels';
+        btnPex.title = 'Buscar imagen en Pexels para esta celda';
+        btnPex.onclick = e => { e.stopPropagation(); buscarPexelsCelda(idx); };
+
+        bvacia.append(btnIA, btnPex);
+        inner.appendChild(bvacia);
+        celda.appendChild(inner);
       }
       grid.appendChild(celda);
     }
@@ -459,6 +509,49 @@ function generarPlantilla() {
     hojasContainer.appendChild(pageWrapper);
   }
 }
+
+// ── Abrir generador IA apuntando a celda específica ──────────────────────
+function abrirGeneradorIA(celdaIdx) {
+  const topicIA = encodeURIComponent('Brecha Digital - imagen educativa, fotografía realista');
+  const url = `generador-ia-imagenes.html?prompt=${topicIA}&resolution=768x768&count=1&arkaios_target=brecha-digital&arkaios_celda=${celdaIdx}`;
+  const w = window.open(url, `gen_ia_${celdaIdx}`, 'width=900,height=700,resizable=yes,scrollbars=yes');
+  if (!w) alert('Activa las ventanas emergentes para usar el generador IA.');
+}
+
+// ── Buscar imagen en Pexels para celda específica ─────────────────────────
+async function buscarPexelsCelda(idx) {
+  const query = prompt('¿Qué imagen buscas para esta celda?', 'digital divide education') || '';
+  if (!query.trim()) return;
+  try {
+    const r = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=5&orientation=square`, {
+      headers: { Authorization: PEXELS_KEY }
+    });
+    const data = await r.json();
+    if (!data.photos?.length) { alert('Sin resultados en Pexels para: ' + query); return; }
+    // Expandir array si hace falta
+    while (imagenes.length <= idx) { imagenes.push(null); captions.push(''); estadosImagen.push({ zoom: 100, fijada: false }); }
+    imagenes[idx] = data.photos[0].src.medium;
+    captions[idx] = query;
+    estadosImagen[idx] = { zoom: 100, fijada: false };
+    generarPlantilla();
+  } catch(e) { alert('Error al buscar en Pexels: ' + e.message); }
+}
+
+// ── Recibir imagen desde el generador IA (postMessage) ────────────────────
+window.addEventListener('message', function(e) {
+  if (!e.data || e.data.type !== 'arkaios_imagen') return;
+  const { url, caption, celda } = e.data;
+  if (!url) return;
+  const idx = Number(celda);
+  // Expandir array si hace falta
+  while (imagenes.length <= idx) { imagenes.push(null); captions.push(''); estadosImagen.push({ zoom: 100, fijada: false }); }
+  imagenes[idx] = url;
+  captions[idx] = caption || 'Brecha Digital';
+  estadosImagen[idx] = { zoom: 100, fijada: false };
+  generarPlantilla();
+  // Confirmar al popup que se recibió
+  if (e.source) e.source.postMessage({ type: 'arkaios_ok', celda: idx }, '*');
+});
 
 // Auto-cargar imágenes al iniciar
 cargarImagenesTema(8);

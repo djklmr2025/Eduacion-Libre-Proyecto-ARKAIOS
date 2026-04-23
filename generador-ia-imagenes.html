@@ -337,7 +337,7 @@ let userKey = null, isGenerating = false;
     console.warn('⚠️ Usando key de respaldo');
   }
 
-  // Parámetros de URL (desde EduAgent)
+  // Parámetros de URL (desde EduAgent o plantilla)
   const p = new URLSearchParams(location.search);
   if (p.get('prompt')) document.getElementById('prompt').value = decodeURIComponent(p.get('prompt'));
   if (p.get('resolution')) document.getElementById('resolution').value = p.get('resolution');
@@ -347,6 +347,22 @@ let userKey = null, isGenerating = false;
     document.getElementById('cv').textContent = c;
   }
   if (p.get('autostart') === '1' && p.get('prompt')) setTimeout(generateImages, 800);
+
+  // Modo bridge: abierto desde una plantilla para llenar una celda
+  const arkaiosTarget = p.get('arkaios_target');
+  const arkaiosCelda  = p.get('arkaios_celda');
+  if (arkaiosTarget && arkaiosCelda !== null) {
+    const badge = document.createElement('div');
+    badge.style.cssText = `
+      position:fixed;top:0;left:0;right:0;z-index:99999;
+      background:linear-gradient(90deg,#7c3aed,#2563eb);
+      color:white;text-align:center;padding:10px;
+      font-weight:700;font-size:13px;
+      box-shadow:0 4px 16px rgba(0,0,0,0.3);
+    `;
+    badge.innerHTML = `🎯 Modo Plantilla — Las imágenes que generes se enviarán a la celda <strong>#${Number(arkaiosCelda)+1}</strong> de <strong>${arkaiosTarget}</strong>. Genera y luego usa <strong>→ Enviar a Plantilla</strong>.`;
+    document.body.prepend(badge);
+  }
 })();
 
 async function generateImages() {
@@ -472,9 +488,39 @@ function addCard(url, prompt, res) {
   dl.className = 'cdl'; dl.textContent = '⬇️ Guardar'; dl.title = 'Abrir en nueva pestaña para guardar';
   dl.onclick = () => window.open(url, '_blank');
 
+  // Botón: Enviar a plantilla (siempre visible)
   const add = document.createElement('button');
-  add.className = 'cadd'; add.textContent = '📄 Plantilla';
-  add.onclick = () => toast('✅ Usa "→ Plantilla PDF" para enviar todas');
+  add.className = 'cadd';
+
+  // Detectar si venimos en modo bridge (arkaios_target + arkaios_celda)
+  const _p = new URLSearchParams(location.search);
+  const _target = _p.get('arkaios_target');
+  const _celda  = _p.get('arkaios_celda');
+
+  if (_target && _celda !== null) {
+    add.textContent = `→ Enviar a celda #${Number(_celda)+1}`;
+    add.style.background = 'linear-gradient(135deg,#7c3aed,#2563eb)';
+    add.style.color = 'white';
+    add.onclick = () => {
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage({
+          type: 'arkaios_imagen',
+          url,
+          caption: prompt.substring(0, 60),
+          celda: Number(_celda)
+        }, '*');
+        add.textContent = '✅ Enviada!';
+        add.disabled = true;
+        setTimeout(() => window.close(), 1200);
+      } else {
+        // Fallback: abrir plantilla con la imagen
+        window.open(`${_target}.html?agent=1&images=${encodeURIComponent(url)}&topic=${encodeURIComponent(prompt)}`, '_blank');
+      }
+    };
+  } else {
+    add.textContent = '📄 Plantilla PDF';
+    add.onclick = () => toast('✅ Usa "→ Plantilla PDF" para enviar todas');
+  }
 
   const del = document.createElement('button');
   del.className = 'cdel'; del.textContent = '✕';
