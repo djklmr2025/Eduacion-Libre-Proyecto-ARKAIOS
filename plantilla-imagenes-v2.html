@@ -312,6 +312,7 @@
             .drop-zone,
             .stats,
             .template-label,
+            #agent-banner,
             .btn-gen-cell,
             .fix-button,
             .delete-button,
@@ -417,15 +418,12 @@
 
     <div class="templates-container" id="templatesContainer"></div>
 
-    <!-- MODAL DE IA REMOVIDO -->
-
     <script>
         let allImages = [];
         let gridConfig = { rows: 4, cols: 4 };
         let draggedElement = null;
         let draggedIndex = null;
 
-        // Helper para convertir imagen a Base64 (evita problemas de CORS al imprimir/guardar)
         function toDataURL(url, callback) {
             var xhr = new XMLHttpRequest();
             xhr.onload = function () {
@@ -436,7 +434,6 @@
                 reader.readAsDataURL(xhr.response);
             };
             xhr.onerror = function () {
-                // Fallback si falla CORS
                 callback(url);
             };
             xhr.open('GET', url);
@@ -483,7 +480,6 @@
                 const val = e.target.value;
                 const [rows, cols] = val.split('x').map(Number);
                 gridConfig = { rows, cols };
-                // Mostrar/ocultar botón de orientación solo en 1x2 o 2x1
                 const btn = document.getElementById('orientBtn');
                 if (val === '1x2' || val === '2x1') {
                     btn.style.display = 'block';
@@ -515,7 +511,6 @@
                         name: file.name
                     };
 
-                    // Try to find the first empty slot (null) to fill
                     const emptyIndex = allImages.findIndex(img => img === null);
                     if (emptyIndex !== -1) {
                         allImages[emptyIndex] = imageData;
@@ -525,8 +520,6 @@
 
                     filesProcessed++;
                     if (filesProcessed === newImages.length) {
-                        // Only sort if explicitly requested, otherwise keep order
-                        // sortImages(); 
                         renderTemplates();
                         updateStats();
                     }
@@ -539,7 +532,6 @@
             const sortOrder = document.getElementById('sortOrder').value;
             if (sortOrder === 'none') return;
 
-            // Separate images and nulls
             const validImages = allImages.filter(img => img !== null);
             const nulls = allImages.filter(img => img === null);
 
@@ -553,9 +545,6 @@
                 });
             }
 
-            // Reconstruct array: sorted images first, then empty slots? 
-            // Or just sort the valid ones and keep nulls at end?
-            // Usually sorting implies compacting. Let's compact.
             allImages = [...validImages, ...nulls];
         }
 
@@ -636,7 +625,6 @@
         function createCell(localIndex, image, globalIndex) {
             const cell = document.createElement('div');
             cell.className = 'grid-cell';
-            // Only draggable if image exists AND is not fixed
             cell.draggable = image && !image.isFixed ? true : false;
             cell.dataset.index = globalIndex;
 
@@ -662,8 +650,6 @@
             const emptyText = document.createElement('div');
             emptyText.className = 'empty-cell-text';
             emptyText.textContent = '🖼️';
-
-
 
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-button';
@@ -713,7 +699,6 @@
             cell.appendChild(emptyText);
             cell.appendChild(deleteBtn);
 
-            // Pin/Fix Button
             if (image) {
                 const fixBtn = document.createElement('button');
                 fixBtn.className = 'fix-button';
@@ -749,7 +734,6 @@
         function swapImages(index1, index2) {
             if (index1 === index2) return;
 
-            // No permitir mover imágenes fijadas
             if (allImages[index1]?.isFixed || allImages[index2]?.isFixed) {
                 showToast('⚠️ No puedes mover imágenes fijadas');
                 return;
@@ -763,10 +747,8 @@
         }
 
         function deleteImage(index) {
-            // Instead of splicing (removing), we set to null to keep the slot empty
             allImages[index] = null;
 
-            // Trim trailing nulls to avoid infinite growth if deleting from end
             while (allImages.length > 0 && allImages[allImages.length - 1] === null) {
                 allImages.pop();
             }
@@ -799,7 +781,6 @@
             stats.style.display = allImages.length > 0 ? 'block' : 'none';
         }
 
-        // ===== API KEYS & INTEGRATION =====
         const PEXELS_API_KEY = '4vj6qTzLM9oc0gN7bdgr3vCO7jRDIBe0zJgknfq9geibx9hdQ16TVxpz';
 
         function applyExternalImages(urls, sourceName) {
@@ -834,10 +815,6 @@
             }
         }
 
-
-        // Las funciones de generación con IA local han sido removidas.
-        // Ahora el sistema se comunica globalmente a través de ARKAIOS Principal.
-
         function mostrarCreditoPixabay(topic, count) {
             let credit = document.getElementById('pixabay-credit');
             if (!credit) {
@@ -855,13 +832,11 @@
         function toggleOrientation() {
             const btn = document.getElementById('orientBtn');
             if (gridConfig.rows === 1 && gridConfig.cols === 2) {
-                // Cambiar a vertical: 2 filas, 1 col
                 gridConfig = { rows: 2, cols: 1 };
                 btn.textContent = '↕️ Vertical';
                 btn.title = 'Cambiar a Horizontal (1x2)';
-                document.getElementById('gridSize').value = '1x2'; // keep select in sync
+                document.getElementById('gridSize').value = '1x2';
             } else {
-                // Cambiar a horizontal: 1 fila, 2 cols
                 gridConfig = { rows: 1, cols: 2 };
                 btn.textContent = '↔️ Horizontal';
                 btn.title = 'Cambiar a Vertical (2x1)';
@@ -874,13 +849,8 @@
         initializeApp();
     </script>
 
-    <!-- ============================================ -->
-    <!-- MODAL DE BÚSQUEDA DE IMÁGENES DE GOOGLE -->
-    <!-- ============================================ -->
-
     <style>
         @keyframes gradientShift {
-
             0%,
             100% {
                 background-position: 0% 50%;
@@ -892,14 +862,7 @@
         }
     </style>
 
-
     <script>
-
-
-        // ============================================
-        // SISTEMA DE FIJADO DE IMÁGENES
-        // ============================================
-
         function toggleFixImage(index) {
             if (allImages[index]) {
                 allImages[index].isFixed = !allImages[index].isFixed;
@@ -910,7 +873,6 @@
             }
         }
 
-        // Toast notification
         function showToast(message) {
             const toast = document.createElement('div');
             toast.textContent = message;
@@ -936,7 +898,6 @@
             }, 2000);
         }
 
-        // CSS para animaciones de toast
         const toastStyles = document.createElement('style');
         toastStyles.textContent = `
         @keyframes slideIn {
@@ -951,16 +912,9 @@
         document.head.appendChild(toastStyles);
     </script>
 
-    <!-- ============================================================ -->
-    <!-- ARKAIOS EDU-AGENT LOADER                                      -->
-    <!-- Lee parámetros de URL enviados por el agente y auto-llena    -->
-    <!-- la plantilla con imágenes. Lanza PDF si ?autopdf=1           -->
-    <!-- ============================================================ -->
     <script>
     (function() {
         const params = new URLSearchParams(window.location.search);
-
-        // Solo activar si viene del agente
         if (!params.get('agent')) return;
 
         const gridParam = params.get('grid') || '3x3';
@@ -970,7 +924,6 @@
 
         if (!imagesParam) return;
 
-        // Banner de carga
         const banner = document.createElement('div');
         banner.id = 'agent-banner';
         banner.style.cssText = `
@@ -983,7 +936,6 @@
         banner.innerHTML = `🎓 ARKAIOS Edu — Cargando plantilla para: <strong>${decodeURIComponent(topic)}</strong> (${gridParam}) <span id="agent-progress">...</span>`;
         document.body.prepend(banner);
 
-        // Configurar el grid
         const [rows, cols] = gridParam.split('x').map(Number);
         if (rows && cols) {
             gridConfig = { rows, cols };
@@ -991,7 +943,6 @@
             if (gridSelect) gridSelect.value = gridParam;
         }
 
-        // Cargar imágenes desde URLs
         const imageUrls = decodeURIComponent(imagesParam).split('|').filter(Boolean);
         let loaded = 0;
 
@@ -1002,8 +953,6 @@
 
         function tryLoadFromUrl(url, name) {
             return new Promise((resolve) => {
-                // Intentar cargar la imagen directamente como URL (sin convertir a base64)
-                // para evitar problemas CORS
                 resolve({ data: url, name: name });
             });
         }
@@ -1025,20 +974,17 @@
             renderTemplates();
             updateStats();
 
-            // Mensaje de listo
             banner.style.background = 'linear-gradient(90deg, #10b981, #059669)';
             banner.innerHTML = `✅ Plantilla lista — ${loaded} imágenes de <strong>${decodeURIComponent(topic)}</strong> (${gridParam}) &nbsp;|&nbsp;
                 <button onclick="window.print()" style="background:white;color:#059669;border:none;padding:4px 12px;border-radius:20px;font-weight:bold;cursor:pointer;margin-left:8px;">🖨️ Imprimir / PDF</button>
                 <button onclick="document.getElementById('agent-banner').remove()" style="background:rgba(255,255,255,0.2);color:white;border:none;padding:4px 12px;border-radius:20px;cursor:pointer;margin-left:8px;">✕ Cerrar</button>
             `;
 
-            // Auto PDF si se solicitó
             if (autoPdf) {
                 setTimeout(() => window.print(), 1500);
             }
         }
 
-        // Esperar a que la app esté inicializada
         window.addEventListener('load', () => {
             setTimeout(loadAllImages, 400);
         });
