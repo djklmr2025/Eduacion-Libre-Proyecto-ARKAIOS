@@ -1,6 +1,15 @@
 {
   "sections": [
     {
+      "title": "Módulos Educativos",
+      "icon": "📚",
+      "items": [
+        { "label": "Brecha Digital", "icon": "📡", "target": "brecha-digital.html" },
+        { "label": "Cultura de Paz", "icon": "☮️", "target": "cultura-de-paz.html" },
+        { "label": "Material Reutilizable", "icon": "📖", "target": "material-educativo-reutilizable.html" }
+      ]
+    },
+    {
       "title": "Módulos de Texto",
       "icon": "📝",
       "makeFirstActive": true,
@@ -11,30 +20,31 @@
       ]
     },
     {
-      "title": "Módulos de Imagen",
-      "icon": "📸",
+      "title": "Plantillas de Imagen",
+      "icon": "🖼️",
       "items": [
-        { "label": "Fotos Infantiles 2.5×3 cm", "icon": "👶", "target": "generador-fotos-infantiles.html" },
-        { "label": "Buscador Google Imágenes", "icon": "🔍", "target": "buscador-imagenes-educativo.html" },
-        { "label": "Pixabay Descarga Lote", "icon": "🌐", "target": "pixabay-descargador-lote.html" },
-        { "label": "Círculos Jack Skellington", "icon": "⭕", "target": "plantilla_circulos_jack.html" },
-        { "label": "Cuadros Imágenes v2", "icon": "🖼️", "target": "plantilla-cuadros-imagenes-v2.html" },
+        { "label": "Cuadros Imágenes v2 + IA", "icon": "🖼️", "target": "plantilla-cuadros-imagenes-v2.html" },
         { "label": "Plantilla Imágenes v2", "icon": "🎨", "target": "plantilla-imagenes-v2.html" },
-        { "label": "Generador IA Imágenes", "icon": "🤖", "target": "generador-ia-imagenes.html" }
+        { "label": "Fotos Infantiles 2.5×3 cm", "icon": "👶", "target": "generador-fotos-infantiles.html" },
+        { "label": "Círculos Jack Skellington", "icon": "⭕", "target": "plantilla_circulos_jack.html" }
       ]
     },
     {
-      "title": "Biblioteca",
-      "icon": "📚",
+      "title": "Herramientas",
+      "icon": "🔧",
       "items": [
-        { "label": "Material Reutilizable", "icon": "📖", "target": "material-educativo-reutilizable.html" }
+        { "label": "Buscador Imágenes Educativas", "icon": "🔍", "target": "buscador-imagenes-educativo.html" },
+        { "label": "Pixabay Descarga Lote", "icon": "🌐", "target": "pixabay-descargador-lote.html" },
+        { "label": "Generador IA Imágenes", "icon": "🤖", "target": "generador-ia-imagenes.html" },
+        { "label": "Orquestador HTML+", "icon": "⚙️", "target": "orquestador-html-plus.html" }
       ]
     },
     {
-      "title": "Automatización IA",
-      "icon": "🤖",
+      "title": "Sistema",
+      "icon": "🏢",
       "items": [
-        { "label": "Orquestador HTML+", "icon": "🧠", "target": "orquestador-html-plus.html" }
+        { "label": "ELEMIA — Memoria IA", "icon": "🧠", "target": "elemia-panel.html" },
+        { "label": "Portal Empresarial", "icon": "🏢", "target": "portal-empresarial.html" }
       ]
     }
   ]
