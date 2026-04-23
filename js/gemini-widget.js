@@ -118,6 +118,7 @@ Tu nombre es Gemini ARKAIOS. Hablas en espanol, eres eficiente y muy preciso.
   color:#c4b5fd;font:400 11px 'Inter',sans-serif;padding:6px 10px;
   border-radius:8px;pointer-events:none;opacity:0;transition:opacity .2s;
   white-space:nowrap;z-index:99996;border:1px solid rgba(124,58,237,.3);}
+@media print{#gw-orb,#gw-panel,#gw-tip{display:none!important}}
 `;
 
   function renderCatalog(items) {
