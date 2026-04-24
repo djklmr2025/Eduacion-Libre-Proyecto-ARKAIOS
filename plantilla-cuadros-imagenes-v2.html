@@ -252,8 +252,17 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
-      transition: transform 0.3s;
+      transition: transform 0.2s;
       user-select: none;
+      pointer-events: none; /* Evita que el <img> intercepte eventos de drag de la celda */
+    }
+
+    .celda-imagen[draggable="true"] {
+      cursor: grab;
+    }
+
+    .celda-imagen[draggable="true"]:active {
+      cursor: grabbing;
     }
 
     .img-preview.moviendo {
@@ -587,10 +596,23 @@
       <div class="controles-editor">
         <div class="control-zoom">
           <label>🔍 Zoom:</label>
-          <input type="range" id="zoom-slider" min="100" max="200" value="100" step="1">
+          <input type="range" id="zoom-slider" min="50" max="300" value="100" step="1">
           <span class="zoom-valor" id="zoom-valor">100%</span>
         </div>
-        <button class="btn btn-primary" onclick="aplicarEdicion()">✓ Aplicar cambios</button>
+        <div class="control-zoom">
+          <label>↔️ Pos. X:</label>
+          <input type="range" id="x-slider" min="-200" max="200" value="0" step="1">
+          <span class="zoom-valor" id="x-valor">0px</span>
+        </div>
+        <div class="control-zoom">
+          <label>↕️ Pos. Y:</label>
+          <input type="range" id="y-slider" min="-200" max="200" value="0" step="1">
+          <span class="zoom-valor" id="y-valor">0px</span>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="aplicarEdicion()">✓ Aplicar cambios</button>
+          <button class="btn btn-secondary" onclick="resetearPosicion()">↺ Resetear posición</button>
+        </div>
       </div>
     </div>
   </div>
@@ -608,6 +630,10 @@
     const editorImg = document.getElementById('editor-img');
     const zoomSlider = document.getElementById('zoom-slider');
     const zoomValor = document.getElementById('zoom-valor');
+    const xSlider = document.getElementById('x-slider');
+    const xValor = document.getElementById('x-valor');
+    const ySlider = document.getElementById('y-slider');
+    const yValor = document.getElementById('y-valor');
 
     let imagenes = [];
     let estadosImagen = []; // { zoom: 100, x: 0, y: 0, fijada: false }
@@ -780,9 +806,10 @@
         const img = document.createElement('img');
         img.src = imagenes[idx];
         img.className = 'img-preview';
+        img.draggable = false; // Evita que el img compita con el drag de la celda
 
         const estado = estadosImagen[idx] || { zoom: 100, x: 0, y: 0, fijada: false };
-        img.style.transform = `scale(${estado.zoom / 100})`;
+        img.style.transform = `scale(${estado.zoom / 100}) translate(${estado.x || 0}px, ${estado.y || 0}px)`;
 
         imgContainer.appendChild(img);
         celda.appendChild(imgContainer);
@@ -887,13 +914,24 @@
       indiceDragInicio = -1;
     }
 
+    function actualizarPreviewEditor() {
+      const zoom = parseInt(zoomSlider.value);
+      const x = parseInt(xSlider.value);
+      const y = parseInt(ySlider.value);
+      editorImg.style.transform = `scale(${zoom / 100}) translate(${x}px, ${y}px)`;
+    }
+
     function abrirEditor(idx) {
       indiceEditando = idx;
       editorImg.src = imagenes[idx];
-      const estado = estadosImagen[idx] || { zoom: 100 };
+      const estado = estadosImagen[idx] || { zoom: 100, x: 0, y: 0, fijada: false };
       zoomSlider.value = estado.zoom;
       zoomValor.textContent = estado.zoom + '%';
-      editorImg.style.transform = `scale(${estado.zoom / 100})`;
+      xSlider.value = estado.x || 0;
+      xValor.textContent = (estado.x || 0) + 'px';
+      ySlider.value = estado.y || 0;
+      yValor.textContent = (estado.y || 0) + 'px';
+      actualizarPreviewEditor();
       modalEditor.classList.add('activo');
     }
 
@@ -903,17 +941,41 @@
     }
 
     zoomSlider.addEventListener('input', function () {
-      const zoom = parseInt(this.value);
-      zoomValor.textContent = zoom + '%';
-      editorImg.style.transform = `scale(${zoom / 100})`;
+      zoomValor.textContent = this.value + '%';
+      actualizarPreviewEditor();
+    });
+
+    xSlider.addEventListener('input', function () {
+      xValor.textContent = this.value + 'px';
+      actualizarPreviewEditor();
+    });
+
+    ySlider.addEventListener('input', function () {
+      yValor.textContent = this.value + 'px';
+      actualizarPreviewEditor();
     });
 
     function aplicarEdicion() {
       if (indiceEditando >= 0) {
+        if (!estadosImagen[indiceEditando]) {
+          estadosImagen[indiceEditando] = { zoom: 100, x: 0, y: 0, fijada: false };
+        }
         estadosImagen[indiceEditando].zoom = parseInt(zoomSlider.value);
+        estadosImagen[indiceEditando].x = parseInt(xSlider.value);
+        estadosImagen[indiceEditando].y = parseInt(ySlider.value);
         generarPlantilla();
         cerrarEditor();
       }
+    }
+
+    function resetearPosicion() {
+      zoomSlider.value = 100;
+      zoomValor.textContent = '100%';
+      xSlider.value = 0;
+      xValor.textContent = '0px';
+      ySlider.value = 0;
+      yValor.textContent = '0px';
+      actualizarPreviewEditor();
     }
 
     function toggleFijar(idx) {

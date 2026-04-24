@@ -1,0 +1,56 @@
+<!-- =====================================================================
+   INSTRUCCIONES DE INTEGRACIÓN — plantilla-riesgo-tecnologias-4x4.html
+   ===================================================================== -->
+
+<!-- PASO 1 ─────────────────────────────────────────────────────────────
+   Copia el archivo "plantilla-riesgo-tecnologias-4x4.html" a la raíz
+   del repositorio (junto a index.html, buscador-imagenes-educativo.html, etc.)
+
+   Estructura resultante:
+     /
+     ├── index.html
+     ├── plantilla-cuadros-imagenes-v2.html
+     ├── plantilla-imagenes-v2.html
+     ├── plantilla-riesgo-tecnologias-4x4.html   ← NUEVO
+     └── ...
+-->
+
+<!-- PASO 2 ─────────────────────────────────────────────────────────────
+   En tu index.html, busca la sección "📸 Módulos de Imagen" en el sidebar.
+   Verás botones similares a este:
+
+     <button onclick="loadTool('plantilla-cuadros-imagenes-v2.html')">
+       🖼️ Cuadros Imágenes v2
+     </button>
+
+   Agrega INMEDIATAMENTE DESPUÉS (o donde prefieras dentro de esa sección)
+   el siguiente bloque:
+-->
+
+<button onclick="loadTool('plantilla-riesgo-tecnologias-4x4.html')">
+  🛡️ Riesgo Tecnologías 4×4
+</button>
+
+<!-- ─────────────────────────────────────────────────────────────────────
+   PASO 3 (opcional pero recomendado)
+   Si tu index.html maneja el menú con un array o JSON de herramientas
+   (por ejemplo en modules.json o generateModules.js), agrega la entrada:
+
+   En modules.json — busca el array de módulos de imagen y añade:
+   {
+     "id": "riesgo-tecnologias-4x4",
+     "titulo": "🛡️ Riesgo Tecnologías 4×4",
+     "descripcion": "Grilla 4x4 de imágenes sobre riesgos digitales (Pexels)",
+     "archivo": "plantilla-riesgo-tecnologias-4x4.html",
+     "categoria": "imagen",
+     "tags": ["riesgo", "tecnología", "ciberseguridad", "grilla", "4x4"]
+   }
+
+   ─────────────────────────────────────────────────────────────────────
+   VERIFICACIÓN RÁPIDA
+   Después del despliegue, visita:
+     https://eduacion-libre-proyecto-arkaios.vercel.app/plantilla-riesgo-tecnologias-4x4.html
+
+   Si ves la grilla y el botón "Buscar" funciona → listo.
+   Si las imágenes no cargan → verifica PEXELS_API_KEY en Variables de Entorno de Vercel.
+   ===================================================================== -->

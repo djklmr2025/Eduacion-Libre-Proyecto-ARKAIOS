@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ARKAIOS — Riesgo en las Tecnologías (Grilla 4×4)</title>
+  <style>
+    /* ============================================
+       ARKAIOS — Variables y Reset
+       ============================================ */
+    :root {
+      --bg:         #0f1117;
+      --panel:      #1a1d27;
+      --border:     #2a2d3a;
+      --accent:     #f97316;
+      --accent2:    #facc15;
+      --text:       #e2e8f0;
+      --text-dim:   #94a3b8;
+      --danger:     #ef4444;
+      --success:    #22c55e;
+      --cell-size:  5cm;
+      --gap:        0.4cm;
+      --radius:     6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ============================================
+       BARRA SUPERIOR
+       ============================================ */
+    .topbar {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .topbar .brand {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      text-transform: uppercase;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .topbar .title-tag {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .topbar .title-tag span {
+      color: var(--accent2);
+      font-weight: 600;
+    }
+
+    /* Search row */
+    .search-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-row input {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius);
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      width: 220px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .search-row input:focus { border-color: var(--accent); }
+
+    .btn {
+      cursor: pointer;
+      border: none;
+      border-radius: var(--radius);
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: opacity .15s, transform .1s;
+    }
+    .btn:active { transform: scale(.96); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary { background: var(--border); color: var(--text); }
+    .btn-print { background: #1e40af; color: #fff; }
+    .btn:hover { opacity: .88; }
+
+    /* Tags */
+    .tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .tag {
+      font-size: 0.7rem;
+      padding: 3px 9px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all .15s;
+      background: transparent;
+    }
+    .tag:hover, .tag.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(249,115,22,.1);
+    }
+
+    /* ============================================
+       ÁREA PRINCIPAL
+       ============================================ */
+    .main {
+      padding: 24px 20px;
+      flex: 1;
+    }
+
+    .section-header {
+      margin-bottom: 20px;
+    }
+    .section-header h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-header p {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* Estado / mensajes */
+    .status-bar {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-bottom: 14px;
+      min-height: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-bar .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      flex-shrink: 0;
+    }
+    .status-bar.loading .dot { background: var(--accent2); animation: pulse 1s infinite; }
+    .status-bar.ok .dot     { background: var(--success); }
+    .status-bar.err .dot    { background: var(--danger); }
+
+    @keyframes pulse {
+      0%,100% { opacity:1; } 50% { opacity:.3; }
+    }
+
+    /* ============================================
+       GRILLA 4×4
+       ============================================ */
+    .grid-wrap {
+      overflow-x: auto;
+    }
+
+    .grid-4x4 {
+      display: grid;
+      grid-template-columns: repeat(4, var(--cell-size));
+      gap: var(--gap);
+      width: max-content;
+    }
+
+    .cell {
+      width: var(--cell-size);
+      height: var(--cell-size);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: relative;
+      background: var(--panel);
+      cursor: pointer;
+    }
+
+    .cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .3s ease;
+    }
+    .cell:hover img { transform: scale(1.06); }
+
+    .cell .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.7) 0%, transparent 55%);
+      opacity: 0;
+      transition: opacity .25s;
+      display: flex;
+      align-items: flex-end;
+      padding: 8px;
+    }
+    .cell:hover .overlay { opacity: 1; }
+
+    .cell .overlay span {
+      font-size: 0.65rem;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    /* Celda vacía / skeleton */
+    .cell.empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-style: dashed;
+      border-color: var(--border);
+    }
+    .cell.empty .empty-icon {
+      font-size: 1.6rem;
+      opacity: .25;
+    }
+
+    /* Skeleton loading */
+    .cell.loading-cell {
+      background: linear-gradient(90deg, var(--panel) 25%, #22263a 50%, var(--panel) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Número de celda */
+    .cell .num {
+      position: absolute;
+      top: 5px;
+      left: 7px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: rgba(255,255,255,.5);
+      background: rgba(0,0,0,.4);
+      padding: 1px 5px;
+      border-radius: 4px;
+      pointer-events: none;
+    }
+
+    /* ============================================
+       FOOTER INFO
+       ============================================ */
+    .info-footer {
+      margin-top: 22px;
+      padding: 12px 16px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .info-footer strong { color: var(--text); }
+
+    /* ============================================
+       MODAL PREVIEW
+       ============================================ */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.85);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-bg.open { display: flex; }
+    .modal-img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 8px;
+      box-shadow: 0 0 60px rgba(0,0,0,.8);
+    }
+    .modal-close {
+      position: fixed;
+      top: 18px;
+      right: 22px;
+      font-size: 2rem;
+      color: #fff;
+      cursor: pointer;
+      line-height: 1;
+      opacity: .7;
+    }
+    .modal-close:hover { opacity: 1; }
+
+    /* ============================================
+       IMPRESIÓN
+       ============================================ */
+    @media print {
+      body { background: #fff; color: #000; }
+      .topbar, .section-header, .status-bar, .info-footer { display: none !important; }
+      .main { padding: 0; }
+      .grid-wrap { overflow: visible; }
+      .grid-4x4 {
+        grid-template-columns: repeat(4, var(--cell-size));
+        gap: var(--gap);
+      }
+      .cell {
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        break-inside: avoid;
+      }
+      .cell .overlay, .cell .num { display: none; }
+      @page { margin: 1cm; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== BARRA SUPERIOR ===== -->
+  <div class="topbar">
+    <a class="brand" href="/">⬅ ARKAIOS</a>
+    <div class="title-tag">🛡️ Grilla Imágenes <span>Riesgo en Tecnologías</span> — 4×4</div>
+
+    <div class="search-row">
+      <input id="queryInput" type="text" value="technology risk cybersecurity" placeholder="Término de búsqueda…" />
+      <button class="btn btn-primary" onclick="buscarImagenes()">🔍 Buscar</button>
+      <button class="btn btn-secondary" onclick="limpiarGrilla()">🗑 Limpiar</button>
+      <button class="btn btn-print" onclick="window.print()">🖨 Imprimir</button>
+    </div>
+
+    <div class="tags">
+      <span class="tag active" onclick="setQuery('technology risk cybersecurity')">Ciberseguridad</span>
+      <span class="tag" onclick="setQuery('data privacy breach')">Privacidad</span>
+      <span class="tag" onclick="setQuery('digital addiction screen time')">Adicción digital</span>
+      <span class="tag" onclick="setQuery('fake news misinformation')">Desinformación</span>
+      <span class="tag" onclick="setQuery('hacker dark web')">Hacking</span>
+      <span class="tag" onclick="setQuery('surveillance camera spy')">Vigilancia</span>
+    </div>
+  </div>
+
+  <!-- ===== CONTENIDO PRINCIPAL ===== -->
+  <div class="main">
+    <div class="section-header">
+      <h1>🛡️ Riesgo en las Tecnologías — Grilla 4×4</h1>
+      <p>16 imágenes · tamaño 5 cm por celda · optimizada para impresión en hoja carta · imágenes de Pexels (licencia libre)</p>
+    </div>
+
+    <div class="status-bar" id="statusBar">
+      <div class="dot"></div>
+      <span id="statusMsg">Listo. Selecciona un tema o escribe un término y presiona Buscar.</span>
+    </div>
+
+    <div class="grid-wrap">
+      <div class="grid-4x4" id="grid">
+        <!-- 16 celdas vacías iniciales -->
+      </div>
+    </div>
+
+    <div class="info-footer">
+      <div><strong>Tamaño de celda:</strong> 5 × 5 cm</div>
+      <div><strong>Grilla:</strong> 4 columnas × 4 filas = 16 imágenes</div>
+      <div><strong>Fuente:</strong> Pexels API (licencia libre, uso educativo)</div>
+      <div><strong>Tip:</strong> Haz clic en cualquier imagen para verla ampliada</div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL PREVIEW ===== -->
+  <div class="modal-bg" id="modalBg" onclick="cerrarModal()">
+    <span class="modal-close">✕</span>
+    <img class="modal-img" id="modalImg" src="" alt="Preview" />
+  </div>
+
+  <script>
+    const TOTAL = 16;
+    let imagenesActuales = [];
+
+    // ─── Inicializar grilla vacía ──────────────────────────────────────────
+    function initGrid() {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      for (let i = 0; i < TOTAL; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell empty';
+        cell.id = `cell-${i}`;
+        cell.innerHTML = `<div class="empty-icon">📷</div>`;
+        grid.appendChild(cell);
+      }
+    }
+
+    // ─── Mostrar skeletons ─────────────────────────────────────────────────
+    function showSkeletons() {
+      for (let i = 0; i < TOTAL; i++) {
+        const cell = document.getElementById(`cell-${i}`);
+        cell.className = 'cell loading-cell';
+        cell.innerHTML = '';
+      }
+    }
+
+    // ─── Buscar imágenes vía proxy Pexels ──────────────────────────────────
+    async function buscarImagenes() {
+      const query = document.getElementById('queryInput').value.trim();
+      if (!query) return;
+
+      setStatus('loading', `Buscando: "${query}"…`);
+      showSkeletons();
+
+      // Marcar tag activo
+      document.querySelectorAll('.tag').forEach(t => {
+        t.classList.toggle('active',
+          t.getAttribute('onclick')?.includes(query));
+      });
+
+      try {
+        // Usa el proxy existente del proyecto en /api/pexels
+        const res = await fetch(`/api/pexels?query=${encodeURIComponent(query)}&per_page=${TOTAL}`);
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        if (!data.photos || data.photos.length === 0) {
+          setStatus('err', 'No se encontraron imágenes. Intenta otro término.');
+          initGrid();
+          return;
+        }
+
+        imagenesActuales = data.photos;
+        renderImagenes(data.photos);
+        setStatus('ok', `${data.photos.length} imágenes cargadas · "${query}"`);
+
+      } catch (err) {
+        // Fallback: si el proxy no está disponible, usa placeholder con texto descriptivo
+        console.warn('Proxy no disponible, usando placeholders:', err);
+        usarPlaceholders(query);
+      }
+    }
+
+    // ─── Renderizar imágenes en la grilla ──────────────────────────────────
+    function renderImagenes(fotos) {
+      for (let i = 0; i < TOTAL; i++) {
+        const cell = document.getElementById(`cell-${i}`);
+        cell.className = 'cell';
+
+        if (i < fotos.length) {
+          const foto = fotos[i];
+          const url = foto.src?.medium || foto.src?.original || '';
+          const fotog = foto.photographer || '';
+          const alt = foto.alt || `Riesgo tecnologías ${i + 1}`;
+
+          cell.innerHTML = `
+            <span class="num">${i + 1}</span>
+            <img src="${url}" alt="${alt}" loading="lazy" onerror="this.parentElement.classList.add('empty'); this.remove();" />
+            <div class="overlay"><span>📷 ${fotog}</span></div>
+          `;
+          cell.onclick = () => abrirModal(url, alt);
+        } else {
+          cell.classList.add('empty');
+          cell.innerHTML = `<div class="empty-icon">📷</div>`;
+        }
+      }
+    }
+
+    // ─── Fallback con placeholders temáticos ───────────────────────────────
+    function usarPlaceholders(query) {
+      const temas = [
+        'Ciberseguridad','Privacidad','Hacking','Datos',
+        'Vigilancia','Malware','Phishing','Red',
+        'Contraseña','Firewall','Cifrado','Fraude',
+        'Robo ID','Dark Web','Ransomware','SPAM'
+      ];
+      for (let i = 0; i < TOTAL; i++) {
+        const cell = document.getElementById(`cell-${i}`);
+        cell.className = 'cell empty';
+        const label = temas[i] || `${query} ${i+1}`;
+        cell.innerHTML = `
+          <span class="num">${i + 1}</span>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:6px;padding:8px;text-align:center;">
+            <div style="font-size:1.8rem;">🛡️</div>
+            <div style="font-size:0.65rem;color:var(--text-dim);line-height:1.3;">${label}</div>
+          </div>
+        `;
+      }
+      setStatus('err', 'Proxy Pexels no disponible — se muestran marcadores. Verifica la PEXELS_API_KEY en Vercel.');
+    }
+
+    // ─── Limpiar grilla ────────────────────────────────────────────────────
+    function limpiarGrilla() {
+      imagenesActuales = [];
+      initGrid();
+      setStatus('', 'Grilla limpiada. Lista para nueva búsqueda.');
+      document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+    }
+
+    // ─── Set query y buscar ────────────────────────────────────────────────
+    function setQuery(q) {
+      document.getElementById('queryInput').value = q;
+      buscarImagenes();
+    }
+
+    // ─── Status bar ────────────────────────────────────────────────────────
+    function setStatus(type, msg) {
+      const bar = document.getElementById('statusBar');
+      const span = document.getElementById('statusMsg');
+      bar.className = `status-bar ${type}`;
+      span.textContent = msg;
+    }
+
+    // ─── Modal ─────────────────────────────────────────────────────────────
+    function abrirModal(src, alt) {
+      document.getElementById('modalImg').src = src;
+      document.getElementById('modalImg').alt = alt;
+      document.getElementById('modalBg').classList.add('open');
+    }
+    function cerrarModal() {
+      document.getElementById('modalBg').classList.remove('open');
+    }
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') cerrarModal();
+    });
+
+    // ─── Init ──────────────────────────────────────────────────────────────
+    initGrid();
+  </script>
+</body>
+</html>
