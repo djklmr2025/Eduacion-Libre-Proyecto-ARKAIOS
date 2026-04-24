@@ -868,6 +868,10 @@
         };
         container.appendChild(btnGen);
         celda.appendChild(container);
+
+        // Las celdas vacías también deben recibir drops
+        celda.addEventListener('dragover', handleDragOver);
+        celda.addEventListener('drop', handleDrop);
       }
 
       return celda;
@@ -882,6 +886,7 @@
       indiceDragInicio = idx;
       e.currentTarget.classList.add('dragging');
       e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', String(idx)); // REQUERIDO — sin esto Firefox cancela el drag
     }
 
     function handleDragOver(e) {
