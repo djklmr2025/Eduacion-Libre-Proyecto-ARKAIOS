@@ -281,6 +281,7 @@
     const style = document.createElement('style');
     style.textContent = `
       #ark-orq-fab {
+        display: none; /* PARCHE: botón oculto — usar window.ARKAIOS_Orquestador.openAssistant() desde consola si lo necesitas */
         position: fixed; right: 18px; bottom: 18px; z-index: 99997;
         border: none; border-radius: 999px; padding: 10px 14px;
         background: #0f766e; color: #fff; font: 600 13px/1.2 Inter,system-ui,sans-serif;

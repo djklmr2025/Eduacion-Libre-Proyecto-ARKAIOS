@@ -396,27 +396,7 @@
         refreshPreview();
         addDiag('info', 'Diagnóstico listo. Este módulo ya no pide llaves al alumno.');
     </script>
-
-    <!-- ============================================================ -->
-    <!-- ARKAIOS EDU-AGENT LOADER                                      -->
-    <!-- ============================================================ -->
-    <script>
-    (function() {
-        const params = new URLSearchParams(window.location.search);
-        if (!params.get('agent')) return;
-
-        const topic = params.get('topic') || '';
-        if (topic) {
-            window.addEventListener('load', () => {
-                const input = document.getElementById('queryInput');
-                const btn = document.getElementById('searchBtn');
-                if (input && btn) {
-                    input.value = decodeURIComponent(topic);
-                    setTimeout(() => btn.click(), 500);
-                }
-            });
-        }
-    })();
-    </script>
+    <script src="/js/ark-config.js"></script>
+    <script src="/js/gemini-widget.js"></script>
 </body>
 </html>
