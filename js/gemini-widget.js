@@ -18,28 +18,30 @@
   // ─── SYSTEM PROMPT ARKAIOS ──────────────────────────────────────────────────
   const SYS = `Eres la IA asistente oficial de ARKAIOS — Sistema Educativo Profesional v3.0.
 Tu nombre es ARKAIOS IA. Hablas en español, eres amigable, directo y muy preciso.
-Cuando el usuario pregunte cómo generar imágenes, dile que puede usar la pestaña 🖼️ del mismo widget.
 
-## MÓDULOS DE ARKAIOS
-- Carta MX Texto → /plantilla_escolar_carta_mx_autoajuste_y_areas_editables.html
-- Hoja Milimétrica → /hoja_milimetrica_interactiva.html
-- Biografía Profesional → /biografia_profesional.html
-- Fotos Infantiles 2.5×3 → /generador-fotos-infantiles.html
-- Buscador Imágenes Educativo → /buscador-imagenes-educativo.html
-- Pixabay Descarga Lote → /pixabay-descargador-lote.html
-- Generador IA Imágenes → /generador-ia-imagenes.html  ← usa FLUX via Pollinations
-- ELEMIA Memoria → /elemia-panel.html
-- Material Reutilizable → /material-educativo-reutilizable.html
-- Orquestador HTML+ → /orquestador-html-plus.html
-- Portal Empresarial → /portal-empresarial.html
+Puedes controlar todas las plantillas del sistema (Jack Skellington, Biografía Profesional, Fotos Infantiles, etc.) enviando un bloque JSON de comando al final de tu respuesta.
 
-## CAPACIDADES
-- Todos los módulos exportan PDF con un clic
-- Pollinations FLUX para imágenes IA (gratis, sin registro)
-- ELEMIA guarda memoria entre sesiones con localStorage
-- Soporta subida de PDFs para extracción automática
+**Importante:** Solo responde el texto de tu respuesta y luego el bloque JSON, nada más. Cuando el usuario desee un proyecto completo, asegúrate de preguntarle datos como contraseña, NIP de 4 dígitos, y su número celular (WhatsApp) para personalizar su experiencia, y recuérdale que estos datos se vincularán pronto a su base de datos personal.
 
-Sé conciso: respuestas cortas y directas. Sin listas largas innecesarias.`;
+Los comandos disponibles son:
+1. Navegar a una plantilla: \`\`\`json
+{ "action": "navigate", "url": "/biografia_profesional.html" }
+\`\`\`
+2. Rellenar una plantilla con datos e imágenes IA (ej. fotos infantiles o biografías): \`\`\`json
+{
+  "action": "fill_template",
+  "textData": { "nombre_autor": "Isaac Newton", "fecha_nacimiento": "1643" },
+  "imagesData": { "foto_autor": "Retrato de Isaac Newton, estilo pintura al óleo" }
+}
+\`\`\`
+3. Rellenar de forma masiva (solo imágenes, ej. Jack Skellington): \`\`\`json
+{ "action": "fill_images", "prompt": "cara de jack skellington", "count": 20 }
+\`\`\`
+4. Generar PDF (imprimir): \`\`\`json
+{ "action": "print" }
+\`\`\`
+
+Nota: En el comando fill_template, textData son pares id_campo: valor, e imagesData son pares id_slot_imagen: prompt_para_generar.`;
 
   // ─── CSS ────────────────────────────────────────────────────────────────────
   const CSS = `
@@ -337,13 +339,79 @@ Sé conciso: respuestas cortas y directas. Sin listas largas innecesarias.`;
         if (!r.ok) throw new Error(d?.error?.message || `HTTP ${r.status}`);
         const reply = d.choices?.[0]?.message?.content || '(sin respuesta)';
         history.push({ role: 'assistant', content: reply });
-        dot.remove(); msgs.appendChild(bubble(reply, 'bot'));
+
+        let displayReply = reply;
+        let commandToExecute = null;
+        const jsonMatch = reply.match(/\`\`\`json\s*(\{[\s\S]*?\})\s*\`\`\`/);
+        if (jsonMatch) {
+            try {
+                commandToExecute = JSON.parse(jsonMatch[1]);
+                displayReply = displayReply.replace(jsonMatch[0], '').trim();
+            } catch(err) { console.error('Error parsing command', err); }
+        }
+
+        dot.remove(); msgs.appendChild(bubble(displayReply, 'bot'));
+
+        if (commandToExecute) {
+            await handleCommand(commandToExecute);
+        }
+
       } catch(e) {
         dot.remove();
         msgs.appendChild(bubble(`⚠️ ${e.message}\n\nPrueba abriendo Gemini Lab con el botón →`, 'bot'));
       }
       msgs.scrollTop = msgs.scrollHeight;
       busy = false; sendBtn.disabled = false; inp.focus();
+    }
+
+
+    async function handleCommand(cmd) {
+        if (cmd.action === 'navigate' && cmd.url) {
+            msgs.appendChild(bubble(`Navegando a ${cmd.url}...`, 'bot'));
+            setTimeout(() => { window.location.href = cmd.url; }, 1500);
+        } else if (cmd.action === 'fill_images') {
+            msgs.appendChild(bubble(`⚙️ Generando ${cmd.count} imágenes ("${cmd.prompt}")...`, 'bot'));
+            await autoFillTemplateImages(cmd.prompt, cmd.count);
+        } else if (cmd.action === 'fill_template') {
+            msgs.appendChild(bubble(`⚙️ Completando plantilla con datos...`, 'bot'));
+            if (cmd.textData && window.ARKAIOS_Orquestador) {
+                window.ARKAIOS_Orquestador.fillTemplate(cmd.textData);
+            }
+            if (cmd.imagesData && window.ARKAIOS_Orquestador) {
+                for (const [slotId, prompt] of Object.entries(cmd.imagesData)) {
+                    msgs.appendChild(bubble(`🎨 Generando imagen para ${slotId}...`, 'bot'));
+                    const url = buildImgUrl(prompt, '768x768');
+                    window.ARKAIOS_Orquestador.insertImage(slotId, url);
+                }
+            }
+            msgs.appendChild(bubble(`✅ Plantilla completada.`, 'bot'));
+        } else if (cmd.action === 'print') {
+            msgs.appendChild(bubble(`🖨️ Preparando PDF...`, 'bot'));
+            setTimeout(() => { window.print(); }, 1000);
+        }
+        msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    async function autoFillTemplateImages(prompt, count) {
+        const urls = [];
+        for (let i = 0; i < count; i++) {
+            urls.push(buildImgUrl(prompt, '768x768'));
+        }
+
+        if (typeof window.applyExternalImages === 'function') {
+            window.applyExternalImages(urls, 'ARKAIOS IA');
+            msgs.appendChild(bubble(`✅ Se aplicaron ${count} imágenes a la plantilla.`, 'bot'));
+        } else if (window.ARKAIOS_Orquestador) {
+            const schema = window.ARKAIOS_Orquestador.scanTemplate();
+            let slots = schema.modules.filter(m => m.type === 'image' || m.selector.includes('image-slot'));
+            for (let i = 0; i < Math.min(count, slots.length); i++) {
+                 window.ARKAIOS_Orquestador.insertImage(slots[i].id, urls[i]);
+            }
+            msgs.appendChild(bubble(`✅ Plantilla genérica rellenada.`, 'bot'));
+        } else {
+            msgs.appendChild(bubble(`⚠️ No encontré una plantilla compatible abierta.`, 'bot'));
+        }
+        msgs.scrollTop = msgs.scrollHeight;
     }
 
     sendBtn.addEventListener('click', () => { const t = inp.value.trim(); if(t){inp.value='';sendChat(t);} });
